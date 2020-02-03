@@ -4,10 +4,12 @@
     Sub PJT I에서는 UX, 디자인 등을 포함하여 백엔드를 제외하여 개발합니다.
  -->
 <template>
-    <div id="find-email-password" class="wrapC">
+    <div id="find-email-password">
         <div class="toggle-title">
-            <h1 @click="showEmailFunc">Email 찾기</h1>
-            <h1 @click="showPasswordFunc">비밀번호 찾기</h1>
+            <h1 id="find-title">아이디 및 비밀번호 찾기</h1>
+            <button class="close" @click="close"><img class="close-img" src="../../assets/images/close.png" /></button>
+            <h1 id="find-email-tab" @click="showEmailFunc">Email 찾기</h1>
+            <h1 id="find-password-tab" @click="showPasswordFunc">비밀번호 찾기</h1>
         </div>
         <div id="find-email" :class="{ showEmail: !showEmail }">
             <div class="input-with-label">
@@ -102,8 +104,10 @@
                 인증번호 확인
             </button>
         </div>
-        <div @click="toLogin">로그인하기</div>
-        <div @click="toJoin">가입하기</div>
+        <div id="button-wrap">
+            <div @click="toLogin">로그인하기</div>
+            <div @click="toJoin">가입하기</div>
+        </div>
     </div>
 </template>
 
@@ -220,6 +224,10 @@ export default {
         toJoin() {
             let flag = confirm('회원가입 페이지로 이동하시겠습니까?');
             if (flag) this.$router.push('/user/join');
+        },
+        close() {
+            localStorage.setItem('popupFind', 'false');
+            this.$router.push('/');
         },
     },
     data: () => {

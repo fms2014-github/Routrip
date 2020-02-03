@@ -68,15 +68,18 @@
                 <div class="text">
                     <div class="bar"></div>
                 </div>
-                <div class="wrap">
+                <div class="wrap" @click="popupToggleFind">
                     <router-link v-bind:to="{ name: 'FindEmailAndPassword' }" class="btn--text">이메일/비밀번호 찾기</router-link>
                 </div>
-                <div class="wrap" @click="popupToggle">
+                <div class="wrap" @click="popupToggleJoin">
                     <router-link v-bind:to="{ name: 'Join' }" class="btn--text">가입하기</router-link>
                 </div>
             </div>
-            <div id="popup-join" :class="{ hideJoin: !popup }">
+            <div id="popup-join" :class="{ hideJoin: !popupJoin }">
                 <router-view name="join" />
+            </div>
+            <div id="popup-find" :class="{ hideJoin: !popupFind }">
+                <router-view name="find" />
             </div>
         </div>
     </div>
@@ -100,7 +103,7 @@ export default {
     },
     created() {
         this.component = this;
-        console.log('localStorage.getItem("popup"1)');
+
         this.passwordSchema
             .is()
             .min(8)
@@ -109,7 +112,9 @@ export default {
             .has()
             .digits()
             .has()
-            .letters();
+            .letters()
+            .not()
+            .symbols();
     },
     watch: {
         password: function(v) {
@@ -187,8 +192,13 @@ export default {
                 );
             }
         },
-        popupToggle() {
-            this.popup = true;
+        popupToggleJoin() {
+            this.popupJoin = true;
+            this.popupFind = false;
+        },
+        popupToggleFind() {
+            this.popupFind = true;
+            this.popupJoin = false;
         },
     },
     data: () => {
@@ -205,7 +215,8 @@ export default {
             isSubmit: false,
             component: this,
             autoLogin: false,
-            popup: false,
+            popupJoin: false,
+            popupFind: false,
         };
     },
     mounted() {
@@ -219,15 +230,23 @@ export default {
         if (localStorage.getItem('emailSaveCheck') !== null) {
             this.emailSaveCheck = localStorage.getItem('emailSaveCheck');
         }
-        if (localStorage.getItem('popup') !== null) {
-            this.popup = Boolean(localStorage.getItem('popup'));
-            localStorage.removeItem('popup');
+        if (localStorage.getItem('popupJoin') !== null) {
+            this.popup = Boolean(localStorage.getItem('popupJoin'));
+            localStorage.removeItem('popupJoin');
+        }
+        if (localStorage.getItem('popupFind') !== null) {
+            this.popup = Boolean(localStorage.getItem('popupFind'));
+            localStorage.removeItem('popupFind');
         }
     },
     updated() {
-        if (localStorage.getItem('popup') !== null) {
-            this.popup = !Boolean(localStorage.getItem('popup'));
-            localStorage.removeItem('popup');
+        if (localStorage.getItem('popupJoin') !== null) {
+            this.popupJoin = !Boolean(localStorage.getItem('popupJoin'));
+            localStorage.removeItem('popupJoin');
+        }
+        if (localStorage.getItem('popupFind') !== null) {
+            this.popupFind = !Boolean(localStorage.getItem('popupFind'));
+            localStorage.removeItem('popupFind');
         }
     },
 };
