@@ -1,27 +1,27 @@
 <template>
     <div id="main">
         <Header></Header>
-        <hr />
-        <div class="search-desktop">
-            <form action class="search-form">
-                <input type="text" placeholder="검색..." />
-                <button>검색</button>
-            </form>
-        </div>
-        <div class="best-posting">
-            <BestPosting></BestPosting>
-        </div>
-        <div class="posting-box">
-            <div class="postings">
-                <Posting></Posting>
-                <Posting></Posting>
-                <Posting></Posting>
-                <Posting></Posting>
-                <Posting></Posting>
-                <Posting></Posting>
+        <div class="body">
+            <div class="search-desktop">
+                <form action class="search-form">
+                    <input type="text" placeholder="검색..." />
+                    <button>검색</button>
+                </form>
+            </div>
+            <div class="best-posting">
+                <BestPosting></BestPosting>
+            </div>
+            <div class="posting-box">
+                <div class="postings">
+                    <Posting></Posting>
+                    <Posting></Posting>
+                    <Posting></Posting>
+                    <Posting></Posting>
+                    <Posting></Posting>
+                    <Posting></Posting>
+                </div>
             </div>
         </div>
-
         <Footer></Footer>
     </div>
 </template>

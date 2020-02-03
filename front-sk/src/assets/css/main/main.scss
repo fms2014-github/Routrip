@@ -2,6 +2,10 @@ $iPad: 'screen and (max-width : 768px)';
 $iPadPro: 'screen and (min-width : 769px) and (max-width : 1024px) ';
 $desktop: 'screen and (min-width : 1025px)';
 
+.body {
+    padding-top: 80px;
+}
+
 .search-desktop {
     @media #{$iPad, $iPadPro} {
         display: none;
