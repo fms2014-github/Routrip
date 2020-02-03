@@ -1,12 +1,13 @@
-$phone : "Only screen and (max-width : 1024px) ";
-$desktop : "screen and (min-width : 1025px)";
+$iPad: 'screen and (max-width : 768px)';
+$iPadPro: 'screen and (min-width : 769px) and (max-width : 1024px) ';
+$desktop: 'screen and (min-width : 1025px)';
 
 #header {
-    @media #{$phone} {
-        margin: 3vh 0;
-        display: flex;
-        align-items: center;
+    display: flex;
+    align-items: center;
+    margin: 3vh 0;
 
+    @media #{$iPad, $iPadPro} {
 
         .hambuger {
             font-size: 3em;
@@ -30,18 +31,20 @@ $desktop : "screen and (min-width : 1025px)";
             }
         }
 
+        .search-ipad {
+            margin-right: 4vw;
+        }
+
         .menu {
             display: none;
         }
     }
 
     @media #{$desktop} {
-        display: flex;
-        align-items: center;
         justify-content: space-between;
-        margin: 3vh 0;
 
-        .hambuger {
+        .hambuger,
+        .search-ipad {
             display: none;
         }
 

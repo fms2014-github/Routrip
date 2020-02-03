@@ -2,6 +2,12 @@
     <div id="main">
         <Header></Header>
         <hr />
+        <div class="search-desktop">
+            <form action class="search-form">
+                <input type="text" placeholder="검색..." />
+                <button>검색</button>
+            </form>
+        </div>
         <div class="best-posting">
             <BestPosting></BestPosting>
         </div>
@@ -32,6 +38,11 @@ export default {
         Footer,
         Posting,
         BestPosting,
+    },
+    data: () => {
+        return {
+            scrollIndex: 0,
+        };
     },
 };
 </script>

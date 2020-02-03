@@ -2,6 +2,20 @@ $iPad: 'screen and (max-width : 768px)';
 $iPadPro: 'screen and (min-width : 769px) and (max-width : 1024px) ';
 $desktop: 'screen and (min-width : 1025px)';
 
+.search-desktop {
+    @media #{$iPad, $iPadPro} {
+        display: none;
+    }
+
+    @media #{$desktop} {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    margin-top: 10px;
+}
+
 //best posting
 .best-posting {
     .horizontal-scroll-wrapper {
