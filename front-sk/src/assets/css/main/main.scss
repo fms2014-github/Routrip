@@ -1,0 +1,142 @@
+$iPad: 'screen and (max-width : 768px)';
+$iPadPro: 'screen and (min-width : 769px) and (max-width : 1024px) ';
+$desktop: 'screen and (min-width : 1025px)';
+
+//best posting
+.best-posting {
+    .horizontal-scroll-wrapper {
+        overflow: scroll;
+        display: flex;
+        padding: 15px 20px 0px 20px;
+
+        .best-img {
+            margin: 20px 30px;
+        }
+
+        img:hover {
+            filter: none;
+            transform: scale(1.05);
+            box-shadow: 0px 10px 20px 10px #5f2f1182;
+        }
+
+        img {
+            transition: 0.5s;
+            filter: saturate(40%) sepia(30%) hue-rotate(5deg);
+        }
+    }
+
+    img {
+        width: 35vw;
+        height: 20vw;
+    }
+}
+
+//posting box
+.posting-box {
+    background-color: #f2f2f2;
+    padding: 3vh 0;
+
+    .posting-component {
+        margin: 70px 0;
+        background-color: white;
+    }
+}
+
+.postings {
+    margin: auto;
+
+    @media #{$iPad} {
+        width: 98vw;
+    }
+
+    @media #{$iPadPro} {
+        width: 90vw;
+    }
+
+    @media #{$desktop} {
+        width: 45vw;
+    }
+
+    .post-info {
+        display: flex;
+        align-items: center;
+        padding: 2vh 2vw;
+        position: relative;
+        margin: auto;
+
+        .profile-img {
+            margin-right: 2vw;
+        }
+
+        .profile-img img {
+            vertical-align: middle;
+            width: 33px;
+        }
+
+        .name-time {
+            strong {
+                font-size: 1.2em;
+            }
+        }
+
+        .else {
+            position: absolute;
+            right: 20px;
+
+            span {
+                font-size: 1.2em;
+            }
+        }
+    }
+
+    .sns-btn {
+        padding: 5px 20px;
+
+        .like {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        .follow {
+            font-size: 1.5em;
+            margin-right: 10px;
+        }
+
+        display: flex;
+    }
+
+    .post-imgs img {
+        width: 100%;
+    }
+
+    .text {
+        padding: 10px 20px;
+    }
+
+    .comment-box {
+        padding: 20px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        .comment-form {
+            width: 95%;
+
+            textarea {
+                height: 36px;
+                border: 0;
+                outline: 0;
+                line-height: 18px;
+                flex: 1;
+                cursor: text;
+                max-height: 72px;
+                font-size: 1em;
+                width: 100%;
+            }
+        }
+
+        .comment-btn button {
+            color: slateblue;
+        }
+    }
+}

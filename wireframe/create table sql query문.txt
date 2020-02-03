@@ -1,0 +1,77 @@
+create table user(
+uid int primary key auto_increment,
+nickname varchar(20) not null,
+name varchar(20) not null,
+email varchar(50) not null,
+password varchar(50) not null,
+phone varchar(20) not null,
+birth date not null,
+profileImg varchar(500),
+loginApi int not null default 0
+);
+
+create table follow(
+following int,
+follower int,
+foreign key(following)
+references user(uid) on update cascade on delete cascade,
+foreign key(follower)
+references user(uid) on update cascade on delete cascade
+);
+
+create table board(
+boardid int primary key auto_increment,
+uid int not null,
+title varchar(50) not null,
+writedate date not null,
+tripterm varchar(10) not null,
+keyword varchar(200),
+latitude double not null,
+longitude double not null,
+level int not null,
+unveiled boolean not null default true,
+foreign key(uid)
+references user(uid) on update cascade on delete cascade
+);
+
+create table favorite(
+uid int not null,
+boardid int not null,
+makedate date not null,
+foreign key(uid)
+references user(uid) on update cascade on delete cascade,
+foreign key(boardid)
+references board(boardid) on update cascade on delete cascade
+);
+
+create table comment(
+commentid int primary key auto_increment,
+uid int not null,
+boardid int not null,
+contents varchar(100) not null,
+writedate datetime not null,
+listener int not null default 0,
+foreign key(uid)
+references user(uid) on update cascade on delete cascade,
+foreign key(boardid)
+references board(boardid) on update cascade on delete cascade
+);
+
+create table img(
+imgid int  primary key auto_increment,
+boardid int not null,
+src varchar(500) not null,
+rep boolean default false,
+foreign key(boardid)
+references board(boardid) on update cascade on delete cascade
+);
+
+create table marker(
+boardid int not null,
+latitude double not null,
+longitude double not null,
+remark varchar(500),
+overlaytype varchar(100),
+foreign key(boardid)
+references board(boardid) on update cascade on delete cascade
+);

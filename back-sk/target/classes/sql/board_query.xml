@@ -1,0 +1,146 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="boardsql">
+
+	<insert id="addBoard" parameterType="board"
+		useGeneratedKeys="true" keyProperty="boardid">
+		<!-- keyword 에 null 들어갔을 때 오류 뜨는지 확인/아니면 자동으로 장소 키워드에 추가됨 -->
+		insert into board
+		(uid, title, writedate, tripterm, latitude,
+		longitude, level, keyword, unveiled)
+		values
+		(#{uid}, #{title},
+		curdate(), #{tripterm}, #{latitude}, #{longitude}, #{level},
+		#{keyword}, #{unveiled})
+		<selectKey keyProperty="boardid" resultType="int">
+			select LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+
+	<select id="getBoardList" resultType="board">
+		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
+		keyword, unveiled
+		from board
+	</select>
+
+	<select id="findBoardListByUid" parameterType="int"
+		resultType="board">
+		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
+		keyword, unveiled
+		from board
+		where uid = #{value}
+	</select>
+
+	<select id="findBoardListByTitle" parameterType="string"
+		resultType="board">
+		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
+		keyword, unveiled
+		from board
+		where title like '%'+#{value}+'%'
+	</select>
+
+	<select id="findBoardListByWriteDate" parameterType="map"
+		resultType="board">
+		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
+		keyword, unveiled
+		from board
+		where writedate <![CDATA[>=]]> #{startdate} and writedate <![CDATA[<=]]> #{enddate}
+	</select>
+
+	<select id="findBoardByBoardId" parameterType="int"
+		resultType="board">
+		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
+		keyword, unveiled
+		from board
+		where boardid = #{value}
+	</select>
+
+	<delete id="deleteBoard" parameterType="int">
+		delete
+		from board
+		where
+		boardid=#{value}
+	</delete>
+
+	<update id="updateBoard" parameterType="board">
+		update board
+		set title = #{title},
+		tripterm = #{tripterm},
+		keyword = #{keyword},
+		unveiled = #{unveiled}
+		where boardid = #{boardid}
+	</update>
+
+
+	<select id="getFavoriteNum" parameterType="int" resultType="int">
+		select count(uid)
+		from favorite
+		where boardid = #{value}
+	</select>
+	
+	<insert id="addFavorite" parameterType="map">
+		insert into favorite(uid, boardid, makedate)
+		values(#{uid}, #{boardid}, curdate())
+	</insert>
+	
+	<select id="getFavoriteByBoard" parameterType="int" resultType="int">
+		select uid
+		from favorite
+		where boardid = #{value}
+		order by makedate
+	</select>
+	
+	<select id="getFavoriteByUser" parameterType="int" resultType="int">
+		select boardid
+		from favorite
+		where uid = #{value}
+		order by makedate
+	</select>
+	
+	<delete id="deleteFavorite" parameterType="map">
+		delete from favorite
+		where uid=#{uid} and boardid=#{boardid}
+	</delete>
+	
+	<insert id="addImg" parameterType="img" useGeneratedKeys="true" keyProperty="imgid">
+	insert into img(boardid, src, rep)
+	values(#{boardid}, #{src}, #{rep})
+	</insert>
+	
+	<select id="findBoardImg" parameterType="int" resultType="img">
+		select imgid, boardid, src, rep
+		from img
+		where boardid = #{value}
+	</select>
+	
+	<select id="findRepImg" parameterType="int" resultType="img">
+		select imgid, boardid, src, rep
+		from img
+		where boardid=#{value} and rep=1
+	</select>
+	
+	<delete id="deleteImg" parameterType="int">
+		delete from img
+		where imgid = #{value}
+	</delete>
+	
+	<insert id="addComment" parameterType="comment" useGeneratedKeys="true" keyProperty="commentid">
+	insert into comment(uid, boardid, contents, writedate, listener)
+	values(#{uid}, #{boardid}, #{contents}, now(), #{listener})
+	</insert>
+	
+	<delete id="deleteComment" parameterType="int">
+	delete from comment
+	where commentid = #{value}
+	</delete>
+	
+	<select id="findComment" parameterType="int" resultType="comment">
+	select commentid, uid, boardid, contents, writedate, listener
+	from comment
+	where boardid = #{value}
+	order by writedate
+	</select>
+</mapper>

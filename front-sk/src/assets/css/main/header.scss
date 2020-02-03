@@ -1,0 +1,80 @@
+$phone : "Only screen and (max-width : 1024px) ";
+$desktop : "screen and (min-width : 1025px)";
+
+#header {
+    @media #{$phone} {
+        margin: 3vh 0;
+        display: flex;
+        align-items: center;
+
+
+        .hambuger {
+            font-size: 3em;
+            margin-left: 4vw;
+            vertical-align: middle;
+        }
+
+        .home {
+            margin: auto;
+
+            .logo {
+                width: 50px;
+                vertical-align: middle;
+                margin-right: 15px;
+            }
+
+            .title {
+                font-size: 30px;
+                font-weight: 600;
+                vertical-align: middle;
+            }
+        }
+
+        .menu {
+            display: none;
+        }
+    }
+
+    @media #{$desktop} {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin: 3vh 0;
+
+        .hambuger {
+            display: none;
+        }
+
+        .home {
+            margin-left: 10vw;
+
+            .logo {
+                width: 4vw;
+                vertical-align: middle;
+                margin-right: 2vw;
+            }
+
+            .title {
+                font-size: 2.3em;
+                font-weight: 600;
+                vertical-align: middle;
+            }
+        }
+
+        .menu {
+            margin-right: 10vw;
+
+            .menu-icon {
+                vertical-align: middle;
+                margin-right: 2vw;
+                font-size: 2.3em;
+            }
+
+            .profile-img {
+                vertical-align: middle;
+                width: 4vw;
+            }
+        }
+    }
+
+}

@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+	"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="usersql">
+
+
+	<insert id="addUser" parameterType="user" useGeneratedKeys="true" keyProperty="uid">
+		insert into user
+		(nickname, name, email, password, phone, birth, profileImg, loginApi)
+		values
+		(#{nickname}, #{name}, #{email}, #{password}, #{phone}, #{birth}, #{profileImg}, #{loginApi})
+		<selectKey keyProperty="uid" resultType="int">
+			select LAST_INSERT_ID()
+		</selectKey>
+	</insert>
+	
+	<select id="getUserList" resultType="user">
+	select uid, nickname, name, email, password, phone, birth, profileImg, loginApi from user
+	</select>
+
+	<select id="findUserByEmailAndPassword" parameterType="user"
+		resultType="user">
+		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi
+		from user
+		where email=#{email} and password=#{password}
+	</select>
+
+	<select id="findUserByUid" parameterType="int" resultType="user">
+		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi
+		from user
+		where uid = #{value}
+	</select>
+
+	<select id="findUserByEmail" parameterType="string" resultType="user">
+		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi
+		from user
+		where email = #{value}
+	</select>
+
+	<select id="findEmail" parameterType="user" resultType="string">
+		select email
+		from user
+		where name=#{name} and phone = #{phone} and birth=#{birth}
+	</select>
+
+	<select id="findPW" parameterType="user" resultType="string">
+		<!-- 해당 사용자가 존재하면 비번 변경을 위한 유저 정보를 반환한다 -->
+		select password
+		from user
+		where name=#{name} and phone = #{phone} and birth=#{birth} and email=#{email}
+	</select>
+
+	<delete id="deleteUser" parameterType="int">
+		delete
+		from user
+		where uid=#{value}
+	</delete>
+
+	<update id="changePw" parameterType="user">
+		UPDATE user
+		SET password=#{password}
+		WHERE uid=#{uid}
+	</update>
+	
+	<update id="updateProfileImg" parameterType="user">
+		update user
+		set profileImg = #{profileImg}
+		where uid = #{uid}
+	</update>
+	
+	<insert id="addFollow" parameterType="map">
+		insert into follow
+		values(#{following}, #{follower})
+	</insert>
+	
+	<delete id="deleteFollow" parameterType="map">
+	delete from follow
+	where following=#{following} and follower=#{follower}
+	</delete>
+	
+	<select id="getFollow" parameterType="int" resultType="int">
+		select follower
+		from follow
+		where following = #{value}
+	</select>
+
+	<select id="getFollower" parameterType="int" resultType="int">
+		select following
+		from follow
+		where follower = #{value}
+	</select>
+	
+</mapper>

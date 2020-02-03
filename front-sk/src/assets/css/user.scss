@@ -1,0 +1,251 @@
+@charset "utf-8";
+@import './common';
+
+.user {
+    @include wrap;
+    min-height: 100%;
+    box-sizing: border-box;
+    h1 {
+        color:#000;
+        font-weight: $f600;
+        margin-bottom: 30px;
+    }
+    .mention {
+        margin: 10px;
+        color: #a6cdc6;
+        font-size: 2.5vw;
+        width: 100vw;
+        text-align: center;
+        display: inline-block;
+    }
+    .checkOption {
+        text-align: center;
+        padding-top: 130px;
+        margin-bottom: 20px;
+    }
+
+    /*로그인*/
+    &#login {
+        margin-top:50px;
+        .login-img{
+            display: flex;
+            flex-wrap: wrap;
+            align-items: center;
+            justify-content: center;
+            margin: 10px;
+            h1 {
+                display: inline-block;
+                color: #41abac;
+                font-size: 7vw;
+                margin: 20px;
+            }
+            .main-logo {
+                display: inline-block;
+                height: 15vw;
+                margin: 20px;
+            }
+        }
+        .btn--login {
+            margin-top: 5px;
+        }
+        .text {
+            @include wrap;
+            p {
+                color: #787878;
+                float: left;
+                font-size: $font-size__5;
+                margin-right: 10px;
+            }
+            .bar {
+                height: 1px;
+                background-color: $grey;
+                float: right;
+                margin-top: 9px;
+                margin-bottom: 20px;
+            }
+        }
+        .emailSaveCheck{
+            input{
+                &[type=checkbox]{
+                    position: static;
+                    left: 0px;
+                    height: 0px;
+                    margin: 02px;
+                    border: 1px solid black;
+                }
+            }
+        }
+        .sns-login {
+            margin: 20px 0;
+            text-align: right;
+            .bar {
+                width: calc(100% - 100px);
+            }
+            #kakao-login, #naver-login, .google-login {
+                display: inline-block;
+                margin: 10px;
+            }
+            #kakao-login {
+                margin: 0 10px;
+            }
+            .logos {
+                text-align: center;
+            }
+        }
+        .add-option {
+            .bar {
+                width: calc(100%);
+            }
+            .wrap {
+                margin-bottom: 10px;
+            }
+            p {
+                float: left;
+            }
+            a {
+                float: right;
+                color:#000;
+                font-weight: $f600;
+            }
+        }
+
+    }
+
+}
+
+#sign-up,#JoinAuth,#change-password,#forget-password{
+    display: inline-flex;
+    flex-direction: column;
+    justify-content: space-between;
+    max-width: 100vw;
+    min-height: 640px;
+    padding: 20px;
+    background-color: white;
+    border-radius: 12px;
+    box-shadow: 0px 0px 5px 5px rgba(50,50,50,.3), 0px 0px 18px 18px rgba(0,0,0,.15);
+    #Join-title{
+        font-size: 2.5rem;
+        display: inline-block;
+        margin-right: calc(100% - 180px)
+    }
+    #JoinAuth-title{
+        font-size: 2rem;
+        display: inline-block;
+        margin-right: calc(100% - 216px)
+    }
+    .close{
+        display: inline;
+        background-color: white;
+        .close-img{
+            width: 32px;
+        }
+        
+    }
+    .JoinAuth-subtitle{
+        margin-bottom: 10px;
+    }
+    input {
+        background-color: whitesmoke;
+    }
+    #term-doc{
+        .term-view{
+            text-align: right;
+            display: inline-block;
+            width: calc(100% - 150px);
+            span{cursor: pointer;}
+        }
+    }
+    button{
+        background-color: rgba($color: #31a8ac, $alpha: 1.0);
+    }
+    .disabled{
+        background-color: rgba($color: #d4d8e6, $alpha: 1.0);
+    }
+    .back{
+        margin: 7px 0;
+        text-align: center;
+        text-decoration: underline;
+        color: rgb(0, 119, 255);
+        cursor: pointer;
+    }
+    
+}
+.terms-doc-dialog{
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    top: 5%;
+    left: 5%;
+    right: 5%;
+    bottom: 5%;
+    .terms{
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        background-color: white;
+        padding: 20px;
+        margin: 10px;
+        max-width: 400px;
+        border-radius: 20px;
+        box-shadow: 0px 0px 5px 5px rgba(50,50,50,.3), 0px 0px 18px 18px rgba(0,0,0,.15);
+        h1{
+            font-size: 1.65rem !important;
+            text-align: center;
+            margin: 0 !important;
+        }
+        .terms-content{
+            background-color: rgba(200, 200, 200, 1);
+            padding: 15px;
+            margin: 10px;
+            border: 1px solid rgba(180, 180, 180, 1);
+            height: 260px;
+            overflow: auto;
+        }
+        button{
+            display: inline-block;
+            width: 80px;
+            height: 30px;
+            margin: 5px;
+            background-color: rgb(50, 50, 50);
+            border-radius: 10px;
+            color: whitesmoke;
+        }
+    }
+}
+
+.hideJoin{
+    visibility: hidden !important;
+}
+#popup-join{
+    position: absolute;
+    top: calc(50vh - 340px);
+    left: calc(50vw - 300px);
+    right: calc(50vw - 300px);
+    bottom: calc(50vh - 340px);
+    .input-with-label{
+        height: auto;
+    }
+}
+
+@media (max-width: 1000px){
+    #forget-password, #sign-up{
+        padding: 20px 20px;
+    }
+    #JoinAuth-form, #reset-password-form{
+        width: calc(100vw - 40px);
+    }
+}
+// 하단 버튼 absolute 해제
+@media (max-height: 650px) {
+    .user {
+        //회원가입
+        &.join {
+            .btn-bottom {
+                position: inherit; @include wrap; margin-top: 60px; margin-bottom: 20px;
+            }
+        }
+    }
+}

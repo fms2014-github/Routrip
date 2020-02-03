@@ -1,0 +1,17 @@
+<<<<<<< HEAD
+com\web\curation\model\user\AuthenticationRequest$AuthenticationRequestBuilder.class
+=======
+com\web\curation\dao\user\UserDaoImpl.class
+com\web\curation\model\BasicResponse.class
+com\web\curation\WebCurationApplication.class
+com\web\curation\controller\account\AccountController$User.class
+com\web\curation\model\user\AuthenticationRequest$AuthenticationRequestBuilder.class
+com\web\curation\config\SwaggerConfig.class
+com\web\curation\service\UserServiceImpl.class
+com\web\curation\model\user\AuthenticationRequest.class
+com\web\curation\dao\user\UserDao.class
+com\web\curation\model\user\User.class
+com\web\curation\controller\account\AccountController.class
+com\web\curation\service\UserService.class
+com\web\curation\model\user\SignupRequest.class
+>>>>>>> beb3c8c49971f5ef68cb571f91b7bb0ab5195984
