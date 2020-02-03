@@ -30,6 +30,7 @@ keyword varchar(200), 검색 키워드
 latitude double not null, 위도
 longitude double not null, 경도
 level int not null, 지도 축소 정도
+favoriteNum int not null default 0, 좋아요 수(게시글 조회시마다 갱신)
 unveiled boolean not null default true, 게시글 공개 비공개 여부
 foreign key(uid)
 references user(uid) on update cascade on delete cascade

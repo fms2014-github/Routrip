@@ -205,6 +205,20 @@ public class AccountController {
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
+	
+	@PostMapping("/email")
+	@ApiOperation(value = "이메일 찾기")
+	public Object findEmail(@RequestBody User user) throws Exception {
+		String email = userService.findEmail(user);//중간에 별 넣어야하게 되면 별 넣기
+		return new ResponseEntity<>(email, HttpStatus.OK);
+	}
+	
+	@PostMapping("/password")
+	@ApiOperation(value = "비밀번호 찾기")
+	public Object findPassword(@RequestBody User user) throws Exception {
+		String password = userService.findPw(user);//도대체 이걸 이메일로 보내야하나 어떻게 해야하나
+		return new ResponseEntity<>(password, HttpStatus.OK);
+	}
 
 //	public Object emailAuth(@Valid @RequestBody HttpServletRequest request, @RequestBody User user) throws Exception {
 

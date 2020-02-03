@@ -89,4 +89,9 @@ public class UserService implements IUserService{
 	public int changeUserKey(User user) throws Exception {
 		return userDao.changeUserKey(user);
 	}
+
+	@Override
+	public String findEmail(User user) throws Exception {
+		return userDao.findEmail(user);
+	}
 }

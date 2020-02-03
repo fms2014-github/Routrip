@@ -99,4 +99,9 @@ public class UserDao implements IUserDao{
 		return sqlSession.update(ns+"changeUserKey", user);
 	}
 
+	@Override
+	public String findEmail(User user) throws Exception {
+		return sqlSession.selectOne(ns+"findEmail", user);
+	}
+
 }

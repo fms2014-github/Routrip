@@ -30,6 +30,7 @@ keyword varchar(200),
 latitude double not null,
 longitude double not null,
 level int not null,
+favoriteNum int not null default 0,
 unveiled boolean not null default true,
 foreign key(uid)
 references user(uid) on update cascade on delete cascade

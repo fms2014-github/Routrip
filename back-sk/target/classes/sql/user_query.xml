@@ -45,8 +45,7 @@
 		where name=#{name} and phone = #{phone} and birth=#{birth} and userkey='Y'
 	</select>
 
-	<select id="findPW" parameterType="user" resultType="string">
-		<!-- 해당 사용자가 존재하면 비번 변경을 위한 유저 정보를 반환한다 -->
+	<select id="findPw" parameterType="user" resultType="string">
 		select password
 		from user
 		where name=#{name} and phone = #{phone} and birth=#{birth} and email=#{email} and userkey='Y'
@@ -56,12 +55,6 @@
 		delete
 		from user
 		where uid=#{value}
-	</delete>
-	
-	<delete id="deleteExpire">
-		delete
-		from user
-		where userkey != 'Y'
 	</delete>
 
 	<update id="changePw" parameterType="user">
