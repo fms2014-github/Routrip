@@ -8,48 +8,48 @@
 
 	<insert id="addUser" parameterType="user" useGeneratedKeys="true" keyProperty="uid">
 		insert into user
-		(nickname, name, email, password, phone, birth, profileImg, loginApi)
+		(nickname, name, email, password, phone, birth, profileImg, loginApi, userkey)
 		values
-		(#{nickname}, #{name}, #{email}, #{password}, #{phone}, #{birth}, #{profileImg}, #{loginApi})
+		(#{nickname}, #{name}, #{email}, #{password}, #{phone}, #{birth}, #{profileImg}, #{loginApi}, #{userkey})
 		<selectKey keyProperty="uid" resultType="int">
 			select LAST_INSERT_ID()
 		</selectKey>
 	</insert>
 	
 	<select id="getUserList" resultType="user">
-	select uid, nickname, name, email, password, phone, birth, profileImg, loginApi from user
+	select uid, nickname, name, email, password, phone, birth, profileImg, loginApi, userkey from user
 	</select>
 
 	<select id="findUserByEmailAndPassword" parameterType="user"
 		resultType="user">
-		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi
+		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi, userkey
 		from user
-		where email=#{email} and password=#{password}
+		where email=#{email} and password=#{password} and userkey='Y'
 	</select>
 
 	<select id="findUserByUid" parameterType="int" resultType="user">
-		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi
+		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi, userkey
 		from user
 		where uid = #{value}
 	</select>
 
 	<select id="findUserByEmail" parameterType="string" resultType="user">
-		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi
+		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi, userkey
 		from user
-		where email = #{value}
+		where email = #{value} and userkey='Y'
 	</select>
 
 	<select id="findEmail" parameterType="user" resultType="string">
 		select email
 		from user
-		where name=#{name} and phone = #{phone} and birth=#{birth}
+		where name=#{name} and phone = #{phone} and birth=#{birth} and userkey='Y'
 	</select>
 
 	<select id="findPW" parameterType="user" resultType="string">
 		<!-- 해당 사용자가 존재하면 비번 변경을 위한 유저 정보를 반환한다 -->
 		select password
 		from user
-		where name=#{name} and phone = #{phone} and birth=#{birth} and email=#{email}
+		where name=#{name} and phone = #{phone} and birth=#{birth} and email=#{email} and userkey='Y'
 	</select>
 
 	<delete id="deleteUser" parameterType="int">
@@ -61,13 +61,19 @@
 	<update id="changePw" parameterType="user">
 		UPDATE user
 		SET password=#{password}
-		WHERE uid=#{uid}
+		WHERE uid=#{uid} and userkey='Y'
 	</update>
 	
 	<update id="updateProfileImg" parameterType="user">
 		update user
 		set profileImg = #{profileImg}
-		where uid = #{uid}
+		where uid = #{uid} and userkey='Y'
+	</update>
+	
+	<update id="updateUserKey" parameterType="int">
+		update user
+		set userkey='Y'
+		where uid=#{value}
 	</update>
 	
 	<insert id="addFollow" parameterType="map">

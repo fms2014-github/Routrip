@@ -10,6 +10,7 @@ package com.web.curation.model.user;
      private String phone;
      private String birth;
      private String profileImg;
+     private String userkey;
      private int loginApi;
      
      public User(){}
@@ -18,7 +19,7 @@ package com.web.curation.model.user;
         this.password = password;
      }
 	public User(int uid, String password, String email, String nickname, String name, String phone, String birth,
-			String profileImg, int loginApi) {
+			String profileImg, int loginApi, String userkey) {
 		super();
 		this.uid = uid;
 		this.password = password;
@@ -29,6 +30,7 @@ package com.web.curation.model.user;
 		this.birth = birth;
 		this.profileImg = profileImg;
 		this.loginApi = loginApi;
+		this.userkey = userkey;
 	}
 	public int getUid() {
 		return uid;
@@ -83,5 +85,11 @@ package com.web.curation.model.user;
 	}
 	public void setLoginApi(int loginApi) {
 		this.loginApi = loginApi;
+	}
+	public String getUserkey() {
+		return userkey;
+	}
+	public void setUserkey(String userkey) {
+		this.userkey = userkey;
 	}
  }

@@ -15,6 +15,7 @@ public interface IUserDao {// extends JpaRepository<User, String> {
      List<User> getUserList() throws Exception;
      User findUserByUid(int uid) throws Exception;
      int deleteUser(int uid) throws Exception;
+     int updateUserKey(int uid) throws Exception;
      
      int addFollow(int following, int follower) throws Exception;
      int deleteFollow(int following, int follower) throws Exception;

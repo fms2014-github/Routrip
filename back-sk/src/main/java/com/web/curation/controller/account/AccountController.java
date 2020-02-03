@@ -16,12 +16,15 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
+import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -138,8 +141,7 @@ public class AccountController {
 		User loginUser = userService.findUserByEmail(user.getEmail());
 		if (ok > 0)
 			return new ResponseEntity<>(loginUser, HttpStatus.OK);
-		else
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	@PostMapping("/signup")
@@ -156,16 +158,36 @@ public class AccountController {
 		}
 		int ok = 0;
 		if (flag) {
+			String authNum = RandomNum();
+			user.setUserkey(authNum);
+			
 			ok = userService.addUser(user);
+			String body = "가입완료하시려면 <a href='"+"http://192.168.100.70:8083/account/key/"+user.getUid()+"/"+authNum+"'>여기</a>를 클릭하세요.";
+			sendEmail(user.getEmail(), body);
+			System.out.println("메일이 발송되었습니다 : "+user.getEmail());
 		}
-
 		if (ok > 0) {
 			// 이미지를 저장할 img/uid 폴더를 프로젝트에 제작(프로젝트 내 저장일 경우)
 			File folder = new File(System.getProperty("user.dir") + "\\img\\" + user.getUid());
 			if (!folder.exists()) {
 				folder.mkdirs(); // 폴더 생성합니다.
+				//프로필 이미지가 이미 가입때 등록됐으면 그걸 저장, 아니면 default 이미지 저장하기
 			}
 			return new ResponseEntity<>(HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+	
+	@GetMapping("/key/{uid}/{userkey}")
+	@ApiOperation(value = "가입완료")
+	public Object updateUserKey(@PathVariable int uid, @PathVariable String userkey) throws Exception {
+		User user = userService.findUserByUid(uid);
+		if(user.getUserkey().equals(userkey)) {
+			int ok = userService.updateUserKey(uid);
+			if (ok > 0) {
+				System.out.println("가입 완료 : "+uid);
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -190,7 +212,7 @@ public class AccountController {
 	}
 
 	// 이메일 보내는 함수(gmail, naver, daum)
-	public void sendEmail(String usermail) {
+	public void sendEmail(String usermail, String body) {
 		System.out.println("EMAIL: " + usermail);
 		// 골뱅이가 여러개 있을 경우, 특문 막 들어가 있을 경우는 어떻게?? 프론트에서?
 		String result = usermail.substring(usermail.lastIndexOf("@") + 1);
@@ -208,17 +230,16 @@ public class AccountController {
 		}
 
 		MimeMessage msg = new MimeMessage(s);
+		//String authNum = "";
 		try {
-
-			String authNum = "";
 			msg.setSentDate(new Date());
 
-			msg.setFrom(new InternetAddress("routrip@routrip.com", "루트립관리자")); // 발송자
+			msg.setFrom(new InternetAddress("routrip@naver.com", "루트립관리자")); // 발송자
 			InternetAddress to = new InternetAddress(usermail); // 수신자
 			msg.setRecipient(Message.RecipientType.TO, to);
 			msg.setSubject("루트립입니다", "UTF-8");
-			authNum = RandomNum();
-			msg.setText("인증번호는 [" + authNum + "]입니다.", "UTF-8");
+			//authNum = RandomNum();
+			msg.setText(body, "UTF-8", "html");
 			Transport.send(msg);
 
 		} catch (AddressException ae) {

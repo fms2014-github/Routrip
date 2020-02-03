@@ -79,4 +79,9 @@ public class UserService implements IUserService{
 	public int deleteUser(int uid) throws Exception {
 		return userDao.deleteUser(uid);
 	}
+
+	@Override
+	public int updateUserKey(int uid) throws Exception {
+		return userDao.updateUserKey(uid);
+	}
 }

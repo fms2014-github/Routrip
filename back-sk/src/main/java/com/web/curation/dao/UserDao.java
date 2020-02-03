@@ -89,4 +89,9 @@ public class UserDao implements IUserDao{
 		return sqlSession.delete(ns+"deleteUser", uid);
 	}
 
+	@Override
+	public int updateUserKey(int uid) throws Exception {
+		return sqlSession.update(ns+"updateUserKey", uid);
+	}
+
 }

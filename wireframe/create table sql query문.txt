@@ -7,7 +7,8 @@ password varchar(50) not null,
 phone varchar(20) not null,
 birth date not null,
 profileImg varchar(500),
-loginApi int not null default 0
+loginApi int not null default 0,
+userkey varchar(10) not null
 );
 
 create table follow(
