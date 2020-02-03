@@ -1,16 +1,15 @@
 <template>
-    <div id="header">
+    <div id="header" :class="{headerHeight : headerHeight}">
         <div class="hambuger">
             <i class="fas fa-bars"></i>
         </div>
         <div class="home">
             <img class="logo" src="../../assets/images/routrip_logo.png" />
-            <span class="title">루트립</span>
+            <span class="title" :class="{scrollDown : scrollDown}">루트립</span>
         </div>
-        <div class="search-ipad" :class="{showSearch : !showSearch}">
+        <div class="search-ipad" :class="{scrollDown : !scrollDown}">
             <form action class="search-form">
                 <input type="text" placeholder="검색..." />
-                <button>검색</button>
             </form>
         </div>
         <div class="menu">
@@ -38,17 +37,19 @@ export default {
     },
     methods: {
         scrollY(event) {
-            console.log(window.scrollY);
             if (window.scrollY > 40) {
-                this.showSearch = true;
+                this.scrollDown = true;
+                this.headerHeight = true;
             } else {
-                this.showSearch = false;
+                this.scrollDown = false;
+                this.headerHeight = false;
             }
         },
     },
     data: () => {
         return {
-            showSearch: false,
+            scrollDown: false,
+            headerHeight: false,
         };
     },
 };

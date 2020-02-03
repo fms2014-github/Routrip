@@ -5,7 +5,6 @@
             <div class="search-desktop">
                 <form action class="search-form">
                     <input type="text" placeholder="검색..." />
-                    <button>검색</button>
                 </form>
             </div>
             <div class="best-posting">
