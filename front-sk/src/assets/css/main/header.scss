@@ -48,8 +48,11 @@ $desktop: 'screen and (min-width : 1025px)';
     @media #{$desktop} {
         justify-content: space-between;
 
-        .hambuger,
-        .search-ipad {
+        .showSearch {
+            display: none;
+        }
+
+        .hambuger {
             display: none;
         }
 

@@ -7,7 +7,7 @@
             <img class="logo" src="../../assets/images/routrip_logo.png" />
             <span class="title">루트립</span>
         </div>
-        <div class="search-ipad">
+        <div class="search-ipad" :class="{showSearch : !showSearch}">
             <form action class="search-form">
                 <input type="text" placeholder="검색..." />
                 <button>검색</button>
@@ -29,5 +29,27 @@
 
 <script>
 import '../../assets/css/main/header.scss';
-export default {};
+export default {
+    created() {
+        window.addEventListener('scroll', this.scrollY);
+    },
+    destroyed() {
+        window.removeEventListener('scroll', this.scrollY);
+    },
+    methods: {
+        scrollY(event) {
+            console.log(window.scrollY);
+            if (window.scrollY > 40) {
+                this.showSearch = true;
+            } else {
+                this.showSearch = false;
+            }
+        },
+    },
+    data: () => {
+        return {
+            showSearch: false,
+        };
+    },
+};
 </script>

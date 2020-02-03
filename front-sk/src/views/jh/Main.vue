@@ -39,11 +39,6 @@ export default {
         Posting,
         BestPosting,
     },
-    data: () => {
-        return {
-            scrollIndex: 0,
-        };
-    },
 };
 </script>
 
