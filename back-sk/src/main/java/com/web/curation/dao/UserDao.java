@@ -94,4 +94,9 @@ public class UserDao implements IUserDao{
 		return sqlSession.update(ns+"updateUserKey", uid);
 	}
 
+	@Override
+	public int changeUserKey(User user) throws Exception {
+		return sqlSession.update(ns+"changeUserKey", user);
+	}
+
 }

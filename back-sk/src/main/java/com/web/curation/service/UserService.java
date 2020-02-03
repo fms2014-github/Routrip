@@ -84,4 +84,9 @@ public class UserService implements IUserService{
 	public int updateUserKey(int uid) throws Exception {
 		return userDao.updateUserKey(uid);
 	}
+
+	@Override
+	public int changeUserKey(User user) throws Exception {
+		return userDao.changeUserKey(user);
+	}
 }

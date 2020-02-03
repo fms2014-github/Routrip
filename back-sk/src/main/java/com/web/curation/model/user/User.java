@@ -92,4 +92,10 @@ package com.web.curation.model.user;
 	public void setUserkey(String userkey) {
 		this.userkey = userkey;
 	}
+	@Override
+	public String toString() {
+		return "User [uid=" + uid + ", password=" + password + ", email=" + email + ", nickname=" + nickname + ", name="
+				+ name + ", phone=" + phone + ", birth=" + birth + ", profileImg=" + profileImg + ", userkey=" + userkey
+				+ ", loginApi=" + loginApi + "]";
+	}
  }

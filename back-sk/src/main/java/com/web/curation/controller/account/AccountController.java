@@ -16,7 +16,6 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
-import javax.websocket.server.PathParam;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -29,6 +28,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.curation.model.BasicResponse;
@@ -58,6 +58,7 @@ public class AccountController {
 		User loginUser = userService.findUserByEmailAndPassword(user.getEmail(), user.getPassword());
 		if (loginUser == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		System.out.println(loginUser.getEmail() + " 님이 로그인하셨습니다.");
 		return new ResponseEntity<>(loginUser, HttpStatus.OK);
 	}
 
@@ -117,8 +118,8 @@ public class AccountController {
 		if (user.getPassword().equals(check.getPassword()))
 			ok = userService.deleteUser(user.getUid());
 		if (ok > 0) {
-			//이미지를 저장한 img/uid 폴더를 프로젝트에서 삭제(프로젝트 내 저장일 경우)
-			deleteFolder(System.getProperty("user.dir")+"\\img\\"+user.getUid());
+			// 이미지를 저장한 img/uid 폴더를 프로젝트에서 삭제(프로젝트 내 저장일 경우)
+			deleteFolder(System.getProperty("user.dir") + "\\img\\" + user.getUid());
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -146,7 +147,7 @@ public class AccountController {
 
 	@PostMapping("/signup")
 	@ApiOperation(value = "가입하기")
-	public Object signup(@Valid @RequestBody User user) throws Exception {// 성공
+	public Object signup(@Valid @RequestBody User user) throws Exception {
 
 		List<User> userlist = userService.getUserList();
 		boolean flag = true;
@@ -160,32 +161,45 @@ public class AccountController {
 		if (flag) {
 			String authNum = RandomNum();
 			user.setUserkey(authNum);
-			
+
 			ok = userService.addUser(user);
-			String body = "가입완료하시려면 <a href='"+"http://192.168.100.70:8083/account/key/"+user.getUid()+"/"+authNum+"'>여기</a>를 클릭하세요.";
+			String body = "인증번호는 [ " + authNum + " ] 입니다.<br>자정이 지나기전에 입력해주십시오.";
 			sendEmail(user.getEmail(), body);
-			System.out.println("메일이 발송되었습니다 : "+user.getEmail());
+			System.out.println("메일이 발송되었습니다 : " + user.getEmail());
 		}
 		if (ok > 0) {
 			// 이미지를 저장할 img/uid 폴더를 프로젝트에 제작(프로젝트 내 저장일 경우)
 			File folder = new File(System.getProperty("user.dir") + "\\img\\" + user.getUid());
 			if (!folder.exists()) {
 				folder.mkdirs(); // 폴더 생성합니다.
-				//프로필 이미지가 이미 가입때 등록됐으면 그걸 저장, 아니면 default 이미지 저장하기
+				// 프로필 이미지가 이미 가입때 등록됐으면 그걸 저장, 아니면 default 이미지 저장하기
 			}
-			return new ResponseEntity<>(HttpStatus.OK);
+			return new ResponseEntity<>(user, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
-	
-	@GetMapping("/key/{uid}/{userkey}")
+
+	@PutMapping("/mail")
+	@ApiOperation(value = "인증번호재발송")
+	public Object sendMail(@RequestBody User user) throws Exception {
+		String authNum = RandomNum();
+		user.setUserkey(authNum);
+		userService.changeUserKey(user);
+		String emailTemp = userService.findUserByUid(user.getUid()).getEmail();
+		String body = "인증번호는 [ " + authNum + " ] 입니다.<br>자정이 지나기전에 입력해주십시오.";
+		sendEmail(emailTemp, body);
+		System.out.println("메일이 재발송되었습니다 : " + user.getEmail());
+		return new ResponseEntity<>(user, HttpStatus.OK);
+	}
+
+	@PutMapping("/signup")
 	@ApiOperation(value = "가입완료")
-	public Object updateUserKey(@PathVariable int uid, @PathVariable String userkey) throws Exception {
-		User user = userService.findUserByUid(uid);
-		if(user.getUserkey().equals(userkey)) {
-			int ok = userService.updateUserKey(uid);
+	public Object updateUserKey(@RequestBody User tempuser) throws Exception {
+		User user = userService.findUserByUid(tempuser.getUid());
+		if (user.getUserkey().equals(tempuser.getUserkey())) {
+			int ok = userService.updateUserKey(tempuser.getUid());
 			if (ok > 0) {
-				System.out.println("가입 완료 : "+uid);
+				System.out.println("가입 완료 : " + user.getEmail());
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 		}
@@ -194,7 +208,7 @@ public class AccountController {
 
 //	public Object emailAuth(@Valid @RequestBody HttpServletRequest request, @RequestBody User user) throws Exception {
 
-		// 사용자가 이메일을 입력하면, 이메일로 인증번호 보내기
+	// 사용자가 이메일을 입력하면, 이메일로 인증번호 보내기
 //		String usermail = request.getParameter("email");
 //		sendEmail(usermail);
 
@@ -228,17 +242,15 @@ public class AccountController {
 		} else {
 			System.out.println("잘못된 형식 : 콘솔에 출력");
 		}
-
 		MimeMessage msg = new MimeMessage(s);
-		//String authNum = "";
+		// String authNum = "";
 		try {
 			msg.setSentDate(new Date());
-
 			msg.setFrom(new InternetAddress("routrip@naver.com", "루트립관리자")); // 발송자
 			InternetAddress to = new InternetAddress(usermail); // 수신자
 			msg.setRecipient(Message.RecipientType.TO, to);
 			msg.setSubject("루트립입니다", "UTF-8");
-			//authNum = RandomNum();
+			// authNum = RandomNum();
 			msg.setText(body, "UTF-8", "html");
 			Transport.send(msg);
 
@@ -259,7 +271,7 @@ public class AccountController {
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.port", "465");
 
-		Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication("routrip@daum.net", "fnxmflq12!");
 			}
@@ -276,7 +288,7 @@ public class AccountController {
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.port", "465");
 
-		Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication("routrip@naver.com", "fnxmflq12!");
 			}
@@ -291,35 +303,35 @@ public class AccountController {
 		props.put("mail.smtp.auth", "true");
 		props.put("mail.smtp.port", "587");
 
-		Session session = Session.getDefaultInstance(props, new javax.mail.Authenticator() {
+		Session session = Session.getInstance(props, new javax.mail.Authenticator() {
 			protected PasswordAuthentication getPasswordAuthentication() {
 				return new PasswordAuthentication("routrip12@gmail.com", "fnxmflq12!");
 			}
 		});
 		return session;
 	}
-	
+
 	public void deleteFolder(String path) {
-		
-	    File folder = new File(path);
-	    try {
-		if(folder.exists()){
-                File[] folder_list = folder.listFiles(); //파일리스트 얻어오기
-				
-		for (int i = 0; i < folder_list.length; i++) {
-		    if(folder_list[i].isFile()) {
-			folder_list[i].delete();
-			System.out.println("파일이 삭제되었습니다.");
-		    }else {
-			deleteFolder(folder_list[i].getPath()); //재귀함수호출
-			System.out.println("폴더가 삭제되었습니다.");
-		    }
-		    folder_list[i].delete();
-		 }
-		 folder.delete(); //폴더 삭제
-	       }
-	   } catch (Exception e) {
-		e.getStackTrace();
-	   }
-    }
+
+		File folder = new File(path);
+		try {
+			if (folder.exists()) {
+				File[] folder_list = folder.listFiles(); // 파일리스트 얻어오기
+
+				for (int i = 0; i < folder_list.length; i++) {
+					if (folder_list[i].isFile()) {
+						folder_list[i].delete();
+						System.out.println("파일이 삭제되었습니다.");
+					} else {
+						deleteFolder(folder_list[i].getPath()); // 재귀함수호출
+						System.out.println("폴더가 삭제되었습니다.");
+					}
+					folder_list[i].delete();
+				}
+				folder.delete(); // 폴더 삭제
+			}
+		} catch (Exception e) {
+			e.getStackTrace();
+		}
+	}
 }
