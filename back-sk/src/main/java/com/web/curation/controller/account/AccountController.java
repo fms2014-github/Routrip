@@ -52,7 +52,7 @@ public class AccountController {
 	@Autowired
 	private UserService userService;
 	
-	private String key = "webcuration-secretkey";
+	private String key = "webcuration-routrip-secretkey";
 
 	@PostMapping("/login")
 	@ApiOperation(value = "로그인")
@@ -65,12 +65,12 @@ public class AccountController {
 		String jwt = Jwts.builder()
 				.setHeaderParam("typ", "JWT")
 				.setSubject(String.valueOf(loginUser.getUid()))
-				.claim("user", loginUser)//만약 user 객체 통째로 암호화 안되면 json 이용해 넣기
+				.claim("user", json)
 				.setExpiration(new Date(System.currentTimeMillis() + (1000*60*60)))
-				.signWith(SignatureAlgorithm.HS256, key)
+				//.signWith(SignatureAlgorithm.HS256, key)
 				.compact();
 		System.out.println(jwt);
-		//System.out.println(Jwts.parser().setSigningKey(key).parseClaimsJwt(jwt));
+		System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody());
 		return new ResponseEntity<>(loginUser, HttpStatus.OK);
 	}
 
