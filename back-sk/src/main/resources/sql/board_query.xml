@@ -24,6 +24,7 @@
 		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
 		keyword, unveiled
 		from board
+		order by fabvoriteNum
 	</select>
 
 	<select id="findBoardListByUid" parameterType="int"
@@ -32,6 +33,7 @@
 		keyword, unveiled
 		from board
 		where uid = #{value}
+		order by writedate
 	</select>
 
 	<select id="findBoardListByTitle" parameterType="string"
@@ -40,6 +42,7 @@
 		keyword, unveiled
 		from board
 		where title like '%'+#{value}+'%'
+		order by favoriteNum
 	</select>
 
 	<select id="findBoardListByWriteDate" parameterType="map"
@@ -48,6 +51,7 @@
 		keyword, unveiled
 		from board
 		where writedate <![CDATA[>=]]> #{startdate} and writedate <![CDATA[<=]]> #{enddate}
+		order by favoriteNum
 	</select>
 
 	<select id="findBoardByBoardId" parameterType="int"

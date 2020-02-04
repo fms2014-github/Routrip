@@ -197,6 +197,7 @@ public class PageController {
 		}
 
 		for(Marker m : board.getMarkers()) {
+			//이것도 다 삭제하고 다시 등록하도록 변경
 			boardService.updateMarker(m);
 		}
 		

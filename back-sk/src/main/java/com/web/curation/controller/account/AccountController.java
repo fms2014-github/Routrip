@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
 import com.web.curation.model.BasicResponse;
 import com.web.curation.model.user.User;
 import com.web.curation.service.UserService;
@@ -51,7 +52,7 @@ public class AccountController {
 	@Autowired
 	private UserService userService;
 	
-	private String key = "webcuration/jwt/secret/key";
+	private String key = "webcuration-secretkey";
 
 	@PostMapping("/login")
 	@ApiOperation(value = "로그인")
@@ -59,16 +60,17 @@ public class AccountController {
 		User loginUser = userService.findUserByEmailAndPassword(user.getEmail(), user.getPassword());
 		if (loginUser == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		String json = new Gson().toJson(loginUser);
 		System.out.println(loginUser.getEmail() + " 님이 로그인하셨습니다.");
-//		String jwt = Jwts.builder()
-//				.setHeaderParam("typ", "JWT")
-//				.setSubject(String.valueOf(loginUser.getUid()))
-//				.claim("user", loginUser)
-//				.setExpiration(new Date(System.currentTimeMillis() + (1000*60*60)))
-//				.signWith(SignatureAlgorithm.HS256, key)
-//				.compact();
-//		System.out.println(jwt);
-		//System.out.println(Jwts.parser().setSigningKey(key).parseClaimsJwt(jwt).getBody());
+		String jwt = Jwts.builder()
+				.setHeaderParam("typ", "JWT")
+				.setSubject(String.valueOf(loginUser.getUid()))
+				.claim("user", loginUser)//만약 user 객체 통째로 암호화 안되면 json 이용해 넣기
+				.setExpiration(new Date(System.currentTimeMillis() + (1000*60*60)))
+				.signWith(SignatureAlgorithm.HS256, key)
+				.compact();
+		System.out.println(jwt);
+		//System.out.println(Jwts.parser().setSigningKey(key).parseClaimsJwt(jwt));
 		return new ResponseEntity<>(loginUser, HttpStatus.OK);
 	}
 
