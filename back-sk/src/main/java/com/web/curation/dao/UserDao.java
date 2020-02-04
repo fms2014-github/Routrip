@@ -18,7 +18,6 @@ public class UserDao implements IUserDao{
 
     @Override
 	public User findUserByEmail(String email) throws Exception {
-    	System.out.println(email);
 		return sqlSession.selectOne(ns+"findUserByEmail", email);
 	}
 

@@ -16,7 +16,6 @@ public class UserService implements IUserService{
 
 	@Override
 	public User findUserByEmail(String email) throws Exception {
-		System.out.println("service   "+email);
 		return userDao.findUserByEmail(email);
 	}
 

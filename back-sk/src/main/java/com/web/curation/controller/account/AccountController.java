@@ -22,6 +22,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,7 +36,6 @@ import com.web.curation.model.user.User;
 import com.web.curation.service.UserService;
 
 import io.jsonwebtoken.Jwts;
-import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -52,7 +53,7 @@ public class AccountController {
 	@Autowired
 	private UserService userService;
 	
-	private String key = "webcuration-routrip-secretkey";
+	//private String key = "webcuration-routrip-secretkey";
 
 	@PostMapping("/login")
 	@ApiOperation(value = "로그인")
@@ -60,18 +61,29 @@ public class AccountController {
 		User loginUser = userService.findUserByEmailAndPassword(user.getEmail(), user.getPassword());
 		if (loginUser == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		String json = new Gson().toJson(loginUser);
 		System.out.println(loginUser.getEmail() + " 님이 로그인하셨습니다.");
 		String jwt = Jwts.builder()
 				.setHeaderParam("typ", "JWT")
 				.setSubject(String.valueOf(loginUser.getUid()))
-				.claim("user", json)
+				.claim("user", new Gson().toJson(loginUser))
+				.claim("uid", loginUser.getUid())
+				.claim("email", loginUser.getEmail())
+				.claim("password", loginUser.getPassword())
+				.claim("name", loginUser.getName())
+				.claim("nickname", loginUser.getNickname())
+				.claim("phone", loginUser.getPhone())
+				.claim("birth", loginUser.getBirth())
+				.claim("profileImg", loginUser.getProfileImg())
+				.claim("loginApi", loginUser.getLoginApi())
+				.claim("userkey", loginUser.getUserkey())
 				.setExpiration(new Date(System.currentTimeMillis() + (1000*60*60)))
 				//.signWith(SignatureAlgorithm.HS256, key)
 				.compact();
-		System.out.println(jwt);
-		System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody());
-		return new ResponseEntity<>(loginUser, HttpStatus.OK);
+		//System.out.println(jwt);
+		//System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody()); //복호화
+		//System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody().get("email"));
+		//System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody().get("user"));
+		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
 
 	@PostMapping("/follow")
@@ -140,11 +152,13 @@ public class AccountController {
 	@PutMapping("/password")
 	@ApiOperation(value = "비밀번호 변경")
 	public Object updatePassword(@RequestBody User user) throws Exception {
+		user.setUid(userService.findUserByEmail(user.getEmail()).getUid());
 		int ok = userService.changePw(user);
-		if (ok > 0)
-			return new ResponseEntity<>(userService.findUserByUid(user.getUid()), HttpStatus.OK);
-		else
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		if (ok > 0) {
+			System.out.println("비밀번호가 변경되었습니다.");
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	@PutMapping("/profile")
@@ -220,25 +234,33 @@ public class AccountController {
 	@PostMapping("/email")
 	@ApiOperation(value = "이메일 찾기")
 	public Object findEmail(@RequestBody User user) throws Exception {
-		String email = userService.findEmail(user);//중간에 별 넣어야하게 되면 별 넣기
+		String email = userService.findEmail(user);
+		System.out.println("이메일 찾기 성공했습니다.");
 		return new ResponseEntity<>(email, HttpStatus.OK);
 	}
 	
-	@PostMapping("/password")
+	@GetMapping("/password/{email}")
 	@ApiOperation(value = "비밀번호 찾기")
-	public Object findPassword(@RequestBody User user) throws Exception {
-		String password = userService.findPw(user);//도대체 이걸 이메일로 보내야하나 어떻게 해야하나
+	public Object findPassword(@PathVariable String email) throws Exception {
+		String certNum = RandomNum();
+		String body = "인증번호는 [ " + certNum + " ] 입니다.<br>자정이 지나기전에 입력해주십시오.";
+		sendEmail(email, body);
+		System.out.println("비밀번호 찾기 인증번호가 발송되었습니다.");
+		return new ResponseEntity<>(certNum, HttpStatus.OK);
+	}
+	
+	@PostMapping("/password")//인증 후 바로 비밀번호 변경으로 가기 때문에 안 쓰임
+	@ApiOperation(value = "비밀번호 찾기 완료")
+	public Object findPasswordEnd(@RequestBody String email) throws Exception {
+		User user = userService.findUserByEmail(email);
+		char[] pass = user.getPassword().toCharArray();
+		for(int i=pass.length-1;i>pass.length/3;i--) {
+			pass[i]='*';
+		}
+		String password = String.valueOf(pass);
+		System.out.println("비밀번호 찾기가 완료되었습니다.");
 		return new ResponseEntity<>(password, HttpStatus.OK);
 	}
-
-//	public Object emailAuth(@Valid @RequestBody HttpServletRequest request, @RequestBody User user) throws Exception {
-
-	// 사용자가 이메일을 입력하면, 이메일로 인증번호 보내기
-//		String usermail = request.getParameter("email");
-//		sendEmail(usermail);
-
-//		return null;
-//	}
 
 	// 인증번호 생성기 (6글자)
 	public String RandomNum() {
