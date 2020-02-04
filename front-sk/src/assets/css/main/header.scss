@@ -4,8 +4,8 @@ $desktop: 'screen and (min-width : 1025px)';
 
 .headerHeight {
     height: 60px !important;
-    -webkit-transition: height .3s ease-in-out;
-    transition: height .3s ease-in-out;
+    -webkit-transition: height 0.3s ease-in-out;
+    transition: height 0.3s ease-in-out;
 }
 
 #header {
@@ -17,11 +17,10 @@ $desktop: 'screen and (min-width : 1025px)';
     height: 80px;
     background-color: skyblue;
     z-index: 100;
-    -webkit-transition: height .3s ease-in-out;
-    transition: height .3s ease-in-out;
+    -webkit-transition: height 0.3s ease-in-out;
+    transition: height 0.3s ease-in-out;
 
     @media #{$iPad, $iPadPro} {
-
         .hambuger {
             font-size: 3em;
             margin-left: 4vw;
@@ -95,5 +94,4 @@ $desktop: 'screen and (min-width : 1025px)';
             }
         }
     }
-
 }

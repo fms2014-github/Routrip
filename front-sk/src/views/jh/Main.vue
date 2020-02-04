@@ -13,11 +13,6 @@
             <div class="posting-box">
                 <div class="postings">
                     <Posting></Posting>
-                    <Posting></Posting>
-                    <Posting></Posting>
-                    <Posting></Posting>
-                    <Posting></Posting>
-                    <Posting></Posting>
                 </div>
             </div>
         </div>
@@ -28,7 +23,7 @@
 <script>
 import Header from './Header.vue';
 import Footer from './Footer.vue';
-import Posting from './Posting';
+import Posting from './Posting.vue';
 import BestPosting from './BestPosting.vue';
 import '../../assets/css/main/main.scss';
 export default {

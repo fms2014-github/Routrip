@@ -107,7 +107,49 @@ $desktop: 'screen and (min-width : 1025px)';
         }
     }
 
+    .post-imgs-box {
+        display: flex;
+        overflow: hidden;
+
+        ul {
+            display: flex;
+        }
+
+        li {
+            @media #{$iPad} {
+                width: 98vw;
+            }
+
+            @media #{$iPadPro} {
+                width: 90vw;
+            }
+
+            @media #{$desktop} {
+                width: 45vw;
+            }
+        }
+
+        img {
+            @media #{$iPad} {
+                width: 98vw;
+                height: 61vw;
+            }
+
+            @media #{$iPadPro} {
+                width: 90vw;
+                height: 56vw;
+            }
+
+            @media #{$desktop} {
+                width: 45vw;
+                height: 28vw;
+            }
+        }
+    }
+
     .sns-btn {
+        display: flex;
+        align-items: center;
         padding: 5px 20px;
 
         .like {
@@ -119,12 +161,6 @@ $desktop: 'screen and (min-width : 1025px)';
             font-size: 1.5em;
             margin-right: 10px;
         }
-
-        display: flex;
-    }
-
-    .post-imgs img {
-        width: 100%;
     }
 
     .text {
