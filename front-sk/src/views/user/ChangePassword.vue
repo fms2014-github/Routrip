@@ -11,22 +11,22 @@
         <div class="input-password">
             <div class="input-with-label">
                 <input
-                    v-model="password1"
-                    v-bind:class="{ error: error.password1, complete: !error.password1 && password1.length !== 0 }"
-                    @keyup.enter="password1"
+                    v-model="password"
+                    v-bind:class="{ error: error.password, complete: !error.password && this.password.length !== 0 }"
+                    @keyup.enter="password"
                     id="password1"
                     placeholder="비밀번호를 입력하세요."
                     type="password"
                 />
                 <label for="password1">비밀번호</label>
-                <div class="error-text" v-if="error.password1">
-                    {{ error.password1 }}
+                <div class="error-text" v-if="error.password">
+                    {{ error.password }}
                 </div>
             </div>
             <div class="input-with-label">
                 <input
                     v-model="password2"
-                    v-bind:class="{ error: error.password2, complete: !error.password2 && password2.length !== 0 }"
+                    v-bind:class="{ error: error.password2, complete: !error.password2 && this.password2.length !== 0 }"
                     @keyup.enter="password2"
                     id="password2"
                     placeholder="비밀번호를 입력하세요."
@@ -68,7 +68,7 @@ export default {
             .letters();
     },
     watch: {
-        password1: function(v) {
+        password: function(v) {
             this.checkPassword1();
         },
         password2: function(v) {
@@ -77,7 +77,7 @@ export default {
     },
     methods: {
         checkPassword1() {
-            if (this.password1.length >= 0 && !this.passwordSchema.validate(this.password1))
+            if (this.password.length >= 0 && !this.passwordSchema.validate(this.password))
                 this.error.password1 = '영문,숫자 포함 8 자리이상이어야 합니다.';
             else this.error.password1 = false;
         },
@@ -88,7 +88,7 @@ export default {
             } else {
                 this.error.password2 = false;
 
-                if (this.password1 !== this.password2) {
+                if (this.password !== this.password2) {
                     this.samePassword = true;
                     this.registerBtn = false;
                 } else {
@@ -98,8 +98,23 @@ export default {
             }
         },
         register() {
-            alert('비밀번호가 변경되었습니다. 다시 로그인해주세요♥');
-            this.$router.push('/');
+            if (this.registerBtn) {
+                var { password } = this;
+                var email = localStorage.getItem('authEmail');
+                var data = { email, password };
+                UserApi.passwordReset(
+                    data,
+                    res => {
+                        alert('비밀번호가 번경되었습니다.');
+                        console.log(res.data);
+                        this.$router.push('/');
+                    },
+                    error => {
+                        console.log(error);
+                        this.$router.push('/error');
+                    },
+                );
+            }
         },
         toLogin() {
             let flag = confirm('로그인 화면으로 돌아가시겠습니까?');
@@ -109,10 +124,10 @@ export default {
     data: () => {
         return {
             passwordSchema: new PV(),
-            password1: '',
+            password: '',
             password2: '',
             error: {
-                password1: false,
+                password: false,
                 password2: false,
             },
             isSubmit: false,

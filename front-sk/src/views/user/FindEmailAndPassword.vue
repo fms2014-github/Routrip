@@ -33,7 +33,7 @@
                     @keyup.enter="birth"
                     id="birth"
                     placeholder="930904"
-                    type="text"
+                    type="date"
                 />
                 <label for="birth">생년월일</label>
                 <div class="error-text" v-if="error.birth">
@@ -170,7 +170,7 @@ export default {
             this.findEmailBtn = !this.error.phone && !this.error.birth;
         },
         checkBirth() {
-            if (this.birth.length != 6) {
+            if (this.birth.length != 10) {
                 this.error.birth = '6자리 숫자로 입력해주세요.';
             } else this.error.birth = false;
 
@@ -205,17 +205,48 @@ export default {
             this.findEmailBtn = false;
         },
         sendCertNumFunc() {
-            alert('위 이메일로 인증번호를 보냈습니다.');
+            if (this.sendCertNum) {
+                UserApi.findPassword(
+                    this.email,
+                    res => {
+                        alert('위 이메일로 인증번호를 보냈습니다.');
+                        localStorage.setItem('authEmail', this.email);
+                        console.log(res.data);
+                        this.authCode = res.data;
+                    },
+                    error => {
+                        console.log(error);
+                    },
+                );
+            }
             this.certNumBox = true;
             this.sendCertNumBtn = false;
             this.checkCertNumBtn = true;
         },
         compareCertNum() {
-            alert('인증되었습니다!');
-            this.$router.push('/user/ChangePassword');
+            console.log('this.certNum', this.certNum);
+            console.log('this.authCode', this.authCode);
+            if (this.certNum === String(this.authCode)) {
+                alert('인증되었습니다.');
+                this.$router.push('/user/ChangePassword');
+            } else {
+                alert('인증번호가 틀렸습니다.');
+            }
         },
         findEmail() {
-            alert('이메일은 qkr******@naver.com 입니다.');
+            if (this.findEmailBtn) {
+                var { name, birth, phone } = this;
+                var data = { name, birth, phone };
+                UserApi.findEmail(
+                    data,
+                    res => {
+                        console.log(res.data);
+                    },
+                    error => {
+                        console.log(error);
+                    },
+                );
+            }
         },
         toLogin() {
             let flag = confirm('로그인 화면으로 돌아가시겠습니까?');
@@ -252,6 +283,7 @@ export default {
             checkCertNum: false,
             checkCertNumBtn: false,
             findEmailBtn: false,
+            authCode: '',
         };
     },
 };
