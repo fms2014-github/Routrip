@@ -15,6 +15,7 @@ public interface IBoardService {
 	Board findBoardByBoardId(int boardid) throws Exception;
 	int deleteBoard(int boardid) throws Exception;
 	int updateBoard(Board board) throws Exception;
+	int updateFavoriteNum(int boardid, int favoriteNum) throws Exception;
 	
     int addFavorite(int uid, int boardid) throws Exception;
     int getFavoriteNum(int boardid) throws Exception;

@@ -70,11 +70,13 @@ references board(boardid) on update cascade on delete cascade
 
 create table marker( 맵에 하나씩 들어가는 마커에 대응
 게시글 하나당 지도 하나라는 가정하에 만들어져 있다
+markerid int primary key, 마커 식별자
 boardid int not null, 마커 달린 게시글
-latitude double not null, 마커 위도
-longitude double not null, 마커 경도
+latitude varchar(500) not null, 마커 위도
+longitude varchar(500) not null, 마커 경도
 remark varchar(500), 주석
-overlaytype varchar(100), 마커모양
+overlaytype varchar(100) not null, 마커모양
+radius int, 원일 경우 반지름
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade
 );

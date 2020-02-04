@@ -8,9 +8,9 @@
 
 	<insert id="addUser" parameterType="user" useGeneratedKeys="true" keyProperty="uid">
 		insert into user
-		(nickname, name, email, password, phone, birth, profileImg, loginApi, userkey)
+		(nickname, name, email, password, phone, birth, loginApi, userkey)
 		values
-		(#{nickname}, #{name}, #{email}, #{password}, #{phone}, #{birth}, #{profileImg}, #{loginApi}, #{userkey})
+		(#{nickname}, #{name}, #{email}, #{password}, #{phone}, #{birth}, #{loginApi}, #{userkey})
 		<selectKey keyProperty="uid" resultType="int">
 			select LAST_INSERT_ID()
 		</selectKey>

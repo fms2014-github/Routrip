@@ -69,11 +69,13 @@ references board(boardid) on update cascade on delete cascade
 );
 
 create table marker(
+markerid int primary key,
 boardid int not null,
-latitude double not null,
-longitude double not null,
+latitude varchar(500) not null,
+longitude varchar(500) not null,
 remark varchar(500),
-overlaytype varchar(100),
+overlaytype varchar(100) not null,
+radius int,
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade
 );

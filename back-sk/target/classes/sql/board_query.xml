@@ -74,6 +74,11 @@
 		where boardid = #{boardid}
 	</update>
 
+	<update id="updateFavoriteNum" parameterType="map">
+		update board
+		set favoritNum = #{favoriteNum}
+		where boardid = #{boardid}
+	</update>
 
 	<select id="getFavoriteNum" parameterType="int" resultType="int">
 		select count(uid)

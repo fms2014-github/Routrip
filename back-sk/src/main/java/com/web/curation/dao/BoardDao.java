@@ -128,4 +128,12 @@ public class BoardDao implements IBoardDao{
 	public int deleteComment(int commentid) throws Exception {
 		return sqlSession.delete(ns+"deleteComment", commentid);
 	}
+
+	@Override
+	public int updateFavoriteNum(int boardid, int favoriteNum) throws Exception {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		map.put("boardid", boardid);
+		map.put("favoriteNum", favoriteNum);
+		return sqlSession.update(ns+"updateFavoriteNum", map);
+	}
 }

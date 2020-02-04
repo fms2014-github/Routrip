@@ -172,7 +172,6 @@ public class AccountController {
 			File folder = new File(System.getProperty("user.dir") + "\\img\\" + user.getUid());
 			if (!folder.exists()) {
 				folder.mkdirs(); // 폴더 생성합니다.
-				// 프로필 이미지가 이미 가입때 등록됐으면 그걸 저장, 아니면 default 이미지 저장하기
 			}
 			return new ResponseEntity<>(user, HttpStatus.OK);
 		}

@@ -115,4 +115,9 @@ public class BoardService implements IBoardService{
 	public int deleteComment(int commentid) throws Exception {
 		return boardDao.deleteComment(commentid);
 	}
+
+	@Override
+	public int updateFavoriteNum(int boardid, int favoriteNum) throws Exception {
+		return boardDao.updateFavoriteNum(boardid, favoriteNum);
+	}
 }
