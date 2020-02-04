@@ -3,7 +3,7 @@
 </template>
 
 <script>
-import UserApi from '../../apis/UserApi';
+
 
 export default {};
 </script>
