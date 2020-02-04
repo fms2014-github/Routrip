@@ -23,7 +23,7 @@ $border-a6cdc6: 1px solid #a6cdc6;
                 size: 1.2em;
             }
         }
-        .selected, .hashtag-form{
+        .select-tag, .hashtag-form{
             display: inline-block;
             margin: 4px 0px;
             .hashtag-form {
@@ -69,34 +69,84 @@ $border-a6cdc6: 1px solid #a6cdc6;
     #map-wrapper {
         width: 100%;
         position: relative;
-        .edit {
+        #edit {
             position: absolute;
             top: 4px;
             left: 24px;
             z-index: 1;
+            border: {
+                style: solid;
+                width: 1px;
+                color: black;
+                collapse: collapse;
+            }
+            #insert-comment-wrap{
+                position: relative;
+                display: flex;
+                flex-direction: column;
+                background-color: white;
+                #insert-comment-wrap-title{
+                    
+                }
+                #comment-submit{
+                    display: inline-block;
+                    margin: 8px;
+                    border: {
+                        style: solid;
+                        width: 1px;
+                        color: black;
+                        collapse: collapse;
+                    }
+                    width: 100px;
+                }
+            }
+            #work{
+                display: inline-block;
+                .draw-tools:last-of-type{
+                    border: {
+                        style: solid;
+                        width: 0 0 1px 0px;
+                        color: black;
+                        collapse: collapse;
+                    }
+                    .selected{
+                        border: {
+                            style: solid;
+                            width: 0px;
+                            color: black;
+                            collapse: collapse;
+                        }
+                    }
+                }
+                #undo, #redo{
+                    &.disabled {
+                        background-color:#ddd;
+                        color:#9e9e9e;
+                    }
+                }
+            }
+            .draw-tools{
+                width: 60px;
+                padding: 8px 0;
+                text-align: center;
+                background-color: #fff;
+                color: black;
+                border: {
+                    style: solid;
+                    width: 0 1px 1px 0px;
+                    color: black;
+                    collapse: collapse;
+                }
+            }
+            .selected{
+                border-bottom: 1px solid white
+            }
         }
         #map {
             width: 100%;
             height: 650px;
         }
-        #insert-comment-wrap{
-            display: flex;
-            flex-direction: column;
-            #comment-submit{
-                display: inline-block;
-                width: 100px;
-            }
-        }
-        #undo, #redo{
-            &.disabled {
-                background-color:#ddd;
-                color:#9e9e9e;
-            }
-            padding: 8px;
-            background-color: #fff;
-            color: black;
-        }
-        #undo { border-right: 0.4px solid rgba(100,100,100,1);}
+
     }
     #map-image{
         width: 100%;
@@ -162,12 +212,12 @@ $border-a6cdc6: 1px solid #a6cdc6;
 
     }
 }
-
 .comment-wrap {
 	position: relative;
 	background: #88b7d5;
     border: 4px solid #c2e1f5;
     padding: 8px;
+    
     &:after, &:before {
         top: 100%;
         left: 50%;
@@ -182,13 +232,55 @@ $border-a6cdc6: 1px solid #a6cdc6;
     &:after {
         border-color: rgba(136, 183, 213, 0);
         border-top-color: #88b7d5;
-        border-width: 20px;
-        margin-left: -20px;
+        border-width: 10px;
+        margin-left: -10px;
     }
     &:before {
         border-color: rgba(194, 225, 245, 0);
         border-top-color: #c2e1f5;
-        border-width: 26px;
-        margin-left: -26px;
+        border-width: 16px;
+        margin-left: -16px;
+    }
+    .comment-title, .comment-content{
+        width: 160px;
+
+        word-wrap: break-word;
+        white-space: pre-wrap;
     }
 }
+
+.drop-down{
+    animation-name: down;
+    animation-duration: 1s;
+    height: 110px;
+    overflow: hidden;
+}
+
+.drop-up{
+    animation-name: up;
+    animation-duration: 1s;
+    height: 0px;
+    overflow: hidden;
+}
+
+@keyframes down {
+    /* keyframe */
+    from {
+      height: 0;
+    }
+    /* keyframe */
+    to {
+      height: 110px;
+    }
+  }
+
+  @keyframes up {
+    /* keyframe */
+    from {
+      height: 110px;
+    }
+    /* keyframe */
+    to {
+      height: 0;
+    }
+  }
