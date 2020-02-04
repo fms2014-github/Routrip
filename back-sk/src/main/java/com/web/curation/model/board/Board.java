@@ -18,10 +18,11 @@ public class Board {
 	private List<Img> imgs = new ArrayList<>();
 	private int favoriteNum = 0;
 	private int commentNum = 0;
-	
+	private List<Marker> markers = new ArrayList<>();
 	
 	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs, int favoriteNum, int commentNum) {
+			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs, int favoriteNum,
+			int commentNum, List<Marker> markers) {
 		super();
 		this.boardid = boardid;
 		this.uid = uid;
@@ -37,6 +38,7 @@ public class Board {
 		this.imgs = imgs;
 		this.favoriteNum = favoriteNum;
 		this.commentNum = commentNum;
+		this.markers = markers;
 	}
 
 	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
@@ -212,5 +214,13 @@ public class Board {
 
 	public void setCommentNum(int commentNum) {
 		this.commentNum = commentNum;
+	}
+
+	public List<Marker> getMarkers() {
+		return markers;
+	}
+
+	public void setMarkers(List<Marker> markers) {
+		this.markers = markers;
 	}
 }

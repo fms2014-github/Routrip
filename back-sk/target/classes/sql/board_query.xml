@@ -148,4 +148,31 @@
 	where boardid = #{value}
 	order by writedate
 	</select>
+	
+	<insert id="addMarker" parameterType="marker" useGeneratedKeys="true" keyProperty="markerid">
+	insert into marker(boardid, latitude, longitude, remark, overlaytype, radius)
+	values(#{boardid}, #{latitude}, #{longitude}, #{remark}, #{overlaytype}, #{radius})
+	</insert>
+	
+	<select id="findMarker" parameterType="int" resultType="marker">
+	select markerid, boardid, latitude, longitude, remark, overlaytype, radius
+	from marker
+	where boardid=#{value}
+	</select>
+	
+	<update id="updateMarker" parameterType="marker">
+		update marker
+		set latitude=#{latitude},
+		longitude = #{longitude},
+		remark = #{remark},
+		overlaytype = #{overlaytype},
+		radius = #{radius}
+		where markerid=#{markerid}
+	</update>
+	
+	<delete id="deleteMarker" parameterType="int">
+		delete
+		from marker
+		where markerid=#{value}
+	</delete>
 </mapper>

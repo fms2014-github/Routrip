@@ -22,19 +22,18 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.curation.model.BasicResponse;
 import com.web.curation.model.user.User;
 import com.web.curation.service.UserService;
 
+import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -51,6 +50,8 @@ public class AccountController {
 
 	@Autowired
 	private UserService userService;
+	
+	private String key = "webcuration/jwt/secret/key";
 
 	@PostMapping("/login")
 	@ApiOperation(value = "로그인")
@@ -59,6 +60,15 @@ public class AccountController {
 		if (loginUser == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		System.out.println(loginUser.getEmail() + " 님이 로그인하셨습니다.");
+//		String jwt = Jwts.builder()
+//				.setHeaderParam("typ", "JWT")
+//				.setSubject(String.valueOf(loginUser.getUid()))
+//				.claim("user", loginUser)
+//				.setExpiration(new Date(System.currentTimeMillis() + (1000*60*60)))
+//				.signWith(SignatureAlgorithm.HS256, key)
+//				.compact();
+//		System.out.println(jwt);
+		//System.out.println(Jwts.parser().setSigningKey(key).parseClaimsJwt(jwt).getBody());
 		return new ResponseEntity<>(loginUser, HttpStatus.OK);
 	}
 

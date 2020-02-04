@@ -19,6 +19,7 @@ import com.web.curation.model.BasicResponse;
 import com.web.curation.model.board.Board;
 import com.web.curation.model.board.Comment;
 import com.web.curation.model.board.Img;
+import com.web.curation.model.board.Marker;
 import com.web.curation.model.user.User;
 import com.web.curation.service.BoardService;
 import com.web.curation.service.UserService;
@@ -89,6 +90,7 @@ public class PageController {
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			b.setCommentNum(comments.size());
 			b.setFavoriteNum(boardService.getFavoriteNum(b.getBoardid()));
+			b.setMarkers(boardService.findMarker(b.getBoardid()));
 			boards.add(b);
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
@@ -115,6 +117,7 @@ public class PageController {
 		board.setCommentNum(comments.size());
 		board.setComments(comments);
 		board.setFavoriteNum(boardService.getFavoriteNum(board.getBoardid()));
+		board.setMarkers(boardService.findMarker(board.getBoardid()));
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
 
@@ -123,23 +126,24 @@ public class PageController {
 	public Object addBoard(@RequestBody Board board, int uid) throws Exception {
 		board.setUid(uid);
 		int ok = boardService.addBoard(board);
-		
-		int repcnt = 0;
-		for (Img i : board.getImgs()) {
-			i.setBoardid(board.getBoardid());
-			if (i.getRep() == 1)
-				repcnt++;
-		}
-		
-		if(repcnt == 0) {
-			boardService.deleteBoard(board.getBoardid());
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
 
 		if (ok > 0) {
+			int repcnt = 0;
 			for (Img i : board.getImgs()) {
-				boardService.addImg(i);
+				i.setBoardid(board.getBoardid());
+				if (i.getRep() == 1)
+					repcnt++;
 			}
+
+			if (repcnt == 0 || board.getMarkers().size() == 0) {
+				boardService.deleteBoard(board.getBoardid());
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+
+			for (Marker m : board.getMarkers()) {
+				m.setBoardid(board.getBoardid());
+			}
+			
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -157,14 +161,14 @@ public class PageController {
 			b.setKeyword(board.getKeyword());
 		if (board.getUnveiled() != b.getUnveiled())
 			b.setUnveiled(board.getUnveiled());
-		
+
 		boolean change = false;
 		int repcnt = 0;
 		List<Img> imgs = boardService.findBoardImg(board.getBoardid());
-		
+
 		if (imgs.size() != board.getImgs().size())
 			change = true;
-		
+
 		if (!change) {
 			List<Img> newimgs = board.getImgs();
 			for (int i = 0; i < imgs.size(); i++) {
@@ -192,6 +196,10 @@ public class PageController {
 			}
 		}
 
+		for(Marker m : board.getMarkers()) {
+			boardService.updateMarker(m);
+		}
+		
 		int ok = boardService.updateBoard(b);
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -213,6 +221,7 @@ public class PageController {
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			b.setCommentNum(comments.size());
 			b.setFavoriteNum(boardService.getFavoriteNum(b.getBoardid()));
+			b.setMarkers(boardService.findMarker(b.getBoardid()));
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
@@ -256,6 +265,7 @@ public class PageController {
 				List<Comment> comments = boardService.findComment(b.getBoardid());
 				b.setCommentNum(comments.size());
 				b.setFavoriteNum(boardService.getFavoriteNum(b.getBoardid()));
+				b.setMarkers(boardService.findMarker(b.getBoardid()));
 				board.add(b);
 			}
 		}
@@ -277,6 +287,7 @@ public class PageController {
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			b.setCommentNum(comments.size());
 			b.setFavoriteNum(boardService.getFavoriteNum(b.getBoardid()));
+			b.setMarkers(boardService.findMarker(b.getBoardid()));
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}

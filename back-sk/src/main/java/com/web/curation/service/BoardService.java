@@ -9,6 +9,7 @@ import com.web.curation.dao.BoardDao;
 import com.web.curation.model.board.Board;
 import com.web.curation.model.board.Comment;
 import com.web.curation.model.board.Img;
+import com.web.curation.model.board.Marker;
 
 @Service
 public class BoardService implements IBoardService{
@@ -119,5 +120,25 @@ public class BoardService implements IBoardService{
 	@Override
 	public int updateFavoriteNum(int boardid, int favoriteNum) throws Exception {
 		return boardDao.updateFavoriteNum(boardid, favoriteNum);
+	}
+
+	@Override
+	public int addMarker(Marker marker) throws Exception {
+		return boardDao.addMarker(marker);
+	}
+
+	@Override
+	public List<Marker> findMarker(int boardid) throws Exception {
+		return boardDao.findMarker(boardid);
+	}
+
+	@Override
+	public int updateMarker(Marker marker) throws Exception {
+		return boardDao.updateMarker(marker);
+	}
+
+	@Override
+	public int deleteMarker(int markerid) throws Exception {
+		return boardDao.deleteMarker(markerid);
 	}
 }

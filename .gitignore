@@ -13,3 +13,6 @@ yarn.lock
 .project
 .pem
 /.metadata/
+
+Servers/
+target/
