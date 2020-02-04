@@ -7,6 +7,7 @@
                 <h2 class="mention">Let's share Route, ROUTRIP!</h2>
             </div>
         </div>
+
         <div class="wrapC right-view">
             <div class="input-with-label">
                 <input
@@ -92,6 +93,18 @@ import GoogleLogin from '../../components/user/snsLogin/Google.vue';
 import UserApi from '../../apis/UserApi';
 import NaverLogin from '../../components/user/snsLogin/Naver.vue';
 
+// store
+// 뷰엑스를 쓰는 방법 중 하나를 가져옴
+import { createNamespacedHelpers } from 'vuex';
+
+// load user store
+const userMapState = createNamespacedHelpers('User').mapState;
+const userMapGetters = createNamespacedHelpers('User').mapGetters;
+const userMapMutations = createNamespacedHelpers('User').mapMutations;
+
+// 전체를 가져온다
+// const userHelper = createNamespacedHelpers('User');
+
 export default {
     components: {
         KakaoLogin,
@@ -127,7 +140,12 @@ export default {
             }
         },
     },
+    computed: {
+        ...userMapState(['user']),
+        ...userMapGetters(['getUser']),
+    },
     methods: {
+        ...userMapMutations(['setUser']),
         getImageUrl() {
             return require('../../assets/images/routrip_logo.png');
         },
@@ -158,31 +176,37 @@ export default {
                     email,
                     password,
                 };
-                //요청 후에는 버튼 비활성화
                 this.isSubmit = false;
                 UserApi.requestLogin(
                     data,
                     res => {
                         //통신을 통해 전달받은 값 콘솔에 출력
-                        console.log(res);
+                        console.log(res.data);
+
+                        // getters로 가져오는 법
+                        console.log(this.getUser);
+
+                        // mutations 쓰는 법
+                        // 전역사용
+                        // 1. this.$store.commit('User/setUser', res.data);
+                        // 2. helpers 이용
+                        this.setUser(res.data);
+
+                        console.log(this.getUser);
+                        localStorage.setItem('loginedEmail', this.email);
                         //요청이 끝나면 버튼 활성화
                         this.isSubmit = true;
                         if (this.emailSaveCheck) {
                             localStorage.setItem('saveEmail', this.email);
                         }
-                        this.error.loginFail = '이메일 주소나 비밀번호가 틀렸습니다.';
+                        // this.$router.push({ name: 'Main' });
                     },
                     error => {
-                        if (error === true) {
-                            this.$router.push({ name: 'Profile' });
-                            localStorage.setItem('loginedEmail', this.email);
-                            localStorage.setItem('nickName', '김코치');
-                        } else {
-                            //요청이 끝나면 버튼 활성화
-                            this.isSubmit = true;
-                            localStorage.setItem('tempInput', this.email);
-                            this.$router.push({ name: 'ErrorPage' });
-                        }
+                        //요청이 끝나면 버튼 활성화
+                        this.isSubmit = true;
+                        localStorage.setItem('tempInput', this.email);
+
+                        this.error.loginFail = '이메일 주소나 비밀번호가 틀렸습니다.';
                     },
                 );
             }
