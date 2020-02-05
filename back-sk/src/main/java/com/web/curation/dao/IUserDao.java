@@ -23,4 +23,8 @@ public interface IUserDao {// extends JpaRepository<User, String> {
      int deleteFollow(int following, int follower) throws Exception;
      List<Integer> getFollow(int following) throws Exception;
      List<Integer> getFollower(int follower) throws Exception;
+
+     int addBlackList(int uid, String exp) throws Exception;
+     int findBlackList(int uid, String exp) throws Exception;
+     int deleteBlackList() throws Exception;
  }

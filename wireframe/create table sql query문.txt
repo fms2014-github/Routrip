@@ -3,7 +3,7 @@ uid int primary key auto_increment,
 nickname varchar(20) not null,
 name varchar(20) not null,
 email varchar(50) not null,
-password varchar(50) not null default 'sns',
+password varchar(50),
 phone varchar(20) not null,
 birth date not null,
 profileImg varchar(500),
@@ -78,4 +78,9 @@ overlaytype varchar(100) not null,
 radius int,
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade
+);
+
+create table blacklist(
+uid int not null,
+exp datetime not null
 );

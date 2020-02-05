@@ -2,6 +2,7 @@ package com.web.curation.controller.account;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -64,36 +65,61 @@ public class AccountController {
 		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
 				// .claim("user", new Gson().toJson(loginUser)) //로그인 객체 통으로 필요하면 주석 풀기
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
-				.claim("password", loginUser.getPassword()).claim("name", loginUser.getName())
-				.claim("nickname", loginUser.getNickname()).claim("phone", loginUser.getPhone())
-				.claim("birth", loginUser.getBirth()).claim("profileImg", loginUser.getProfileImg())
-				.claim("loginApi", loginUser.getLoginApi()).claim("userkey", loginUser.getUserkey())
+				// .claim("password", loginUser.getPassword())
+				// .claim("name", loginUser.getName())
+				.claim("nickname", loginUser.getNickname())
+				// .claim("phone", loginUser.getPhone())
+				// .claim("birth", loginUser.getBirth())
+				.claim("profileImg", loginUser.getProfileImg()).claim("loginApi", loginUser.getLoginApi())
+				.claim("userkey", loginUser.getUserkey())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))// 하루 뒤 자동 기간 만료됨
 				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
 		// System.out.println(jwt);
 		// System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody()); //복호화
 		// System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody().get("email"));
-		// System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody().get("user"));
+		// System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration());
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
 
-	@PostMapping("snslogin")
+	@PostMapping("/snslogin")
 	@ApiOperation(value = "sns로그인")
-	public Object snslogin(String email, int api) throws Exception {
+	public Object snslogin(@RequestBody String email, int api) throws Exception {
 		User user = userService.findUserByEmail(email, api);
-		System.out.println("sns 로그인 시도되었습니다.");
+		System.out.println("sns로그인이 시도되었습니다.");
 		if (user == null)
 			return new ResponseEntity<>(HttpStatus.OK);
 		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(user.getUid()))
-				.claim("uid", user.getUid()).claim("email", user.getEmail()).claim("password", user.getPassword())
-				.claim("name", user.getName()).claim("nickname", user.getNickname()).claim("phone", user.getPhone())
-				.claim("birth", user.getBirth()).claim("profileImg", user.getProfileImg())
-				.claim("loginApi", user.getLoginApi()).claim("userkey", user.getUserkey())
+				.claim("uid", user.getUid()).claim("email", user.getEmail())
+				// .claim("password", user.getPassword())
+				// .claim("name", user.getName())
+				.claim("nickname", user.getNickname())
+				// .claim("phone", user.getPhone())
+				// .claim("birth", user.getBirth())
+				.claim("profileImg", user.getProfileImg()).claim("loginApi", user.getLoginApi())
+				.claim("userkey", user.getUserkey())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
 				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
+		System.out.println(user.getEmail() + " 님 sns로그인 되었습니다.");
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
+	}
+
+	@PostMapping("/logout")
+	@ApiOperation(value = "로그아웃")
+	public Object logout(@RequestBody String jwt) throws Exception {
+		int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String exp = String.valueOf(format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration()));
+		userService.deleteBlackList();
+		if (userService.findBlackList(uid, exp) == 0) {
+			userService.addBlackList(uid, exp);
+			System.out.println("로그아웃되었습니다.");
+			return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			System.out.println("이미 로그아웃된 사용자입니다.");
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	@PostMapping("/follow")
@@ -147,10 +173,8 @@ public class AccountController {
 	@DeleteMapping("/user")
 	@ApiOperation(value = "탈퇴하기")
 	public Object deleteUser(@RequestBody User user) throws Exception {
-		User check = userService.findUserByUid(user.getUid());
 		int ok = 0;
-		if (user.getPassword().equals(check.getPassword()))
-			ok = userService.deleteUser(user.getUid());
+		ok = userService.deleteUser(user.getUid());
 		if (ok > 0) {
 			// 이미지를 저장한 img/uid 폴더를 프로젝트에서 삭제(프로젝트 내 저장일 경우)
 			deleteFolder(System.getProperty("user.dir") + "\\img\\" + user.getUid());
@@ -184,13 +208,14 @@ public class AccountController {
 	@PostMapping("/signup")
 	@ApiOperation(value = "가입하기")
 	public Object signup(@Valid @RequestBody User user) throws Exception {
-
-		List<User> userlist = userService.getUserList();
 		boolean flag = true;
-		for (User u : userlist) {// 해당 이메일이 이미 존재하는지 확인
-			if (u.getEmail().equalsIgnoreCase(user.getEmail())) {
-				flag = false;
-				break;
+		if (user.getLoginApi() == 0) {
+			List<User> userlist = userService.getUserList();
+			for (User u : userlist) {// 해당 이메일이 이미 존재하는지 확인
+				if (u.getEmail().equalsIgnoreCase(user.getEmail())) {
+					flag = false;
+					break;
+				}
 			}
 		}
 		int ok = 0;
@@ -259,20 +284,20 @@ public class AccountController {
 		return new ResponseEntity<>(certNum, HttpStatus.OK);
 	}
 
-	@PostMapping("/password") // 인증 후 바로 비밀번호 변경으로 가기 때문에 안 쓰임
-	@ApiOperation(value = "비밀번호 찾기 완료")
-	public Object findPasswordEnd(@RequestBody String email) throws Exception {
-		User user = userService.findUserByEmail(email, 0);
-		if (user == null)
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		char[] pass = user.getPassword().toCharArray();
-		for (int i = pass.length - 1; i > pass.length / 3; i--) {
-			pass[i] = '*';
-		}
-		String password = String.valueOf(pass);
-		System.out.println("비밀번호 찾기가 완료되었습니다.");
-		return new ResponseEntity<>(password, HttpStatus.OK);
-	}
+//	@PostMapping("/password")
+//	@ApiOperation(value = "비밀번호 찾기 완료")
+//	public Object findPasswordEnd(@RequestBody String email) throws Exception {
+//		User user = userService.findUserByEmail(email, 0);
+//		if (user == null)
+//			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+//		char[] pass = user.getPassword().toCharArray();
+//		for (int i = pass.length - 1; i > pass.length / 3; i--) {
+//			pass[i] = '*';
+//		}
+//		String password = String.valueOf(pass);
+//		System.out.println("비밀번호 찾기가 완료되었습니다.");
+//		return new ResponseEntity<>(password, HttpStatus.OK);
+//	}
 
 	// 인증번호 생성기 (6글자)
 	public String RandomNum() {

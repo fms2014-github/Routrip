@@ -106,4 +106,25 @@ public class UserDao implements IUserDao{
 		return sqlSession.selectOne(ns+"findEmail", user);
 	}
 
+
+	@Override
+	public int addBlackList(int uid, String exp) throws Exception {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("uid", String.valueOf(uid));
+		map.put("exp", exp);
+		return sqlSession.insert(ns+"addBlackList", map);
+	}
+
+	@Override
+	public int findBlackList(int uid, String exp) throws Exception {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("uid", String.valueOf(uid));
+		map.put("exp", exp);
+		return sqlSession.selectOne(ns+"findBlackList", map);
+	}
+
+	@Override
+	public int deleteBlackList() throws Exception {
+		return sqlSession.delete(ns+"deleteBlackList");
+	}
 }

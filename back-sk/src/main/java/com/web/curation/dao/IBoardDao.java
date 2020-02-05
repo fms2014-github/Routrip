@@ -1,5 +1,6 @@
 package com.web.curation.dao;
 
+import java.util.Date;
 import java.util.List;
 
 import com.web.curation.model.board.Board;

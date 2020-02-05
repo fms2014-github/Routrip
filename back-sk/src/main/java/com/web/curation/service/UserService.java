@@ -93,4 +93,19 @@ public class UserService implements IUserService{
 	public String findEmail(User user) throws Exception {
 		return userDao.findEmail(user);
 	}
+
+	@Override
+	public int addBlackList(int uid, String exp) throws Exception {
+		return userDao.addBlackList(uid, exp);
+	}
+
+	@Override
+	public int findBlackList(int uid, String exp) throws Exception {
+		return userDao.findBlackList(uid, exp);
+	}
+
+	@Override
+	public int deleteBlackList() throws Exception {
+		return userDao.deleteBlackList();
+	}
 }
