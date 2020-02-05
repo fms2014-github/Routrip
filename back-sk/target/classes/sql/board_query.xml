@@ -23,7 +23,7 @@
 		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
 		keyword, unveiled
 		from board
-		order by fabvoriteNum
+		order by favoriteNum desc
 	</select>
 
 	<select id="findBoardListByUid" parameterType="int"
@@ -32,7 +32,7 @@
 		keyword, unveiled
 		from board
 		where uid = #{value}
-		order by writedate
+		order by writedate desc
 	</select>
 
 	<select id="findBoardListByTitle" parameterType="string"
@@ -41,7 +41,7 @@
 		keyword, unveiled
 		from board
 		where title like '%'+#{value}+'%'
-		order by favoriteNum
+		order by favoriteNum desc
 	</select>
 
 	<select id="findBoardListByWriteDate" parameterType="map"
@@ -50,7 +50,7 @@
 		keyword, unveiled
 		from board
 		where writedate <![CDATA[>=]]> #{startdate} and writedate <![CDATA[<=]]> #{enddate}
-		order by favoriteNum
+		order by favoriteNum desc
 	</select>
 
 	<select id="findBoardByBoardId" parameterType="int"
@@ -79,7 +79,7 @@
 
 	<update id="updateFavoriteNum" parameterType="map">
 		update board
-		set favoritNum = #{favoriteNum}
+		set favoriteNum = #{favoriteNum}
 		where boardid = #{boardid}
 	</update>
 
@@ -98,14 +98,14 @@
 		select uid
 		from favorite
 		where boardid = #{value}
-		order by makedate
+		order by makedate desc
 	</select>
 	
 	<select id="getFavoriteByUser" parameterType="int" resultType="int">
 		select boardid
 		from favorite
 		where uid = #{value}
-		order by makedate
+		order by makedate desc
 	</select>
 	
 	<delete id="deleteFavorite" parameterType="map">
@@ -149,7 +149,7 @@
 	select commentid, uid, boardid, contents, writedate, listener
 	from comment
 	where boardid = #{value}
-	order by writedate
+	order by writedate desc
 	</select>
 	
 	<insert id="addMarker" parameterType="marker" useGeneratedKeys="true" keyProperty="markerid">

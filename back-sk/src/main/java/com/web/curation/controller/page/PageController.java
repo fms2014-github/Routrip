@@ -223,9 +223,9 @@ public class PageController {
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
 
-	@PostMapping("/searchBoard")
+	@GetMapping("/searchBoard/{str}")
 	@ApiOperation(value = "게시글 검색")
-	public Object search(@RequestBody String str) throws Exception {
+	public Object search(@PathVariable String str) throws Exception {
 		List<Board> boards = boardService.getBoardList();
 		List<Board> board = new ArrayList<Board>();
 
@@ -271,9 +271,9 @@ public class PageController {
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
 
-	@GetMapping("/searchBoard/{uid}")
+	@PostMapping("/searchBoard")
 	@ApiOperation(value = "작성한 게시글")
-	public Object writedBoard(@PathVariable int uid) throws Exception {
+	public Object writedBoard(@RequestBody int uid) throws Exception {
 		List<Board> boards = boardService.findBoardListByUid(uid);
 		for (Board b : boards) {
 			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
@@ -286,7 +286,7 @@ public class PageController {
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			b.setCommentNum(comments.size());
 			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
-			//boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
 			b.setFavoriteNum(favoriteNum);
 			b.setMarkers(boardService.findMarker(b.getBoardid()));
 		}
