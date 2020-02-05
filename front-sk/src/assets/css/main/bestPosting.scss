@@ -1,0 +1,17 @@
+.hooper,
+.hooper * {
+    box-sizing: border-box;
+}
+
+.hooper {
+    height: 200px;
+    position: relative;
+    width: 100%;
+    display: block;
+
+    .hooper-list {
+        overflow: hidden;
+        width: 100%;
+        height: 100%;
+    }
+}

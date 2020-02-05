@@ -81,7 +81,7 @@
 
 <script>
 import { Hooper, Slide, Pagination as HooperPagination } from 'hooper';
-
+import '../../assets/css/main/posting.scss';
 export default {
     components: {
         Hooper,

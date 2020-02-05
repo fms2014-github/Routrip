@@ -1,63 +1,36 @@
 <template>
-    <div class="best-posting-component">
-        <div class="horizontal-scroll-wrapper">
-            <div class="best-img">
-                <a href>
-                    <img src="../../assets/images/trip_img/trip1.jpg" />
-                </a>
-            </div>
-            <div class="best-img">
-                <a href>
-                    <img src="../../assets/images/trip_img/trip2.jpg" />
-                </a>
-            </div>
-            <div class="best-img">
-                <a href>
-                    <img src="../../assets/images/trip_img/trip3.jpg" />
-                </a>
-            </div>
-            <div class="best-img">
-                <a href>
-                    <img src="../../assets/images/trip_img/trip4.jpg" />
-                </a>
-            </div>
-            <div class="best-img">
-                <a href>
-                    <img src="../../assets/images/trip_img/trip5.jpg" />
-                </a>
-            </div>
-            <div class="best-img">
-                <a href>
-                    <img src="../../assets/images/trip_img/trip1.jpg" />
-                </a>
-            </div>
-            <div class="best-img">
-                <a href>
-                    <img src="../../assets/images/trip_img/trip2.jpg" />
-                </a>
-            </div>
-            <div class="best-img">
-                <a href>
-                    <img src="../../assets/images/trip_img/trip3.jpg" />
-                </a>
-            </div>
-            <div class="best-img">
-                <a href>
-                    <img src="../../assets/images/trip_img/trip4.jpg" />
-                </a>
-            </div>
-            <div class="best-img">
-                <a href>
-                    <img src="../../assets/images/trip_img/trip5.jpg" />
-                </a>
-            </div>
-        </div>
-    </div>
+    <hooper :infiniteScroll="true">
+        <slide>
+            <img src="../../assets/images/trip_img/trip6.jpg" />
+        </slide>
+        <slide>
+            <img src="../../assets/images/trip_img/trip7.jpg" />
+        </slide>
+        <slide>
+            <img src="../../assets/images/trip_img/trip8.jpg" />
+        </slide>
+        <slide>
+            <img src="../../assets/images/trip_img/trip6.jpg" />
+        </slide>
+        <slide>
+            <img src="../../assets/images/trip_img/trip7.jpg" />
+        </slide>
+        <slide>
+            <img src="../../assets/images/trip_img/trip5.jpg" />
+        </slide>
+    </hooper>
 </template>
 
 <script>
-export default {};
+import '../../assets/css/main/bestPosting.scss';
+import { Hooper, Slide } from 'hooper';
+
+export default {
+    components: {
+        Hooper,
+        Slide,
+    },
+};
 </script>
 
-<style>
-</style>
+<style></style>
