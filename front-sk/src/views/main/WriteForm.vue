@@ -40,17 +40,29 @@
                     <button id="undo" class="draw-tools disabled" onclick="undo()" disabled>실행취소</button>
                     <button id="redo" class="draw-tools disabled" onclick="redo()" disabled>원래대로</button>
                 </div>
-                <div id="insert-comment-wrap" class="drop-up">
-                    <span id="insert-comment-wrap-title">설명 넣기</span>
-                    <label for="comment-title-insert">제목 <input id="comment-title-insert" type="text" v-model="commentTitle"/></label>
-                    <label for="comment-content-insert">내용<textarea id="comment-content-insert" type="text" v-model="commentContent"/></label>
-                    <button id="comment-submit" @click="createDraw">생성</button>
+                <div id="drop-down-wrap" class="drop-up">
+                    <div id="insert-comment-wrap">
+                        <span id="insert-comment-wrap-title">설명 넣기</span>
+                        <label for="comment-title-insert">제목 <input id="comment-title-insert" type="text" v-model="commentTitle"/></label>
+                        <label for="comment-content-insert">내용<textarea id="comment-content-insert" type="text" v-model="commentContent"/></label>
+                        <button id="comment-submit" @click="createDraw">생성</button>
+                    </div>
+                    <div id="create-condition">
+                        <span>생성 조건</span>
+                        <label for="both"><input v-model="createCondition" id="both" name="condition" type="radio" value="both" />둘 다 생성</label>
+                        <label for="only-comment"
+                            ><input v-model="createCondition" id="only-comment" name="condition" type="radio" value="comment" />주석만 생성</label
+                        >
+                        <label for="only-drawTool"
+                            ><input v-model="createCondition" id="only-drawTool" name="condition" type="radio" value="drawtool" />그리기 도구만
+                            생성</label
+                        >
+                    </div>
                 </div>
             </div>
             <br />
             <button onclick="extractionImg()">이미지 생성</button>
         </div>
-        <div id="map-image"></div>
         <div id="image-upload">
             <label id="upload-button" for="image-file">사진 업로드</label>
             <input id="image-file" type="file" multiple @change="imageFiles" />
@@ -71,7 +83,7 @@
 </template>
 
 <script>
-import '../../assets/css/contentUpload.scss';
+import '../../assets/css/WriteForm.scss';
 import InputForm from '../../components/common/Input';
 
 export default {
@@ -108,6 +120,7 @@ export default {
             error: {
                 title: '',
             },
+            createCondition: 'both',
         };
     },
     watch: {
@@ -118,7 +131,7 @@ export default {
     },
     methods: {
         createDraw() {
-            selectOverlay(this.selectDraw, this.commentTitle, this.commentContent);
+            selectOverlay(this.createCondition, this.selectDraw, this.commentTitle, this.commentContent);
             this.commentTitle = this.commentContent = '';
         },
         selectDrawTools(s, e) {
@@ -128,12 +141,12 @@ export default {
                     document.getElementsByClassName('draw-tools')[i].classList.remove('selected');
                 }
                 e.target.classList.add('selected');
-                document.getElementById('insert-comment-wrap').classList.add('drop-down');
-                document.getElementById('insert-comment-wrap').classList.remove('drop-up');
+                document.getElementById('drop-down-wrap').classList.add('drop-down');
+                document.getElementById('drop-down-wrap').classList.remove('drop-up');
             } else if (e.target && e.target.classList.contains('selected')) {
                 e.target.classList.remove('selected');
-                document.getElementById('insert-comment-wrap').classList.remove('drop-down');
-                document.getElementById('insert-comment-wrap').classList.add('drop-up');
+                document.getElementById('drop-down-wrap').classList.remove('drop-down');
+                document.getElementById('drop-down-wrap').classList.add('drop-up');
             }
             this.selectDraw = s;
         },
