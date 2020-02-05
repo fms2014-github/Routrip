@@ -81,7 +81,7 @@
 
 <script>
 import { Hooper, Slide, Pagination as HooperPagination } from 'hooper';
-
+import '../../assets/css/main/posting.scss';
 export default {
     components: {
         Hooper,
@@ -91,11 +91,6 @@ export default {
     data: () => {
         return {
             comment: '',
-            data: [
-                '<div class="example-slide">Slide 1</div>',
-                '<div class="example-slide">Slide 2</div>',
-                '<div class="example-slide">Slide 3</div>',
-            ],
         };
     },
     methods: {
