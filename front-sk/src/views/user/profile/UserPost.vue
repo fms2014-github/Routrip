@@ -1,22 +1,43 @@
 <template>
 
-    <div class="post">
-        <h1>안녕 여긴 글</h1>
-        <UserProfile :description="hi" >
+    <div class="row">
+        <allBoard title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주"
+            picture=trip2.jpg>
+        </allBoard>
 
-        </UserProfile>
+        <allBoard title = '강릉 2박3일'
+		    keywords = "#자연경관 #커플여행 ">
+        </allBoard>
+        
+        <allBoard title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주"
+            picture=trip4.jpg>
+        </allBoard>
+
+        <allBoard title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주">
+        </allBoard>
+
+        <allBoard title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주">
+        </allBoard>
+
+        <allBoard title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주">
+        </allBoard>
         
     </div>
    
 </template>
 
 <script>
-import UserProfile from "../../../components/common/UserProfile"
+import allBoard from "../../../components/common/allBoard"
 
 export default {
     
     components:{
-        UserProfile
+        allBoard
     }
 
     // data() {

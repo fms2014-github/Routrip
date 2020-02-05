@@ -1,4 +1,5 @@
 
+
 <template>
     
     <button class="user-picture" @click="handleModal" v-if="userPicture">
