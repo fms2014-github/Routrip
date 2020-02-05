@@ -105,9 +105,9 @@ public class AccountController {
 
 	@PostMapping("/follow")
 	@ApiOperation(value = "팔로우 등록")
-	public Object following(@RequestBody User user, int uid) throws Exception {
+	public Object following(@RequestBody String jwt, int uid) throws Exception {
 		int ok = 0;
-		List<Integer> follower = userService.getFollow(user.getUid());
+		List<Integer> follower = userService.getFollow((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 		boolean flag = true;
 		for (int i : follower) {
 			if (i == uid) {
@@ -116,7 +116,7 @@ public class AccountController {
 			}
 		}
 		if (flag)
-			ok = userService.addFollow(user.getUid(), uid);
+			ok = userService.addFollow((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), uid);
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -144,8 +144,8 @@ public class AccountController {
 
 	@DeleteMapping("/follow")
 	@ApiOperation(value = "팔로우 해제")
-	public Object deleteFollow(@RequestBody User user, int uid) throws Exception {
-		int ok = userService.deleteFollow(user.getUid(), uid);
+	public Object deleteFollow(@RequestBody String jwt, int uid) throws Exception {
+		int ok = userService.deleteFollow((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), uid);
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -153,12 +153,13 @@ public class AccountController {
 
 	@DeleteMapping("/user")
 	@ApiOperation(value = "탈퇴하기")
-	public Object deleteUser(@RequestBody User user) throws Exception {
+	public Object deleteUser(@RequestBody String jwt) throws Exception {
+		int uid = (int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
 		int ok = 0;
-		ok = userService.deleteUser(user.getUid());
+		ok = userService.deleteUser(uid);
 		if (ok > 0) {
 			// 이미지를 저장한 img/uid 폴더를 프로젝트에서 삭제(프로젝트 내 저장일 경우)
-			deleteFolder(System.getProperty("user.dir") + "\\img\\" + user.getUid());
+			//deleteFolder(System.getProperty("user.dir") + "\\img\\" + uid);
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -178,7 +179,8 @@ public class AccountController {
 
 	@PutMapping("/profile")
 	@ApiOperation(value = "프로필이미지 변경")
-	public Object updateProfile(@RequestBody User user) throws Exception {
+	public Object updateProfile(@RequestBody User user) throws Exception {//DB안의 내용물은 uid.png 나 디폴트 이미지나 둘 중 하나
+		//받아온 파일을 정해진 폴더에 uid.png 형식으로 다운받는 코드 짜서 넣기
 		int ok = userService.updateProfileImg(user);
 		User loginUser = userService.findUserByEmail(user.getEmail(), user.getLoginApi());
 		if (ok > 0)
@@ -211,10 +213,10 @@ public class AccountController {
 		}
 		if (ok > 0) {
 			// 이미지를 저장할 img/uid 폴더를 프로젝트에 제작(프로젝트 내 저장일 경우)
-			File folder = new File(System.getProperty("user.dir") + "\\img\\" + user.getUid());
-			if (!folder.exists()) {
-				folder.mkdirs(); // 폴더 생성합니다.
-			}
+//			File folder = new File(System.getProperty("user.dir") + "\\img\\" + user.getUid());
+//			if (!folder.exists()) {
+//				folder.mkdirs(); // 폴더 생성합니다.
+//			}
 			return new ResponseEntity<>(user, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -250,11 +252,11 @@ public class AccountController {
 	@PostMapping("/email")
 	@ApiOperation(value = "이메일 찾기")
 	public Object findEmail(@RequestBody User user) throws Exception {
-		List<String> emails = userService.findEmail(user);
-		if(emails.isEmpty())
+		List<String> email = userService.findEmail(user);
+		if(email.isEmpty())
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		for (int e=0;e<emails.size();e++) {
-			String s = emails.get(e);
+		for (int e=0;e<email.size();e++) {
+			String s = email.get(e);
 			char[] c = s.toCharArray();
 			int g = 0;
 			for (g = 1; g < c.length; g++) {
@@ -265,10 +267,9 @@ public class AccountController {
 				c[i] = '*';
 			}
 			s = String.valueOf(c);
-			emails.set(e, s);
+			email.set(e, s);
 		}
 		System.out.println("이메일 찾기 성공했습니다.");
-		String email = emails.get(0);
 		return new ResponseEntity<>(email, HttpStatus.OK);
 	}
 

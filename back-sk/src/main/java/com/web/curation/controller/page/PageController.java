@@ -14,6 +14,7 @@ import com.web.curation.model.user.User;
 import com.web.curation.service.BoardService;
 import com.web.curation.service.UserService;
 
+import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.*;
 
 @ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
@@ -34,18 +35,19 @@ public class PageController {
 
 	@PostMapping("/favorite")
 	@ApiOperation(value = "좋아요 등록")
-	public Object addFavorite(@RequestBody User user, int boardid) throws Exception {
+	public Object addFavorite(@RequestBody String jwt, int boardid) throws Exception {
+		int uid = (int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
 		int ok = 0;
 		List<Integer> usersid = boardService.getFavoriteByBoard(boardid);
 		boolean flag = true;
 		for (int i : usersid) {
-			if (i == user.getUid()) {
+			if (i == uid) {
 				flag = false;
 				break;
 			}
 		}
 		if (flag)
-			ok = boardService.addFavorite(user.getUid(), boardid);
+			ok = boardService.addFavorite(uid, boardid);
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -63,8 +65,8 @@ public class PageController {
 
 	@PostMapping("/favoriteBoard")
 	@ApiOperation(value = "좋아요 누른 게시글")
-	public Object FavoriteListByUser(@RequestBody User user) throws Exception {
-		List<Integer> boardsid = boardService.getFavoriteByUser(user.getUid());
+	public Object FavoriteListByUser(@RequestBody String jwt) throws Exception {
+		List<Integer> boardsid = boardService.getFavoriteByUser((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 		List<Board> boards = new ArrayList<Board>();
 		for (int i : boardsid) {
 			Board b = boardService.findBoardByBoardId(i);
@@ -86,18 +88,18 @@ public class PageController {
 
 	@DeleteMapping("/favorite")
 	@ApiOperation(value = "좋아요 해제")
-	public Object deleteFavorite(@RequestBody User user, Board board) throws Exception {
-		int ok = boardService.deleteFavorite(user.getUid(), board.getBoardid());
+	public Object deleteFavorite(@RequestBody String jwt, Board board) throws Exception {
+		int ok = boardService.deleteFavorite((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), board.getBoardid());
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
-	@PostMapping("/boardDetail")
+	@GetMapping("/board/{boardid}/{uid}")
 	@ApiOperation(value = "게시글 상세 정보")
-	public Object getBoardDetail(@RequestBody User user, int boardid) throws Exception {
+	public Object getBoardDetail(@PathVariable int boardid, @PathVariable int uid) throws Exception {
 		Board board = boardService.findBoardByBoardId(boardid);
-		if (board.getUnveiled() == 0 && user.getUid() != board.getUid()) {
+		if (board.getUnveiled() == 0 && uid != board.getUid()) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		board.setImgs(boardService.findBoardImg(board.getBoardid()));
@@ -261,10 +263,10 @@ public class PageController {
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
 
-	@PostMapping("/writeBoard")
+	@GetMapping("/searchBoard/{uid}")
 	@ApiOperation(value = "작성한 게시글")
-	public Object writedBoard(@RequestBody User user) throws Exception {
-		List<Board> boards = boardService.findBoardListByUid(user.getUid());
+	public Object writedBoard(@PathVariable int uid) throws Exception {
+		List<Board> boards = boardService.findBoardListByUid(uid);
 		for (Board b : boards) {
 			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
 			List<Img> repimg = new ArrayList<Img>();// 대표 이미지들 들어갈 리스트
@@ -293,7 +295,7 @@ public class PageController {
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
-	@PostMapping("/deleteComment")
+	@DeleteMapping("/comment")
 	@ApiOperation(value = "댓글 삭제")
 	public Object deleteComment(@RequestBody Comment comment) throws Exception {
 		int ok = boardService.deleteComment(comment.getCommentid());
