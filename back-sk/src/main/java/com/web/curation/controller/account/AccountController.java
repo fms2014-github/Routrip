@@ -185,6 +185,7 @@ public class AccountController {
 			//받아온 파일을 정해진 폴더에 uid.png 형식으로 다운받는 코드 짜서 넣기
 		}
 		int ok = userService.updateProfile(user);
+		//업데이트를 적용하고 싶으면 로그아웃 후 다시 로그인하도록 바로 적용하고 싶으면 jwt도 받아서 원래껄 로그아웃시키고 새로 로그인 시킨 뒤 반환
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

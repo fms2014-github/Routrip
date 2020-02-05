@@ -79,7 +79,9 @@ public class PageController {
 			b.setImgs(repimg);
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			b.setCommentNum(comments.size());
-			b.setFavoriteNum(boardService.getFavoriteNum(b.getBoardid()));
+			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+			//boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+			b.setFavoriteNum(favoriteNum);
 			b.setMarkers(boardService.findMarker(b.getBoardid()));
 			boards.add(b);
 		}
@@ -106,7 +108,9 @@ public class PageController {
 		List<Comment> comments = boardService.findComment(board.getBoardid());
 		board.setCommentNum(comments.size());
 		board.setComments(comments);
-		board.setFavoriteNum(boardService.getFavoriteNum(board.getBoardid()));
+		int favoriteNum = boardService.getFavoriteNum(board.getBoardid());
+		boardService.updateFavoriteNum(board.getBoardid(), favoriteNum);
+		board.setFavoriteNum(favoriteNum);
 		board.setMarkers(boardService.findMarker(board.getBoardid()));
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
@@ -211,7 +215,9 @@ public class PageController {
 			b.setImgs(repimg);
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			b.setCommentNum(comments.size());
-			b.setFavoriteNum(boardService.getFavoriteNum(b.getBoardid()));
+			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+			b.setFavoriteNum(favoriteNum);
 			b.setMarkers(boardService.findMarker(b.getBoardid()));
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
@@ -255,7 +261,9 @@ public class PageController {
 				b.setImgs(repimg);
 				List<Comment> comments = boardService.findComment(b.getBoardid());
 				b.setCommentNum(comments.size());
-				b.setFavoriteNum(boardService.getFavoriteNum(b.getBoardid()));
+				int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+				//boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+				b.setFavoriteNum(favoriteNum);
 				b.setMarkers(boardService.findMarker(b.getBoardid()));
 				board.add(b);
 			}
@@ -277,7 +285,9 @@ public class PageController {
 			b.setImgs(repimg);
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			b.setCommentNum(comments.size());
-			b.setFavoriteNum(boardService.getFavoriteNum(b.getBoardid()));
+			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+			//boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+			b.setFavoriteNum(favoriteNum);
 			b.setMarkers(boardService.findMarker(b.getBoardid()));
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);

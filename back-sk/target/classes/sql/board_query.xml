@@ -7,7 +7,6 @@
 
 	<insert id="addBoard" parameterType="board"
 		useGeneratedKeys="true" keyProperty="boardid">
-		<!-- keyword 에 null 들어갔을 때 오류 뜨는지 확인/아니면 자동으로 장소 키워드에 추가됨 -->
 		insert into board
 		(uid, title, writedate, tripterm, latitude,
 		longitude, level, keyword, unveiled)
