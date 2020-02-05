@@ -102,8 +102,8 @@ public class UserDao implements IUserDao{
 	}
 
 	@Override
-	public String findEmail(User user) throws Exception {
-		return sqlSession.selectOne(ns+"findEmail", user);
+	public List<String> findEmail(User user) throws Exception {
+		return sqlSession.selectList(ns+"findEmail", user);
 	}
 
 

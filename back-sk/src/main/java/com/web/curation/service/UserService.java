@@ -90,7 +90,7 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public String findEmail(User user) throws Exception {
+	public List<String> findEmail(User user) throws Exception {
 		return userDao.findEmail(user);
 	}
 

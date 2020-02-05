@@ -10,7 +10,7 @@ public interface IUserService {//extends JpaRepository<User, String> {
     int addUser(User user) throws Exception;
     int changePw(User user) throws Exception;
     String findPw(User user) throws Exception;
-    String findEmail(User user) throws Exception;
+    List<String> findEmail(User user) throws Exception;
     int updateProfileImg(User user) throws Exception;
     List<User> getUserList() throws Exception;
     User findUserByUid(int uid) throws Exception;

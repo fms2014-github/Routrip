@@ -3,42 +3,23 @@ package com.web.curation.controller.account;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Properties;
+import java.util.*;
 
-import javax.mail.Message;
-import javax.mail.MessagingException;
-import javax.mail.PasswordAuthentication;
-import javax.mail.Session;
-import javax.mail.Transport;
-import javax.mail.internet.AddressException;
-import javax.mail.internet.InternetAddress;
-import javax.mail.internet.MimeMessage;
+import javax.mail.*;
+import javax.mail.internet.*;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.web.curation.model.BasicResponse;
 import com.web.curation.model.user.User;
 import com.web.curation.service.UserService;
 
 import io.jsonwebtoken.Jwts;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 
 @ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
 		@ApiResponse(code = 403, message = "Forbidden", response = BasicResponse.class),
@@ -269,8 +250,25 @@ public class AccountController {
 	@PostMapping("/email")
 	@ApiOperation(value = "이메일 찾기")
 	public Object findEmail(@RequestBody User user) throws Exception {
-		String email = userService.findEmail(user);
+		List<String> emails = userService.findEmail(user);
+		if(emails.isEmpty())
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		for (int e=0;e<emails.size();e++) {
+			String s = emails.get(e);
+			char[] c = s.toCharArray();
+			int g = 0;
+			for (g = 1; g < c.length; g++) {
+				if (c[g] == '@')
+					break;
+			}
+			for (int i = g - 1; i >= g / 3 * 2; i--) {
+				c[i] = '*';
+			}
+			s = String.valueOf(c);
+			emails.set(e, s);
+		}
 		System.out.println("이메일 찾기 성공했습니다.");
+		String email = emails.get(0);
 		return new ResponseEntity<>(email, HttpStatus.OK);
 	}
 
@@ -283,21 +281,6 @@ public class AccountController {
 		System.out.println("비밀번호 찾기 인증번호가 발송되었습니다.");
 		return new ResponseEntity<>(certNum, HttpStatus.OK);
 	}
-
-//	@PostMapping("/password")
-//	@ApiOperation(value = "비밀번호 찾기 완료")
-//	public Object findPasswordEnd(@RequestBody String email) throws Exception {
-//		User user = userService.findUserByEmail(email, 0);
-//		if (user == null)
-//			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//		char[] pass = user.getPassword().toCharArray();
-//		for (int i = pass.length - 1; i > pass.length / 3; i--) {
-//			pass[i] = '*';
-//		}
-//		String password = String.valueOf(pass);
-//		System.out.println("비밀번호 찾기가 완료되었습니다.");
-//		return new ResponseEntity<>(password, HttpStatus.OK);
-//	}
 
 	// 인증번호 생성기 (6글자)
 	public String RandomNum() {
