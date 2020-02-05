@@ -20,23 +20,24 @@
         <div class="post-imgs-box">
             <hooper class="post-img-box">
                 <slide>
-                    <img src="../../assets/images/trip_img/trip6.jpg" alt="" />
+                    <img src="../../assets/images/trip_img/trip6.jpg" alt />
                 </slide>
                 <slide>
-                    <img src="../../assets/images/trip_img/trip7.jpg" alt="" />
+                    <img src="../../assets/images/trip_img/trip7.jpg" alt />
                 </slide>
                 <slide>
-                    <img src="../../assets/images/trip_img/trip8.jpg" alt="" />
+                    <img src="../../assets/images/trip_img/trip8.jpg" alt />
                 </slide>
                 <slide>
-                    <img src="../../assets/images/trip_img/trip6.jpg" alt="" />
+                    <img src="../../assets/images/trip_img/trip6.jpg" alt />
                 </slide>
                 <slide>
-                    <img src="../../assets/images/trip_img/trip7.jpg" alt="" />
+                    <img src="../../assets/images/trip_img/trip7.jpg" alt />
                 </slide>
                 <slide>
-                    <img src="../../assets/images/trip_img/trip8.jpg" alt="" />
+                    <img src="../../assets/images/trip_img/trip8.jpg" alt />
                 </slide>
+                <hooper-pagination slot="hooper-addons"></hooper-pagination>
             </hooper>
         </div>
         <div class="sns-btn">
@@ -45,9 +46,6 @@
             </div>
             <div class="follow">
                 <button>🏹</button>
-            </div>
-            <div>
-                <hooper-pagination slot="hooper-addons"></hooper-pagination>
             </div>
         </div>
         <div class="text">

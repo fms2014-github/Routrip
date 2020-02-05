@@ -110,12 +110,27 @@ $desktop: 'screen and (min-width : 1025px)';
     .post-imgs-box {
         display: flex;
         overflow: hidden;
-
-        ul {
-            display: flex;
+        .hooper,
+        .hooper * {
+            box-sizing: border-box;
         }
+        .hooper-track {
+            display: flex;
+            li {
+                @media #{$iPad} {
+                    width: 98vw;
+                }
 
-        li {
+                @media #{$iPadPro} {
+                    width: 90vw;
+                }
+
+                @media #{$desktop} {
+                    width: 45vw;
+                }
+            }
+        }
+        .hooper-pagination {
             @media #{$iPad} {
                 width: 98vw;
             }
@@ -127,8 +142,35 @@ $desktop: 'screen and (min-width : 1025px)';
             @media #{$desktop} {
                 width: 45vw;
             }
+            .hooper-indicators {
+                display: flex;
+                justify-content: center;
+                .hooper-indicator {
+                    margin: 0 2px;
+                    width: 15px;
+                    height: 5px;
+                    border-radius: 5px;
+                    padding: 0;
+                    background-color: #aaa;
+                    cursor: pointer;
+                }
+                .hooper-indicator:hover,
+                .hooper-indicator.is-active {
+                    background-color: #2d2d2d;
+                }
+            }
         }
 
+        .hooper-sr-only {
+            position: absolute;
+            width: 1px;
+            height: 1px;
+            padding: 0;
+            margin: -1px;
+            overflow: hidden;
+            clip: rect(0, 0, 0, 0);
+            border: 0;
+        }
         img {
             @media #{$iPad} {
                 width: 98vw;
@@ -150,7 +192,7 @@ $desktop: 'screen and (min-width : 1025px)';
     .sns-btn {
         display: flex;
         align-items: center;
-        padding: 5px 20px;
+        padding: 0 20px 5px 20px;
 
         .like {
             font-size: 1.5em;
