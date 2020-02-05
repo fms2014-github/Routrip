@@ -15,9 +15,8 @@ public class UserService implements IUserService{
 	private UserDao userDao;
 
 	@Override
-	public User findUserByEmail(String email) throws Exception {
-		System.out.println("service   "+email);
-		return userDao.findUserByEmail(email);
+	public User findUserByEmail(String email, int loginApi) throws Exception {
+		return userDao.findUserByEmail(email, loginApi);
 	}
 
 	@Override
@@ -30,20 +29,20 @@ public class UserService implements IUserService{
 		return userDao.addUser(user);
 	}
 
-	@Override
-	public int changePw(User user) throws Exception {
-		return userDao.changePw(user);
-	}
+//	@Override
+//	public int changePw(User user) throws Exception {
+//		return userDao.changePw(user);
+//	}
 
 	@Override
 	public String findPw(User user) throws Exception {
 		return userDao.findPw(user);
 	}
 	
-	@Override
-	public int updateProfileImg(User user) throws Exception {
-		return userDao.updateProfileImg(user);
-	}
+//	@Override
+//	public int updateProfileImg(User user) throws Exception {
+//		return userDao.updateProfileImg(user);
+//	}
 
 	@Override
 	public int addFollow(int following, int follower) throws Exception {
@@ -78,5 +77,40 @@ public class UserService implements IUserService{
 	@Override
 	public int deleteUser(int uid) throws Exception {
 		return userDao.deleteUser(uid);
+	}
+
+	@Override
+	public int updateUserKey(int uid) throws Exception {
+		return userDao.updateUserKey(uid);
+	}
+
+	@Override
+	public int changeUserKey(User user) throws Exception {
+		return userDao.changeUserKey(user);
+	}
+
+	@Override
+	public List<String> findEmail(User user) throws Exception {
+		return userDao.findEmail(user);
+	}
+
+	@Override
+	public int addBlackList(int uid, String exp) throws Exception {
+		return userDao.addBlackList(uid, exp);
+	}
+
+	@Override
+	public int findBlackList(int uid, String exp) throws Exception {
+		return userDao.findBlackList(uid, exp);
+	}
+
+	@Override
+	public int deleteBlackList() throws Exception {
+		return userDao.deleteBlackList();
+	}
+
+	@Override
+	public int updateProfile(User user) throws Exception {
+		return userDao.updateProfile(user);
 	}
 }

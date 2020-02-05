@@ -6,26 +6,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.web.curation.model.BasicResponse;
-import com.web.curation.model.board.Board;
-import com.web.curation.model.board.Comment;
-import com.web.curation.model.board.Img;
+import com.web.curation.model.board.*;
 import com.web.curation.model.user.User;
 import com.web.curation.service.BoardService;
 import com.web.curation.service.UserService;
 
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.jsonwebtoken.Jwts;
+import io.swagger.annotations.*;
 
 @ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
 		@ApiResponse(code = 403, message = "Forbidden", response = BasicResponse.class),
@@ -45,18 +35,19 @@ public class PageController {
 
 	@PostMapping("/favorite")
 	@ApiOperation(value = "좋아요 등록")
-	public Object addFavorite(@RequestBody User user, int boardid) throws Exception {
+	public Object addFavorite(@RequestBody String jwt, int boardid) throws Exception {
+		int uid = (int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
 		int ok = 0;
 		List<Integer> usersid = boardService.getFavoriteByBoard(boardid);
 		boolean flag = true;
 		for (int i : usersid) {
-			if (i == user.getUid()) {
+			if (i == uid) {
 				flag = false;
 				break;
 			}
 		}
 		if (flag)
-			ok = boardService.addFavorite(user.getUid(), boardid);
+			ok = boardService.addFavorite(uid, boardid);
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -74,8 +65,8 @@ public class PageController {
 
 	@PostMapping("/favoriteBoard")
 	@ApiOperation(value = "좋아요 누른 게시글")
-	public Object FavoriteListByUser(@RequestBody User user) throws Exception {
-		List<Integer> boardsid = boardService.getFavoriteByUser(user.getUid());
+	public Object FavoriteListByUser(@RequestBody String jwt) throws Exception {
+		List<Integer> boardsid = boardService.getFavoriteByUser((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 		List<Board> boards = new ArrayList<Board>();
 		for (int i : boardsid) {
 			Board b = boardService.findBoardByBoardId(i);
@@ -88,7 +79,10 @@ public class PageController {
 			b.setImgs(repimg);
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			b.setCommentNum(comments.size());
-			b.setFavoriteNum(boardService.getFavoriteNum(b.getBoardid()));
+			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+			//boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+			b.setFavoriteNum(favoriteNum);
+			b.setMarkers(boardService.findMarker(b.getBoardid()));
 			boards.add(b);
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
@@ -96,25 +90,28 @@ public class PageController {
 
 	@DeleteMapping("/favorite")
 	@ApiOperation(value = "좋아요 해제")
-	public Object deleteFavorite(@RequestBody User user, Board board) throws Exception {
-		int ok = boardService.deleteFavorite(user.getUid(), board.getBoardid());
+	public Object deleteFavorite(@RequestBody String jwt, Board board) throws Exception {
+		int ok = boardService.deleteFavorite((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), board.getBoardid());
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
-	@PostMapping("/boardDetail")
+	@GetMapping("/board/{boardid}/{uid}")
 	@ApiOperation(value = "게시글 상세 정보")
-	public Object getBoardDetail(@RequestBody User user, int boardid) throws Exception {
+	public Object getBoardDetail(@PathVariable int boardid, @PathVariable int uid) throws Exception {
 		Board board = boardService.findBoardByBoardId(boardid);
-		if (board.getUnveiled() == 0 && user.getUid() != board.getUid()) {
+		if (board.getUnveiled() == 0 && uid != board.getUid()) {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		}
 		board.setImgs(boardService.findBoardImg(board.getBoardid()));
 		List<Comment> comments = boardService.findComment(board.getBoardid());
 		board.setCommentNum(comments.size());
 		board.setComments(comments);
-		board.setFavoriteNum(boardService.getFavoriteNum(board.getBoardid()));
+		int favoriteNum = boardService.getFavoriteNum(board.getBoardid());
+		boardService.updateFavoriteNum(board.getBoardid(), favoriteNum);
+		board.setFavoriteNum(favoriteNum);
+		board.setMarkers(boardService.findMarker(board.getBoardid()));
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
 
@@ -123,23 +120,24 @@ public class PageController {
 	public Object addBoard(@RequestBody Board board, int uid) throws Exception {
 		board.setUid(uid);
 		int ok = boardService.addBoard(board);
-		
-		int repcnt = 0;
-		for (Img i : board.getImgs()) {
-			i.setBoardid(board.getBoardid());
-			if (i.getRep() == 1)
-				repcnt++;
-		}
-		
-		if(repcnt == 0) {
-			boardService.deleteBoard(board.getBoardid());
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
 
 		if (ok > 0) {
+			int repcnt = 0;
 			for (Img i : board.getImgs()) {
-				boardService.addImg(i);
+				i.setBoardid(board.getBoardid());
+				if (i.getRep() == 1)
+					repcnt++;
 			}
+
+			if (repcnt == 0 || board.getMarkers().size() == 0) {
+				boardService.deleteBoard(board.getBoardid());
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+
+			for (Marker m : board.getMarkers()) {
+				m.setBoardid(board.getBoardid());
+			}
+			
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -157,14 +155,14 @@ public class PageController {
 			b.setKeyword(board.getKeyword());
 		if (board.getUnveiled() != b.getUnveiled())
 			b.setUnveiled(board.getUnveiled());
-		
+
 		boolean change = false;
 		int repcnt = 0;
 		List<Img> imgs = boardService.findBoardImg(board.getBoardid());
-		
+
 		if (imgs.size() != board.getImgs().size())
 			change = true;
-		
+
 		if (!change) {
 			List<Img> newimgs = board.getImgs();
 			for (int i = 0; i < imgs.size(); i++) {
@@ -192,6 +190,11 @@ public class PageController {
 			}
 		}
 
+		for(Marker m : board.getMarkers()) {
+			//이것도 다 삭제하고 다시 등록하도록 변경
+			boardService.updateMarker(m);
+		}
+		
 		int ok = boardService.updateBoard(b);
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -212,14 +215,17 @@ public class PageController {
 			b.setImgs(repimg);
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			b.setCommentNum(comments.size());
-			b.setFavoriteNum(boardService.getFavoriteNum(b.getBoardid()));
+			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+			b.setFavoriteNum(favoriteNum);
+			b.setMarkers(boardService.findMarker(b.getBoardid()));
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
 
-	@PostMapping("/searchBoard")
+	@GetMapping("/searchBoard/{str}")
 	@ApiOperation(value = "게시글 검색")
-	public Object search(@RequestBody String str) throws Exception {
+	public Object search(@PathVariable String str) throws Exception {
 		List<Board> boards = boardService.getBoardList();
 		List<Board> board = new ArrayList<Board>();
 
@@ -255,17 +261,20 @@ public class PageController {
 				b.setImgs(repimg);
 				List<Comment> comments = boardService.findComment(b.getBoardid());
 				b.setCommentNum(comments.size());
-				b.setFavoriteNum(boardService.getFavoriteNum(b.getBoardid()));
+				int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+				//boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+				b.setFavoriteNum(favoriteNum);
+				b.setMarkers(boardService.findMarker(b.getBoardid()));
 				board.add(b);
 			}
 		}
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
 
-	@PostMapping("/writeBoard")
+	@PostMapping("/searchBoard")
 	@ApiOperation(value = "작성한 게시글")
-	public Object writedBoard(@RequestBody User user) throws Exception {
-		List<Board> boards = boardService.findBoardListByUid(user.getUid());
+	public Object writedBoard(@RequestBody int uid) throws Exception {
+		List<Board> boards = boardService.findBoardListByUid(uid);
 		for (Board b : boards) {
 			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
 			List<Img> repimg = new ArrayList<Img>();// 대표 이미지들 들어갈 리스트
@@ -276,7 +285,10 @@ public class PageController {
 			b.setImgs(repimg);
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			b.setCommentNum(comments.size());
-			b.setFavoriteNum(boardService.getFavoriteNum(b.getBoardid()));
+			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+			b.setFavoriteNum(favoriteNum);
+			b.setMarkers(boardService.findMarker(b.getBoardid()));
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
@@ -293,7 +305,7 @@ public class PageController {
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
-	@PostMapping("/deleteComment")
+	@DeleteMapping("/comment")
 	@ApiOperation(value = "댓글 삭제")
 	public Object deleteComment(@RequestBody Comment comment) throws Exception {
 		int ok = boardService.deleteComment(comment.getCommentid());
