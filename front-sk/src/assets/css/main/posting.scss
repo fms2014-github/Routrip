@@ -38,9 +38,10 @@ $desktop: 'screen and (min-width : 1025px)';
     display: flex;
     overflow: hidden;
 
-    .hooper,
-    .hooper * {
-        box-sizing: border-box;
+
+
+    .hooper {
+        height: unset;
     }
 
     .hooper-track {
