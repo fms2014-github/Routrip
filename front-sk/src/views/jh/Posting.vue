@@ -16,9 +16,29 @@
                     </span>
                 </div>
             </div>
-            <div class="post-imgs">
-                <img src="../../assets/images/trip_img/trip7.jpg" alt />
-            </div>
+        </div>
+        <div class="post-imgs-box">
+            <hooper class="post-img-box">
+                <slide>
+                    <img src="../../assets/images/trip_img/trip6.jpg" alt />
+                </slide>
+                <slide>
+                    <img src="../../assets/images/trip_img/trip7.jpg" alt />
+                </slide>
+                <slide>
+                    <img src="../../assets/images/trip_img/trip8.jpg" alt />
+                </slide>
+                <slide>
+                    <img src="../../assets/images/trip_img/trip6.jpg" alt />
+                </slide>
+                <slide>
+                    <img src="../../assets/images/trip_img/trip7.jpg" alt />
+                </slide>
+                <slide>
+                    <img src="../../assets/images/trip_img/trip8.jpg" alt />
+                </slide>
+                <hooper-pagination slot="hooper-addons"></hooper-pagination>
+            </hooper>
         </div>
         <div class="sns-btn">
             <div class="like">
@@ -30,16 +50,11 @@
         </div>
         <div class="text">
             <span>
-                너무너무 즐거웠어요를레이히~~~~~요를레이히~~~~
-                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
-                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
-                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
-                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
-                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
-                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
-                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
-                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
-                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
+                너무너무 즐거웠어요를레이히~~~~~요를레이히~~~~ 요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
+                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~ 요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
+                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~ 요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
+                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~ 요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
+                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~ 요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
                 요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
             </span>
         </div>
@@ -65,10 +80,22 @@
 </template>
 
 <script>
+import { Hooper, Slide, Pagination as HooperPagination } from 'hooper';
+
 export default {
+    components: {
+        Hooper,
+        Slide,
+        HooperPagination,
+    },
     data: () => {
         return {
             comment: '',
+            data: [
+                '<div class="example-slide">Slide 1</div>',
+                '<div class="example-slide">Slide 2</div>',
+                '<div class="example-slide">Slide 3</div>',
+            ],
         };
     },
     methods: {
@@ -78,6 +105,3 @@ export default {
     },
 };
 </script>
-
-<style>
-</style>
