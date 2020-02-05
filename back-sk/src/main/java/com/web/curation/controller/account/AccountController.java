@@ -169,7 +169,7 @@ public class AccountController {
 	@ApiOperation(value = "비밀번호 변경")
 	public Object updatePassword(@RequestBody User user) throws Exception {
 		user.setUid(userService.findUserByEmail(user.getEmail(), 0).getUid());
-		int ok = userService.changePw(user);
+		int ok = userService.updateProfile(user);//안되면 changePW함수로 다시 변경
 		if (ok > 0) {
 			System.out.println("비밀번호가 변경되었습니다.");
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -177,14 +177,16 @@ public class AccountController {
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
-	@PutMapping("/profile")
-	@ApiOperation(value = "프로필이미지 변경")
-	public Object updateProfile(@RequestBody User user) throws Exception {//DB안의 내용물은 uid.png 나 디폴트 이미지나 둘 중 하나
-		//받아온 파일을 정해진 폴더에 uid.png 형식으로 다운받는 코드 짜서 넣기
-		int ok = userService.updateProfileImg(user);
-		User loginUser = userService.findUserByEmail(user.getEmail(), user.getLoginApi());
+	@PutMapping("/user")
+	@ApiOperation(value = "회원정보 변경")//프로필 이미지, 닉네임 변경
+	public Object updateProfile(@RequestBody User user) throws Exception {
+		if(user.getProfileImg()!=null) {
+			//DB안의 내용물은 uid.png 나 디폴트 이미지나 둘 중 하나
+			//받아온 파일을 정해진 폴더에 uid.png 형식으로 다운받는 코드 짜서 넣기
+		}
+		int ok = userService.updateProfile(user);
 		if (ok > 0)
-			return new ResponseEntity<>(loginUser, HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
@@ -217,7 +219,7 @@ public class AccountController {
 //			if (!folder.exists()) {
 //				folder.mkdirs(); // 폴더 생성합니다.
 //			}
-			return new ResponseEntity<>(user, HttpStatus.OK);
+			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -232,7 +234,7 @@ public class AccountController {
 		String body = "인증번호는 [ " + authNum + " ] 입니다.<br>자정이 지나기전에 입력해주십시오.";
 		sendEmail(emailTemp, body);
 		System.out.println("메일이 재발송되었습니다 : " + user.getEmail());
-		return new ResponseEntity<>(user, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PutMapping("/signup")
@@ -274,12 +276,12 @@ public class AccountController {
 	}
 
 	@GetMapping("/password/{email}")
-	@ApiOperation(value = "비밀번호 찾기")
+	@ApiOperation(value = "비밀번호 변경 인증번호")
 	public Object findPassword(@PathVariable String email) throws Exception {
 		String certNum = RandomNum();
 		String body = "인증번호는 [ " + certNum + " ] 입니다.<br>자정이 지나기전에 입력해주십시오.";
 		sendEmail(email, body);
-		System.out.println("비밀번호 찾기 인증번호가 발송되었습니다.");
+		System.out.println("비밀번호 변경 인증번호가 발송되었습니다.");
 		return new ResponseEntity<>(certNum, HttpStatus.OK);
 	}
 

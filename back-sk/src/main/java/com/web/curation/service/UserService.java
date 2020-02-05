@@ -29,20 +29,20 @@ public class UserService implements IUserService{
 		return userDao.addUser(user);
 	}
 
-	@Override
-	public int changePw(User user) throws Exception {
-		return userDao.changePw(user);
-	}
+//	@Override
+//	public int changePw(User user) throws Exception {
+//		return userDao.changePw(user);
+//	}
 
 	@Override
 	public String findPw(User user) throws Exception {
 		return userDao.findPw(user);
 	}
 	
-	@Override
-	public int updateProfileImg(User user) throws Exception {
-		return userDao.updateProfileImg(user);
-	}
+//	@Override
+//	public int updateProfileImg(User user) throws Exception {
+//		return userDao.updateProfileImg(user);
+//	}
 
 	@Override
 	public int addFollow(int following, int follower) throws Exception {
@@ -107,5 +107,10 @@ public class UserService implements IUserService{
 	@Override
 	public int deleteBlackList() throws Exception {
 		return userDao.deleteBlackList();
+	}
+
+	@Override
+	public int updateProfile(User user) throws Exception {
+		return userDao.updateProfile(user);
 	}
 }

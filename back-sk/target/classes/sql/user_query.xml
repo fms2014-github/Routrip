@@ -58,7 +58,22 @@
 		from user
 		where uid=#{value}
 	</delete>
+	
+	<update id="updateProfile" parameterType="user">
+		update user set
+		<if test="password != null">
+		password=#{password}
+		</if>
+		<if test="profileImg != null">
+		profileImg=#{profileImg}
+		</if>
+		<if test="nickname != null">
+		nickname=#{nickname}
+		</if>
+		where uid = #{uid} and userkey='Y'
+	</update>
 
+<!-- 
 	<update id="changePw" parameterType="user">
 		UPDATE user
 		SET password=#{password}
@@ -71,6 +86,13 @@
 		where uid = #{uid} and userkey='Y'
 	</update>
 	
+	<update id="updateNickName" parameterType="user">
+		update user
+		set nickname = #{nickname}
+		where uid = #{uid} and userkey='Y'
+	</update>
+ -->
+ 
 	<update id="updateUserKey" parameterType="int">
 		update user
 		set userkey='Y'

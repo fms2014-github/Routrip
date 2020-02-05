@@ -35,20 +35,20 @@ public class UserDao implements IUserDao{
 		return sqlSession.insert(ns+"addUser", user);
 	}
 	
-	@Override
-	public int changePw(User user) throws Exception {
-		return sqlSession.update(ns+"changePw", user);
-	}
+//	@Override
+//	public int changePw(User user) throws Exception {
+//		return sqlSession.update(ns+"changePw", user);
+//	}
 	
 	@Override
 	public String findPw(User user) throws Exception {
 		return sqlSession.selectOne(ns+"findPw", user);
 	}
 
-	@Override
-	public int updateProfileImg(User user) throws Exception {
-		return sqlSession.update(ns+"updateProfileImg", user);
-	}
+//	@Override
+//	public int updateProfileImg(User user) throws Exception {
+//		return sqlSession.update(ns+"updateProfileImg", user);
+//	}
 
 	@Override
 	public int addFollow(int following, int follower) throws Exception {
@@ -126,5 +126,10 @@ public class UserDao implements IUserDao{
 	@Override
 	public int deleteBlackList() throws Exception {
 		return sqlSession.delete(ns+"deleteBlackList");
+	}
+
+	@Override
+	public int updateProfile(User user) throws Exception {
+		return sqlSession.update(ns+"updateProfile", user);
 	}
 }
