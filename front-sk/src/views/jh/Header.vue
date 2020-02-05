@@ -4,7 +4,9 @@
             <i class="fas fa-bars"></i>
         </div>
         <div class="home">
-            <img class="logo" src="../../assets/images/routrip_logo.png" />
+            <router-link v-bind:to="{ name: 'Main' }" class="btn--text">
+                <img class="logo" src="../../assets/images/routrip_logo.png" />
+            </router-link>
             <span class="title" :class="{scrollDown : scrollDown}">루트립</span>
         </div>
         <div class="search-ipad" :class="{scrollDown : !scrollDown}">
