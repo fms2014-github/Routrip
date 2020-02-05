@@ -24,7 +24,7 @@
 		resultType="user">
 		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi, userkey
 		from user
-		where email=#{email} and password=#{password} and userkey='Y'
+		where email=#{email} and password=#{password} and loginApi = 0 and userkey='Y'
 	</select>
 
 	<select id="findUserByUid" parameterType="int" resultType="user">
@@ -33,22 +33,22 @@
 		where uid = #{value}
 	</select>
 
-	<select id="findUserByEmail" parameterType="string" resultType="user">
+	<select id="findUserByEmail" parameterType="map" resultType="user">
 		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi, userkey
 		from user
-		where email = #{value} and userkey='Y'
+		where email = #{email} and loginApi=#{loginApi} and userkey='Y'
 	</select>
 
 	<select id="findEmail" parameterType="user" resultType="string">
 		select email
 		from user
-		where name=#{name} and phone = #{phone} and birth=#{birth} and userkey='Y'
+		where name=#{name} and phone = #{phone} and birth=#{birth} and loginApi = 0 and userkey='Y'
 	</select>
 
 	<select id="findPw" parameterType="user" resultType="string">
 		select password
 		from user
-		where name=#{name} and phone = #{phone} and birth=#{birth} and email=#{email} and userkey='Y'
+		where name=#{name} and phone = #{phone} and birth=#{birth} and email=#{email} and loginApi = 0 and userkey='Y'
 	</select>
 
 	<delete id="deleteUser" parameterType="int">

@@ -3,7 +3,7 @@ uid int primary key auto_increment,
 nickname varchar(20) not null,
 name varchar(20) not null,
 email varchar(50) not null,
-password varchar(50) not null,
+password varchar(50) not null default 'sns',
 phone varchar(20) not null,
 birth date not null,
 profileImg varchar(500),
@@ -69,7 +69,7 @@ references board(boardid) on update cascade on delete cascade
 );
 
 create table marker(
-markerid int primary key,
+markerid int primary key auto_increment,
 boardid int not null,
 latitude varchar(500) not null,
 longitude varchar(500) not null,

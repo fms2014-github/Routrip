@@ -30,7 +30,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.Gson;
 import com.web.curation.model.BasicResponse;
 import com.web.curation.model.user.User;
 import com.web.curation.service.UserService;
@@ -52,8 +51,8 @@ public class AccountController {
 
 	@Autowired
 	private UserService userService;
-	
-	//private String key = "webcuration-routrip-secretkey";
+
+	// private String key = "webcuration-routrip-secretkey";
 
 	@PostMapping("/login")
 	@ApiOperation(value = "로그인")
@@ -62,27 +61,38 @@ public class AccountController {
 		if (loginUser == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		System.out.println(loginUser.getEmail() + " 님이 로그인하셨습니다.");
-		String jwt = Jwts.builder()
-				.setHeaderParam("typ", "JWT")
-				.setSubject(String.valueOf(loginUser.getUid()))
-				.claim("user", new Gson().toJson(loginUser))
-				.claim("uid", loginUser.getUid())
-				.claim("email", loginUser.getEmail())
-				.claim("password", loginUser.getPassword())
-				.claim("name", loginUser.getName())
-				.claim("nickname", loginUser.getNickname())
-				.claim("phone", loginUser.getPhone())
-				.claim("birth", loginUser.getBirth())
-				.claim("profileImg", loginUser.getProfileImg())
-				.claim("loginApi", loginUser.getLoginApi())
-				.claim("userkey", loginUser.getUserkey())
-				.setExpiration(new Date(System.currentTimeMillis() + (1000*60*60)))
-				//.signWith(SignatureAlgorithm.HS256, key)
+		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
+				// .claim("user", new Gson().toJson(loginUser)) //로그인 객체 통으로 필요하면 주석 풀기
+				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
+				.claim("password", loginUser.getPassword()).claim("name", loginUser.getName())
+				.claim("nickname", loginUser.getNickname()).claim("phone", loginUser.getPhone())
+				.claim("birth", loginUser.getBirth()).claim("profileImg", loginUser.getProfileImg())
+				.claim("loginApi", loginUser.getLoginApi()).claim("userkey", loginUser.getUserkey())
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))// 하루 뒤 자동 기간 만료됨
+				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
-		//System.out.println(jwt);
-		//System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody()); //복호화
-		//System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody().get("email"));
-		//System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody().get("user"));
+		// System.out.println(jwt);
+		// System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody()); //복호화
+		// System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody().get("email"));
+		// System.out.println(Jwts.parser().parseClaimsJwt(jwt).getBody().get("user"));
+		return new ResponseEntity<>(jwt, HttpStatus.OK);
+	}
+
+	@PostMapping("snslogin")
+	@ApiOperation(value = "sns로그인")
+	public Object snslogin(String email, int api) throws Exception {
+		User user = userService.findUserByEmail(email, api);
+		System.out.println("sns 로그인 시도되었습니다.");
+		if (user == null)
+			return new ResponseEntity<>(HttpStatus.OK);
+		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(user.getUid()))
+				.claim("uid", user.getUid()).claim("email", user.getEmail()).claim("password", user.getPassword())
+				.claim("name", user.getName()).claim("nickname", user.getNickname()).claim("phone", user.getPhone())
+				.claim("birth", user.getBirth()).claim("profileImg", user.getProfileImg())
+				.claim("loginApi", user.getLoginApi()).claim("userkey", user.getUserkey())
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
+				// .signWith(SignatureAlgorithm.HS256, key)
+				.compact();
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
 
@@ -152,7 +162,7 @@ public class AccountController {
 	@PutMapping("/password")
 	@ApiOperation(value = "비밀번호 변경")
 	public Object updatePassword(@RequestBody User user) throws Exception {
-		user.setUid(userService.findUserByEmail(user.getEmail()).getUid());
+		user.setUid(userService.findUserByEmail(user.getEmail(), 0).getUid());
 		int ok = userService.changePw(user);
 		if (ok > 0) {
 			System.out.println("비밀번호가 변경되었습니다.");
@@ -165,7 +175,7 @@ public class AccountController {
 	@ApiOperation(value = "프로필이미지 변경")
 	public Object updateProfile(@RequestBody User user) throws Exception {
 		int ok = userService.updateProfileImg(user);
-		User loginUser = userService.findUserByEmail(user.getEmail());
+		User loginUser = userService.findUserByEmail(user.getEmail(), user.getLoginApi());
 		if (ok > 0)
 			return new ResponseEntity<>(loginUser, HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -230,7 +240,7 @@ public class AccountController {
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@PostMapping("/email")
 	@ApiOperation(value = "이메일 찾기")
 	public Object findEmail(@RequestBody User user) throws Exception {
@@ -238,7 +248,7 @@ public class AccountController {
 		System.out.println("이메일 찾기 성공했습니다.");
 		return new ResponseEntity<>(email, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/password/{email}")
 	@ApiOperation(value = "비밀번호 찾기")
 	public Object findPassword(@PathVariable String email) throws Exception {
@@ -248,14 +258,16 @@ public class AccountController {
 		System.out.println("비밀번호 찾기 인증번호가 발송되었습니다.");
 		return new ResponseEntity<>(certNum, HttpStatus.OK);
 	}
-	
-	@PostMapping("/password")//인증 후 바로 비밀번호 변경으로 가기 때문에 안 쓰임
+
+	@PostMapping("/password") // 인증 후 바로 비밀번호 변경으로 가기 때문에 안 쓰임
 	@ApiOperation(value = "비밀번호 찾기 완료")
 	public Object findPasswordEnd(@RequestBody String email) throws Exception {
-		User user = userService.findUserByEmail(email);
+		User user = userService.findUserByEmail(email, 0);
+		if (user == null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		char[] pass = user.getPassword().toCharArray();
-		for(int i=pass.length-1;i>pass.length/3;i--) {
-			pass[i]='*';
+		for (int i = pass.length - 1; i > pass.length / 3; i--) {
+			pass[i] = '*';
 		}
 		String password = String.valueOf(pass);
 		System.out.println("비밀번호 찾기가 완료되었습니다.");

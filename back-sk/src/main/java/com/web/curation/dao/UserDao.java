@@ -17,8 +17,11 @@ public class UserDao implements IUserDao{
     private String ns = "usersql.";
 
     @Override
-	public User findUserByEmail(String email) throws Exception {
-		return sqlSession.selectOne(ns+"findUserByEmail", email);
+	public User findUserByEmail(String email, int loginApi) throws Exception {
+    	Map<String, String> map = new HashMap<String, String>();
+    	map.put("email", email);
+    	map.put("loginApi", String.valueOf(loginApi));
+		return sqlSession.selectOne(ns+"findUserByEmail", map);
 	}
 
     @Override

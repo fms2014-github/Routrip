@@ -5,7 +5,7 @@ import java.util.List;
 import com.web.curation.model.user.User;
 
 public interface IUserService {//extends JpaRepository<User, String> {
-	User findUserByEmail(String email) throws Exception;
+	User findUserByEmail(String email, int loginApi) throws Exception;
     User findUserByEmailAndPassword(String email, String password) throws Exception;
     int addUser(User user) throws Exception;
     int changePw(User user) throws Exception;

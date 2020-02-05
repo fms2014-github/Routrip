@@ -15,8 +15,8 @@ public class UserService implements IUserService{
 	private UserDao userDao;
 
 	@Override
-	public User findUserByEmail(String email) throws Exception {
-		return userDao.findUserByEmail(email);
+	public User findUserByEmail(String email, int loginApi) throws Exception {
+		return userDao.findUserByEmail(email, loginApi);
 	}
 
 	@Override

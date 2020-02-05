@@ -3,7 +3,7 @@ uid int primary key auto_increment, 회원 식별자
 nickname varchar(20) not null, 닉네임
 name varchar(20) not null, 이름
 email varchar(50) not null, 이메일(아이디 대용)
-password varchar(50) not null, 비밀번호
+password varchar(50) not null default 'sns', 비밀번호
 phone varchar(20) not null, 전화번호
 birth date not null, 생년월일
 profileImg varchar(500), 프로필 사진
@@ -70,7 +70,7 @@ references board(boardid) on update cascade on delete cascade
 
 create table marker( 맵에 하나씩 들어가는 마커에 대응
 게시글 하나당 지도 하나라는 가정하에 만들어져 있다
-markerid int primary key, 마커 식별자
+markerid int primary key auto_increment, 마커 식별자
 boardid int not null, 마커 달린 게시글
 latitude varchar(500) not null, 마커 위도
 longitude varchar(500) not null, 마커 경도
