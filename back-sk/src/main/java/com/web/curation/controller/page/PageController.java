@@ -302,8 +302,8 @@ public class PageController {
 
 	@PostMapping("/searchBoard")
 	@ApiOperation(value = "작성한 게시글")
-	public Object writedBoard(@RequestBody int uid) throws Exception {
-		List<Board> boards = boardService.findBoardListByUid(uid);
+	public Object writedBoard(@RequestBody String jwt) throws Exception {
+		List<Board> boards = boardService.findBoardListByUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 		for (Board b : boards) {
 			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
 			List<Img> repimg = new ArrayList<Img>();// 대표 이미지들 들어갈 리스트

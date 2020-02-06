@@ -52,12 +52,12 @@ public class AccountController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@PostMapping("/test")
 	@ApiOperation("테스트용")
-	public Object test() throws Exception{
+	public Object test() throws Exception {
 		String jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiIxIiwidWlkIjoxLCJlbWFpbCI6InRlc3RAc3NhZnkuY29tIiwibmlja25hbWUiOiJ0ZXN0bWFuIiwicHJvZmlsZUltZyI6ImltZy9wcm9maWxlLnBuZyIsImxvZ2luQXBpIjowLCJ1c2Vya2V5IjoiWSIsImV4cCI6MTU4MTA1ODMxNH0.";
-		//"eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiIxIiwidWlkIjoxLCJlbWFpbCI6InRlc3RAc3NhZnkuY29tIiwibmlja25hbWUiOiJ0ZXN0bWFuIiwicHJvZmlsZUltZyI6InNyYy9pbWcucG5nIiwibG9naW5BcGkiOjAsInVzZXJrZXkiOiJZIiwiZXhwIjoxNTgxMDU3OTA4fQ.";
+		// "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiIxIiwidWlkIjoxLCJlbWFpbCI6InRlc3RAc3NhZnkuY29tIiwibmlja25hbWUiOiJ0ZXN0bWFuIiwicHJvZmlsZUltZyI6InNyYy9pbWcucG5nIiwibG9naW5BcGkiOjAsInVzZXJrZXkiOiJZIiwiZXhwIjoxNTgxMDU3OTA4fQ.";
 		System.out.println("문답무용 jwt 토큰을 되돌려주는 테스트 주소입니다.");
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
@@ -72,8 +72,8 @@ public class AccountController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		System.out.println(loginUser.getEmail() + " 님이 로그인하셨습니다.");
 		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
-				// .claim("user", new Gson().toJson(loginUser)) //로그인 객체 통으로 필요하면 주석 풀기
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
+				.claim("userid", loginUser.getUserid())
 				// .claim("password", loginUser.getPassword())
 				// .claim("name", loginUser.getName())
 				.claim("nickname", loginUser.getNickname())
@@ -94,12 +94,13 @@ public class AccountController {
 	@PostMapping("/snslogin")
 	@ApiOperation(value = "sns로그인")
 	public Object snslogin(@RequestBody User user) throws Exception {
-		User loginUser = userService.findUserByEmail(user.getEmail(), user.getLoginApi());
+		User loginUser = userService.findUserByUserId(user.getUserid(), user.getLoginApi());
 		System.out.println("sns로그인이 시도되었습니다.");
 		if (loginUser == null)
 			return new ResponseEntity<>(HttpStatus.OK);
 		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
+				.claim("userid", loginUser.getUserid())
 				// .claim("password", loginUser.getPassword())
 				// .claim("name", loginUser.getName())
 				.claim("nickname", loginUser.getNickname())
@@ -110,7 +111,7 @@ public class AccountController {
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
 				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
-		System.out.println(loginUser.getEmail() + " 님 sns로그인 되었습니다.");
+		System.out.println(loginUser.getUserid() + " 님 sns로그인 되었습니다.");
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
 
@@ -227,6 +228,19 @@ public class AccountController {
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
+	@PostMapping("/snssignup")
+	@ApiOperation(value = "sns가입하기")
+	public Object snsSignup(@Valid @RequestBody User user) throws Exception {
+		int ok = 0;
+		// userid 는 프론트에서 바로 넣어주도록
+		user.setUserkey("Y");
+		ok = userService.addUser(user);
+		if (ok > 0) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+
 	@PostMapping("/signup")
 	@ApiOperation(value = "가입하기")
 	public Object signup(@Valid @RequestBody User user) throws Exception {
@@ -320,6 +334,19 @@ public class AccountController {
 		sendEmail(email, body);
 		System.out.println("비밀번호 변경 인증번호가 발송되었습니다.");
 		return new ResponseEntity<>(certNum, HttpStatus.OK);
+	}
+
+	@PostMapping("/decode")
+	@ApiOperation(value = "유저 토큰 해석")
+	public Object snsSignup(@RequestBody String jwt) throws Exception {
+		User user = new User();
+		user.setUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+		user.setEmail((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("email"));
+		user.setUserid((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("userid"));
+		user.setNickname((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("nickname"));
+		user.setProfileImg((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("profileImg"));
+		user.setLoginApi((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("loginApi"));
+		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
 	// 인증번호 생성기 (6글자)
@@ -446,17 +473,20 @@ public class AccountController {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date exp = format.parse(format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration()));
 		Date now = format.parse(format.format(new Date()));
-		if (exp.getTime() < now.getTime())//만료기간 지났으면 인증실패
+		if (exp.getTime() < now.getTime())// 만료기간 지났으면 인증실패
 			return false;
-		List<String> exps = userService.findBlackListByUid((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));//최신 로그인 이전 시점 로그인 인증실패
+		List<String> exps = userService
+				.findBlackListByUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));// 최신 로그인 이전 시점 로그인
+																									// 인증실패
 		if (exps != null) {
-			for(String e:exps) {
-				if(exp.getTime() < format.parse(e).getTime()) {
+			for (String e : exps) {
+				if (exp.getTime() < format.parse(e).getTime()) {
 					return false;
 				}
 			}
 		}
-		if(userService.findBlackList((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration()))>0)
+		if (userService.findBlackList((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"),
+				format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration())) > 0)
 			return false;
 		return true;
 	}

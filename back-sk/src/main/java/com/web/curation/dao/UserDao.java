@@ -138,4 +138,12 @@ public class UserDao implements IUserDao{
 	public List<String> findBlackListByUid(int uid) throws Exception {
 		return sqlSession.selectList(ns+"findBlackListByUid", uid);
 	}
+
+	@Override
+	public User findUserByUserId(String userid, int loginApi) throws Exception {
+		Map<String, String> map = new HashMap<String, String>();
+		map.put("userid", userid);
+		map.put("loginApi", String.valueOf(loginApi));
+		return sqlSession.selectOne(ns+"findUserByUserId", map);
+	}
 }
