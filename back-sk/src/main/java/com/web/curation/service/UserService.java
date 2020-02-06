@@ -118,4 +118,14 @@ public class UserService implements IUserService{
 	public List<String> findBlackListByUid(int uid) throws Exception {
 		return userDao.findBlackListByUid(uid);
 	}
+
+	@Override
+	public User findUserByUserId(String userid, int loginApi) throws Exception {
+		return userDao.findUserByUserId(userid, loginApi);
+	}
+
+	@Override
+	public User findUserSimple(int uid) throws Exception {
+		return userDao.findUserSimple(uid);
+	}
 }

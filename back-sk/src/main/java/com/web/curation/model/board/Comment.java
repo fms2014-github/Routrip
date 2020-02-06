@@ -1,5 +1,10 @@
 package com.web.curation.model.board;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
+
+import com.web.curation.model.user.User;
+
 public class Comment {
 	private int commentid;
 	private int uid;
@@ -7,8 +12,11 @@ public class Comment {
 	private String contents;
 	private String writedate;
 	private int listener = 0;
-	
-	public Comment(int commentid, int uid, int boardid, String contents, String writedate, int listener) {
+	private User user;
+	private String writeday;//~전
+
+	public Comment(int commentid, int uid, int boardid, String contents, String writedate, int listener, User user,
+			String writeday) {
 		super();
 		this.commentid = commentid;
 		this.uid = uid;
@@ -16,6 +24,8 @@ public class Comment {
 		this.contents = contents;
 		this.writedate = writedate;
 		this.listener = listener;
+		this.user = user;
+		this.writeday = writeday;
 	}
 
 	public Comment() {
@@ -68,5 +78,21 @@ public class Comment {
 
 	public void setListener(int listener) {
 		this.listener = listener;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public String getWriteday() {
+		return writeday;
+	}
+
+	public void setWriteday(String writeday) {
+		this.writeday = writeday;
 	}
 }
