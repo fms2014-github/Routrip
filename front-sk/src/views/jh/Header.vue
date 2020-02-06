@@ -7,7 +7,7 @@
             <router-link v-bind:to="{ name: 'Main' }" class="btn--text">
                 <img class="logo" src="../../assets/images/routrip_logo.png" />
             </router-link>
-            <span class="title" :class="{scrollDown : scrollDown}">루트립</span>
+            <span class="title" :class="{scrollDown : scrollDown}">루 : 트립</span>
         </div>
         <div class="search-ipad" :class="{scrollDown : !scrollDown}">
             <form action class="search-form">

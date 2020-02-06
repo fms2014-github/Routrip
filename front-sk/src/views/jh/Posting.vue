@@ -6,7 +6,7 @@
                     <img src="../../assets/images/user.png" alt />
                 </div>
                 <div class="name-time">
-                    <strong>박정호</strong>
+                    <strong>{{ nickname }}</strong>
                     <br />
                     <span>로마, 이탈리아</span>
                 </div>
@@ -80,8 +80,11 @@
 </template>
 
 <script>
+//scss import
 import { Hooper, Slide, Pagination as HooperPagination } from 'hooper';
 import '../../assets/css/main/posting.scss';
+import Axios from 'axios';
+
 export default {
     components: {
         Hooper,
@@ -91,7 +94,52 @@ export default {
     data: () => {
         return {
             comment: '',
+            title: '',
+            title: '',
+            writedate: '',
+            tripterm: '',
+            keyword: '',
+            latitude: '',
+            longitude: '',
+            level: '',
+            comments: '',
+            imgs: '',
+            favoriteNum: '',
+            commentNum: '',
+            markers: '',
+            nickname: '',
         };
+    },
+    created: function() {
+        // using JSONPlaceholder
+        const URI = 'http://192.168.100.70:8083/';
+        Axios.get(`${URI}/page/boardList`)
+            .then(res => {
+                console.log(res.data);
+
+                var length = Object.keys(res.data).length;
+                for (var i = 0; i < length; ++i) {
+                    var data = res.data[i];
+                    this.title = data.title;
+                    this.writedate = data.writedate;
+                    this.tripterm = data.tripterm;
+                    this.keyword = data.keyword;
+                    this.latitude = data.latitude;
+                    this.longitude = data.longitude;
+                    this.level = data.level;
+                    this.comments = data.comments;
+                    this.imgs = data.imgs;
+                    this.favoriteNum = data.favoriteNum;
+                    this.commentNum = data.commentNum;
+                    this.markers = data.markers;
+                    this.nickname = data.nickname;
+                    console.log(this.title);
+                    console.log(this.nickname);
+                }
+            })
+            .catch(res => {
+                console.log(res);
+            });
     },
     methods: {
         resize() {
