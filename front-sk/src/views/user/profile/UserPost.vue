@@ -1,56 +1,81 @@
 <template>
-    <div class="post">
-        <h1>안녕 여긴 게시글</h1>
 
-        <button @click="plus">리스트에 추가</button>
+    <div class="row">
+        <allBoard title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주"
+            picture=trip2.jpg>
+        </allBoard>
 
-        <div v-for="(dum, index) in dummy" :key="index" class="content">
-            <h2>{{ dum.title }}</h2>
-            <p>{{ dum.content }}</p>
-        </div>
+        <allBoard title = '강릉 2박3일'
+		    keywords = "#자연경관 #커플여행 ">
+        </allBoard>
+        
+        <allBoard title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주"
+            picture=trip4.jpg>
+        </allBoard>
+
+        <allBoard title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주">
+        </allBoard>
+
+        <allBoard title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주">
+        </allBoard>
+
+        <allBoard title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주">
+        </allBoard>
+        
     </div>
+   
 </template>
 
 <script>
-import UserApi from '../../../apis/UserApi';
+import allBoard from "../../../components/common/allBoard"
 
 export default {
-    data() {
-        return {
-            dummy: [
-                {
-                    id: 1,
-                    title: '제목',
-                    content: '내용',
-                },
-                {
-                    id: 2,
-                    title: '제목1',
-                    content: '내용1',
-                },
-            ],
-            post: null,
-        };
-    },
-    created() {
-        this.fetchData();
-    },
-    watch: {
-        $route: 'fetchData',
-    },
-    methods: {
-        fetchData() {
-            this.error = this.post = null;
-            this.loading = true;
-        },
-        plus() {
-            const data = {
-                id: 3,
-                title: '제목 new',
-                content: '내용 new',
-            };
-            this.dummy.push(data);
-        },
-    },
+    
+    components:{
+        allBoard
+    }
+
+    // data() {
+    //     return {
+    //         dummy: [
+    //             {
+    //                 id: 1,
+    //                 title: '제목',
+    //                 content: '내용',
+    //             },
+    //             {
+    //                 id: 2,
+    //                 title: '제목1',
+    //                 content: '내용1',
+    //             },
+    //         ],
+    //         post: null,
+    //     };
+    // },
+    // created() {
+    //     this.fetchData();
+    // },
+    // watch: {
+    //     $route: 'fetchData',
+    // },
+    // methods: {
+    //     fetchData() {
+    //         this.error = this.post = null;
+    //         this.loading = true;
+    //     },
+    //     plus() {
+    //         const data = {
+    //             id: 3,
+    //             title: '제목 new',
+    //             content: '내용 new',
+    //         };
+    //         this.dummy.push(data);
+    //     },
+    // },
 };
 </script>

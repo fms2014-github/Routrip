@@ -36,7 +36,10 @@
         margin-top: 30px;
     }
     .profile-tab-page {
-        margin-top: 80px;
+        overflow: visible;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+        margin-top: 160px;
     }
 }
     // input

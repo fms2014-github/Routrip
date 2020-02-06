@@ -93,18 +93,18 @@ export default {
                 this.imageArr.push(get_file[i]);
             }
 
-            for (var i = 0; i < get_file.length; i++) {
-                var reader = new FileReader();
+            // for (var i = 0; i < get_file.length; i++) {
+            //     var reader = new FileReader();
 
-                reader.onload = (function(imgab) {
-                    return function(e) {
-                        imgab.push(e.target.result);
-                    };
-                })(this.imageArrBase64);
-                if (get_file) {
-                    reader.readAsDataURL(get_file[i]);
-                }
-            }
+            //     reader.onload = (function(imgab) {
+            //         return function(e) {
+            //             imgab.push(e.target.result);
+            //         };
+            //     })(this.imageArrBase64);
+            //     if (get_file) {
+            //         reader.readAsDataURL(get_file[i]);
+            //     }
+            // }
         },
         deleteImg(id, idx) {
             this.imageArr.splice(idx, 1);
