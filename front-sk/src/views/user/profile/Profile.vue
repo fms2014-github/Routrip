@@ -4,12 +4,13 @@
             <h2>My Profile</h2>
 
             <button v-if="show" @click="logout">logout</button>
-
+            
             <div class="profile-wrap">
                 <UserPicture :userPicture="true" />
                 <div class="user-info">
                     <HeaderComponent :headerTitle="userinfo.email" :mailIcon="true" />
-                    <HeaderComponent :headerTitle="userinfo.nickname" :profileIcon="true" rightText="수정" />
+                    <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정"/>
+                
                 </div>
             </div>
             <div class="wrap">
@@ -33,6 +34,7 @@ import UserPicture from '../../../components/common/UserPicture';
 import TabComponent from '../../../components/common/Tab';
 import '../../../assets/css/profile.scss';
 import '../../../assets/css/style.scss';
+
 
 export default {
     components: {
@@ -70,6 +72,27 @@ export default {
                 this.show = false;
             }
         },
+        
+        async changeNick(){
+            const ipAPI = 'usernick'
+            const inputValue = fetch(ipAPI)
+                .then(response => response.json())
+                .then(data => data.ip)
+            const { value: ipAddress } = await Swal.fire({
+                title: 'Enter your IP address',
+                input: 'text',
+                inputValue: inputValue,
+                showCancelButton: true,
+                inputValidator: (value) => {
+                    if (!value) {
+                        return 'You need to write something!'
+                    }
+                }
+            })
+            if (ipAddress) {
+                Swal.fire(`Your IP address is ${ipAddress}`)
+            }
+        }
     },
     data() {
         return {

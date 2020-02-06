@@ -6,6 +6,9 @@
 <script>
 export default {
     name: 'app',
+    mounted() {
+        console.log('haha');
+    },
 };
 </script>
 <style></style>
