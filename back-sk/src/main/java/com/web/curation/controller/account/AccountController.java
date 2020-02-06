@@ -52,6 +52,15 @@ public class AccountController {
 
 	@Autowired
 	private UserService userService;
+	
+	@PostMapping("/test")
+	@ApiOperation("테스트용")
+	public Object test() throws Exception{
+		String jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiIxIiwidWlkIjoxLCJlbWFpbCI6InRlc3RAc3NhZnkuY29tIiwibmlja25hbWUiOiJ0ZXN0bWFuIiwicHJvZmlsZUltZyI6ImltZy9wcm9maWxlLnBuZyIsImxvZ2luQXBpIjowLCJ1c2Vya2V5IjoiWSIsImV4cCI6MTU4MTA1ODMxNH0.";
+		//"eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiIxIiwidWlkIjoxLCJlbWFpbCI6InRlc3RAc3NhZnkuY29tIiwibmlja25hbWUiOiJ0ZXN0bWFuIiwicHJvZmlsZUltZyI6InNyYy9pbWcucG5nIiwibG9naW5BcGkiOjAsInVzZXJrZXkiOiJZIiwiZXhwIjoxNTgxMDU3OTA4fQ.";
+		System.out.println("문답무용 jwt 토큰을 되돌려주는 테스트 주소입니다.");
+		return new ResponseEntity<>(jwt, HttpStatus.OK);
+	}
 
 	// private String key = "webcuration-routrip-secretkey";
 
@@ -112,7 +121,7 @@ public class AccountController {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String exp = format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration());
 		userService.deleteBlackList();
-		if (userService.findBlackList(uid, exp) == 0 && isOkJwt(jwt)) {
+		if (isOkJwt(jwt)) {
 			userService.addBlackList(uid, exp, jwt);
 			System.out.println("로그아웃되었습니다.");
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -437,9 +446,9 @@ public class AccountController {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		Date exp = format.parse(format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration()));
 		Date now = format.parse(format.format(new Date()));
-		if (exp.getTime() < now.getTime())
+		if (exp.getTime() < now.getTime())//만료기간 지났으면 인증실패
 			return false;
-		List<String> exps = userService.findBlackListByUid((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+		List<String> exps = userService.findBlackListByUid((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));//최신 로그인 이전 시점 로그인 인증실패
 		if (exps != null) {
 			for(String e:exps) {
 				if(exp.getTime() < format.parse(e).getTime()) {
@@ -447,6 +456,8 @@ public class AccountController {
 				}
 			}
 		}
+		if(userService.findBlackList((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration()))>0)
+			return false;
 		return true;
 	}
 }

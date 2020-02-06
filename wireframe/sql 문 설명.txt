@@ -6,8 +6,8 @@ email varchar(50) not null, 이메일(아이디 대용)
 password varchar(50), 비밀번호
 phone varchar(20) not null, 전화번호
 birth date not null, 생년월일
-profileImg varchar(500) default 'profile_default.jpg', 프로필 사진
-loginApi int not null default 0, 로그인api 종류
+profileImg varchar(500) default 'img/profile.png', 프로필 사진
+loginApi int not null default 0, 로그인api 종류(카카오1, 구글2, 네이버3)
 userkey varchar(10) not null 유저 인증여부(인증되있으면 Y 라 됨)
 );
 

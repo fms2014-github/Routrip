@@ -3,7 +3,6 @@ package com.web.curation.controller.page;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import com.web.curation.model.BasicResponse;
 import com.web.curation.model.board.Board;
 import com.web.curation.model.board.Comment;
@@ -32,7 +30,6 @@ import io.jsonwebtoken.Jwts;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import springfox.documentation.spring.web.json.Json;
 
 @ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
 		@ApiResponse(code = 403, message = "Forbidden", response = BasicResponse.class),
@@ -250,9 +247,8 @@ public class PageController {
 			User user = userService.findUserByUid(b.getUid());
 			b.setNickname(user.getNickname());
 		}
-		//System.out.println(new Gson().toJson(boards));
 		System.out.println("전체 게시글 조회했습니다.");
-		return new ResponseEntity<>(boards, HttpStatus.OK);
+		return new ResponseEntity<>(new Gson().toJson(boards), HttpStatus.OK);
 	}
                                                                                                             
 	@GetMapping("/searchBoard/{str}")
