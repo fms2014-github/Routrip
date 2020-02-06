@@ -123,4 +123,9 @@ public class UserService implements IUserService{
 	public User findUserByUserId(String userid, int loginApi) throws Exception {
 		return userDao.findUserByUserId(userid, loginApi);
 	}
+
+	@Override
+	public User findUserSimple(int uid) throws Exception {
+		return userDao.findUserSimple(uid);
+	}
 }

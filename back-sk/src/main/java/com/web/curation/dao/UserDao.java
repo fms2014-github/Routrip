@@ -146,4 +146,9 @@ public class UserDao implements IUserDao{
 		map.put("loginApi", String.valueOf(loginApi));
 		return sqlSession.selectOne(ns+"findUserByUserId", map);
 	}
+
+	@Override
+	public User findUserSimple(int uid) throws Exception {
+		return sqlSession.selectOne(ns+"findUserSimple", uid);
+	}
 }

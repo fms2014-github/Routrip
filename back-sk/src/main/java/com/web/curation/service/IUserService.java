@@ -19,6 +19,7 @@ public interface IUserService {//extends JpaRepository<User, String> {
     int updateUserKey(int uid) throws Exception;
     int changeUserKey(User user) throws Exception;
     User findUserByUserId(String userid, int loginApi) throws Exception;
+    User findUserSimple(int uid) throws Exception;
     
     int addFollow(int following, int follower) throws Exception;
     int deleteFollow(int following, int follower) throws Exception;

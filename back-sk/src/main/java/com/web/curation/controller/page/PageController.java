@@ -1,6 +1,8 @@
 package com.web.curation.controller.page;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,6 +127,7 @@ public class PageController {
 		boardService.updateFavoriteNum(board.getBoardid(), favoriteNum);
 		board.setFavoriteNum(favoriteNum);
 		board.setMarkers(boardService.findMarker(board.getBoardid()));
+		board.setUser(userService.findUserSimple(board.getUid()));
 		System.out.println("게시글 상세를 조회하였습니다.");
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
@@ -238,14 +241,48 @@ public class PageController {
 			}
 			b.setImgs(repimg);
 			List<Comment> comments = boardService.findComment(b.getBoardid());
+			for(Comment c:comments) {
+				SimpleDateFormat format3 = new SimpleDateFormat("yyyyMMddHHmmss");
+				SimpleDateFormat format4 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+				long no = Long.parseLong(format3.format(new Date()))/100;
+				long wd = Long.parseLong(format3.format(format4.parse(c.getWritedate())))/100;
+					if (no / 100000000 - wd / 100000000 > 0) {
+						c.setWriteday((no / 100000000 - wd / 100000000) + "년 전");
+					} else if (no / 1000000 - wd / 1000000 > 0) {
+						c.setWriteday((no / 1000000 - wd / 1000000) + "달 전");
+					} else if (no / 10000 - wd / 10000 > 0) {
+						c.setWriteday((no / 10000 - wd / 10000) + "일 전");
+					} else if (no / 100 - wd / 100 > 0) {
+						c.setWriteday((no / 100 - wd / 100) + "시간 전");
+					} else if (no - wd > 0) {
+						c.setWriteday((no - wd) + "분 전");
+					} else {
+						c.setWriteday("방금 전");
+					}
+				c.setUser(userService.findUserSimple(c.getUid()));
+			}
 			b.setCommentNum(comments.size());
 			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
 			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);//좋아요 수 갱신
 			b.setFavoriteNum(favoriteNum);
 			b.setMarkers(boardService.findMarker(b.getBoardid()));
-			b.setComments(boardService.findComment(b.getBoardid()));
-			User user = userService.findUserByUid(b.getUid());
-			b.setUser(user);
+			b.setComments(comments);
+			b.setUser(userService.findUserSimple(b.getUid()));
+			SimpleDateFormat format1 = new SimpleDateFormat("yyyyMMdd");
+			SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+			int now = Integer.parseInt(format1.format(new Date()));
+			int writedate = Integer.parseInt(format1.format(format2.parse(b.getWritedate())));
+			if(now/10000 - writedate/10000 > 0) {
+				b.setWriteday((now/10000 - writedate/10000)+"년 전" );
+			}else if((format1.parse(String.valueOf(now)).getTime() - format1.parse(String.valueOf(writedate)).getTime()) / (24*60*60*1000) < 7 && (format1.parse(String.valueOf(now)).getTime() - format1.parse(String.valueOf(writedate)).getTime()) / (24*60*60*1000) > 0) {
+				b.setWriteday(((format1.parse(String.valueOf(now)).getTime() - format1.parse(String.valueOf(writedate)).getTime()) / (24*60*60*1000))+"일 전");
+			}else if(now/100 - writedate/100 > 0) {
+				b.setWriteday((now/100 - writedate/100)+"달 전");
+			}else if(now - writedate > 0) {
+				b.setWriteday((now - writedate)+"일 전");
+			}else {
+				b.setWriteday("오늘");
+			}
 		}
 		System.out.println("전체 게시글 조회했습니다.");
 		return new ResponseEntity<>(boards, HttpStatus.OK);

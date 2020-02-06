@@ -58,6 +58,12 @@
 		from user
 		where name=#{name} and phone = #{phone} and birth=#{birth} and email=#{email} and loginApi = 0 and userkey='Y'
 	</select>
+	
+	<select id="findUserSimple" parameterType="int" resultType="user">
+	select uid, nickname, name, profileImg, loginApi, userkey, userid
+		from user
+		where uid = #{userid} and userkey='Y'
+	</select>
 
 	<delete id="deleteUser" parameterType="int">
 		delete

@@ -336,16 +336,16 @@ public class AccountController {
 		return new ResponseEntity<>(certNum, HttpStatus.OK);
 	}
 
-	@PostMapping("/decode")
+	@GetMapping("/decode/{jwt}")
 	@ApiOperation(value = "유저 토큰 해석")
-	public Object snsSignup(@RequestBody String jwt) throws Exception {
+	public Object snsSignup(@PathVariable String jwt) throws Exception {
 		User user = new User();
-		user.setUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
-		user.setEmail((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("email"));
-		user.setUserid((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("userid"));
-		user.setNickname((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("nickname"));
-		user.setProfileImg((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("profileImg"));
-		user.setLoginApi((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("loginApi"));
+		user.setUid((int) Jwts.parser().parseClaimsJwt((String)jwt).getBody().get("uid"));
+		user.setEmail((String) Jwts.parser().parseClaimsJwt((String)jwt).getBody().get("email"));
+		user.setUserid((String) Jwts.parser().parseClaimsJwt((String)jwt).getBody().get("userid"));
+		user.setNickname((String) Jwts.parser().parseClaimsJwt((String)jwt).getBody().get("nickname"));
+		user.setProfileImg((String) Jwts.parser().parseClaimsJwt((String)jwt).getBody().get("profileImg"));
+		user.setLoginApi((int) Jwts.parser().parseClaimsJwt((String)jwt).getBody().get("loginApi"));
 		return new ResponseEntity<>(user, HttpStatus.OK);
 	}
 
