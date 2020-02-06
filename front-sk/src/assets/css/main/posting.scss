@@ -21,6 +21,7 @@ $desktop: 'screen and (min-width : 1025px)';
     .name-time {
         strong {
             font-size: 1.2em;
+            margin-right: 10px;
         }
     }
 
@@ -147,15 +148,46 @@ $desktop: 'screen and (min-width : 1025px)';
 
 .comment-box {
     padding: 20px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
+
+    .comments {
+        .comment {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+
+            .writer-img img {
+                width: 30px;
+                height: 30px;
+                border-radius: 20px;
+            }
+
+            .comment-info {
+                margin-left: 20px;
+
+                .writer {
+                    margin-bottom: 5px;
+
+                    span {
+                        margin-left: 10px;
+                        font-size: 12px;
+                    }
+                }
+            }
+        }
+    }
+
+    .write-comment {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
 
     .comment-form {
         width: 95%;
 
         textarea {
-            height: 36px;
+            height: 18px;
             border: 0;
             outline: 0;
             line-height: 18px;

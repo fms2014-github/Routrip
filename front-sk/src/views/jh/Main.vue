@@ -16,12 +16,13 @@
                         <div class="postings-posting">
                             <div class="post-info">
                                 <div class="profile-img">
-                                    <img src="../../assets/images/user.png" alt />
+                                    <img :src="'http://192.168.100.70:8083/' + data.user.profileImg" />
                                 </div>
                                 <div class="name-time">
                                     <strong>{{ data.title }}</strong>
+                                    <span>{{ data.writeday }}</span>
                                     <br />
-                                    <span>로마, 이탈리아</span>
+                                    <span>{{ data.user.nickname }}</span>
                                 </div>
                                 <div class="else">
                                     <span>
@@ -45,32 +46,47 @@
                             <div class="follow">
                                 <button>🏹</button>
                             </div>
+                            <div class="state">{{ data.favoriteNum }}명이 이 게시글을 좋아합니다.</div>
                         </div>
+
                         <div class="text">
                             <span>
-                                너무너무 즐거웠어요를레이히~~~~~요를레이히~~~~ 요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
-                                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~ 요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
-                                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~ 요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
-                                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~ 요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
-                                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~ 요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
-                                요를레이히~~~~~요를레이히~~~~요를레이히~~~~~요를레이히~~~~
+                                {{ data.keyword }}
                             </span>
                         </div>
 
                         <div class="comment-box">
-                            <form action class="comment-form">
-                                <textarea
-                                    class="comment"
-                                    @keydown="resize(this)"
-                                    placeholder="댓글 달기..."
-                                    autocomplete="off"
-                                    wrap="soft"
-                                ></textarea>
-                            </form>
-                            <div class="comment-btn">
-                                <button>
-                                    <strong>등록</strong>
-                                </button>
+                            <div class="comments">
+                                <div class="comment" v-for="(comment, commentIdx) in data.comments" :key="commentIdx">
+                                    <div class="writer-img">
+                                        <img :src="'http://192.168.100.70:8083/' + comment.user.profileImg" alt />
+                                    </div>
+                                    <div class="comment-info">
+                                        <div class="writer">
+                                            <strong>{{ comment.user.nickname }}</strong>
+                                            <span>{{ comment.writeday }}</span>
+                                        </div>
+                                        <div class="writer-text">
+                                            <span>{{ comment.contents }}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="write-comment">
+                                <form action class="comment-form">
+                                    <textarea
+                                        class="comment"
+                                        @keydown="resize(this)"
+                                        placeholder="댓글 달기..."
+                                        autocomplete="off"
+                                        wrap="soft"
+                                    ></textarea>
+                                </form>
+                                <div class="comment-btn">
+                                    <button>
+                                        <strong>등록</strong>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -85,7 +101,6 @@
 //vue
 import Header from './Header.vue';
 import Footer from './Footer.vue';
-import Posting from './Posting.vue';
 import BestPosting from './BestPosting.vue';
 
 //js
