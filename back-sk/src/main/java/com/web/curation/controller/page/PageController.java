@@ -3,19 +3,36 @@ package com.web.curation.controller.page;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import com.web.curation.model.BasicResponse;
-import com.web.curation.model.board.*;
+import com.web.curation.model.board.Board;
+import com.web.curation.model.board.Comment;
+import com.web.curation.model.board.Img;
+import com.web.curation.model.board.Marker;
 import com.web.curation.model.user.User;
 import com.web.curation.service.BoardService;
 import com.web.curation.service.UserService;
 
 import io.jsonwebtoken.Jwts;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
+import springfox.documentation.spring.web.json.Json;
 
 @ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
 		@ApiResponse(code = 403, message = "Forbidden", response = BasicResponse.class),
@@ -112,6 +129,7 @@ public class PageController {
 		boardService.updateFavoriteNum(board.getBoardid(), favoriteNum);
 		board.setFavoriteNum(favoriteNum);
 		board.setMarkers(boardService.findMarker(board.getBoardid()));
+		System.out.println("게시글 상세를 조회하였습니다.");
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
 
@@ -134,10 +152,16 @@ public class PageController {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
 
-			for (Marker m : board.getMarkers()) {
-				m.setBoardid(board.getBoardid());
+			for (Img i : board.getImgs()) {
+				boardService.addImg(i);
 			}
 			
+			for (Marker m : board.getMarkers()) {
+				m.setBoardid(board.getBoardid());
+				boardService.addMarker(m);
+			}
+			
+			System.out.println("게시글 등록되었습니다.");
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -191,8 +215,12 @@ public class PageController {
 		}
 
 		for(Marker m : board.getMarkers()) {
-			//이것도 다 삭제하고 다시 등록하도록 변경
-			boardService.updateMarker(m);
+			if(m.getMarkerid() > 0) {//있던 마커면 수정
+				boardService.updateMarker(m);
+			}else {//없던 마커면 새로 등록
+				m.setBoardid(board.getBoardid());
+				boardService.addMarker(m);
+			}
 		}
 		
 		int ok = boardService.updateBoard(b);
@@ -216,13 +244,17 @@ public class PageController {
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			b.setCommentNum(comments.size());
 			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
-			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);//좋아요 수 갱신
 			b.setFavoriteNum(favoriteNum);
 			b.setMarkers(boardService.findMarker(b.getBoardid()));
+			User user = userService.findUserByUid(b.getUid());
+			b.setNickname(user.getNickname());
 		}
+		//System.out.println(new Gson().toJson(boards));
+		System.out.println("전체 게시글 조회했습니다.");
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
-
+                                                                                                            
 	@GetMapping("/searchBoard/{str}")
 	@ApiOperation(value = "게시글 검색")
 	public Object search(@PathVariable String str) throws Exception {
@@ -268,6 +300,7 @@ public class PageController {
 				board.add(b);
 			}
 		}
+		System.out.println("게시글 조회되었습니다.");
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
 

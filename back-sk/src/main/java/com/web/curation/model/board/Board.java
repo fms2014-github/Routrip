@@ -19,6 +19,7 @@ public class Board {
 	private int favoriteNum = 0;
 	private int commentNum = 0;
 	private List<Marker> markers = new ArrayList<>();
+	private String nickname;
 	
 	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
 			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs, int favoriteNum,
@@ -222,5 +223,13 @@ public class Board {
 
 	public void setMarkers(List<Marker> markers) {
 		this.markers = markers;
+	}
+
+	public String getNickname() {
+		return nickname;
+	}
+
+	public void setNickname(String nickname) {
+		this.nickname = nickname;
 	}
 }
