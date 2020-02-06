@@ -1,6 +1,6 @@
 <template>
     <div>
-        {{title}} 글에 {{comment}} 을 남겼습니다.
+        {{picture}}{{nickName}} 
     </div>
 </template>
 
@@ -9,9 +9,9 @@ import common from "../../assets/css/common.scss"
 
 
 export default {
-    props: {
-        title: String,
-        comment:String,
+    props:{
+        picture:String,
+        nickName:String,
     }
 }
 </script>

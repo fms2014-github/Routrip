@@ -1,9 +1,18 @@
 <template>
-    <h1>안녕 여긴 좋아요</h1>
+    <div>
+        <h1>안녕 여긴 좋아요</h1>
+        <allLike></allLike>
+    </div>  
 </template>
 
 <script>
-import UserApi from '../../../apis/UserApi';
+import allLike from "../../../components/common/allLike"
 
-export default {};
+
+export default {
+    components:{
+        allLike
+    }
+
+};
 </script>

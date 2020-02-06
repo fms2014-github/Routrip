@@ -34,6 +34,7 @@ import UserPicture from '../../../components/common/UserPicture';
 import TabComponent from '../../../components/common/Tab';
 import '../../../assets/css/profile.scss';
 import '../../../assets/css/style.scss';
+import Axios from 'axios';
 
 
 export default {
@@ -42,9 +43,15 @@ export default {
         UserPicture,
         TabComponent,
     },
+    created: function(){
+        const URI = 'http://192.168.100.70:8083/';
+        Axios.get(`${URI}/page/`)
+            .then(res => {}).catch(res=>{})
+    },
     mounted() {
         this.getInfo();
         this.checkLogin();
+        // axios.get 메소드호출
     },
     methods: {
         popupToggle() {
@@ -72,7 +79,7 @@ export default {
                 this.show = false;
             }
         },
-        
+
         async changeNick(){
             const ipAPI = 'usernick'
             const inputValue = fetch(ipAPI)
