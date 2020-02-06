@@ -329,8 +329,7 @@ export default {
             }
         },
         close() {
-            localStorage.setItem('popup', 'false');
-            this.$router.push('/');
+            this.$emit('popupToggle');
         },
     },
 };

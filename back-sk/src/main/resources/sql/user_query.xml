@@ -128,11 +128,15 @@
 	</select>
 	
 	<insert id="addBlackList" parameterType="map">
-	insert into blacklist(uid, exp) values(#{uid}, #{exp})
+	insert into blacklist(uid, exp, jwt) values(#{uid}, #{exp}, #{jwt})
 	</insert>
 	
 	<select id="findBlackList" parameterType="map" resultType="int">
-	select count(exp) from blacklist where uid=#{uid} and exp=#{exp}
+	select count(jwt) from blacklist where uid=#{uid} and exp=#{exp}
+	</select>
+	
+	<select id="findBlackListByUid" parameterType="int" resultType="string">
+	select exp from blacklist where uid=#{value}
 	</select>
 	
 	<delete id="deleteBlackList">

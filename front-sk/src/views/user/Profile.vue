@@ -5,7 +5,7 @@
             <div class="profile-wrap">
                 <UserPicture :userPicture="true" />
                 <div class="user-info">
-                    <HeaderComponent headerTitle="여기가 이메일" :mailIcon="true" />
+                    <HeaderComponent :headerTitle="user.email" :mailIcon="true" />
                     <HeaderComponent headerTitle="여기가 닉네임" :profileIcon="true" rightText="수정" />
                 </div>
             </div>
@@ -30,12 +30,27 @@ import UserPicture from '../../components/common/UserPicture';
 import TabComponent from '../../components/common/Tab';
 import '../../assets/css/profile.scss';
 import '../../assets/css/style.scss';
+import { createNamespacedHelpers } from 'vuex';
+
+const userMapGetters = createNamespacedHelpers('User').mapGetters;
 
 export default {
     components: {
         HeaderComponent,
         UserPicture,
         TabComponent,
+    },
+    computed: {
+        ...userMapGetters(['getUser']),
+    },
+    data: () => {
+        return {
+            user: {},
+        };
+    },
+    mounted() {
+        console.log(this.user);
+        this.user = this.getUser();
     },
 };
 </script>

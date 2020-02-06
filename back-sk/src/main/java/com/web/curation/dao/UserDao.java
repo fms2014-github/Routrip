@@ -108,10 +108,11 @@ public class UserDao implements IUserDao{
 
 
 	@Override
-	public int addBlackList(int uid, String exp) throws Exception {
+	public int addBlackList(int uid, String exp, String jwt) throws Exception {
 		Map<String, String> map = new HashMap<String, String>();
 		map.put("uid", String.valueOf(uid));
 		map.put("exp", exp);
+		map.put("jwt", jwt);
 		return sqlSession.insert(ns+"addBlackList", map);
 	}
 
@@ -131,5 +132,10 @@ public class UserDao implements IUserDao{
 	@Override
 	public int updateProfile(User user) throws Exception {
 		return sqlSession.update(ns+"updateProfile", user);
+	}
+
+	@Override
+	public List<String> findBlackListByUid(int uid) throws Exception {
+		return sqlSession.selectList(ns+"findBlackListByUid", uid);
 	}
 }

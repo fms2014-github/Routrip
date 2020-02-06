@@ -3,23 +3,42 @@ package com.web.curation.controller.account;
 import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Properties;
 
-import javax.mail.*;
-import javax.mail.internet.*;
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.AddressException;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import com.web.curation.model.BasicResponse;
 import com.web.curation.model.user.User;
 import com.web.curation.service.UserService;
 
 import io.jsonwebtoken.Jwts;
-import io.swagger.annotations.*;
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 
 @ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
 		@ApiResponse(code = 403, message = "Forbidden", response = BasicResponse.class),
@@ -65,24 +84,24 @@ public class AccountController {
 
 	@PostMapping("/snslogin")
 	@ApiOperation(value = "sns로그인")
-	public Object snslogin(@RequestBody String email, int api) throws Exception {
-		User user = userService.findUserByEmail(email, api);
+	public Object snslogin(@RequestBody User user) throws Exception {
+		User loginUser = userService.findUserByEmail(user.getEmail(), user.getLoginApi());
 		System.out.println("sns로그인이 시도되었습니다.");
-		if (user == null)
+		if (loginUser == null)
 			return new ResponseEntity<>(HttpStatus.OK);
-		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(user.getUid()))
-				.claim("uid", user.getUid()).claim("email", user.getEmail())
-				// .claim("password", user.getPassword())
-				// .claim("name", user.getName())
-				.claim("nickname", user.getNickname())
-				// .claim("phone", user.getPhone())
-				// .claim("birth", user.getBirth())
-				.claim("profileImg", user.getProfileImg()).claim("loginApi", user.getLoginApi())
-				.claim("userkey", user.getUserkey())
+		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
+				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
+				// .claim("password", loginUser.getPassword())
+				// .claim("name", loginUser.getName())
+				.claim("nickname", loginUser.getNickname())
+				// .claim("phone", loginUser.getPhone())
+				// .claim("birth", loginUser.getBirth())
+				.claim("profileImg", loginUser.getProfileImg()).claim("loginApi", loginUser.getLoginApi())
+				.claim("userkey", loginUser.getUserkey())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
 				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
-		System.out.println(user.getEmail() + " 님 sns로그인 되었습니다.");
+		System.out.println(loginUser.getEmail() + " 님 sns로그인 되었습니다.");
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
 
@@ -91,10 +110,10 @@ public class AccountController {
 	public Object logout(@RequestBody String jwt) throws Exception {
 		int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String exp = String.valueOf(format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration()));
+		String exp = format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration());
 		userService.deleteBlackList();
-		if (userService.findBlackList(uid, exp) == 0) {
-			userService.addBlackList(uid, exp);
+		if (userService.findBlackList(uid, exp) == 0 && isOkJwt(jwt)) {
+			userService.addBlackList(uid, exp, jwt);
 			System.out.println("로그아웃되었습니다.");
 			return new ResponseEntity<>(HttpStatus.OK);
 		} else {
@@ -106,19 +125,22 @@ public class AccountController {
 	@PostMapping("/follow")
 	@ApiOperation(value = "팔로우 등록")
 	public Object following(@RequestBody String jwt, int uid) throws Exception {
-		int ok = 0;
-		List<Integer> follower = userService.getFollow((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
-		boolean flag = true;
-		for (int i : follower) {
-			if (i == uid) {
-				flag = false;
-				break;
+		if (isOkJwt(jwt)) {
+			int ok = 0;
+			List<Integer> follower = userService
+					.getFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+			boolean flag = true;
+			for (int i : follower) {
+				if (i == uid) {
+					flag = false;
+					break;
+				}
 			}
+			if (flag)
+				ok = userService.addFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), uid);
+			if (ok > 0)
+				return new ResponseEntity<>(HttpStatus.OK);
 		}
-		if (flag)
-			ok = userService.addFollow((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), uid);
-		if (ok > 0)
-			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
@@ -145,22 +167,26 @@ public class AccountController {
 	@DeleteMapping("/follow")
 	@ApiOperation(value = "팔로우 해제")
 	public Object deleteFollow(@RequestBody String jwt, int uid) throws Exception {
-		int ok = userService.deleteFollow((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), uid);
-		if (ok > 0)
-			return new ResponseEntity<>(HttpStatus.OK);
+		if (isOkJwt(jwt)) {
+			int ok = userService.deleteFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), uid);
+			if (ok > 0)
+				return new ResponseEntity<>(HttpStatus.OK);
+		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	@DeleteMapping("/user")
 	@ApiOperation(value = "탈퇴하기")
 	public Object deleteUser(@RequestBody String jwt) throws Exception {
-		int uid = (int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
-		int ok = 0;
-		ok = userService.deleteUser(uid);
-		if (ok > 0) {
-			// 이미지를 저장한 img/uid 폴더를 프로젝트에서 삭제(프로젝트 내 저장일 경우)
-			//deleteFolder(System.getProperty("user.dir") + "\\img\\" + uid);
-			return new ResponseEntity<>(HttpStatus.OK);
+		if (isOkJwt(jwt)) {
+			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
+			int ok = 0;
+			ok = userService.deleteUser(uid);
+			if (ok > 0) {
+				// 이미지를 저장한 img/uid 폴더를 프로젝트에서 삭제(프로젝트 내 저장일 경우)
+				// deleteFolder(System.getProperty("user.dir") + "\\img\\" + uid);
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -169,7 +195,7 @@ public class AccountController {
 	@ApiOperation(value = "비밀번호 변경")
 	public Object updatePassword(@RequestBody User user) throws Exception {
 		user.setUid(userService.findUserByEmail(user.getEmail(), 0).getUid());
-		int ok = userService.updateProfile(user);//안되면 changePW함수로 다시 변경
+		int ok = userService.updateProfile(user);// 안되면 changePW함수로 다시 변경
 		if (ok > 0) {
 			System.out.println("비밀번호가 변경되었습니다.");
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -178,14 +204,15 @@ public class AccountController {
 	}
 
 	@PutMapping("/user")
-	@ApiOperation(value = "회원정보 변경")//프로필 이미지, 닉네임 변경
+	@ApiOperation(value = "회원정보 변경") // 프로필 이미지, 닉네임 변경
 	public Object updateProfile(@RequestBody User user) throws Exception {
-		if(user.getProfileImg()!=null) {
-			//DB안의 내용물은 uid.png 나 디폴트 이미지나 둘 중 하나
-			//받아온 파일을 정해진 폴더에 uid.png 형식으로 다운받는 코드 짜서 넣기
+		if (user.getProfileImg() != null) {
+			// DB안의 내용물은 uid.png 나 디폴트 이미지나 둘 중 하나
+			// 받아온 파일을 정해진 폴더에 uid.png 형식으로 다운받는 코드 짜서 넣기
 		}
 		int ok = userService.updateProfile(user);
-		//업데이트를 적용하고 싶으면 로그아웃 후 다시 로그인하도록 바로 적용하고 싶으면 jwt도 받아서 원래껄 로그아웃시키고 새로 로그인 시킨 뒤 반환
+		// 업데이트를 적용하고 싶으면 로그아웃 후 다시 로그인하도록 바로 적용하고 싶으면 jwt도 받아서 원래껄 로그아웃시키고 새로 로그인 시킨 뒤
+		// 반환
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -256,9 +283,9 @@ public class AccountController {
 	@ApiOperation(value = "이메일 찾기")
 	public Object findEmail(@RequestBody User user) throws Exception {
 		List<String> email = userService.findEmail(user);
-		if(email.isEmpty())
+		if (email.isEmpty())
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		for (int e=0;e<email.size();e++) {
+		for (int e = 0; e < email.size(); e++) {
 			String s = email.get(e);
 			char[] c = s.toCharArray();
 			int g = 0;
@@ -404,5 +431,22 @@ public class AccountController {
 		} catch (Exception e) {
 			e.getStackTrace();
 		}
+	}
+
+	public boolean isOkJwt(String jwt) throws Exception {
+		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		Date exp = format.parse(format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration()));
+		Date now = format.parse(format.format(new Date()));
+		if (exp.getTime() < now.getTime())
+			return false;
+		List<String> exps = userService.findBlackListByUid((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+		if (exps != null) {
+			for(String e:exps) {
+				if(exp.getTime() < format.parse(e).getTime()) {
+					return false;
+				}
+			}
+		}
+		return true;
 	}
 }

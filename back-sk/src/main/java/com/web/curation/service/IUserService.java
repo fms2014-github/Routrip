@@ -24,7 +24,8 @@ public interface IUserService {//extends JpaRepository<User, String> {
     List<Integer> getFollow(int following) throws Exception;
     List<Integer> getFollower(int follower) throws Exception;
     
-    int addBlackList(int uid, String exp) throws Exception;
+    int addBlackList(int uid, String exp, String jwt) throws Exception;
     int findBlackList(int uid, String exp) throws Exception;
+    List<String> findBlackListByUid(int uid) throws Exception;
     int deleteBlackList() throws Exception;
 }

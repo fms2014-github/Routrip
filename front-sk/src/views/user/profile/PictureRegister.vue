@@ -1,4 +1,3 @@
-
 <template>
     <div>
         <div id="sign-up">
@@ -129,14 +128,14 @@
             <div class="terms">
                 <h1>개인정보 이용 동의서</h1>
                 <div class="terms-content">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam rutrum justo diam, sed tincidunt ex sodales molestie. Nulla
-                    interdum convallis odio, porttitor semper enim hendrerit sit amet. Phasellus et est et nunc varius aliquam. Fusce in
-                    urna sollicitudin, pellentesque velit sed, iaculis enim. Duis non risus vel nunc elementum faucibus ac rhoncus arcu.
-                    Interdum et malesuada fames ac ante ipsum primis in faucibus. Cras efficitur nulla lacus, non pretium mi dapibus
-                    convallis. Curabitur quis est sed justo pulvinar tincidunt. Vestibulum molestie libero vitae velit consequat suscipit.
-                    Mauris elementum facilisis felis in tincidunt. Donec vulputate tincidunt ex non elementum. Integer eget aliquet nisl.
-                    Nullam lectus turpis, dapibus a orci a, molestie accumsan nisl. Donec volutpat lacus lacus, eget sodales enim luctus a.
-                    Pellentesque tincidunt ligula ut ligula rhoncus luctus. Suspendisse in augue id velit pretium varius.
+                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam rutrum justo diam, sed tincidunt ex sodales molestie. Nulla interdum
+                    convallis odio, porttitor semper enim hendrerit sit amet. Phasellus et est et nunc varius aliquam. Fusce in urna sollicitudin,
+                    pellentesque velit sed, iaculis enim. Duis non risus vel nunc elementum faucibus ac rhoncus arcu. Interdum et malesuada fames ac
+                    ante ipsum primis in faucibus. Cras efficitur nulla lacus, non pretium mi dapibus convallis. Curabitur quis est sed justo pulvinar
+                    tincidunt. Vestibulum molestie libero vitae velit consequat suscipit. Mauris elementum facilisis felis in tincidunt. Donec
+                    vulputate tincidunt ex non elementum. Integer eget aliquet nisl. Nullam lectus turpis, dapibus a orci a, molestie accumsan nisl.
+                    Donec volutpat lacus lacus, eget sodales enim luctus a. Pellentesque tincidunt ligula ut ligula rhoncus luctus. Suspendisse in
+                    augue id velit pretium varius.
                 </div>
                 <button @click="termPopup = false">
                     닫기
@@ -152,8 +151,8 @@ import '../../../assets/css/style.scss';
 import UserApi from '../../../apis/UserApi';
 import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
-import '../../../assets/css/profile.scss'
-import '../../../assets/css/user.scss'
+import '../../../assets/css/profile.scss';
+import '../../../assets/css/user.scss';
 
 export default {
     data: () => {
