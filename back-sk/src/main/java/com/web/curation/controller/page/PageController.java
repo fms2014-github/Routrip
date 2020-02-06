@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.google.gson.Gson;
 import com.web.curation.model.BasicResponse;
 import com.web.curation.model.board.Board;
 import com.web.curation.model.board.Comment;
@@ -244,11 +243,12 @@ public class PageController {
 			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);//좋아요 수 갱신
 			b.setFavoriteNum(favoriteNum);
 			b.setMarkers(boardService.findMarker(b.getBoardid()));
+			b.setComments(boardService.findComment(b.getBoardid()));
 			User user = userService.findUserByUid(b.getUid());
-			b.setNickname(user.getNickname());
+			b.setUser(user);
 		}
 		System.out.println("전체 게시글 조회했습니다.");
-		return new ResponseEntity<>(new Gson().toJson(boards), HttpStatus.OK);
+		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
                                                                                                             
 	@GetMapping("/searchBoard/{str}")

@@ -3,6 +3,8 @@ package com.web.curation.model.board;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.web.curation.model.user.User;
+
 public class Board {
 	private int boardid;
 	private int uid;
@@ -19,7 +21,7 @@ public class Board {
 	private int favoriteNum = 0;
 	private int commentNum = 0;
 	private List<Marker> markers = new ArrayList<>();
-	private String nickname;
+	private User user;
 	
 	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
 			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs, int favoriteNum,
@@ -225,11 +227,11 @@ public class Board {
 		this.markers = markers;
 	}
 
-	public String getNickname() {
-		return nickname;
+	public User getUser() {
+		return user;
 	}
 
-	public void setNickname(String nickname) {
-		this.nickname = nickname;
+	public void setUser(User user) {
+		this.user = user;
 	}
 }
