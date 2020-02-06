@@ -88,10 +88,10 @@ public class PageController {
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
 
-	@DeleteMapping("/favorite")
+	@DeleteMapping("/favorite/{boardid}")
 	@ApiOperation(value = "좋아요 해제")
-	public Object deleteFavorite(@RequestBody String jwt, Board board) throws Exception {
-		int ok = boardService.deleteFavorite((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), board.getBoardid());
+	public Object deleteFavorite(@RequestBody String jwt, @PathVariable int boardid) throws Exception {
+		int ok = boardService.deleteFavorite((int)Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), boardid);
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -117,8 +117,8 @@ public class PageController {
 
 	@PostMapping("/board")
 	@ApiOperation(value = "게시글 등록")
-	public Object addBoard(@RequestBody Board board, int uid) throws Exception {
-		board.setUid(uid);
+	public Object addBoard(@RequestBody Board board) throws Exception {
+		//uid 프론트에서 바로 넣어놓기
 		int ok = boardService.addBoard(board);
 
 		if (ok > 0) {
@@ -295,9 +295,8 @@ public class PageController {
 
 	@PostMapping("/comment")
 	@ApiOperation(value = "댓글 등록")
-	public Object addComment(@RequestBody Comment comment, int boardid, int uid) throws Exception {
-		comment.setBoardid(boardid);
-		comment.setUid(uid);
+	public Object addComment(@RequestBody Comment comment) throws Exception {
+		//boardid 랑 uid 는 프론트에서 바로 넣어놓기
 		int ok = boardService.addComment(comment);
 		// comment 에 listener 가 있으면 listener 한테 알람? 백엔드에서 보내야하나?
 		if (ok > 0)

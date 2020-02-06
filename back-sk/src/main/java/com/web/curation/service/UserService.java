@@ -95,8 +95,8 @@ public class UserService implements IUserService{
 	}
 
 	@Override
-	public int addBlackList(int uid, String exp) throws Exception {
-		return userDao.addBlackList(uid, exp);
+	public int addBlackList(int uid, String exp, String jwt) throws Exception {
+		return userDao.addBlackList(uid, exp, jwt);
 	}
 
 	@Override
@@ -112,5 +112,10 @@ public class UserService implements IUserService{
 	@Override
 	public int updateProfile(User user) throws Exception {
 		return userDao.updateProfile(user);
+	}
+
+	@Override
+	public List<String> findBlackListByUid(int uid) throws Exception {
+		return userDao.findBlackListByUid(uid);
 	}
 }
