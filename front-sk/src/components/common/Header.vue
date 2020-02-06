@@ -29,7 +29,7 @@ export default {
     name: 'header',
     props: ['profileIcon', 'mailIcon', 'headerTitle', 'isBack', 'isSearch', 'rightText', 'isDisabled'],
     mounted() {
-        console.log(this.headerTitle)
-    }
+        console.log(this.headerTitle);
+    },
 };
 </script>
