@@ -50,10 +50,10 @@
             <h2>header</h2>
             <div class="wrap">
                 <!-- header -->
-                <HeaderComponent headerTitle="헤더 타이틀" :isSearch="true" />
+                <HeaderComponent headerTitle="헤헤더 타이틀" :isSearch="true" />
                 <HeaderComponent headerTitle="헤더 타이틀" :isBack="true" />
                 <HeaderComponent headerTitle="헤더 타이틀" :isBack="true" rightText="저장" isDisabled="true" />
-                <HeaderComponent headerTitle="헤더 타이틀" :isBack="true" rightText="저장" />
+                <HeaderComponent headerTitle="더 타이틀" :isBack="true" rightText="저장" />
                 <HeaderComponent headerTitle="헤더 타이틀" :isBack="true" :isSearch="true" />
             </div>
 

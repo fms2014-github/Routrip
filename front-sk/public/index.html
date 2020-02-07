@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="ko">
+<html lang="en">
 
 <head>
     <meta charset="utf-8">
@@ -10,14 +10,14 @@
     <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=07c20e31d1891825ce375b67602ddf31&libraries=services,clusterer,drawing">
     </script>
-
     <title>example</title>
-    <script src="../src/apis/test.js"></script>
     <script>
-        var mapContainer, mapOption, map, manager, options, toolbox, mapImage, customOverlay, content;
-        var saveMarkers = [];
-        var overlays = [];
+        var mapContainer, mapOption, map, manager, options, toolbox, mapImage;
         var commentIndex = 0;
+        var startX, startY, startOverlayPoint
+        var info = [],
+            cusInfo = []
+        var commentCondition = 'false'
         window.onload = function () { // window.onload 시작
             mapContainer = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
             mapOption = {
@@ -97,17 +97,35 @@
 
             // 위에 작성한 옵션으로 Drawing Manager를 생성합니다
             manager = new kakao.maps.Drawing.DrawingManager(options);
-
-            // Toolbox를 생성합니다.
-            // Toolbox 생성 시 위에서 생성한 DrawingManager 객체를 설정합니다.
-            // DrawingManager 객체를 꼭 설정해야만 그리기 모드와 매니저의 상태를 툴박스에 설정할 수 있습니다.
-            toolbox = new kakao.maps.Drawing.Toolbox({
-                drawingManager: manager,
+            manager.addListener('drawend', function (mouseEvent) {
+                if (commentCondition) {
+                    if (mouseEvent.overlayType === 'marker') {
+                        info[info.length - 1].open(map, mouseEvent.target);
+                    } else if (mouseEvent.overlayType === 'circle' || mouseEvent.overlayType ===
+                        'ellipse') {
+                        cusInfo[cusInfo.length - 1].setPosition(mouseEvent.target.getPosition())
+                        cusInfo[cusInfo.length - 1].setMap(map)
+                    } else if (mouseEvent.overlayType === 'arrow' || mouseEvent.overlayType ===
+                        'polyline' ||
+                        mouseEvent.overlayType === 'polygon') {
+                        cusInfo[cusInfo.length - 1].setPosition(mouseEvent.target.getPath()[Math.floor(
+                            mouseEvent.target.getPath().length / 2)])
+                        cusInfo[cusInfo.length - 1].setMap(map)
+                    } else if (mouseEvent.overlayType === 'rectangle') {
+                        let pos_11 = mouseEvent.target.getBounds().getSouthWest().getLat()
+                        let pos_12 = mouseEvent.target.getBounds().getSouthWest().getLng()
+                        let pos_21 = mouseEvent.target.getBounds().getNorthEast().getLat()
+                        let pos_22 = mouseEvent.target.getBounds().getNorthEast().getLng()
+                        let a = pos_11 + (Math.abs(pos_11 - pos_21) / 2)
+                        let b = pos_12 + (Math.abs(pos_12 - pos_22) / 2)
+                        cusInfo[cusInfo.length - 1].setPosition(new kakao.maps.LatLng(a, b))
+                        cusInfo[cusInfo.length - 1].setMap(map)
+                    } else {
+                        cusInfo[cusInfo.length - 1].setPosition(mouseEvent.coords)
+                        cusInfo[cusInfo.length - 1].setMap(map)
+                    }
+                }
             });
-
-            // 지도 위에 Toolbox를 표시합니다
-            // kakao.maps.ControlPosition은 컨트롤이 표시될 위치를 정의하는데 TOP은 위 가운데를 의미합니다.
-            map.addControl(toolbox.getElement(), kakao.maps.ControlPosition.TOP);
 
             var undoBtn = document.getElementById('undo');
             var redoBtn = document.getElementById('redo');
@@ -119,57 +137,44 @@
                 // 되돌릴 수 있다면 undo 버튼을 활성화 시킵니다
                 if (manager.undoable()) {
                     undoBtn.disabled = false;
-                    undoBtn.className = '';
+                    undoBtn.classList.remove('disabled');
                 } else {
                     // 아니면 undo 버튼을 비활성화 시킵니다
                     undoBtn.disabled = true;
-                    undoBtn.className = 'disabled';
+                    undoBtn.classList.add('disabled');
                 }
 
                 // 취소할 수 있다면 redo 버튼을 활성화 시킵니다
                 if (manager.redoable()) {
                     redoBtn.disabled = false;
-                    redoBtn.className = '';
+                    redoBtn.classList.remove('disabled');
                 } else {
                     // 아니면 redo 버튼을 비활성화 시킵니다
                     redoBtn.disabled = true;
-                    redoBtn.className = 'disabled';
+                    redoBtn.classList.add('disabled');
                 }
             });
 
 
         };
-        // window.onload 끝
 
         function extractionImg() {
-            var bounds = new kakao.maps.LatLngBounds();
-            var data = manager.getData();
-            var markers = data[kakao.maps.drawing.OverlayType.MARKER];
-            var len = markers.length,
-                i = 0;
-            for (; i < len; i++) {
-                var marker = {
-                    position: new kakao.maps.LatLng(markers[i].y, markers[i].x),
-                };
-                bounds.extend(marker['position']);
-                saveMarkers.push(marker);
-            }
-            if (len === 0) bounds.extend(map.getCenter())
-            map.setBounds(bounds);
-            var staticMapContainer = document.getElementById('map-image');
-            staticMap = new kakao.maps.StaticMap(staticMapContainer, {
-                center: map.getCenter(),
-                level: map.getLevel(),
-                marker: saveMarkers,
-            });
         }
-
         // 버튼 클릭 시 호출되는 핸들러 입니다
-        function selectOverlay(type) {
+        function selectOverlay(condition, type, title, content) {
             // 그리기 중이면 그리기를 취소합니다
             manager.cancel();
-            // 클릭한 그리기 요소 타입을 선택합니다
-            manager.select(kakao.maps.Drawing.OverlayType[type]);
+            if (condition === 'both') {
+                commentCondition = true;
+                insertComment(type, title, content)
+                // 클릭한 그리기 요소 타입을 선택합니다
+                manager.select(kakao.maps.Drawing.OverlayType[type]);
+            } else if (condition === 'comment') {
+                insertComment(type, title, content)
+            } else if (condition === 'drawtool') {
+                commentCondition = false;
+                manager.select(kakao.maps.Drawing.OverlayType[type]);
+            }
         }
 
         // undo 버튼 클릭시 호출되는 함수입니다.
@@ -183,303 +188,207 @@
             // 이전 상태로 되돌린 상태를 취소합니다
             manager.redo();
         }
-        // Drawing Manager에서 가져온 데이터 중 선을 아래 지도에 표시하는 함수입니다
-        function getOverlays() {
-            drawMarker();
-            drawarrow();
-            drawPolyline();
-            drawRectangle();
-            drawCircle();
-            drawEllipse()
-            drawPolygon();
-            return overlays
-        }
 
-        function drawMarker() {
-            var data = manager.getData();
-            var markers = data[kakao.maps.drawing.OverlayType.MARKER];
-            var len = markers.length,
-                i = 0;
-
-            for (; i < len; i++) {
-                var marker = new kakao.maps.Marker({
-                    position: new kakao.maps.LatLng(markers[i].y, markers[i].x),
-                    zIndex: markers[i].zIndex
-                });
-
-                overlays.push(marker);
-            }
-        }
-
-        function drawarrow() {
-            var data = manager.getData();
-            var arrows = data[kakao.maps.drawing.OverlayType.ARROW];
-            var len = arrows.length,
-                i = 0;
-
-            for (; i < len; i++) {
-                var path = pointsToPath(arrows[i].points);
-                var style = arrows[i].options;
-                var arrow = new kakao.maps.Polyline({
-                    endArrow: true,
-                    path: path,
-                    strokeColor: style.strokeColor,
-                    strokeOpacity: style.strokeOpacity,
-                    strokeStyle: style.strokeStyle,
-                    strokeWeight: style.strokeWeight
-                });
-
-                overlays.push(arrow);
-            }
-        }
-        // Drawing Manager에서 가져온 데이터 중 선을 아래 지도에 표시하는 함수입니다
-        function drawPolyline() {
-            var data = manager.getData();
-            var lines = data[kakao.maps.drawing.OverlayType.POLYLINE];
-            var len = lines.length,
-                i = 0;
-
-            for (; i < len; i++) {
-                var path = pointsToPath(lines[i].points);
-                var style = lines[i].options;
-                var polyline = new kakao.maps.Polyline({
-                    path: path,
-                    strokeColor: style.strokeColor,
-                    strokeOpacity: style.strokeOpacity,
-                    strokeStyle: style.strokeStyle,
-                    strokeWeight: style.strokeWeight
-                });
-
-                overlays.push(polyline);
-            }
-        }
-
-        // Drawing Manager에서 가져온 데이터 중 사각형을 아래 지도에 표시하는 함수입니다
-        function drawRectangle() {
-            var data = manager.getData();
-            var rects = data[kakao.maps.drawing.OverlayType.RECTANGLE];
-            var len = rects.length,
-                i = 0;
-
-            for (; i < len; i++) {
-                var style = rects[i].options;
-                var rect = new kakao.maps.Rectangle({
-                    bounds: new kakao.maps.LatLngBounds(
-                        new kakao.maps.LatLng(rects[i].sPoint.y, rects[i].sPoint.x),
-                        new kakao.maps.LatLng(rects[i].ePoint.y, rects[i].ePoint.x)
-                    ),
-                    strokeColor: style.strokeColor,
-                    strokeOpacity: style.strokeOpacity,
-                    strokeStyle: style.strokeStyle,
-                    strokeWeight: style.strokeWeight,
-                    fillColor: style.fillColor,
-                    fillOpacity: style.fillOpacity
-                });
-
-                overlays.push(rect);
-            }
-        }
-
-        // Drawing Manager에서 가져온 데이터 중 원을 아래 지도에 표시하는 함수입니다
-        function drawCircle() {
-            var data = manager.getData();
-            var circles = data[kakao.maps.drawing.OverlayType.CIRCLE];
-            var len = circles.length,
-                i = 0;
-
-            for (; i < len; i++) {
-                var style = circles[i].options;
-                var circle = new kakao.maps.Circle({
-                    center: new kakao.maps.LatLng(circles[i].center.y, circles[i].center.x),
-                    radius: circles[i].radius,
-                    strokeColor: style.strokeColor,
-                    strokeOpacity: style.strokeOpacity,
-                    strokeStyle: style.strokeStyle,
-                    strokeWeight: style.strokeWeight,
-                    fillColor: style.fillColor,
-                    fillOpacity: style.fillOpacity
-                });
-
-                overlays.push(circle);
-            }
-        }
-
-        function drawEllipse() {
-            var data = manager.getData();
-            var ellipses = data[kakao.maps.drawing.OverlayType.ELLIPSE];
-            var len = ellipses.length,
-                i = 0;
-
-            for (; i < len; i++) {
-                var style = ellipses[i].options;
-                var ellipse = new kakao.maps.Ellipse({
-                    rx: ellipses[i].rx,
-                    ry: ellipses[i].ry,
-                    center: new kakao.maps.LatLng(ellipses[i].center.y, ellipses[i].center.x),
-                    strokeColor: style.strokeColor,
-                    strokeOpacity: style.strokeOpacity,
-                    strokeStyle: style.strokeStyle,
-                    strokeWeight: style.strokeWeight,
-                    fillColor: style.fillColor,
-                    fillOpacity: style.fillOpacity
-                });
-
-                overlays.push(ellipse);
-            }
-        }
-        // Drawing Manager에서 가져온 데이터 중 다각형을 아래 지도에 표시하는 함수입니다
-        function drawPolygon() {
-            var data = manager.getData();
-            var polygons = data[kakao.maps.drawing.OverlayType.POLYGON];
-            var len = polygons.length,
-                i = 0;
-
-            for (; i < len; i++) {
-                var path = pointsToPath(polygons[i].points);
-                var style = polygons[i].options;
-                var polygon = new kakao.maps.Polygon({
-                    path: path,
-                    strokeColor: style.strokeColor,
-                    strokeOpacity: style.strokeOpacity,
-                    strokeStyle: style.strokeStyle,
-                    strokeWeight: style.strokeWeight,
-                    fillColor: style.fillColor,
-                    fillOpacity: style.fillOpacity
-                });
-
-                overlays.push(polygon);
-            }
-        }
-
-        // Drawing Manager에서 가져온 데이터 중 
-        // 선과 다각형의 꼭지점 정보를 kakao.maps.LatLng객체로 생성하고 배열로 반환하는 함수입니다 
-        function pointsToPath(points) {
-            var len = points.length,
-                path = [],
-                i = 0;
-
-            for (; i < len; i++) {
-                var latlng = new kakao.maps.LatLng(points[i].y, points[i].x);
-                path.push(latlng);
-            }
-
-            return path;
-        }
-
-        function insertComment(title, content) {
+        function insertComment(type, title, content) {
             let commentWrap = document.createElement('div');
             var commentTitle = document.createElement('div');
+            var commentClose = document.createElement('button');
             var commentHr = document.createElement('hr');
             var commentContent = document.createElement('div');
             var titleTextNoded = document.createTextNode(title);
             var contentTextNoded = document.createTextNode(content);
+            commentWrap.setAttribute('id', 'comment-' + commentIndex++)
             commentWrap.setAttribute('class', 'comment-wrap')
             commentTitle.setAttribute('class', 'comment-title')
+            commentClose.setAttribute('class', 'close')
             commentContent.setAttribute('class', 'comment-content')
             commentWrap.appendChild(commentTitle)
             commentWrap.appendChild(commentHr)
             commentWrap.appendChild(commentContent)
             commentTitle.appendChild(titleTextNoded)
             commentContent.appendChild(contentTextNoded)
-            customOverlay = new kakao.maps.CustomOverlay({
-                position: map.getCenter(),
-                content: commentWrap,
-                xAnchor: 0.3,
-                yAnchor: 0.91
-            });
+            if (type === 'MARKER') {
+                var infowindow = new kakao.maps.InfoWindow({
+                    content: commentWrap,
+                    removable: true
+                });
+                info.push(infowindow)
 
+                // 커스텀 오버레이에 mousedown이벤트를 등록합니다 
+                addEventHandle(commentWrap, 'mousedown', onMouseDown);
 
-            // 커스텀 오버레이를 지도에 표시합니다
-            customOverlay.setMap(map);
-            // 커스텀 오버레이에 mousedown이벤트를 등록합니다 
-            var temp = document.getElementsByClassName('comment-wrap')[commentIndex]
-            temp.parentElement.setAttribute('id', 'comment-no-' + commentIndex);
-            addEventHandle(document.getElementById('comment-no-' + commentIndex++), 'mousedown', onMouseDown);
+                // mouseup 이벤트가 일어났을때 mousemove 이벤트를 제거하기 위해
+                // document에 mouseup 이벤트를 등록합니다 
+                addEventHandle(document, 'mouseup', onMouseUp);
 
-            // mouseup 이벤트가 일어났을때 mousemove 이벤트를 제거하기 위해
-            // document에 mouseup 이벤트를 등록합니다 
-            addEventHandle(document, 'mouseup', onMouseUp);
-        }
-        // 커스텀 오버레이에 mousedown 했을 때 호출되는 핸들러 입니다 
-        function onMouseDown(e) {
-            // 커스텀 오버레이를 드래그 할 때, 내부 텍스트가 영역 선택되는 현상을 막아줍니다.
-            if (e.preventDefault) {
-                e.preventDefault();
-                console.log('onMouseDown','e.preventDefault();')
-                console.log('onMouseDown',e)
+                // 커스텀 오버레이에 mousedown 했을 때 호출되는 핸들러 입니다 
+                function onMouseDown(e) {
+                    // 커스텀 오버레이를 드래그 할 때, 내부 텍스트가 영역 선택되는 현상을 막아줍니다.
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    } else {
+                        e.returnValue = false;
+                    }
+
+                    var proj = map.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다 
+                        overlayPos = infowindow.getPosition(); // 커스텀 오버레이의 현재 위치를 가져옵니다
+
+                    // 커스텀오버레이에서 마우스 관련 이벤트가 발생해도 지도가 움직이지 않도록 합니다
+                    kakao.maps.event.preventMap();
+
+                    // mousedown된 좌표를 설정합니다 
+                    startX = e.clientX;
+                    startY = e.clientY;
+
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표를
+                    // 지도 컨테이너내 픽셀 좌표로 변환합니다 
+                    startOverlayPoint = proj.containerPointFromCoords(overlayPos);
+
+                    // document에 mousemove 이벤트를 등록합니다 
+                    addEventHandle(document, 'mousemove', onMouseMove);
+                }
+
+                // 커스텀 오버레이에 mousedown 한 상태에서 
+                // mousemove 하면 호출되는 핸들러 입니다 
+                function onMouseMove(e) {
+                    // 커스텀 오버레이를 드래그 할 때, 내부 텍스트가 영역 선택되는 현상을 막아줍니다.
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    } else {
+                        e.returnValue = false;
+                    }
+
+                    var proj = map.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다 
+                        deltaX = startX - e.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다 
+                        deltaY = startY - e.clientY,
+                        // mousedown됐을 때의 커스텀 오버레이의 좌표에 실제로 마우스가 이동된 픽셀좌표를 반영합니다 
+                        newPoint = new kakao.maps.Point(startOverlayPoint.x - deltaX, startOverlayPoint.y - deltaY),
+                        // 계산된 픽셀 좌표를 지도 컨테이너에 해당하는 지도 좌표로 변경합니다 
+                        newPos = proj.coordsFromContainerPoint(newPoint);
+
+                    // 커스텀 오버레이의 좌표를 설정합니다 
+                    infowindow.setPosition(newPos);
+                }
+
+                // mouseup 했을 때 호출되는 핸들러 입니다 
+                function onMouseUp(e) {
+                    // 등록된 mousemove 이벤트 핸들러를 제거합니다 
+                    removeEventHandle(document, 'mousemove', onMouseMove);
+                }
+
+                // target node에 이벤트 핸들러를 등록하는 함수힙니다  
+                function addEventHandle(target, type, callback) {
+                    if (target.addEventListener) {
+                        target.addEventListener(type, callback);
+                    } else {
+                        target.attachEvent('on' + type, callback);
+                    }
+                }
+
+                // target node에 등록된 이벤트 핸들러를 제거하는 함수힙니다 
+                function removeEventHandle(target, type, callback) {
+                    if (target.removeEventListener) {
+                        target.removeEventListener(type, callback);
+                    } else {
+                        target.detachEvent('on' + type, callback);
+                    }
+                }
             } else {
-                e.returnValue = false;
-                console.log('onMouseDown','e.returnValue = false;')
-            }
+                commentWrap.appendChild(commentClose)
+                var customOverlay = new kakao.maps.CustomOverlay({
+                    position: map.getCenter(),
+                    content: commentWrap,
+                    yAnchor: 1.4
+                });
+                cusInfo.push(customOverlay)
+                commentClose.onclick = function closeOverlay() {
+                    customOverlay.setMap(null)
+                }
+                // 커스텀 오버레이에 mousedown이벤트를 등록합니다 
+                addEventHandle(commentWrap, 'mousedown', onMouseDown);
 
-            var proj = map.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다 
-                overlayPos = customOverlay.getPosition(); // 커스텀 오버레이의 현재 위치를 가져옵니다
+                // mouseup 이벤트가 일어났을때 mousemove 이벤트를 제거하기 위해
+                // document에 mouseup 이벤트를 등록합니다 
+                addEventHandle(document, 'mouseup', onMouseUp);
 
-            // 커스텀오버레이에서 마우스 관련 이벤트가 발생해도 지도가 움직이지 않도록 합니다
-            kakao.maps.event.preventMap();
+                // 커스텀 오버레이에 mousedown 했을 때 호출되는 핸들러 입니다 
+                function onMouseDown(e) {
+                    // 커스텀 오버레이를 드래그 할 때, 내부 텍스트가 영역 선택되는 현상을 막아줍니다.
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    } else {
+                        e.returnValue = false;
+                    }
 
-            // mousedown된 좌표를 설정합니다 
-            startX = e.clientX;
-            startY = e.clientY;
+                    var proj = map.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다 
+                        overlayPos = customOverlay.getPosition(); // 커스텀 오버레이의 현재 위치를 가져옵니다
 
-            // mousedown됐을 때의 커스텀 오버레이의 좌표를
-            // 지도 컨테이너내 픽셀 좌표로 변환합니다 
-            startOverlayPoint = proj.containerPointFromCoords(overlayPos);
+                    // 커스텀오버레이에서 마우스 관련 이벤트가 발생해도 지도가 움직이지 않도록 합니다
+                    kakao.maps.event.preventMap();
 
-            // document에 mousemove 이벤트를 등록합니다 
-            addEventHandle(document, 'mousemove', onMouseMove);
-        }
+                    // mousedown된 좌표를 설정합니다 
+                    startX = e.clientX;
+                    startY = e.clientY;
 
-        // 커스텀 오버레이에 mousedown 한 상태에서 
-        // mousemove 하면 호출되는 핸들러 입니다 
-        function onMouseMove(e) {
-            // 커스텀 오버레이를 드래그 할 때, 내부 텍스트가 영역 선택되는 현상을 막아줍니다.
-            if (e.preventDefault) {
-                e.preventDefault();
-                console.log('onMouseMove','e.preventDefault();')
-            } else {
-                e.returnValue = false;
-                console.log('onMouseMove','e.returnValue = false;')
-            }
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표를
+                    // 지도 컨테이너내 픽셀 좌표로 변환합니다 
+                    startOverlayPoint = proj.containerPointFromCoords(overlayPos);
 
-            var proj = map.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다 
-                deltaX = startX - e.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다 
-                deltaY = startY - e.clientY,
-                // mousedown됐을 때의 커스텀 오버레이의 좌표에 실제로 마우스가 이동된 픽셀좌표를 반영합니다 
-                newPoint = new kakao.maps.Point(startOverlayPoint.x - deltaX, startOverlayPoint.y - deltaY),
-                // 계산된 픽셀 좌표를 지도 컨테이너에 해당하는 지도 좌표로 변경합니다 
-                newPos = proj.coordsFromContainerPoint(newPoint);
+                    // document에 mousemove 이벤트를 등록합니다 
+                    addEventHandle(document, 'mousemove', onMouseMove);
+                }
 
-            // 커스텀 오버레이의 좌표를 설정합니다 
-            customOverlay.setPosition(newPos);
+                // 커스텀 오버레이에 mousedown 한 상태에서 
+                // mousemove 하면 호출되는 핸들러 입니다 
+                function onMouseMove(e) {
+                    // 커스텀 오버레이를 드래그 할 때, 내부 텍스트가 영역 선택되는 현상을 막아줍니다.
+                    if (e.preventDefault) {
+                        e.preventDefault();
+                    } else {
+                        e.returnValue = false;
+                    }
 
-        }
+                    var proj = map.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다 
+                        deltaX = startX - e.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다 
+                        deltaY = startY - e.clientY,
+                        // mousedown됐을 때의 커스텀 오버레이의 좌표에 실제로 마우스가 이동된 픽셀좌표를 반영합니다 
+                        newPoint = new kakao.maps.Point(startOverlayPoint.x - deltaX, startOverlayPoint.y - deltaY),
+                        // 계산된 픽셀 좌표를 지도 컨테이너에 해당하는 지도 좌표로 변경합니다 
+                        newPos = proj.coordsFromContainerPoint(newPoint);
 
-        // mouseup 했을 때 호출되는 핸들러 입니다 
-        function onMouseUp(e) {
-            // 등록된 mousemove 이벤트 핸들러를 제거합니다 
-            removeEventHandle(document, 'mousemove', onMouseMove);
-        }
+                    // 커스텀 오버레이의 좌표를 설정합니다 
+                    customOverlay.setPosition(newPos);
+                }
 
-        // target node에 이벤트 핸들러를 등록하는 함수힙니다  
-        function addEventHandle(target, type, callback) {
-            if (target.addEventListener) {
-                target.addEventListener(type, callback);
-            } else {
-                target.attachEvent('on' + type, callback);
-            }
-        }
+                // mouseup 했을 때 호출되는 핸들러 입니다 
+                function onMouseUp(e) {
+                    // 등록된 mousemove 이벤트 핸들러를 제거합니다 
+                    removeEventHandle(document, 'mousemove', onMouseMove);
+                }
 
-        // target node에 등록된 이벤트 핸들러를 제거하는 함수힙니다 
-        function removeEventHandle(target, type, callback) {
-            if (target.removeEventListener) {
-                target.removeEventListener(type, callback);
-            } else {
-                target.detachEvent('on' + type, callback);
+                // target node에 이벤트 핸들러를 등록하는 함수힙니다  
+                function addEventHandle(target, type, callback) {
+                    if (target.addEventListener) {
+                        target.addEventListener(type, callback);
+                    } else {
+                        target.attachEvent('on' + type, callback);
+                    }
+                }
+
+                // target node에 등록된 이벤트 핸들러를 제거하는 함수힙니다 
+                function removeEventHandle(target, type, callback) {
+                    if (target.removeEventListener) {
+                        target.removeEventListener(type, callback);
+                    } else {
+                        target.detachEvent('on' + type, callback);
+                    }
+                }
             }
         }
     </script>
 
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@mdi/font@latest/css/materialdesignicons.min.css">
 </head>
 
 <body>

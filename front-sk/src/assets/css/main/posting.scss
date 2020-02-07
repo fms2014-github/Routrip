@@ -1,0 +1,206 @@
+$iPad: 'screen and (max-width : 768px)';
+$iPadPro: 'screen and (min-width : 769px) and (max-width : 1024px) ';
+$desktop: 'screen and (min-width : 1025px)';
+
+.post-info {
+    display: flex;
+    align-items: center;
+    padding: 2vh 2vw;
+    position: relative;
+    margin: auto;
+
+    .profile-img {
+        margin-right: 2vw;
+    }
+
+    .profile-img img {
+        vertical-align: middle;
+        width: 33px;
+    }
+
+    .name-time {
+        strong {
+            font-size: 1.2em;
+            margin-right: 10px;
+        }
+    }
+
+    .else {
+        position: absolute;
+        right: 20px;
+
+        span {
+            font-size: 1.2em;
+        }
+    }
+}
+
+.post-imgs-box {
+    display: flex;
+    overflow: hidden;
+
+    .hooper {
+        height: unset;
+    }
+
+    .hooper-track {
+        display: flex;
+
+        li {
+            @media #{$iPad} {
+                width: 98vw;
+            }
+
+            @media #{$iPadPro} {
+                width: 90vw;
+            }
+
+            @media #{$desktop} {
+                width: 45vw;
+            }
+        }
+    }
+
+    .hooper-pagination {
+        @media #{$iPad} {
+            width: 98vw;
+        }
+
+        @media #{$iPadPro} {
+            width: 90vw;
+        }
+
+        @media #{$desktop} {
+            width: 45vw;
+        }
+
+        .hooper-indicators {
+            display: flex;
+            justify-content: center;
+
+            .hooper-indicator {
+                margin: 0 2px;
+                width: 15px;
+                height: 5px;
+                border-radius: 5px;
+                padding: 0;
+                background-color: #aaa;
+                cursor: pointer;
+            }
+
+            .hooper-indicator:hover,
+            .hooper-indicator.is-active {
+                background-color: #2d2d2d;
+            }
+        }
+    }
+
+    .hooper-sr-only {
+        position: absolute;
+        width: 1px;
+        height: 1px;
+        padding: 0;
+        margin: -1px;
+        overflow: hidden;
+        clip: rect(0, 0, 0, 0);
+        border: 0;
+    }
+
+    img {
+        @media #{$iPad} {
+            width: 98vw;
+            height: 61vw;
+        }
+
+        @media #{$iPadPro} {
+            width: 90vw;
+            height: 56vw;
+        }
+
+        @media #{$desktop} {
+            width: 45vw;
+            height: 28vw;
+        }
+    }
+}
+
+.sns-btn {
+    display: flex;
+    align-items: center;
+    padding: 0 20px 5px 20px;
+
+    .like {
+        font-size: 1.5em;
+        margin-right: 10px;
+    }
+
+    .follow {
+        font-size: 1.5em;
+        margin-right: 10px;
+    }
+}
+
+.text {
+    padding: 10px 20px;
+}
+
+.comment-box {
+    padding: 20px;
+
+    .comments {
+        .comment {
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+
+            .writer-img img {
+                width: 30px;
+                height: 30px;
+                border-radius: 20px;
+            }
+
+            .comment-info {
+                margin-left: 20px;
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                .writer {
+                    margin-bottom: 5px;
+
+                    span {
+                        margin-left: 10px;
+                        font-size: 12px;
+                    }
+                }
+            }
+        }
+    }
+
+    .write-comment {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 20px;
+    }
+
+    .comment-form {
+        width: 95%;
+
+        textarea {
+            height: 18px;
+            border: 0;
+            outline: 0;
+            line-height: 18px;
+            flex: 1;
+            cursor: text;
+            max-height: 72px;
+            font-size: 1em;
+            width: 100%;
+        }
+    }
+
+    .comment-btn button {
+        color: slateblue;
+    }
+}

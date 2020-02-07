@@ -14,7 +14,7 @@
             {{ headerTitle }}
         </h4>
 
-        <button v-if="rightText" class="right-text" :class="{ disabled: isDisabled }" :disabled="isDisabled">
+        <button v-if="rightText" class="right-text" :class="{ disabled: isDisabled }" :disabled="isDisabled" @click="changeNick">
             {{ rightText }}
         </button>
 
@@ -27,9 +27,12 @@
 <script>
 export default {
     name: 'header',
-    props: ['profileIcon', 'mailIcon', 'headerTitle', 'isBack', 'isSearch', 'rightText', 'isDisabled'],
+    props: ['profileIcon', 'mailIcon', 'headerTitle', 'isBack', 'isSearch', 'rightText', 'isDisabled','changeNick'],
     mounted() {
-        console.log(this.headerTitle)
+        console.log(this.headerTitle);
+    },
+    methods: {
+       
     }
 };
 </script>

@@ -1,6 +1,6 @@
 // Vue 및 테스트할 컴포넌트 가져오기
-import Vue from 'vue'
-import ExampleModel from '../../model/ExampleModel'
+import Vue from 'vue';
+import ExampleModel from '../../model/ExampleModel';
 /*
 기본적인 Jest 테스트 구문입니다.
 
@@ -14,7 +14,5 @@ describe('테스트 분류를 적습니다', () => {
     // 원시 컴포넌트 옵션을 검사합니다.
     it('테스트 기능을 적습니다', () => {
         expect(true).toBe(true);
-    })
-
-
-})
+    });
+});

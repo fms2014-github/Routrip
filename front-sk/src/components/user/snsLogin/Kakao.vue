@@ -30,26 +30,49 @@ export default {
     data: () => {
         return {
             init: true,
+            checkLogin: false,
         };
     },
     mounted() {
         if (this.init) {
-            Kakao.init('a54b02b365bbc7f177c5f527d56243e7');
-            this.init = false;
+            Kakao.init('cffc768e4739655aab323adbd9eb2633');
+            this.init = Kakao.isInitialized();
         }
         console.log('여기는 mounted');
     },
+    watch: {
+        checkLogin: function() {
+            if (this.checkLogin) {
+                console.log('??');
+                this.$emit('loginOrJoin');
+                // this.$router.push('/user/join');
+            }
+        },
+    },
     methods: {
         kakaoLogin() {
-            console.log('kakao login');
+            // console.log('kakao login');
             // 로그인 창을 띄웁니다.
+
             Kakao.Auth.loginForm({
-                success: function(authObj) {
+                persistAccessToken: true,
+                persistRefreshToken: true,
+                success: authObj => {
+                    console.log(this);
                     console.log('카카오 로그인 성공! access token 받아옴!');
                     console.log(JSON.stringify(authObj));
+                    console.log(authObj.access_token);
+                    console.log(authObj.refresh_token);
+                    localStorage.setItem('kakao_access_token', authObj.access_token);
+                    localStorage.setItem('kakao_refresh_token', authObj.refresh_token);
+
+                    this.checkLogin = true;
+                    ////////////////////// 부모님께 전송@@@@
                 },
-                fail: function(err) {
-                    alert(JSON.stringify(err));
+                // 실패는 어떨 때 하는건지 모르겠다!x
+                fail: errObj => {
+                    console(JSON.stringify(errObj));
+                    alert('죄송합니다. 다시 로그인 요청 해주세요!');
                 },
             });
         },
