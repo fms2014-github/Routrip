@@ -2,13 +2,14 @@ create table user(
 uid int primary key auto_increment,
 nickname varchar(20) not null,
 name varchar(20) not null,
-email varchar(50) not null,
+email varchar(50),
 password varchar(50),
 phone varchar(20) not null,
 birth date not null,
 profileImg varchar(500) default 'profile_default.jpg',
 loginApi int not null default 0,
-userkey varchar(10) not null
+userkey varchar(10) not null,
+userid varchar(20)
 );
 
 create table follow(

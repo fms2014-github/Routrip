@@ -3,6 +3,8 @@ package com.web.curation.model.board;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.web.curation.model.user.User;
+
 public class Board {
 	private int boardid;
 	private int uid;
@@ -19,10 +21,12 @@ public class Board {
 	private int favoriteNum = 0;
 	private int commentNum = 0;
 	private List<Marker> markers = new ArrayList<>();
+	private User user;
+	private String writeday;//~전
 	
 	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
 			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs, int favoriteNum,
-			int commentNum, List<Marker> markers) {
+			int commentNum, List<Marker> markers, String writeday) {
 		super();
 		this.boardid = boardid;
 		this.uid = uid;
@@ -39,6 +43,7 @@ public class Board {
 		this.favoriteNum = favoriteNum;
 		this.commentNum = commentNum;
 		this.markers = markers;
+		this.writeday = writeday;
 	}
 
 	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
@@ -222,5 +227,21 @@ public class Board {
 
 	public void setMarkers(List<Marker> markers) {
 		this.markers = markers;
+	}
+
+	public User getUser() {
+		return user;
+	}
+
+	public void setUser(User user) {
+		this.user = user;
+	}
+
+	public String getWriteday() {
+		return writeday;
+	}
+
+	public void setWriteday(String writeday) {
+		this.writeday = writeday;
 	}
 }
