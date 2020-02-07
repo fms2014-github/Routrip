@@ -4,7 +4,9 @@
             <div class="login-img">
                 <img class="main-logo" :src="getImageUrl()" />
                 <h1>루 : 트립</h1>
-                <h2 class="mention">Let's share Route, ROUTRIP!</h2>
+                <h2 class="mention">
+                    Let's share Route, ROUTRIP!
+                </h2>
             </div>
         </div>
 
@@ -22,7 +24,9 @@
                     type="text"
                 />
                 <label for="email">이메일</label>
-                <div class="error-text" v-if="error.email">{{ error.email }}</div>
+                <div class="error-text" v-if="error.email">
+                    {{ error.email }}
+                </div>
             </div>
 
             <div class="input-with-label">
@@ -38,7 +42,9 @@
                     placeholder="비밀번호를 입력하세요."
                 />
                 <label for="password">비밀번호</label>
-                <div class="error-text" v-if="error.password">{{ error.password }}</div>
+                <div class="error-text" v-if="error.password">
+                    {{ error.password }}
+                </div>
             </div>
 
             <div class="checkOption">
@@ -51,8 +57,12 @@
                     <label for="autoLogin">자동 로그인</label>
                 </div>
             </div>
-            <button class="btn btn--back btn--login" @click="login" :disabled="!isSubmit" :class="{ disabled: !isSubmit }">로그인</button>
-            <div class="error-text red" v-if="error.loginFail">{{ error.loginFail }}</div>
+            <button class="btn btn--back btn--login" @click="login" :disabled="!isSubmit" :class="{ disabled: !isSubmit }">
+                로그인
+            </button>
+            <div class="error-text red" v-if="error.loginFail">
+                {{ error.loginFail }}
+            </div>
 
             <div class="sns-login">
                 <div class="text">
@@ -62,6 +72,7 @@
                 <div class="logos">
                     <kakaoLogin @loginOrJoin="loginOrJoin" :component="component" v-on:checkLogin="loginOrJoin" />
                     <GoogleLogin :component="component" />
+                    <button @click="reqUserInfo">요청하기</button>
                     <NaverLogin :component="component" />
                 </div>
             </div>
@@ -70,7 +81,13 @@
                     <div class="bar"></div>
                 </div>
                 <div class="wrap">
-                    <router-link v-bind:to="{ name: 'FindEmailAndPassword' }" class="btn--text">이메일/비밀번호 찾기</router-link>
+                    <router-link
+                        v-bind:to="{
+                            name: 'FindEmailAndPassword',
+                        }"
+                        class="btn--text"
+                        >이메일/비밀번호 찾기</router-link
+                    >
                 </div>
                 <div class="wrap btn--text" @click="popupToggle">
                     가입하기
@@ -101,12 +118,12 @@ import { createNamespacedHelpers } from 'vuex';
 import Axios from 'axios';
 
 // load user store
-const userMapState = createNamespacedHelpers('User').mapState;
-const userMapGetters = createNamespacedHelpers('User').mapGetters;
-const userMapMutations = createNamespacedHelpers('User').mapMutations;
+// const userMapState = createNamespacedHelpers('User').mapState;
+// const userMapGetters = createNamespacedHelpers('User').mapGetters;
+// const userMapMutations = createNamespacedHelpers('User').mapMutations;
 
 // 전체를 가져온다
-// const userHelper = createNamespacedHelpers('User');
+const userHelper = createNamespacedHelpers('User');
 
 export default {
     components: {
@@ -144,11 +161,12 @@ export default {
         },
     },
     computed: {
-        ...userMapState(['user']),
-        ...userMapGetters(['getUser']),
+        ...userHelper.mapState(['user']),
+        ...userHelper.mapGetters(['getUser']),
     },
     methods: {
-        ...userMapMutations(['setUser']),
+        ...userHelper.mapActions(['reqUserInfo']),
+        ...userHelper.mapMutations(['setUser']),
         getImageUrl() {
             return require('../../assets/images/routrip_logo.png');
         },
@@ -220,19 +238,27 @@ export default {
         loginOrJoin() {
             console.log('여기까진 오냐?');
             const at = localStorage.getItem('kakao_access_token');
-            // Kakao.init('cffc768e4739655aab323adbd9eb2633');
             Kakao.API.request({
                 url: '/v1/user/me',
                 success: res => {
-                    console.log(res);
                     this.setUser(res);
-                    this.userEamil = res.kaccount_email;
-                    console.log(this.userEmail);
-                    Axios.post('http://192.168.100.70:8083/account/snslogin', { loginApi: 1, email: res.kaccount_email }).then(res2 => {
-                        console.log('너가 응답이야?');
-                        console.log(res2);
-                    });
-                    this.$router.push('/profile');
+                    this.userSnsId = res.id;
+                    Axios.post('http://192.168.100.70:8083/account/snslogin', {
+                        loginApi: 1,
+                        userid: res.id,
+                    })
+                        .then(res2 => {
+                            console.log(res.kaccount_email);
+                            console.log(res2);
+                            localStorage.setItem('routrip_JWT', res2.data);
+                            if (res.kaccount_email !== undefined) {
+                                localStorage.setItem('routrip', res.kaccount_email);
+                                this.reqUserInfo();
+                                this.$router.push('/main');
+                                console.log(this.getUser);
+                            }
+                        })
+                        .then(() => this.popupToggle());
 
                     // this.$router.puch('/user/join');
                 },
@@ -254,7 +280,7 @@ export default {
             component: this,
             autoLogin: false,
             popup: false,
-            userEmail: '',
+            userSnsId: '',
         };
     },
     mounted() {
