@@ -1,34 +1,20 @@
 package com.web.curation.controller.page;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.web.curation.model.BasicResponse;
-import com.web.curation.model.board.Board;
-import com.web.curation.model.board.Comment;
-import com.web.curation.model.board.Img;
-import com.web.curation.model.board.Marker;
+import com.web.curation.model.board.*;
 import com.web.curation.model.user.User;
 import com.web.curation.service.BoardService;
 import com.web.curation.service.UserService;
 
 import io.jsonwebtoken.Jwts;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 
 @ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
 		@ApiResponse(code = 403, message = "Forbidden", response = BasicResponse.class),
@@ -133,7 +119,6 @@ public class PageController {
 	@PostMapping("/board")
 	@ApiOperation(value = "게시글 등록")
 	public Object addBoard(@RequestBody Board board) throws Exception {
-		//uid 프론트에서 바로 넣어놓기
 		int ok = boardService.addBoard(board);
 
 		if (ok > 0) {
@@ -328,7 +313,6 @@ public class PageController {
 	@PostMapping("/comment")
 	@ApiOperation(value = "댓글 등록")
 	public Object addComment(@RequestBody Comment comment) throws Exception {
-		//boardid 랑 uid 는 프론트에서 바로 넣어놓기
 		int ok = boardService.addComment(comment);
 		// comment 에 listener 가 있으면 listener 한테 알람? 백엔드에서 보내야하나?
 		if (ok > 0)
@@ -338,8 +322,8 @@ public class PageController {
 
 	@DeleteMapping("/comment")
 	@ApiOperation(value = "댓글 삭제")
-	public Object deleteComment(@RequestBody Comment comment) throws Exception {
-		int ok = boardService.deleteComment(comment.getCommentid());
+	public Object deleteComment(@RequestBody String commentid) throws Exception {
+		int ok = boardService.deleteComment(Integer.parseInt(commentid));
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
