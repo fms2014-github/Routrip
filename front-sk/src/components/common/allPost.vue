@@ -1,11 +1,9 @@
 <template>
     <div class="gallery">
+         <div class = 'card-header'>
+            <h1 class = 'card-header-title'>{{title}}</h1>       
+        </div>
         <div class= 'card'>
-            <div class = 'card-header'>
-                <h1 class = 'card-header-title'>{{title}}</h1>
-                
-            </div>
-            
             <img :src="picture | getUrl" class = 'card-image'>
             
             <div class ='card-info'>
@@ -14,10 +12,9 @@
                     <li class="card-comments"><span class="visually-hidden">댓글 수 : </span><i class="fas fa-comment" aria-hidden="true"></i> 2</li>
                 </ul>
             </div> 	
-            
-            <div class = 'card-footer'>
-                {{keywords}}
-            </div>
+        </div>
+        <div class = 'card-footer'>
+            {{keywords}}
         </div>
     </div>
 </template>

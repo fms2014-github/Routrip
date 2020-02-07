@@ -1,15 +1,18 @@
 <template>
-  
+    <div>
+        {{ title }} 글에 좋아요를 눌렀습니다.
+
+    </div>
 </template>
 
 <script>
-import myPost from "../../assets/css/common.scss"
+import common from "../../assets/css/common.scss"
 
 
 export default {
     props: {
         title: String,
-        like:String,
+        
     }
 }
 </script>
