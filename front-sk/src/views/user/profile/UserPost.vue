@@ -1,56 +1,55 @@
 <template>
-    <div class="post">
-        <h1>안녕 여긴 게시글</h1>
 
-        <button @click="plus">리스트에 추가</button>
+    <div class="row">
+        <allPost title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주"
+            picture=trip1.jpg>
+        </allPost>
 
-        <div v-for="(dum, index) in dummy" :key="index" class="content">
-            <h2>{{ dum.title }}</h2>
-            <p>{{ dum.content }}</p>
-        </div>
+        <allPost title = '강릉 2박3일'
+		    keywords = "#자연경관 #커플여행"
+            picture=trip2.jpg>
+        </allPost>
+        
+        <allPost title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주"
+            picture=trip5.jpg>
+        </allPost>
+
+        <allPost title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주">
+        </allPost>
+
+        <allPost title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주">
+        </allPost>
+
+        <allPost title = '제주도 3박4일'
+		    keywords = "#저가여행 #맛집위주">
+        </allPost>
+
+        <allPost title="으아아">
+            
+        </allPost>
+        
+    {{axios}}
+        
     </div>
+   
 </template>
 
 <script>
-import UserApi from '../../../apis/UserApi';
+import allPost from "../../../components/common/allPost"
+
 
 export default {
-    data() {
-        return {
-            dummy: [
-                {
-                    id: 1,
-                    title: '제목',
-                    content: '내용',
-                },
-                {
-                    id: 2,
-                    title: '제목1',
-                    content: '내용1',
-                },
-            ],
-            post: null,
-        };
+    
+    components:{
+        allPost
     },
-    created() {
-        this.fetchData();
-    },
-    watch: {
-        $route: 'fetchData',
-    },
-    methods: {
-        fetchData() {
-            this.error = this.post = null;
-            this.loading = true;
-        },
-        plus() {
-            const data = {
-                id: 3,
-                title: '제목 new',
-                content: '내용 new',
-            };
-            this.dummy.push(data);
-        },
-    },
+    methods:{
+  
+
+    }
 };
 </script>

@@ -4,9 +4,12 @@
             <div class="login-img">
                 <img class="main-logo" :src="getImageUrl()" />
                 <h1>루 : 트립</h1>
-                <h2 class="mention">Let's share Route, ROUTRIP!</h2>
+                <h2 class="mention">
+                    Let's share Route, ROUTRIP!
+                </h2>
             </div>
         </div>
+
         <div class="wrapC right-view">
             <div class="input-with-label">
                 <input
@@ -21,7 +24,9 @@
                     type="text"
                 />
                 <label for="email">이메일</label>
-                <div class="error-text" v-if="error.email">{{ error.email }}</div>
+                <div class="error-text" v-if="error.email">
+                    {{ error.email }}
+                </div>
             </div>
 
             <div class="input-with-label">
@@ -37,7 +42,9 @@
                     placeholder="비밀번호를 입력하세요."
                 />
                 <label for="password">비밀번호</label>
-                <div class="error-text" v-if="error.password">{{ error.password }}</div>
+                <div class="error-text" v-if="error.password">
+                    {{ error.password }}
+                </div>
             </div>
 
             <div class="checkOption">
@@ -50,8 +57,12 @@
                     <label for="autoLogin">자동 로그인</label>
                 </div>
             </div>
-            <button class="btn btn--back btn--login" @click="login" :disabled="!isSubmit" :class="{ disabled: !isSubmit }">로그인</button>
-            <div class="error-text red" v-if="error.loginFail">{{ error.loginFail }}</div>
+            <button class="btn btn--back btn--login" @click="login" :disabled="!isSubmit" :class="{ disabled: !isSubmit }">
+                로그인
+            </button>
+            <div class="error-text red" v-if="error.loginFail">
+                {{ error.loginFail }}
+            </div>
 
             <div class="sns-login">
                 <div class="text">
@@ -59,8 +70,9 @@
                     <div class="bar"></div>
                 </div>
                 <div class="logos">
-                    <kakaoLogin :component="component" />
+                    <kakaoLogin @loginOrJoin="loginOrJoin" :component="component" v-on:checkLogin="loginOrJoin" />
                     <GoogleLogin :component="component" />
+                    <button @click="reqUserInfo">요청하기</button>
                     <NaverLogin :component="component" />
                 </div>
             </div>
@@ -68,18 +80,21 @@
                 <div class="text">
                     <div class="bar"></div>
                 </div>
-                <div class="wrap" @click="popupToggleFind">
-                    <router-link v-bind:to="{ name: 'FindEmailAndPassword' }" class="btn--text">이메일/비밀번호 찾기</router-link>
+                <div class="wrap">
+                    <router-link
+                        v-bind:to="{
+                            name: 'FindEmailAndPassword',
+                        }"
+                        class="btn--text"
+                        >이메일/비밀번호 찾기</router-link
+                    >
                 </div>
-                <div class="wrap" @click="popupToggleJoin">
-                    <router-link v-bind:to="{ name: 'Join' }" class="btn--text">가입하기</router-link>
+                <div class="wrap btn--text" @click="popupToggle">
+                    가입하기
                 </div>
             </div>
-            <div id="popup-join" :class="{ hideJoin: !popupJoin }">
-                <router-view name="join" />
-            </div>
-            <div id="popup-find" :class="{ hideJoin: !popupFind }">
-                <router-view name="find" />
+            <div id="popup-join" :class="{ hideJoin: !popup }">
+                <join @popupToggle="popupToggle" />
             </div>
         </div>
     </div>
@@ -90,20 +105,35 @@ import '../../assets/css/style.scss';
 import '../../assets/css/user.scss';
 import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
+import Kakao from '../../components/user/snsLogin/kakao.js';
 import KakaoLogin from '../../components/user/snsLogin/Kakao.vue';
 import GoogleLogin from '../../components/user/snsLogin/Google.vue';
 import UserApi from '../../apis/UserApi';
 import NaverLogin from '../../components/user/snsLogin/Naver.vue';
+import join from './Join';
+
+// store
+// 뷰엑스를 쓰는 방법 중 하나를 가져옴
+import { createNamespacedHelpers } from 'vuex';
+import Axios from 'axios';
+
+// load user store
+// const userMapState = createNamespacedHelpers('User').mapState;
+// const userMapGetters = createNamespacedHelpers('User').mapGetters;
+// const userMapMutations = createNamespacedHelpers('User').mapMutations;
+
+// 전체를 가져온다
+const userHelper = createNamespacedHelpers('User');
 
 export default {
     components: {
         KakaoLogin,
         GoogleLogin,
         NaverLogin,
+        join,
     },
     created() {
         this.component = this;
-
         this.passwordSchema
             .is()
             .min(8)
@@ -112,9 +142,7 @@ export default {
             .has()
             .digits()
             .has()
-            .letters()
-            .not()
-            .symbols();
+            .letters();
     },
     watch: {
         password: function(v) {
@@ -132,7 +160,13 @@ export default {
             }
         },
     },
+    computed: {
+        ...userHelper.mapState(['user']),
+        ...userHelper.mapGetters(['getUser']),
+    },
     methods: {
+        ...userHelper.mapActions(['reqUserInfo']),
+        ...userHelper.mapMutations(['setUser']),
         getImageUrl() {
             return require('../../assets/images/routrip_logo.png');
         },
@@ -163,42 +197,72 @@ export default {
                     email,
                     password,
                 };
-                //요청 후에는 버튼 비활성화
                 this.isSubmit = false;
                 UserApi.requestLogin(
                     data,
                     res => {
                         //통신을 통해 전달받은 값 콘솔에 출력
-                        console.log(res);
+                        console.log(res.data);
+
+                        // getters로 가져오는 법
+                        console.log(this.getUser);
+
+                        // mutations 쓰는 법
+                        // 전역사용
+                        // 1. this.$store.commit('User/setUser', res.data);
+                        // 2. helpers 이용
+                        this.setUser(res.data);
+
+                        console.log(this.getUser);
+                        localStorage.setItem('loginedEmail', this.email);
                         //요청이 끝나면 버튼 활성화
                         this.isSubmit = true;
                         if (this.emailSaveCheck) {
                             localStorage.setItem('saveEmail', this.email);
                         }
-                        this.error.loginFail = '이메일 주소나 비밀번호가 틀렸습니다.';
+                        // this.$router.push({ name: 'Main' });
                     },
                     error => {
-                        if (error === true) {
-                            this.$router.push({ name: 'Profile' });
-                            localStorage.setItem('loginedEmail', this.email);
-                            localStorage.setItem('nickName', '김코치');
-                        } else {
-                            //요청이 끝나면 버튼 활성화
-                            this.isSubmit = true;
-                            localStorage.setItem('tempInput', this.email);
-                            this.$router.push({ name: 'ErrorPage' });
-                        }
+                        //요청이 끝나면 버튼 활성화
+                        this.isSubmit = true;
+                        localStorage.setItem('tempInput', this.email);
+
+                        this.error.loginFail = '이메일 주소나 비밀번호가 틀렸습니다.';
                     },
                 );
             }
         },
-        popupToggleJoin() {
-            this.popupJoin = true;
-            this.popupFind = false;
+        popupToggle() {
+            this.popup = !this.popup;
         },
-        popupToggleFind() {
-            this.popupFind = true;
-            this.popupJoin = false;
+        loginOrJoin() {
+            console.log('여기까진 오냐?');
+            const at = localStorage.getItem('kakao_access_token');
+            Kakao.API.request({
+                url: '/v1/user/me',
+                success: res => {
+                    this.setUser(res);
+                    this.userSnsId = res.id;
+                    Axios.post('http://192.168.100.70:8083/account/snslogin', {
+                        loginApi: 1,
+                        userid: res.id,
+                    })
+                        .then(res2 => {
+                            console.log(res.kaccount_email);
+                            console.log(res2);
+                            localStorage.setItem('routrip_JWT', res2.data);
+                            if (res.kaccount_email !== undefined) {
+                                localStorage.setItem('routrip', res.kaccount_email);
+                                this.reqUserInfo();
+                                this.$router.push('/main');
+                                console.log(this.getUser);
+                            }
+                        })
+                        .then(() => this.popupToggle());
+
+                    // this.$router.puch('/user/join');
+                },
+            });
         },
     },
     data: () => {
@@ -215,8 +279,8 @@ export default {
             isSubmit: false,
             component: this,
             autoLogin: false,
-            popupJoin: false,
-            popupFind: false,
+            popup: false,
+            userSnsId: '',
         };
     },
     mounted() {
@@ -230,23 +294,15 @@ export default {
         if (localStorage.getItem('emailSaveCheck') !== null) {
             this.emailSaveCheck = localStorage.getItem('emailSaveCheck');
         }
-        if (localStorage.getItem('popupJoin') !== null) {
-            this.popup = Boolean(localStorage.getItem('popupJoin'));
-            localStorage.removeItem('popupJoin');
-        }
-        if (localStorage.getItem('popupFind') !== null) {
-            this.popup = Boolean(localStorage.getItem('popupFind'));
-            localStorage.removeItem('popupFind');
+        if (localStorage.getItem('popup') !== null) {
+            this.popup = Boolean(localStorage.getItem('popup'));
+            localStorage.removeItem('popup');
         }
     },
     updated() {
-        if (localStorage.getItem('popupJoin') !== null) {
-            this.popupJoin = !Boolean(localStorage.getItem('popupJoin'));
-            localStorage.removeItem('popupJoin');
-        }
-        if (localStorage.getItem('popupFind') !== null) {
-            this.popupFind = !Boolean(localStorage.getItem('popupFind'));
-            localStorage.removeItem('popupFind');
+        if (localStorage.getItem('popup') !== null) {
+            this.popup = !Boolean(localStorage.getItem('popup'));
+            localStorage.removeItem('popup');
         }
     },
 };

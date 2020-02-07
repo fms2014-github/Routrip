@@ -5,19 +5,12 @@ import http from '../http-common';
 
 const requestLogin = (data, callback, errorCallback) => {
     //백앤드와 로그인 통신하는 부분
-    if (data.email !== email || data.password !== password) {
-        errorCallback(false);
-        return;
-    }
-    http.post('/account/login', data)
+    http.post('http://192.168.100.70:8083/account/login', data)
         .then(res => {
-            console.log(res);
             callback(res);
         })
         .catch(error => {
-            console.log(error);
-            // errorCallback(false);
-            errorCallback(true);
+            errorCallback(error);
         });
 };
 const requestSignUp = (data, callback, errorCallback) => {

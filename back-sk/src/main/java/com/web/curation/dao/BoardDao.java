@@ -11,6 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.web.curation.model.board.Board;
 import com.web.curation.model.board.Comment;
 import com.web.curation.model.board.Img;
+import com.web.curation.model.board.Marker;
 
 @Repository
 public class BoardDao implements IBoardDao{
@@ -127,5 +128,33 @@ public class BoardDao implements IBoardDao{
 	@Override
 	public int deleteComment(int commentid) throws Exception {
 		return sqlSession.delete(ns+"deleteComment", commentid);
+	}
+
+	@Override
+	public int updateFavoriteNum(int boardid, int favoriteNum) throws Exception {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		map.put("boardid", boardid);
+		map.put("favoriteNum", favoriteNum);
+		return sqlSession.update(ns+"updateFavoriteNum", map);
+	}
+
+	@Override
+	public int addMarker(Marker marker) throws Exception {
+		return sqlSession.insert(ns+"addMarker", marker);
+	}
+
+	@Override
+	public List<Marker> findMarker(int boardid) throws Exception {
+		return sqlSession.selectList(ns+"findMarker", boardid);
+	}
+
+	@Override
+	public int updateMarker(Marker marker) throws Exception {
+		return sqlSession.update(ns+"updateMarker", marker);
+	}
+
+	@Override
+	public int deleteMarker(int markerid) throws Exception {
+		return sqlSession.delete(ns+"deleteMarker", markerid);
 	}
 }

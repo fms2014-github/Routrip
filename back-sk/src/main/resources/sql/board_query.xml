@@ -7,7 +7,6 @@
 
 	<insert id="addBoard" parameterType="board"
 		useGeneratedKeys="true" keyProperty="boardid">
-		<!-- keyword 에 null 들어갔을 때 오류 뜨는지 확인/아니면 자동으로 장소 키워드에 추가됨 -->
 		insert into board
 		(uid, title, writedate, tripterm, latitude,
 		longitude, level, keyword, unveiled)
@@ -24,6 +23,7 @@
 		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
 		keyword, unveiled
 		from board
+		order by favoriteNum desc
 	</select>
 
 	<select id="findBoardListByUid" parameterType="int"
@@ -32,6 +32,7 @@
 		keyword, unveiled
 		from board
 		where uid = #{value}
+		order by writedate desc
 	</select>
 
 	<select id="findBoardListByTitle" parameterType="string"
@@ -40,6 +41,7 @@
 		keyword, unveiled
 		from board
 		where title like '%'+#{value}+'%'
+		order by favoriteNum desc
 	</select>
 
 	<select id="findBoardListByWriteDate" parameterType="map"
@@ -48,6 +50,7 @@
 		keyword, unveiled
 		from board
 		where writedate <![CDATA[>=]]> #{startdate} and writedate <![CDATA[<=]]> #{enddate}
+		order by favoriteNum desc
 	</select>
 
 	<select id="findBoardByBoardId" parameterType="int"
@@ -74,6 +77,11 @@
 		where boardid = #{boardid}
 	</update>
 
+	<update id="updateFavoriteNum" parameterType="map">
+		update board
+		set favoriteNum = #{favoriteNum}
+		where boardid = #{boardid}
+	</update>
 
 	<select id="getFavoriteNum" parameterType="int" resultType="int">
 		select count(uid)
@@ -90,14 +98,14 @@
 		select uid
 		from favorite
 		where boardid = #{value}
-		order by makedate
+		order by makedate desc
 	</select>
 	
 	<select id="getFavoriteByUser" parameterType="int" resultType="int">
 		select boardid
 		from favorite
 		where uid = #{value}
-		order by makedate
+		order by makedate desc
 	</select>
 	
 	<delete id="deleteFavorite" parameterType="map">
@@ -141,6 +149,33 @@
 	select commentid, uid, boardid, contents, writedate, listener
 	from comment
 	where boardid = #{value}
-	order by writedate
+	order by writedate desc
 	</select>
+	
+	<insert id="addMarker" parameterType="marker" useGeneratedKeys="true" keyProperty="markerid">
+	insert into marker(boardid, latitude, longitude, remark, overlaytype, radius)
+	values(#{boardid}, #{latitude}, #{longitude}, #{remark}, #{overlaytype}, #{radius})
+	</insert>
+	
+	<select id="findMarker" parameterType="int" resultType="marker">
+	select markerid, boardid, latitude, longitude, remark, overlaytype, radius
+	from marker
+	where boardid=#{value}
+	</select>
+	
+	<update id="updateMarker" parameterType="marker">
+		update marker
+		set latitude=#{latitude},
+		longitude = #{longitude},
+		remark = #{remark},
+		overlaytype = #{overlaytype},
+		radius = #{radius}
+		where markerid=#{markerid}
+	</update>
+	
+	<delete id="deleteMarker" parameterType="int">
+		delete
+		from marker
+		where markerid=#{value}
+	</delete>
 </mapper>

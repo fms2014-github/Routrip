@@ -1,9 +1,20 @@
 <template>
-    <h1>안녕 여긴 댓글</h1>
+    <div>
+        <!-- <h1>안녕 여긴 댓글</h1> -->
+        <allComment></allComment>
+    </div>
 </template>
 
 <script>
-import UserApi from '../../../apis/UserApi';
+import allComment from "../../../components/common/allComment"
 
-export default {};
+export default {
+    components:{
+        allComment
+    }
+}
+
+
+
+
 </script>
