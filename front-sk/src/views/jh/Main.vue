@@ -8,7 +8,20 @@
                 </form>
             </div>
             <div class="best-posting">
-                <BestPosting></BestPosting>
+                <div class="postings-posting">
+                    <hooper
+                        :infiniteScroll="true"
+                        :itemsToShow="3"
+                        :progress="true"
+                        :autoPlay="true"
+                        :playSpeed="2000"
+                    >
+                        <slide v-for="(data, dataIdx) in datas" :key="dataIdx">
+                            <img :src="'http://192.168.100.70:8083/' + data.imgs[0].src" alt />
+                        </slide>
+                        <hooper-navigation slot="hooper-addons"></hooper-navigation>
+                    </hooper>
+                </div>
             </div>
             <div class="posting-box">
                 <div class="postings">
@@ -16,7 +29,9 @@
                         <div class="postings-posting">
                             <div class="post-info">
                                 <div class="profile-img">
-                                    <img :src="'http://192.168.100.70:8083/' + data.user.profileImg" />
+                                    <img
+                                        :src="'http://192.168.100.70:8083/' + data.user.profileImg"
+                                    />
                                 </div>
                                 <div class="name-time">
                                     <strong>{{ data.title }}</strong>
@@ -50,16 +65,21 @@
                         </div>
 
                         <div class="text">
-                            <span>
-                                {{ data.keyword }}
-                            </span>
+                            <span>{{ data.keyword }}</span>
                         </div>
 
                         <div class="comment-box">
                             <div class="comments">
-                                <div class="comment" v-for="(comment, commentIdx) in data.comments" :key="commentIdx">
+                                <div
+                                    class="comment"
+                                    v-for="(comment, commentIdx) in data.comments"
+                                    :key="commentIdx"
+                                >
                                     <div class="writer-img">
-                                        <img :src="'http://192.168.100.70:8083/' + comment.user.profileImg" alt />
+                                        <img
+                                            :src="'http://192.168.100.70:8083/' + comment.user.profileImg"
+                                            alt
+                                        />
                                     </div>
                                     <div class="comment-info">
                                         <div class="writer">
@@ -101,7 +121,6 @@
 //vue
 import Header from './Header.vue';
 import Footer from './Footer.vue';
-import BestPosting from './BestPosting.vue';
 
 //js
 import Kakao from '../../components/user/snsLogin/kakao';
@@ -109,12 +128,13 @@ import Kakao from '../../components/user/snsLogin/kakao';
 // scss
 import '../../assets/css/main/posting.scss';
 import '../../assets/css/main/main.scss';
+import '../../assets/css/main/bestPosting.scss';
 
 //axios
 import Axios from 'axios';
 
 //component
-import { Hooper, Slide, Pagination as HooperPagination } from 'hooper';
+import { Hooper, Slide, Pagination as HooperPagination, Navigation as HooperNavigation } from 'hooper';
 
 // 뷰엑스를 가져옴
 import { createNamespacedHelpers } from 'vuex';
@@ -128,10 +148,10 @@ export default {
         Header,
         Footer,
         // Posting,
-        BestPosting,
         Hooper,
         Slide,
         HooperPagination,
+        HooperNavigation,
     },
     data: () => {
         return {
@@ -147,7 +167,7 @@ export default {
                 this.datas = res.data;
             })
             .catch(res => {
-                console.log(res);
+                // console.log(res);
             });
     },
     computed: {
