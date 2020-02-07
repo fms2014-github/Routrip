@@ -39,8 +39,6 @@ $desktop: 'screen and (min-width : 1025px)';
     display: flex;
     overflow: hidden;
 
-
-
     .hooper {
         height: unset;
     }
@@ -163,7 +161,10 @@ $desktop: 'screen and (min-width : 1025px)';
 
             .comment-info {
                 margin-left: 20px;
-
+                width: 100%;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
                 .writer {
                     margin-bottom: 5px;
 

@@ -82,12 +82,17 @@
                                         />
                                     </div>
                                     <div class="comment-info">
-                                        <div class="writer">
-                                            <strong>{{ comment.user.nickname }}</strong>
-                                            <span>{{ comment.writeday }}</span>
+                                        <div class="comment-info-box">
+                                            <div class="writer">
+                                                <strong>{{ comment.user.nickname }}</strong>
+                                                <span>{{ comment.writeday }}</span>
+                                            </div>
+                                            <div class="writer-text">
+                                                <span>{{ comment.contents }}</span>
+                                            </div>
                                         </div>
-                                        <div class="writer-text">
-                                            <span>{{ comment.contents }}</span>
+                                        <div class="comment-delete">
+                                            <button @click="deleteComment(comment)">삭제</button>
                                         </div>
                                     </div>
                                 </div>
@@ -96,14 +101,13 @@
                                 <form action class="comment-form">
                                     <textarea
                                         class="comment"
-                                        @keydown="resize(this)"
                                         placeholder="댓글 달기..."
                                         autocomplete="off"
                                         wrap="soft"
                                     ></textarea>
                                 </form>
                                 <div class="comment-btn">
-                                    <button>
+                                    <button @click="addComment(data)">
                                         <strong>등록</strong>
                                     </button>
                                 </div>
@@ -142,7 +146,7 @@ import { createNamespacedHelpers } from 'vuex';
 const userMapState = createNamespacedHelpers('User').mapState;
 const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
-
+const URI = 'http://192.168.100.70:8083/';
 export default {
     components: {
         Header,
@@ -156,11 +160,11 @@ export default {
     data: () => {
         return {
             datas: '',
+            comment: '',
         };
     },
     created: function() {
         // using JSONPlaceholder
-        const URI = 'http://192.168.100.70:8083/';
         Axios.get(`${URI}/page/boardList`)
             .then(res => {
                 console.log(res.data);
@@ -193,6 +197,52 @@ export default {
                     console.log(this.getUser);
                 },
             });
+        },
+        getAlldata() {
+            Axios.get(`${URI}/page/boardList`)
+                .then(res => {
+                    console.log(res.data);
+                    this.datas = res.data;
+                })
+                .catch(res => {
+                    // console.log(res);
+                });
+        },
+        addComment(info) {
+            // console.log(this.comment);
+            console.log(info);
+            var commentObject = new Object();
+            commentObject.boardid = info.boardid;
+            commentObject.contents = this.comment;
+            commentObject.uid = info.uid;
+            console.log(commentObject);
+            if (this.commentid == null) {
+                alert('댓글을 입력해주세요');
+            } else {
+                Axios.post(`${URI}/page/comment`, commentObject)
+                    .then(res => {
+                        // console.log('댓글 달기 성공');
+                    })
+                    .catch(res => {
+                        console.log('댓글 달기 실패');
+                    });
+                this.getAlldata();
+            }
+        },
+        deleteComment(info) {
+            console.log(info);
+            if (confirm('댓글을 삭제하시겠습니까?')) {
+                Axios.delete(`${URI}/page/comment`, {
+                    data: info.commentid,
+                })
+                    .then(res => {
+                        // console.log('댓글 삭제 성공');
+                    })
+                    .catch(res => {
+                        console.log('댓글 삭제 실패');
+                    });
+                this.getAlldata();
+            }
         },
     },
 };
