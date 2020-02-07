@@ -1,17 +1,21 @@
 <template>
+
     <div class="profile-page">
         <div class="wrapD">
             <h2>My Profile</h2>
-
             <button v-if="show" @click="logout">logout</button>
-            
             <div class="profile-wrap">
                 <UserPicture :userPicture="true" />
                 <div class="user-info">
                     <HeaderComponent :headerTitle="userinfo.email" :mailIcon="true" />
                     <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정"/>
-                
+               
+                <div class="none-border">
+                    <button class="button-text">회원탈퇴</button>
                 </div>
+                </div>
+
+          
             </div>
             <div class="wrap">
                 <router-link v-bind:to="{ name: 'UserPost' }"><TabComponent tabTitle="글" :isActive="true"/></router-link>
@@ -38,22 +42,43 @@ import Axios from 'axios';
 
 
 export default {
+    
     components: {
         HeaderComponent,
         UserPicture,
         TabComponent,
     },
-    created: function(){
-        const URI = 'http://192.168.100.70:8083/';
-        Axios.get(`${URI}/page/`)
-            .then(res => {}).catch(res=>{})
-    },
+
+    // created: function(){
+    //     Axios.post('http://192.168.100.70:8083/account/test/')
+    //         .then(res => {
+    //             console.log(res.data)
+    //             this.userinfo.token=res.data;
+     
+    //         }).catch(error=>{
+    //             console.error(error);
+    //         })
+    // },
+
+    
+
     mounted() {
         this.getInfo();
         this.checkLogin();
-        // axios.get 메소드호출
+        
     },
     methods: {
+        tokener(e) {
+            console.log("gihihihifgigfdig",e)          
+            Axios.get('http://192.168.100.70:8083/account/decode'+e)
+                .then(res=>{
+                    console.log(res.data)
+                    this.userinfo.email=res.data.email
+                    this.userinfo.nickname=res.data.nickname
+                }).catch(error=>{
+                    console.error(error);
+                })
+        },
         popupToggle() {
             this.popup = true;
         },
@@ -105,6 +130,7 @@ export default {
         return {
             popup: 'false',
             userinfo: {
+                token:'',
                 email: '',
                 nickname: '',
             },

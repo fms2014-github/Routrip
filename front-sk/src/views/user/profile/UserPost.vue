@@ -7,7 +7,8 @@
         </allPost>
 
         <allPost title = '강릉 2박3일'
-		    keywords = "#자연경관 #커플여행 ">
+		    keywords = "#자연경관 #커플여행"
+            picture=trip2.jpg>
         </allPost>
         
         <allPost title = '제주도 3박4일'

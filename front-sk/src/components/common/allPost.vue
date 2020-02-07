@@ -4,7 +4,7 @@
             <h1 class = 'card-header-title'>{{title}}</h1>       
         </div>
         <div class= 'card'>
-            <img :src="picture | getUrl" class = 'card-image' width="400" height="400">
+            <img :src="picture | getUrl" class = 'card-image'>
             
             <div class ='card-info'>
                 <ul>
