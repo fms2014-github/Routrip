@@ -10,10 +10,6 @@
     <script type="text/javascript"
         src="//dapi.kakao.com/v2/maps/sdk.js?appkey=07c20e31d1891825ce375b67602ddf31&libraries=services,clusterer,drawing">
     </script>
-    <script src='https://cdn.rawgit.com/eligrey/FileSaver.js/5ed507ef8aa53d8ecfea96d96bc7214cd2476fd2/FileSaver.min.js'>
-    </script>
-    <script src='canvas2image.js'></script>
-    <script src='https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.5.0-beta4/html2canvas.js'></script>
     <title>example</title>
     <script>
         var mapContainer, mapOption, map, manager, options, toolbox, mapImage;
@@ -163,18 +159,6 @@
         };
 
         function extractionImg() {
-            html2canvas(document.getElementById('map'), {
-                onrendered: function (canvas) {
-                    //document.getElementById("RESULT").src = canvas.toDataURL();   // 이미지를 보여주고 싶으면 이런식으로 치환해버림 됨
-                    if (canvas.msToBlob) { // 망할 익스플로러 예외처리.. 망해라 M$
-                        var blob = canvas.msToBlob();
-                        window.navigator.msSaveBlob(blob, "FILENAME.png");
-                    } else {
-                        Canvas2Image.saveAsPNG(canvas, document.body.clientWidth, document.body
-                            .clientHeight, "asdfasdf.png");
-                    }
-                }
-            });
         }
         // 버튼 클릭 시 호출되는 핸들러 입니다
         function selectOverlay(condition, type, title, content) {

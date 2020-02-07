@@ -61,7 +61,6 @@
                 </div>
             </div>
             <br />
-            <button onclick="extractionImg()">이미지 생성</button>
         </div>
         <div id="image-upload">
             <label id="upload-button" for="image-file">사진 업로드</label>
