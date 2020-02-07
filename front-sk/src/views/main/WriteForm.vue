@@ -60,7 +60,7 @@
 </template>
 
 <script>
-import '../../assets/css/contentUpload.scss';
+import '../../assets/css/WriteForm.scss';
 import InputForm from '../../components/common/Input';
 
 export default {
