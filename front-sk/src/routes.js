@@ -13,7 +13,7 @@ import UserComment from './views/user/profile/UserComment.vue';
 import UserLike from './views/user/profile/UserLike.vue';
 import UserPeople from './views/user/profile/UserPeople.vue';
 import PictureRegister from './views/user/profile/PictureRegister.vue';
-import ContentUploadForm from './views/main/ContentUploadForm.vue';
+import WriteForm from './views/main/WriteForm.vue';
 import Main from './views/jh/Main.vue';
 
 export default [
@@ -34,6 +34,13 @@ export default [
                 name: 'JoinAuth',
                 components: {
                     join: JoinAuth,
+                },
+            },
+            {
+                path: '/user/FindEmailAndPassword',
+                name: 'FindEmailAndPassword',
+                components: {
+                    find: FindEmailAndPassword,
                 },
             },
         ],
@@ -80,11 +87,7 @@ export default [
             },
         ],
     },
-    {
-        path: '/user/FindEmailAndPassword',
-        name: 'FindEmailAndPassword',
-        component: FindEmailAndPassword,
-    },
+
     {
         path: '/user/ChangePassword',
         name: 'ChangePassword',
@@ -101,9 +104,9 @@ export default [
         component: ErrorPage,
     },
     {
-        path: '/ContentUploadForm',
-        name: 'ContentUploadForm',
-        component: ContentUploadForm,
+        path: '/WriteForm',
+        name: 'WriteForm',
+        component: WriteForm,
     },
     {
         path: '/components',
