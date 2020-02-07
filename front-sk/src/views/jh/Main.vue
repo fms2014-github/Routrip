@@ -104,6 +104,7 @@
                                         placeholder="댓글 달기..."
                                         autocomplete="off"
                                         wrap="soft"
+                                        v-model="comment"
                                     ></textarea>
                                 </form>
                                 <div class="comment-btn">
@@ -216,12 +217,13 @@ export default {
             commentObject.contents = this.comment;
             commentObject.uid = info.uid;
             console.log(commentObject);
-            if (this.commentid == null) {
+            if (this.comment == null) {
                 alert('댓글을 입력해주세요');
             } else {
                 Axios.post(`${URI}/page/comment`, commentObject)
                     .then(res => {
                         // console.log('댓글 달기 성공');
+                        this.comment = '';
                     })
                     .catch(res => {
                         console.log('댓글 달기 실패');
