@@ -112,7 +112,7 @@ public class PageController {
 		board.setFavoriteNum(favoriteNum);
 		board.setMarkers(boardService.findMarker(board.getBoardid()));
 		board.setUser(userService.findUserSimple(board.getUid()));
-		System.out.println("게시글 상세를 조회하였습니다.");
+		//System.out.println("게시글 상세를 조회하였습니다.");
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
 
@@ -143,7 +143,7 @@ public class PageController {
 				boardService.addMarker(m);
 			}
 			
-			System.out.println("게시글 등록되었습니다.");
+			//System.out.println("게시글 등록되었습니다.");
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -235,7 +235,7 @@ public class PageController {
 			b.setComments(comments);
 			b.setUser(userService.findUserSimple(b.getUid()));
 		}
-		System.out.println("전체 게시글 조회했습니다.");
+		//System.out.println("전체 게시글 조회했습니다.");
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
                                                                                                             
@@ -284,7 +284,7 @@ public class PageController {
 				board.add(b);
 			}
 		}
-		System.out.println("게시글 조회되었습니다.");
+		//System.out.println("게시글 조회되었습니다.");
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
 
