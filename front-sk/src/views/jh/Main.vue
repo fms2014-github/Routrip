@@ -175,6 +175,9 @@ export default {
                 // console.log(res);
             });
     },
+    // updated: function() {
+    //     this.getAlldata();
+    // },
     computed: {
         ...userMapState(['User']),
         ...userMapGetters(['getUser']),
