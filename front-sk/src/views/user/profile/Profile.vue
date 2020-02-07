@@ -8,8 +8,12 @@
                 <UserPicture :userPicture="true" />
                 <div class="user-info">
                     <HeaderComponent :headerTitle="userinfo.email" :mailIcon="true" />
-                    <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정"/>
-               
+                    <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정" :changeNick="changeNick" />
+
+              
+
+
+                    <button v-on:click="changeNick">체크체크</button>
                 <div class="none-border">
                     <button class="button-text">회원탈퇴</button>
                 </div>
@@ -39,7 +43,7 @@ import TabComponent from '../../../components/common/Tab';
 import '../../../assets/css/profile.scss';
 import '../../../assets/css/style.scss';
 import Axios from 'axios';
-
+import Swal from 'sweetalert2';
 
 export default {
     
@@ -68,17 +72,17 @@ export default {
         
     },
     methods: {
-        tokener(e) {
-            console.log("gihihihifgigfdig",e)          
-            Axios.get('http://192.168.100.70:8083/account/decode'+e)
-                .then(res=>{
-                    console.log(res.data)
-                    this.userinfo.email=res.data.email
-                    this.userinfo.nickname=res.data.nickname
-                }).catch(error=>{
-                    console.error(error);
-                })
-        },
+        // tokener(e) {
+        //     console.log("gihihihifgigfdig",e)          
+        //     Axios.get('http://192.168.100.70:8083/account/decode'+e)
+        //         .then(res=>{
+        //             console.log(res.data)
+        //             this.userinfo.email=res.data.email
+        //             this.userinfo.nickname=res.data.nickname
+        //         }).catch(error=>{
+        //             console.error(error);
+        //         })
+        // },
         popupToggle() {
             this.popup = true;
         },
@@ -105,26 +109,17 @@ export default {
             }
         },
 
-        async changeNick(){
-            const ipAPI = 'usernick'
-            const inputValue = fetch(ipAPI)
-                .then(response => response.json())
-                .then(data => data.ip)
-            const { value: ipAddress } = await Swal.fire({
-                title: 'Enter your IP address',
-                input: 'text',
-                inputValue: inputValue,
-                showCancelButton: true,
-                inputValidator: (value) => {
-                    if (!value) {
-                        return 'You need to write something!'
-                    }
+        async changeNick() { await Swal.fire({
+            title: '바꿀 닉네임을 입력해주세요.',
+            input: 'text',
+            inputValue: "테스트",
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to write something!'
                 }
-            })
-            if (ipAddress) {
-                Swal.fire(`Your IP address is ${ipAddress}`)
             }
-        }
+        })},
     },
     data() {
         return {
@@ -134,7 +129,7 @@ export default {
                 email: '',
                 nickname: '',
             },
-            show: false,
+            show: false
         };
     },
 };
