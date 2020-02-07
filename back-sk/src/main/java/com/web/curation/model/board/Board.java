@@ -1,6 +1,8 @@
 package com.web.curation.model.board;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import com.web.curation.model.user.User;
@@ -15,15 +17,15 @@ public class Board {
 	private double latitude;
 	private double longitude;
 	private int level;
-	private int unveiled = 1; //true = 1, false = 0
+	private int unveiled = 1; // true = 1, false = 0
 	private List<Comment> comments = new ArrayList<>();
 	private List<Img> imgs = new ArrayList<>();
 	private int favoriteNum = 0;
 	private int commentNum = 0;
 	private List<Marker> markers = new ArrayList<>();
 	private User user;
-	private String writeday;//~전
-	
+	private String writeday;// ~전
+
 	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
 			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs, int favoriteNum,
 			int commentNum, List<Marker> markers, String writeday) {
@@ -63,8 +65,8 @@ public class Board {
 		this.imgs = imgs;
 	}
 
-	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword,
-			double latitude, double longitude, int level, int unveiled) {
+	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
+			double longitude, int level, int unveiled) {
 		super();
 		this.boardid = boardid;
 		this.uid = uid;
@@ -188,7 +190,7 @@ public class Board {
 	public void setUnveiled(int unveiled) {
 		this.unveiled = unveiled;
 	}
-	
+
 	public List<Comment> getComments() {
 		return comments;
 	}
@@ -238,6 +240,27 @@ public class Board {
 	}
 
 	public String getWriteday() {
+		try {
+			SimpleDateFormat format1 = new SimpleDateFormat("yyyyMMdd");
+			SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+			Date now = format1.parse(format1.format(new Date()));
+			Date wd = format1.parse(format1.format(format2.parse(this.writedate)));
+			if ((now.getTime() == wd.getTime())) {
+				writeday = "오늘";
+			} else if ((now.getTime() - wd.getTime()) / (1000 * 60 * 60 * 24) < 31) {
+				writeday = ((now.getTime() - wd.getTime()) / (1000 * 60 * 60 * 24)) + "일 전";
+			} else if (Integer.parseInt(format1.format(now)) / 10000
+					- Integer.parseInt(format1.format(wd)) / 10000 > 0) {
+				writeday = (Integer.parseInt(format1.format(now)) / 10000
+						- Integer.parseInt(format1.format(wd)) / 10000) + "년 전";
+			} else if (Integer.parseInt(format1.format(now)) / 100
+					- Integer.parseInt(format1.format(wd)) / 100 > 0) {
+				writeday = (Integer.parseInt(format1.format(now)) / 100
+						- Integer.parseInt(format1.format(wd)) / 100) + "달 전";
+			}
+		} catch (Exception e) {
+			System.out.println("writeday 가져오는 동안 오류 발생");
+		}
 		return writeday;
 	}
 

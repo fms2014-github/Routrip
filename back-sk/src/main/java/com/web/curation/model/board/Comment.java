@@ -13,7 +13,7 @@ public class Comment {
 	private String writedate;
 	private int listener = 0;
 	private User user;
-	private String writeday;//~전
+	private String writeday;// ~전
 
 	public Comment(int commentid, int uid, int boardid, String contents, String writedate, int listener, User user,
 			String writeday) {
@@ -89,6 +89,36 @@ public class Comment {
 	}
 
 	public String getWriteday() {
+		try {
+			SimpleDateFormat format1 = new SimpleDateFormat("yyyyMMddHH");
+			SimpleDateFormat format2 = new SimpleDateFormat("HH:mm:ss");
+			SimpleDateFormat format3 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date now1 = format1.parse(format1.format(new Date()));
+			Date now2 = format2.parse(format2.format(new Date()));
+			Date wd1 = format1.parse(format1.format(format3.parse(this.writedate)));
+			Date wd2 = format2.parse(format2.format(format3.parse(this.writedate)));
+			if ((now1.getTime() - wd1.getTime()) / (1000 * 60 * 60) < 24) {
+				if ((now2.getTime() - wd2.getTime()) / 1000 < 60) {
+					writeday = ((now2.getTime() - wd2.getTime()) / 1000) + "초 전";
+				} else if ((now2.getTime() - wd2.getTime()) / (1000 * 60) < 60) {
+					writeday = ((now2.getTime() - wd2.getTime()) / (1000 * 60)) + "분 전";
+				} else if ((now2.getTime() - wd2.getTime()) / (1000 * 60 * 60) < 24) {
+					writeday = ((now2.getTime() - wd2.getTime()) / (1000 * 60 * 60)) + "시간 전";
+				}
+			} else if ((now1.getTime() - wd1.getTime()) / (1000 * 60 * 60 * 24) < 31) {
+				writeday = ((now1.getTime() - wd1.getTime()) / (1000 * 60 * 60 * 24)) + "일 전";
+			} else if (Integer.parseInt(format1.format(now1)) / 1000000
+					- Integer.parseInt(format1.format(wd1)) / 1000000 > 0) {
+				writeday = (Integer.parseInt(format1.format(now1)) / 1000000
+						- Integer.parseInt(format1.format(wd1)) / 1000000) + "년 전";
+			} else if (Integer.parseInt(format1.format(now1)) / 10000 - Integer.parseInt(format1.format(wd1)) / 10000 > 0) {
+				writeday = (Integer.parseInt(format1.format(now1)) / 10000 - Integer.parseInt(format1.format(wd1)) / 10000)
+						+ "달 전";
+			}
+		} catch (Exception e) {
+			System.out.println("writeday 가져오는 동안 오류 발생");
+		}
+
 		return writeday;
 	}
 
