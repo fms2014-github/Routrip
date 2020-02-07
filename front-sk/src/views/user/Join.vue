@@ -314,6 +314,7 @@ export default {
 
                         //요청이 끝나면 버튼 활성화
                         this.isSubmit = true;
+                        localStorage.setItem('popup', 'false');
                         this.$router.push({ name: 'JoinAuth' });
                     },
                     error => {
@@ -328,8 +329,7 @@ export default {
             }
         },
         close() {
-            localStorage.setItem('popupJoin', 'false');
-            this.$router.push('/');
+            this.$emit('popupToggle');
         },
     },
 };

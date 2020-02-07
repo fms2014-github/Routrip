@@ -1,9 +1,16 @@
 <template>
-    <h1>안녕 여긴 빨로팔롱잉</h1>
+    <div>
+        <h1>안녕 여긴 빨로팔롱잉</h1>
+        <allPeople></allPeople>
+    </div>
 </template>
 
 <script>
-import UserApi from '../../../apis/UserApi';
+import allPeople from "../../../components/common/allPeople"
 
-export default {};
+export default {
+    components: {
+        allPeople
+    }
+};
 </script>

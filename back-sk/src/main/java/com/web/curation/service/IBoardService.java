@@ -5,6 +5,7 @@ import java.util.List;
 import com.web.curation.model.board.Board;
 import com.web.curation.model.board.Comment;
 import com.web.curation.model.board.Img;
+import com.web.curation.model.board.Marker;
 
 public interface IBoardService {
 	int addBoard(Board board) throws Exception;
@@ -15,6 +16,7 @@ public interface IBoardService {
 	Board findBoardByBoardId(int boardid) throws Exception;
 	int deleteBoard(int boardid) throws Exception;
 	int updateBoard(Board board) throws Exception;
+	int updateFavoriteNum(int boardid, int favoriteNum) throws Exception;
 	
     int addFavorite(int uid, int boardid) throws Exception;
     int getFavoriteNum(int boardid) throws Exception;
@@ -30,4 +32,9 @@ public interface IBoardService {
     int addComment(Comment comment) throws Exception;
     List<Comment> findComment(int boardid) throws Exception;
     int deleteComment(int commentid) throws Exception;
+    
+    int addMarker(Marker marker) throws Exception;
+    List<Marker> findMarker(int boardid) throws Exception;
+    int updateMarker(Marker marker) throws Exception;
+    int deleteMarker(int markerid) throws Exception;
 }
