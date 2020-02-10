@@ -93,8 +93,11 @@
                 </div>
             </div>
             <div id="popup-join" :class="{ hideJoin: !popup }">
-                <join @popupToggle="popupToggle" />
+                <join @popupToggle="popupToggle" :snscheck="loginApi" @snsToggle="snsToggle" />
             </div>
+            <!-- <div id="popup-snsjoin" :class="{ hideJoin: !popup }">
+                <join @popupToggle="popupToggle" />
+            </div> -->
         </div>
     </div>
 </template>
@@ -232,16 +235,25 @@ export default {
             }
         },
         popupToggle() {
+            console.log('이건 오는데..');
             this.popup = !this.popup;
         },
-        loginOrJoin() {
+        snsToggle() {
+            console.log('아니');
+            this.loginApi = 0;
+            this.popup = !this.popup;
+        },
+        loginOrJoin(loginApi) {
+            this.loginApi = loginApi;
+            console.log(this.loginApi);
+
             Kakao.API.request({
                 url: '/v1/user/me',
                 success: res => {
                     this.setUser(res);
                     this.userSnsId = res.id;
                     Axios.post('http://192.168.100.70:8083/account/snslogin', {
-                        loginApi: 1,
+                        loginApi: loginApi,
                         userid: res.id,
                     })
                         .then(res2 => {
@@ -273,6 +285,7 @@ export default {
             autoLogin: false,
             popup: false,
             userSnsId: '',
+            loginApi: 0,
         };
     },
     mounted() {
