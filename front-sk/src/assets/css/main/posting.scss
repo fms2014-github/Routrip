@@ -132,12 +132,17 @@ $desktop: 'screen and (min-width : 1025px)';
     .like {
         font-size: 1.5em;
         margin-right: 10px;
+
+        .likeToggle {
+            display: none;
+        }
     }
 
     .follow {
         font-size: 1.5em;
         margin-right: 10px;
     }
+
 }
 
 .text {
@@ -165,6 +170,7 @@ $desktop: 'screen and (min-width : 1025px)';
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+
                 .writer {
                     margin-bottom: 5px;
 

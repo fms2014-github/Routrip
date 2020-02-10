@@ -9,7 +9,13 @@
             </div>
             <div class="best-posting">
                 <div class="postings-posting">
-                    <hooper :infiniteScroll="true" :itemsToShow="3" :progress="true" :autoPlay="true" :playSpeed="2000">
+                    <hooper
+                        :infiniteScroll="true"
+                        :itemsToShow="3"
+                        :progress="true"
+                        :autoPlay="true"
+                        :playSpeed="2000"
+                    >
                         <slide v-for="(data, dataIdx) in datas" :key="dataIdx">
                             <img :src="'http://192.168.100.70:8083/' + data.imgs[0].src" alt />
                         </slide>
@@ -23,7 +29,9 @@
                         <div class="postings-posting">
                             <div class="post-info">
                                 <div class="profile-img">
-                                    <img :src="'http://192.168.100.70:8083/' + data.user.profileImg" />
+                                    <img
+                                        :src="'http://192.168.100.70:8083/' + data.user.profileImg"
+                                    />
                                 </div>
                                 <div class="name-time">
                                     <strong>{{ data.title }}</strong>
@@ -48,7 +56,14 @@
                         </div>
                         <div class="sns-btn">
                             <div class="like">
-                                <button>🧡</button>
+                                <button @click="toggleLikeBtn(data.boardid)">
+                                    <div :class="{likeToggle : likeShow[dataIdx].like}">
+                                        <i class="far fa-heart"></i>
+                                    </div>
+                                    <div :class="{likeToggle : !likeShow[dataIdx].like}">
+                                        <i class="fas fa-heart" style="color:red;"></i>
+                                    </div>
+                                </button>
                             </div>
                             <div class="follow">
                                 <button>🏹</button>
@@ -62,9 +77,16 @@
 
                         <div class="comment-box">
                             <div class="comments">
-                                <div class="comment" v-for="(comment, commentIdx) in data.comments" :key="commentIdx">
+                                <div
+                                    class="comment"
+                                    v-for="(comment, commentIdx) in data.comments"
+                                    :key="commentIdx"
+                                >
                                     <div class="writer-img">
-                                        <img :src="'http://192.168.100.70:8083/' + comment.user.profileImg" alt />
+                                        <img
+                                            :src="'http://192.168.100.70:8083/' + comment.user.profileImg"
+                                            alt
+                                        />
                                     </div>
                                     <div class="comment-info">
                                         <div class="comment-info-box">
@@ -84,7 +106,13 @@
                             </div>
                             <div class="write-comment">
                                 <form action class="comment-form">
-                                    <textarea class="comment" placeholder="댓글 달기..." autocomplete="off" wrap="soft" v-model="comment"></textarea>
+                                    <textarea
+                                        class="comment"
+                                        placeholder="댓글 달기..."
+                                        autocomplete="off"
+                                        wrap="soft"
+                                        v-model="comment"
+                                    ></textarea>
                                 </form>
                                 <div class="comment-btn">
                                     <button @click="addComment(data)">
@@ -127,6 +155,8 @@ const userMapState = createNamespacedHelpers('User').mapState;
 const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
 const URI = 'http://192.168.100.70:8083/';
+const jwt =
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiI1IiwidWlkIjo1LCJlbWFpbCI6InRlc3QzQHNzYWZ5LmNvbSIsIm5pY2tuYW1lIjoidGVzdE5pY2siLCJwcm9maWxlSW1nIjoiaW1nL3Byb2ZpbGUucG5nIiwibG9naW5BcGkiOjAsInVzZXJrZXkiOiJZIiwiZXhwIjoxNTgxMzk1MDk3fQ.';
 export default {
     components: {
         Header,
@@ -141,22 +171,16 @@ export default {
         return {
             datas: '',
             comment: '',
+            likeList: [],
+            likeShow: [],
         };
     },
     created: function() {
-        // using JSONPlaceholder
-        Axios.get(`${URI}/page/boardList`)
-            .then(res => {
-                // console.log(res.data);
-                this.datas = res.data;
-            })
-            .catch(res => {
-                // console.log(res);
-            });
+        this.showAll();
     },
-    updated: function() {
-        this.getAlldata();
-    },
+    // updated: function() {
+    //     this.getAlldata();
+    // },
     computed: {
         ...userMapState(['User']),
         ...userMapGetters(['getUser']),
@@ -180,6 +204,32 @@ export default {
                     console.log(this.getUser);
                 },
             });
+        },
+        showAll() {
+            Axios.post(`${URI}/page/favoriteBoard`, { jwt: jwt })
+                .then(res => {
+                    this.likeList = [];
+                    for (var i = 0; i < res.data.length; ++i) {
+                        this.likeList.push(res.data[i].boardid);
+                    }
+
+                    Axios.get(`${URI}/page/boardList`)
+                        .then(res => {
+                            this.likeShow = [];
+                            this.datas = res.data;
+                            for (var i = 0; i < this.datas.length; ++i) {
+                                if (this.likeList.includes(this.datas[i].boardid)) this.likeShow.push({ like: true });
+                                else this.likeShow.push({ like: false });
+                            }
+                        })
+                        .catch(res => {
+                            console.log('전체 게시글 조회 실패');
+                        });
+                    console.log(this.likeList);
+                })
+                .catch(res => {
+                    console.log('좋아요 게시글 조회 실패');
+                });
         },
         getAlldata() {
             Axios.get(`${URI}/page/boardList`)
@@ -228,8 +278,18 @@ export default {
                 this.getAlldata();
             }
         },
+        toggleLikeBtn(boardid) {
+            Axios.post(`${URI}/page/favorite`, { jwt: jwt, boardid: boardid })
+                .then(res => {
+                    this.showAll();
+                })
+                .catch(res => {
+                    console.log(res);
+                });
+        },
     },
 };
 </script>
 
-<style></style>
+<style>
+</style>
