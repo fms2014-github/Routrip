@@ -20,6 +20,7 @@ public class Board {
 	private int unveiled = 1; // true = 1, false = 0
 	private List<Comment> comments = new ArrayList<>();
 	private List<Img> imgs = new ArrayList<>();
+	private List<User> favorite = new ArrayList<>();
 	private int favoriteNum = 0;
 	private int commentNum = 0;
 	private List<Marker> markers = new ArrayList<>();
@@ -27,8 +28,8 @@ public class Board {
 	private String writeday;// ~전
 
 	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs, int favoriteNum,
-			int commentNum, List<Marker> markers, String writeday) {
+			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs, List<User> favorite,
+			int favoriteNum, int commentNum, List<Marker> markers, User user, String writeday) {
 		super();
 		this.boardid = boardid;
 		this.uid = uid;
@@ -42,73 +43,16 @@ public class Board {
 		this.unveiled = unveiled;
 		this.comments = comments;
 		this.imgs = imgs;
+		this.favorite = favorite;
 		this.favoriteNum = favoriteNum;
 		this.commentNum = commentNum;
 		this.markers = markers;
+		this.user = user;
 		this.writeday = writeday;
-	}
-
-	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs) {
-		super();
-		this.boardid = boardid;
-		this.uid = uid;
-		this.title = title;
-		this.writedate = writedate;
-		this.tripterm = tripterm;
-		this.keyword = keyword;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
-		this.unveiled = unveiled;
-		this.comments = comments;
-		this.imgs = imgs;
-	}
-
-	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled) {
-		super();
-		this.boardid = boardid;
-		this.uid = uid;
-		this.title = title;
-		this.writedate = writedate;
-		this.tripterm = tripterm;
-		this.keyword = keyword;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
-		this.unveiled = unveiled;
 	}
 
 	public Board() {
 		super();
-	}
-
-	public Board(int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled) {
-		super();
-		this.uid = uid;
-		this.title = title;
-		this.writedate = writedate;
-		this.tripterm = tripterm;
-		this.keyword = keyword;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
-		this.unveiled = unveiled;
-	}
-
-	public Board(int uid, String titile, String writedate, String tripterm, double latitude, double longitude,
-			int level, int unveiled) {
-		super();
-		this.uid = uid;
-		this.title = titile;
-		this.writedate = writedate;
-		this.tripterm = tripterm;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
-		this.unveiled = unveiled;
 	}
 
 	public int getBoardid() {
@@ -221,6 +165,14 @@ public class Board {
 
 	public void setCommentNum(int commentNum) {
 		this.commentNum = commentNum;
+	}
+
+	public List<User> getFavorite() {
+		return favorite;
+	}
+
+	public void setFavorite(List<User> favorite) {
+		this.favorite = favorite;
 	}
 
 	public List<Marker> getMarkers() {

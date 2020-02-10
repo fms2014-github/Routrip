@@ -23,7 +23,7 @@
 		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
 		keyword, unveiled
 		from board
-		order by favoriteNum desc
+		order by writedate desc
 	</select>
 
 	<select id="findBoardListByUid" parameterType="int"
@@ -113,6 +113,22 @@
 		where uid=#{uid} and boardid=#{boardid}
 	</delete>
 	
+	<insert id="addScrap" parameterType="map">
+		insert into scrap(uid, boardid)
+		values(#{uid}, #{boardid})
+	</insert>
+	
+	<select id="getScrap" parameterType="int" resultType="int">
+	select boardid
+	from scrap
+	where uid=#{value}
+	</select>
+	
+	<delete id="deleteScrap" parameterType="map">
+		delete from scrap
+		where uid=#{uid} and boardid=#{boardid}
+	</delete>
+	
 	<insert id="addImg" parameterType="img" useGeneratedKeys="true" keyProperty="imgid">
 	insert into img(boardid, src, rep)
 	values(#{boardid}, #{src}, #{rep})
@@ -188,4 +204,12 @@
 		from marker
 		where markerid=#{value}
 	</delete>
+	
+	<select id="findBoardByFollow" parameterType="int" resultType="board">
+	select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
+		keyword, unveiled
+		from board
+		where uid in(select follower from follow where following = #{value})
+		order by writedate desc
+	</select>
 </mapper>

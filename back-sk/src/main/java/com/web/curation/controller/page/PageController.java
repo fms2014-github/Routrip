@@ -47,7 +47,11 @@ public class PageController {
 			for (int i : usersid) {
 				if (i == uid) {
 					flag = false;
-					break;
+					Map<String, String> map1 = new HashMap<String, String>();
+					map1.put("jwt", jwt);
+					map1.put("boardid", String.valueOf(boardid));
+					deleteFavorite(map1);
+					return new ResponseEntity<>(HttpStatus.OK);
 				}
 			}
 			if (flag)
@@ -58,15 +62,15 @@ public class PageController {
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
-	@PostMapping("/favoriteUser")
-	@ApiOperation(value = "좋아요 누른 사람")
-	public Object FavoriteListByBoard(@RequestBody Board board) throws Exception {
-		List<Integer> usersid = boardService.getFavoriteByBoard(board.getBoardid());
-		List<User> users = new ArrayList<User>();
-		for (int i : usersid)
-			users.add(userService.findUserSimple(i));
-		return new ResponseEntity<>(users, HttpStatus.OK);
-	}
+//	@PostMapping("/favoriteUser")
+//	@ApiOperation(value = "좋아요 누른 사람")
+//	public Object FavoriteListByBoard(@RequestBody Board board) throws Exception {
+//		List<Integer> usersid = boardService.getFavoriteByBoard(board.getBoardid());
+//		List<User> users = new ArrayList<User>();
+//		for (int i : usersid)
+//			users.add(userService.findUserSimple(i));
+//		return new ResponseEntity<>(users, HttpStatus.OK);
+//	}
 
 	@PostMapping("/favoriteBoard")
 	@ApiOperation(value = "좋아요 누른 게시글")
@@ -79,7 +83,7 @@ public class PageController {
 			for (int i : boardsid) {
 				Board b = boardService.findBoardByBoardId(i);
 				List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-				List<Img> repimg = new ArrayList<Img>();// 대표 이미지들 들어갈 리스트
+				List<Img> repimg = new ArrayList<Img>();
 				for (Img img : imgs) {
 					if (img.getRep() == 1)
 						repimg.add(img);
@@ -91,11 +95,16 @@ public class PageController {
 				}
 				b.setCommentNum(comments.size());
 				int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
-				boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);// 좋아요 수 갱신
+				boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
 				b.setFavoriteNum(favoriteNum);
 				b.setMarkers(boardService.findMarker(b.getBoardid()));
 				b.setComments(comments);
 				b.setUser(userService.findUserSimple(b.getUid()));
+				List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
+				List<User> users = new ArrayList<User>();
+				for (int ui : usersid)
+					users.add(userService.findUserSimple(ui));
+				b.setFavorite(users);
 				boards.add(b);
 			}
 			return new ResponseEntity<>(boards, HttpStatus.OK);
@@ -103,9 +112,9 @@ public class PageController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	@DeleteMapping("/favorite")
-	@ApiOperation(value = "좋아요 해제")
-	public Object deleteFavorite(@RequestBody Map<String, String> map) throws Exception {
+	//@DeleteMapping("/favorite")
+	//@ApiOperation(value = "좋아요 해제")
+	public Object deleteFavorite(Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
@@ -114,6 +123,121 @@ public class PageController {
 				return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+	
+	@PostMapping("/scrap")
+	@ApiOperation(value = "스크랩 추가")
+	public Object addScrap(@RequestBody Map<String, String> map) throws Exception {
+		String jwt = map.get("jwt");
+		if (isOkJwt(jwt)) {
+			int boardid = Integer.parseInt(map.get("boardid"));
+			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
+			int ok = 0;
+			List<Integer> usersid = boardService.getScrap(boardid);
+			boolean flag = true;
+			for (int i : usersid) {
+				if (i == uid) {
+					flag = false;
+					Map<String, String> map1 = new HashMap<String, String>();
+					map1.put("jwt", jwt);
+					map1.put("boardid", String.valueOf(boardid));
+					deleteScrap(map1);
+					return new ResponseEntity<>(HttpStatus.OK);
+				}
+			}
+			if (flag)
+				ok = boardService.addScrap(uid, boardid);
+			if (ok > 0)
+				return new ResponseEntity<>(HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+
+	@PostMapping("/scrapBoard")
+	@ApiOperation(value = "스크랩 게시글")
+	public Object scrapBoard(@RequestBody Map<String, String> map) throws Exception {
+		String jwt = map.get("jwt");
+		if (isOkJwt(jwt)) {
+			List<Integer> boardsid = boardService
+					.getScrap((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+			List<Board> boards = new ArrayList<Board>();
+			for (int i : boardsid) {
+				Board b = boardService.findBoardByBoardId(i);
+				List<Img> imgs = boardService.findBoardImg(b.getBoardid());
+				List<Img> repimg = new ArrayList<Img>();
+				for (Img img : imgs) {
+					if (img.getRep() == 1)
+						repimg.add(img);
+				}
+				b.setImgs(repimg);
+				List<Comment> comments = boardService.findComment(b.getBoardid());
+				for (Comment c : comments) {
+					c.setUser(userService.findUserSimple(c.getUid()));
+				}
+				b.setCommentNum(comments.size());
+				int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+				boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+				b.setFavoriteNum(favoriteNum);
+				b.setMarkers(boardService.findMarker(b.getBoardid()));
+				b.setComments(comments);
+				b.setUser(userService.findUserSimple(b.getUid()));
+				List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
+				List<User> users = new ArrayList<User>();
+				for (int ui : usersid)
+					users.add(userService.findUserSimple(ui));
+				b.setFavorite(users);
+				boards.add(b);
+			}
+			return new ResponseEntity<>(boards, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+
+	public Object deleteScrap(Map<String, String> map) throws Exception {
+		String jwt = map.get("jwt");
+		if (isOkJwt(jwt)) {
+			int boardid = Integer.parseInt(map.get("boardid"));
+			int ok = boardService.deleteScrap((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), boardid);
+			if (ok > 0)
+				return new ResponseEntity<>(HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+	
+	@PostMapping("/followBoard")
+	@ApiOperation(value = "팔로우 게시글")
+	public Object followboard(@RequestBody Map<String, String> map) throws Exception {
+		String jwt = map.get("jwt");
+		if (isOkJwt(jwt)) {
+			List<Board> boards = boardService.findBoardByFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+			for (Board b : boards) {
+				List<Img> imgs = boardService.findBoardImg(b.getBoardid());
+				List<Img> repimg = new ArrayList<Img>();
+				for (Img img : imgs) {
+					if (img.getRep() == 1)
+						repimg.add(img);
+				}
+				b.setImgs(repimg);
+				List<Comment> comments = boardService.findComment(b.getBoardid());
+				for (Comment c : comments) {
+					c.setUser(userService.findUserSimple(c.getUid()));
+				}
+				b.setCommentNum(comments.size());
+				int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+				boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+				b.setFavoriteNum(favoriteNum);
+				b.setMarkers(boardService.findMarker(b.getBoardid()));
+				b.setComments(comments);
+				List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
+				List<User> users = new ArrayList<User>();
+				for (int ui : usersid)
+					users.add(userService.findUserSimple(ui));
+				b.setFavorite(users);
+				b.setUser(userService.findUserSimple(b.getUid()));
+			}
+			return new ResponseEntity<>(boards, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PostMapping("/boardDetail")
@@ -138,8 +262,12 @@ public class PageController {
 			boardService.updateFavoriteNum(board.getBoardid(), favoriteNum);
 			board.setFavoriteNum(favoriteNum);
 			board.setMarkers(boardService.findMarker(board.getBoardid()));
+			List<Integer> usersid = boardService.getFavoriteByBoard(board.getBoardid());
+			List<User> users = new ArrayList<User>();
+			for (int ui : usersid)
+				users.add(userService.findUserSimple(ui));
+			board.setFavorite(users);
 			board.setUser(userService.findUserSimple(board.getUid()));
-			// System.out.println("게시글 상세를 조회하였습니다.");
 			return new ResponseEntity<>(board, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -150,7 +278,6 @@ public class PageController {
 	public Object addBoard(@RequestBody Board board) throws Exception {
 		// uid 는 프론트에서 설정?
 		int ok = boardService.addBoard(board);
-
 		if (ok > 0) {
 			int repcnt = 0;
 			for (Img i : board.getImgs()) {
@@ -158,21 +285,18 @@ public class PageController {
 				if (i.getRep() == 1)
 					repcnt++;
 			}
-
 			if (repcnt == 0 || board.getMarkers().size() == 0) {
 				boardService.deleteBoard(board.getBoardid());
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 			}
-
 			for (Img i : board.getImgs()) {
 				boardService.addImg(i);
 			}
-
 			for (Marker m : board.getMarkers()) {
 				m.setBoardid(board.getBoardid());
 				boardService.addMarker(m);
 			}
-
+			
 			List<Integer> follower = userService.getFollower(board.getUid());
 			for(int i:follower) {
 				Alarm alarm = new Alarm();
@@ -180,6 +304,7 @@ public class PageController {
 				alarm.setBoardid(board.getBoardid());
 				alarm.setAlarmtype(4);
 				alarm.setNickname(board.getUser().getNickname());
+				userService.addAlarm(alarm);
 			}
 			// System.out.println("게시글 등록되었습니다.");
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -256,7 +381,7 @@ public class PageController {
 		List<Board> boards = boardService.getBoardList();
 		for (Board b : boards) {
 			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-			List<Img> repimg = new ArrayList<Img>();// 대표 이미지들 들어갈 리스트
+			List<Img> repimg = new ArrayList<Img>();
 			for (Img i : imgs) {
 				if (i.getRep() == 1)
 					repimg.add(i);
@@ -268,13 +393,17 @@ public class PageController {
 			}
 			b.setCommentNum(comments.size());
 			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
-			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);// 좋아요 수 갱신
+			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
 			b.setFavoriteNum(favoriteNum);
 			b.setMarkers(boardService.findMarker(b.getBoardid()));
 			b.setComments(comments);
+			List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
+			List<User> users = new ArrayList<User>();
+			for (int ui : usersid)
+				users.add(userService.findUserSimple(ui));
+			b.setFavorite(users);
 			b.setUser(userService.findUserSimple(b.getUid()));
 		}
-		// System.out.println("전체 게시글 조회했습니다.");
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
 
@@ -317,7 +446,7 @@ public class PageController {
 			}
 			if (flag) {// 보드 정보를 다 모아서 목록에 넣는다
 				List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-				List<Img> repimg = new ArrayList<Img>();// 대표 이미지들 들어갈 리스트
+				List<Img> repimg = new ArrayList<Img>();
 				for (Img i : imgs) {
 					if (i.getRep() == 1)
 						repimg.add(i);
@@ -329,15 +458,19 @@ public class PageController {
 				}
 				b.setCommentNum(comments.size());
 				int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
-				boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);// 좋아요 수 갱신
+				boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
 				b.setFavoriteNum(favoriteNum);
 				b.setMarkers(boardService.findMarker(b.getBoardid()));
 				b.setComments(comments);
+				List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
+				List<User> users = new ArrayList<User>();
+				for (int ui : usersid)
+					users.add(userService.findUserSimple(ui));
+				b.setFavorite(users);
 				b.setUser(userService.findUserSimple(b.getUid()));
 				board.add(b);
 			}
 		}
-		// System.out.println("게시글 조회되었습니다.");
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
 
@@ -348,18 +481,28 @@ public class PageController {
 		List<Board> boards = boardService.findBoardListByUid(uid);
 		for (Board b : boards) {
 			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-			List<Img> repimg = new ArrayList<Img>();// 대표 이미지들 들어갈 리스트
+			List<Img> repimg = new ArrayList<Img>();
 			for (Img i : imgs) {
 				if (i.getRep() == 1)
 					repimg.add(i);
 			}
 			b.setImgs(repimg);
 			List<Comment> comments = boardService.findComment(b.getBoardid());
+			for (Comment c : comments) {
+				c.setUser(userService.findUserSimple(c.getUid()));
+			}
 			b.setCommentNum(comments.size());
 			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
 			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
 			b.setFavoriteNum(favoriteNum);
 			b.setMarkers(boardService.findMarker(b.getBoardid()));
+			b.setComments(comments);
+			List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
+			List<User> users = new ArrayList<User>();
+			for (int ui : usersid)
+				users.add(userService.findUserSimple(ui));
+			b.setFavorite(users);
+			b.setUser(userService.findUserSimple(b.getUid()));
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
@@ -375,7 +518,7 @@ public class PageController {
 				comment.getCommentid();
 			alarm.setBoardid(comment.getBoardid());
 			alarm.setAlarmtype(comment.getListener()==0?2:3);
-			alarm.setNickname(comment.getUser().getNickname());
+			alarm.setNickname(userService.findUserByUid(comment.getUid()).getNickname());
 			userService.addAlarm(alarm);
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
