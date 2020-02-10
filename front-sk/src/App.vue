@@ -11,7 +11,7 @@ const userMapActions = createNamespacedHelpers('User').mapActions;
 export default {
     name: 'app',
     beforeCreate() {
-        this.reqUserInfo();
+        this.reqUserInfo;
     },
     mounted() {
         console.log('haha');

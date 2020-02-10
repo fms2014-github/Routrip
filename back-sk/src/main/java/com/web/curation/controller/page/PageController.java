@@ -1,36 +1,20 @@
 package com.web.curation.controller.page;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
+import java.util.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import com.web.curation.model.BasicResponse;
-import com.web.curation.model.board.Board;
-import com.web.curation.model.board.Comment;
-import com.web.curation.model.board.Img;
-import com.web.curation.model.board.Marker;
+import com.web.curation.model.board.*;
 import com.web.curation.model.user.User;
 import com.web.curation.service.BoardService;
 import com.web.curation.service.UserService;
 
 import io.jsonwebtoken.Jwts;
-import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.*;
 
 @ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
 		@ApiResponse(code = 403, message = "Forbidden", response = BasicResponse.class),
@@ -128,14 +112,13 @@ public class PageController {
 		board.setFavoriteNum(favoriteNum);
 		board.setMarkers(boardService.findMarker(board.getBoardid()));
 		board.setUser(userService.findUserSimple(board.getUid()));
-		System.out.println("게시글 상세를 조회하였습니다.");
+		//System.out.println("게시글 상세를 조회하였습니다.");
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
 
 	@PostMapping("/board")
 	@ApiOperation(value = "게시글 등록")
 	public Object addBoard(@RequestBody Board board) throws Exception {
-		//uid 프론트에서 바로 넣어놓기
 		int ok = boardService.addBoard(board);
 
 		if (ok > 0) {
@@ -160,7 +143,7 @@ public class PageController {
 				boardService.addMarker(m);
 			}
 			
-			System.out.println("게시글 등록되었습니다.");
+			//System.out.println("게시글 등록되었습니다.");
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -242,23 +225,6 @@ public class PageController {
 			b.setImgs(repimg);
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			for(Comment c:comments) {
-				SimpleDateFormat format3 = new SimpleDateFormat("yyyyMMddHHmmss");
-				SimpleDateFormat format4 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-				long no = Long.parseLong(format3.format(new Date()))/100;
-				long wd = Long.parseLong(format3.format(format4.parse(c.getWritedate())))/100;
-					if (no / 100000000 - wd / 100000000 > 0) {
-						c.setWriteday((no / 100000000 - wd / 100000000) + "년 전");
-					} else if (no / 1000000 - wd / 1000000 > 0) {
-						c.setWriteday((no / 1000000 - wd / 1000000) + "달 전");
-					} else if (no / 10000 - wd / 10000 > 0) {
-						c.setWriteday((no / 10000 - wd / 10000) + "일 전");
-					} else if (no / 100 - wd / 100 > 0) {
-						c.setWriteday((no / 100 - wd / 100) + "시간 전");
-					} else if (no - wd > 0) {
-						c.setWriteday((no - wd) + "분 전");
-					} else {
-						c.setWriteday("방금 전");
-					}
 				c.setUser(userService.findUserSimple(c.getUid()));
 			}
 			b.setCommentNum(comments.size());
@@ -268,23 +234,8 @@ public class PageController {
 			b.setMarkers(boardService.findMarker(b.getBoardid()));
 			b.setComments(comments);
 			b.setUser(userService.findUserSimple(b.getUid()));
-			SimpleDateFormat format1 = new SimpleDateFormat("yyyyMMdd");
-			SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
-			int now = Integer.parseInt(format1.format(new Date()));
-			int writedate = Integer.parseInt(format1.format(format2.parse(b.getWritedate())));
-			if(now/10000 - writedate/10000 > 0) {
-				b.setWriteday((now/10000 - writedate/10000)+"년 전" );
-			}else if((format1.parse(String.valueOf(now)).getTime() - format1.parse(String.valueOf(writedate)).getTime()) / (24*60*60*1000) < 7 && (format1.parse(String.valueOf(now)).getTime() - format1.parse(String.valueOf(writedate)).getTime()) / (24*60*60*1000) > 0) {
-				b.setWriteday(((format1.parse(String.valueOf(now)).getTime() - format1.parse(String.valueOf(writedate)).getTime()) / (24*60*60*1000))+"일 전");
-			}else if(now/100 - writedate/100 > 0) {
-				b.setWriteday((now/100 - writedate/100)+"달 전");
-			}else if(now - writedate > 0) {
-				b.setWriteday((now - writedate)+"일 전");
-			}else {
-				b.setWriteday("오늘");
-			}
 		}
-		System.out.println("전체 게시글 조회했습니다.");
+		//System.out.println("전체 게시글 조회했습니다.");
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
                                                                                                             
@@ -333,7 +284,7 @@ public class PageController {
 				board.add(b);
 			}
 		}
-		System.out.println("게시글 조회되었습니다.");
+		//System.out.println("게시글 조회되었습니다.");
 		return new ResponseEntity<>(board, HttpStatus.OK);
 	}
 
@@ -362,7 +313,6 @@ public class PageController {
 	@PostMapping("/comment")
 	@ApiOperation(value = "댓글 등록")
 	public Object addComment(@RequestBody Comment comment) throws Exception {
-		//boardid 랑 uid 는 프론트에서 바로 넣어놓기
 		int ok = boardService.addComment(comment);
 		// comment 에 listener 가 있으면 listener 한테 알람? 백엔드에서 보내야하나?
 		if (ok > 0)
@@ -372,8 +322,8 @@ public class PageController {
 
 	@DeleteMapping("/comment")
 	@ApiOperation(value = "댓글 삭제")
-	public Object deleteComment(@RequestBody Comment comment) throws Exception {
-		int ok = boardService.deleteComment(comment.getCommentid());
+	public Object deleteComment(@RequestBody String commentid) throws Exception {
+		int ok = boardService.deleteComment(Integer.parseInt(commentid));
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

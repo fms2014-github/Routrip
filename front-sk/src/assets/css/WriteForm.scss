@@ -1,0 +1,364 @@
+@charset "utf-8";
+@import './common';
+$hashtag-cansle-circle: 18px;
+$area-search-bar-circle: 30px;
+$border-default: 1px solid black;
+$border-41a8ac: 1px solid #41a8ac;
+$border-7bbfc8: 1px solid #7bbfc8;
+$border-a6cdc6: 1px solid #a6cdc6;
+
+#content-upload-form {
+    #content-title {
+        float: none;
+        margin: 0px;
+    }
+
+    .select-form {
+        border: $border-default;
+        border-bottom: 0px;
+
+        .select-form-title {
+            display: inline-block;
+            vertical-align: middle;
+            padding: 0 8px;
+
+            font: {
+                size: 1.2em;
+            }
+        }
+
+        .select-tag,
+        .hashtag-form {
+            display: inline-block;
+            margin: 4px 0px;
+
+            .hashtag-form {
+                border: $border-41a8ac;
+                border-radius: 20px;
+                margin: 4px;
+                vertical-align: middle;
+                padding: 4px 4px 4px 8px;
+
+                font: {
+                    size: 1.2em;
+                }
+
+                .hashtag-cansle {
+                    width: $hashtag-cansle-circle;
+                    height: $hashtag-cansle-circle;
+                    margin-left: 4px;
+                    border: $border-41a8ac;
+                    border-radius: $hashtag-cansle-circle;
+                }
+            }
+        }
+    }
+
+    .search {
+        border: $border-default;
+        border-top: 0px;
+
+        .search-bar {
+            width: calc(100vw - 50px);
+            height: $area-search-bar-circle;
+            border-radius: $area-search-bar-circle;
+            border: $border-a6cdc6;
+            padding: 0 16px;
+            margin: 8px;
+        }
+
+        .search-result-dropdown {
+            .dropdown-list {
+                border: $border-a6cdc6;
+
+                font: {
+                    size: 1.6em;
+                }
+
+                padding: 16px;
+            }
+        }
+    }
+
+    #map-wrapper {
+        width: 100%;
+        position: relative;
+
+        #edit {
+            position: absolute;
+            top: 4px;
+            left: 24px;
+            z-index: 1;
+
+            border: {
+                style: solid;
+                width: 1px;
+                color: black;
+                collapse: collapse;
+            }
+
+            #drop-down-wrap {
+                position: relative;
+                display: flex;
+                background-color: white;
+                height: 0px;
+
+                #insert-comment-wrap {
+                    display: flex;
+                    flex-direction: column;
+
+                    #comment-submit {
+                        display: inline-block;
+                        margin: 8px;
+                        width: 100px;
+
+                        border: {
+                            style: solid;
+                            width: 1px;
+                            color: black;
+                        }
+                    }
+                }
+
+                #create-condition {
+                    display: inline-block;
+                    width: 100%;
+
+                    span {
+                        display: block;
+                    }
+
+                    label {
+                        display: block;
+                        input[type=radio] {
+                            position: static;
+                            -webkit-appearance: radio;
+                        }
+                    }
+                }
+            }
+
+            #work {
+                display: inline-block;
+
+                .draw-tools:last-of-type {
+                    border: {
+                        style: solid;
+                        width: 0 0 1px 0px;
+                        color: black;
+                        collapse: collapse;
+                    }
+
+                    .selected {
+                        border: {
+                            style: solid;
+                            width: 0px;
+                            color: black;
+                            collapse: collapse;
+                        }
+                    }
+                }
+
+                #undo,
+                #redo {
+                    &.disabled {
+                        background-color: #ddd;
+                        color: #9e9e9e;
+                    }
+                }
+            }
+
+            .draw-tools {
+                width: 60px;
+                padding: 8px 0;
+                text-align: center;
+                background-color: #fff;
+                color: black;
+
+                border: {
+                    style: solid;
+                    width: 0 1px 1px 0px;
+                    color: black;
+                    collapse: collapse;
+                }
+            }
+
+            .selected {
+                border-bottom: 1px solid white
+            }
+        }
+
+        #map {
+            width: 800px;
+            height: 650px;
+        }
+
+    }
+
+    #image-upload {
+        #image-file {
+            display: none;
+        }
+
+        #upload-button {
+            padding: 4px;
+
+            border: {
+                style: solid;
+                width: 1px;
+            }
+        }
+
+        #file-list {
+            margin: 4px 0;
+
+            .upload-image-preview {
+                display: inline-block;
+                position: relative;
+                border: 2px solid black;
+                margin: 1px;
+
+                .image-size {
+                    vertical-align: bottom;
+                    width: 64px;
+                    height: 80px;
+                }
+
+                .deleteImg {
+                    position: absolute;
+                    right: 0px;
+
+                    border: {
+                        style: solid;
+                        width: 0 0 2px 2px;
+                    }
+
+                    height: 16px;
+                }
+            }
+        }
+    }
+
+    #text-area {
+        border: {
+            style: solid;
+        }
+    }
+
+    #calendar-wrapper {
+        label {
+            margin: 0px 4px;
+
+            border: {
+                style: solid;
+                width: 1px;
+            }
+
+            .calendar {
+                width: 40px;
+
+                border: {
+                    width: 1px;
+                }
+            }
+
+            span {
+                padding: 0px 4px;
+            }
+        }
+
+    }
+}
+
+.comment-wrap {
+    position: relative;
+    background: #88b7d5;
+    border: 4px solid #c2e1f5;
+    padding: 8px;
+
+    &:after,
+    &:before {
+        top: 100%;
+        left: 50%;
+        border: solid transparent;
+        content: " ";
+        height: 0;
+        width: 0;
+        position: absolute;
+        pointer-events: none;
+    }
+
+    &:after {
+        border-color: rgba(136, 183, 213, 0);
+        border-top-color: #88b7d5;
+        border-width: 10px;
+        margin-left: -10px;
+    }
+
+    &:before {
+        border-color: rgba(194, 225, 245, 0);
+        border-top-color: #c2e1f5;
+        border-width: 16px;
+        margin-left: -16px;
+    }
+
+    .comment-content {
+        width: 160px;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+    }
+
+    .comment-title {
+        width: 144px;
+        word-wrap: break-word;
+        white-space: pre-wrap;
+    }
+
+    .close {
+        display: inline-block;
+        background-image: url('../images/close.png');
+        background-size: cover;
+        width: 16px;
+        height: 16px;
+    }
+}
+
+.drop-down {
+    animation-name: down;
+    animation-duration: 1s;
+    height: 150px !important;
+    overflow: hidden;
+}
+
+.drop-up {
+    animation-name: up;
+    animation-duration: 1s;
+    height: 0px;
+    overflow: hidden;
+}
+
+@keyframes down {
+
+    /* keyframe */
+    from {
+        height: 0px;
+    }
+
+    /* keyframe */
+    to {
+        height: 150px;
+    }
+}
+
+@keyframes up {
+
+    /* keyframe */
+    from {
+        height: 150px;
+    }
+
+    /* keyframe */
+    to {
+        height: 0;
+    }
+}

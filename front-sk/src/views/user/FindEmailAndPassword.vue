@@ -4,10 +4,12 @@
     Sub PJT I에서는 UX, 디자인 등을 포함하여 백엔드를 제외하여 개발합니다.
  -->
 <template>
-    <div id="find-email-password" class="wrapC">
+    <div id="find-email-password">
         <div class="toggle-title">
-            <h1 @click="showEmailFunc">Email 찾기</h1>
-            <h1 @click="showPasswordFunc">비밀번호 찾기</h1>
+            <h1 id="find-title">아이디 및 비밀번호 찾기</h1>
+            <button class="close" @click="close"><img class="close-img" src="../../assets/images/close.png" /></button>
+            <h1 id="find-email-tab" @click="showEmailFunc">Email 찾기</h1>
+            <h1 id="find-password-tab" @click="showPasswordFunc">비밀번호 찾기</h1>
         </div>
         <div id="find-email" :class="{ showEmail: !showEmail }">
             <div class="input-with-label">
@@ -31,7 +33,7 @@
                     @keyup.enter="birth"
                     id="birth"
                     placeholder="930904"
-                    type="text"
+                    type="date"
                 />
                 <label for="birth">생년월일</label>
                 <div class="error-text" v-if="error.birth">
@@ -102,8 +104,10 @@
                 인증번호 확인
             </button>
         </div>
-        <div @click="toLogin">로그인하기</div>
-        <div @click="toJoin">가입하기</div>
+        <div id="button-wrap">
+            <div @click="toLogin">로그인하기</div>
+            <div @click="toJoin">가입하기</div>
+        </div>
     </div>
 </template>
 
@@ -166,7 +170,7 @@ export default {
             this.findEmailBtn = !this.error.phone && !this.error.birth;
         },
         checkBirth() {
-            if (this.birth.length != 6) {
+            if (this.birth.length != 10) {
                 this.error.birth = '6자리 숫자로 입력해주세요.';
             } else this.error.birth = false;
 
@@ -201,17 +205,48 @@ export default {
             this.findEmailBtn = false;
         },
         sendCertNumFunc() {
-            alert('위 이메일로 인증번호를 보냈습니다.');
+            if (this.sendCertNum) {
+                UserApi.findPassword(
+                    this.email,
+                    res => {
+                        alert('위 이메일로 인증번호를 보냈습니다.');
+                        localStorage.setItem('authEmail', this.email);
+                        console.log(res.data);
+                        this.authCode = res.data;
+                    },
+                    error => {
+                        console.log(error);
+                    },
+                );
+            }
             this.certNumBox = true;
             this.sendCertNumBtn = false;
             this.checkCertNumBtn = true;
         },
         compareCertNum() {
-            alert('인증되었습니다!');
-            this.$router.push('/user/ChangePassword');
+            console.log('this.certNum', this.certNum);
+            console.log('this.authCode', this.authCode);
+            if (this.certNum === String(this.authCode)) {
+                alert('인증되었습니다.');
+                this.$router.push('/user/ChangePassword');
+            } else {
+                alert('인증번호가 틀렸습니다.');
+            }
         },
         findEmail() {
-            alert('이메일은 qkr******@naver.com 입니다.');
+            if (this.findEmailBtn) {
+                var { name, birth, phone } = this;
+                var data = { name, birth, phone };
+                UserApi.findEmail(
+                    data,
+                    res => {
+                        console.log(res.data);
+                    },
+                    error => {
+                        console.log(error);
+                    },
+                );
+            }
         },
         toLogin() {
             let flag = confirm('로그인 화면으로 돌아가시겠습니까?');
@@ -220,6 +255,10 @@ export default {
         toJoin() {
             let flag = confirm('회원가입 페이지로 이동하시겠습니까?');
             if (flag) this.$router.push('/user/join');
+        },
+        close() {
+            localStorage.setItem('popupFind', 'false');
+            this.$router.push('/');
         },
     },
     data: () => {
@@ -244,6 +283,7 @@ export default {
             checkCertNum: false,
             checkCertNumBtn: false,
             findEmailBtn: false,
+            authCode: '',
         };
     },
 };
