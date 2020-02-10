@@ -9,9 +9,18 @@
                     <HeaderComponent :headerTitle="userinfo.email" :mailIcon="true" />
                     <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정" :changeNick="changeNick" />
 
+<<<<<<< HEAD
+              
+                <button @click="reqUserInfo">테스트</button>
+
+                <div class="none-border">
+                    <button class="button-text">회원탈퇴</button>
+                </div>
+=======
                     <div class="none-border">
                         <button class="button-text">회원탈퇴</button>
                     </div>
+>>>>>>> 632e396a444e6b7417a2c200abf381e78398997b
                 </div>
             </div>
             <div class="wrap">
@@ -37,6 +46,14 @@ import '../../../assets/css/profile.scss';
 import '../../../assets/css/style.scss';
 import Axios from 'axios';
 import Swal from 'sweetalert2';
+import { createNamespacedHelpers } from 'vuex';
+
+
+
+
+const userMapActions = createNamespacedHelpers('User').mapActions;
+
+
 
 export default {
     components: {
@@ -61,6 +78,10 @@ export default {
         this.checkLogin();
     },
     methods: {
+        ...userMapActions(['reqUserInfo']),
+        
+
+
         // tokener(e) {
         //     console.log("gihihihifgigfdig",e)
         //     Axios.get('http://192.168.100.70:8083/account/decode'+e)
@@ -98,6 +119,21 @@ export default {
             }
         },
 
+<<<<<<< HEAD
+        async changeNick() { await Swal.fire({
+            title: '바꿀 닉네임을 입력해주세요.',
+            input: 'text',
+            inputValue: "테스트",
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to write something!'
+                }
+            }
+        })},
+
+
+=======
         async changeNick() {
             await Swal.fire({
                 title: '바꿀 닉네임을 입력해주세요.',
@@ -111,6 +147,7 @@ export default {
                 },
             });
         },
+>>>>>>> 632e396a444e6b7417a2c200abf381e78398997b
     },
     data() {
         return {
