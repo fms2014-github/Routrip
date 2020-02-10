@@ -129,6 +129,9 @@ public class PageController {
 			}
 			board.setImgs(boardService.findBoardImg(board.getBoardid()));
 			List<Comment> comments = boardService.findComment(board.getBoardid());
+			for (Comment c : comments) {
+				c.setUser(userService.findUserSimple(c.getUid()));
+			}
 			board.setCommentNum(comments.size());
 			board.setComments(comments);
 			int favoriteNum = boardService.getFavoriteNum(board.getBoardid());
@@ -284,19 +287,28 @@ public class PageController {
 		for (Board b : boards) {
 			String[] keywords = b.getKeyword().split(" ");
 			boolean flag = false;
-			if (str.contains(b.getTitle()) || b.getTitle().contains(str)) {
+			if (str.contains(b.getTitle()) || b.getTitle().contains(str)) {//제목과 검색어 어느쪽이 완전히 포함할 경우
 				flag = true;
 			} else {
-				for (String k : keywords) {
+				for (String k : keywords) {//검색어가 키워드를 포함할 경우
 					if (str.contains(k)) {
 						flag = true;
 						break;
 					}
 				}
 				if (!flag) {
-					String[] titles = b.getTitle().split(" ");
+					String[] titles = b.getTitle().split(" ");//검색어가 제목의 일부를 포함할 경우
 					for (String t : titles) {
 						if (str.contains(t)) {
+							flag = true;
+							break;
+						}
+					}
+				}
+				if (!flag) {
+					String[] strs = str.split(" ");//제목이 검색어의 일부를 포함할 경우
+					for (String s : strs) {
+						if (b.getTitle().contains(s)) {
 							flag = true;
 							break;
 						}
