@@ -240,11 +240,13 @@ export default {
                 success: res => {
                     this.setUser(res);
                     this.userSnsId = res.id;
+                    console.log(this.userSnsId);
                     Axios.post('http://192.168.100.70:8083/account/snslogin', {
                         loginApi: 1,
                         userid: res.id,
                     })
                         .then(res2 => {
+                            console.log(res2);
                             localStorage.setItem('routrip_JWT', res2.data);
                             if (res2.data !== '') {
                                 this.reqUserInfo();

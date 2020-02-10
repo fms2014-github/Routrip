@@ -2,27 +2,22 @@
     <div class="profile-page">
         <div class="wrapD">
             <h2>My Profile</h2>
-            <button v-if="show" @click="logout">logout</button>
+            <button @click="logout">logout</button>
             <div class="profile-wrap">
                 <UserPicture :userPicture="true" />
                 <div class="user-info">
                     <HeaderComponent :headerTitle="userinfo.email" :mailIcon="true" />
                     <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정" :changeNick="changeNick" />
 
-<<<<<<< HEAD
-              
                 <button @click="reqUserInfo">테스트</button>
+                <button @click="test">프린터</button>
 
                 <div class="none-border">
                     <button class="button-text">회원탈퇴</button>
                 </div>
-=======
-                    <div class="none-border">
-                        <button class="button-text">회원탈퇴</button>
-                    </div>
->>>>>>> 632e396a444e6b7417a2c200abf381e78398997b
                 </div>
             </div>
+            
             <div class="wrap">
                 <router-link v-bind:to="{ name: 'UserPost' }"><TabComponent tabTitle="글" :isActive="true"/></router-link>
                 <router-link v-bind:to="{ name: 'UserComment' }"><TabComponent tabTitle="댓글" :isActive="true"/></router-link>
@@ -50,8 +45,8 @@ import { createNamespacedHelpers } from 'vuex';
 
 
 
-
 const userMapActions = createNamespacedHelpers('User').mapActions;
+const userMapGetters = createNamespacedHelpers('User').mapGetters;
 
 
 
@@ -60,6 +55,9 @@ export default {
         HeaderComponent,
         UserPicture,
         TabComponent,
+    },
+    computed: {
+        ...userMapGetters(['getUser']),
     },
 
     // created: function(){
@@ -76,11 +74,20 @@ export default {
     mounted() {
         this.getInfo();
         this.checkLogin();
+        
     },
     methods: {
         ...userMapActions(['reqUserInfo']),
+        ...userMapActions(['logout']),
+    
+        test() {
+            this.userinfo.nickname=this.getUser.data.nickname
+        },
         
-
+        logout(){
+            
+            this.$router.push({ name: 'Login' });
+        },
 
         // tokener(e) {
         //     console.log("gihihihifgigfdig",e)
@@ -106,11 +113,11 @@ export default {
                 localStorage.removeItem('popup');
             }
         },
-        logout() {
-            localStorage.removeItem('loginedEmail');
-            localStorage.removeItem('nickName');
-            this.$router.push({ name: 'Login' });
-        },
+        // logout() {
+        //     localStorage.removeItem('loginedEmail');
+        //     localStorage.removeItem('nickName');
+        //     this.$router.push({ name: 'Login' });
+        // },
         checkLogin() {
             if (localStorage.getItem('loginedEmail') !== null) {
                 this.show = true;
@@ -119,7 +126,6 @@ export default {
             }
         },
 
-<<<<<<< HEAD
         async changeNick() { await Swal.fire({
             title: '바꿀 닉네임을 입력해주세요.',
             input: 'text',
@@ -131,27 +137,9 @@ export default {
                 }
             }
         })},
-
-
-=======
-        async changeNick() {
-            await Swal.fire({
-                title: '바꿀 닉네임을 입력해주세요.',
-                input: 'text',
-                inputValue: '테스트',
-                showCancelButton: true,
-                inputValidator: value => {
-                    if (!value) {
-                        return 'You need to write something!';
-                    }
-                },
-            });
-        },
->>>>>>> 632e396a444e6b7417a2c200abf381e78398997b
     },
     data() {
         return {
-            popup: 'false',
             userinfo: {
                 token: '',
                 email: '',
