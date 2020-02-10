@@ -67,7 +67,6 @@ export default {
                     localStorage.setItem('kakao_refresh_token', authObj.refresh_token);
 
                     this.checkLogin = true;
-                    ////////////////////// 부모님께 전송@@@@
                 },
                 // 실패는 어떨 때 하는건지 모르겠다!x
                 fail: errObj => {
