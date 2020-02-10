@@ -1,5 +1,7 @@
 <template>
     <div>
+
+        
         <button @click="reqUserFollow">테스트</button>
         <div style="display: inline-block; width:40vw; ">
             A영역
@@ -7,8 +9,9 @@
         <div style="display: inline-block; width:40vw; ">
             B영역
         </div>
-
         <allPeople></allPeople>
+
+
     </div>
 </template>
 

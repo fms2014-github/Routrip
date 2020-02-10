@@ -1,5 +1,5 @@
 import Axios from 'axios';
-import profile from '../../views/user/Profile';
+import profile from '../../views/user/Profile.vue';
 
 // 상태를 선언하는 부분입니다.
 // 상태? 전역 변수라고 생각하시면 편합니다.
@@ -13,17 +13,20 @@ const state = {
 // dispatch
 const actions = {
     logout({ commit }) {
-        profile.$router.push({ name: 'Login' });
+        console.log(profile)
+        const jwt = localStorage.getItem('routrip_JWT');
         //vuex에 user정보 비우기
-        commit('setUser', null);
-        //로컬스토리지 비우기
-        localStorage.clear();
+        Axios.post('http://192.168.100.70:8083/account/logout/' , {jwt : jwt}).then(res => {
+            commit('setUser', null);
+            //로컬스토리지 비우기
+            localStorage.clear();
+        });
     },
-    reqUserInfo({ commit }) {
+    async reqUserInfo({ commit }) {
         console.log('스토어 액션 호출!');
         const jwt = localStorage.getItem('routrip_JWT');
         console.log(jwt);
-        Axios.post('http://192.168.100.70:8083/account/decode/' , {jwt : jwt}).then(res => {
+        await Axios.post('http://192.168.100.70:8083/account/decode/' , {jwt : jwt}).then(res => {
             commit('setUser', res);
             console.log(res.data)
             // console.log(res.data.nickname);

@@ -6,11 +6,10 @@
             <div class="profile-wrap">
                 <UserPicture :userPicture="true" />
                 <div class="user-info">
-                    <HeaderComponent :headerTitle="userinfo.email" :mailIcon="true" />
                     <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정" :changeNick="changeNick" />
 
-                <button @click="reqUserInfo">테스트</button>
-                <button @click="test">프린터</button>
+                <!-- <button @click="reqUserInfo">테스트</button>
+                <button @click="test">프린터</button> -->
 
                 <div class="none-border">
                     <button class="button-text">회원탈퇴</button>
@@ -74,20 +73,32 @@ export default {
     mounted() {
         this.getInfo();
         this.checkLogin();
-        
+
+        this.reqInfo();
     },
     methods: {
         ...userMapActions(['reqUserInfo']),
         ...userMapActions(['logout']),
-    
+
+        async reqInfo() {
+            
+            await this.reqUserInfo();
+            console.log("?", this.getUser);
+            this.userinfo.nickname=this.getUser.data.nickname;
+        },
+        getAllPost(){
+            
+        },
+
         test() {
             this.userinfo.nickname=this.getUser.data.nickname
         },
-        
-        logout(){
-            
-            this.$router.push({ name: 'Login' });
+        logout() {
+            this.logout().then(() => {
+                this.$router.push('/');
+            })
         },
+      
 
         // tokener(e) {
         //     console.log("gihihihifgigfdig",e)
@@ -113,11 +124,7 @@ export default {
                 localStorage.removeItem('popup');
             }
         },
-        // logout() {
-        //     localStorage.removeItem('loginedEmail');
-        //     localStorage.removeItem('nickName');
-        //     this.$router.push({ name: 'Login' });
-        // },
+        
         checkLogin() {
             if (localStorage.getItem('loginedEmail') !== null) {
                 this.show = true;
@@ -133,10 +140,20 @@ export default {
             showCancelButton: true,
             inputValidator: (value) => {
                 if (!value) {
-                    return 'You need to write something!'
+                    return '뭐라도 써보세요!'
                 }
-            }
-        })},
+                else{
+                    const jwt = localStorage.getItem('routrip_JWT');
+                    Axios.put('http://192.168.100.70:8083/account/user/', { 
+                        data: {
+                            value: value,
+                            jwt : jwt 
+                        }
+                    }).then(res => {
+                        commit('setUser', res);
+                    });
+                }
+            }})},
     },
     data() {
         return {
@@ -144,6 +161,7 @@ export default {
                 token: '',
                 email: '',
                 nickname: '',
+                posts:[],
             },
             show: false,
         };
