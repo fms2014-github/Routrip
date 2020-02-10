@@ -65,10 +65,23 @@
                                     </div>
                                 </button>
                             </div>
-                            <div class="follow">
-                                <button>🏹</button>
+                            <div class="scrab">
+                                <!-- <button @click="toggleScrabBtn(data.boardid)">
+                                    <div :class="{scrabToggle : scrabShow[dataIdx].scrab}">
+                                        <i class="far fa-bookmark"></i>
+                                    </div>
+                                    <div :class="{scrabToggle : scrabShow[dataIdx].scrab}">
+                                        <i class="fas fa-bookmark"></i>
+                                    </div>
+                                </button>-->
                             </div>
-                            <div class="state">{{ data.favoriteNum }}명이 이 게시글을 좋아합니다.</div>
+                            <div class="state" v-if="data.favoriteNum==1">
+                                <strong>{{ whoLiked[dataIdx] }}</strong>님이 게시글을 좋아합니다.
+                            </div>
+                            <div class="state" v-if="data.favoriteNum>1">
+                                <strong>{{ whoLiked[dataIdx] }}</strong>
+                                님 외 {{ data.favoriteNum-1 }}명이 이 게시글을 좋아합니다.
+                            </div>
                         </div>
 
                         <div class="text">
@@ -173,6 +186,9 @@ export default {
             comment: '',
             likeList: [],
             likeShow: [],
+            whoLiked: [],
+            scrabList: [],
+            scrabShow: [],
         };
     },
     created: function() {
@@ -208,27 +224,33 @@ export default {
         showAll() {
             Axios.post(`${URI}/page/favoriteBoard`, { jwt: jwt })
                 .then(res => {
+                    // console.log(res.data);
                     this.likeList = [];
                     for (var i = 0; i < res.data.length; ++i) {
                         this.likeList.push(res.data[i].boardid);
                     }
-
-                    Axios.get(`${URI}/page/boardList`)
-                        .then(res => {
-                            this.likeShow = [];
-                            this.datas = res.data;
-                            for (var i = 0; i < this.datas.length; ++i) {
-                                if (this.likeList.includes(this.datas[i].boardid)) this.likeShow.push({ like: true });
-                                else this.likeShow.push({ like: false });
-                            }
-                        })
-                        .catch(res => {
-                            console.log('전체 게시글 조회 실패');
-                        });
-                    console.log(this.likeList);
                 })
                 .catch(res => {
                     console.log('좋아요 게시글 조회 실패');
+                });
+
+            Axios.get(`${URI}/page/boardList`)
+                .then(res => {
+                    this.likeShow = [];
+                    this.whoLiked = [];
+                    this.datas = res.data;
+                    for (var i = 0; i < this.datas.length; ++i) {
+                        if (res.data[i].favorite.length > 0) {
+                            this.whoLiked.push(res.data[i].favorite[0].nickname);
+                        } else {
+                            this.whoLiked.push('');
+                        }
+                        if (this.likeList.includes(this.datas[i].boardid)) this.likeShow.push({ like: true });
+                        else this.likeShow.push({ like: false });
+                    }
+                })
+                .catch(res => {
+                    console.log('전체 게시글 조회 실패');
                 });
         },
         getAlldata() {
@@ -286,6 +308,15 @@ export default {
                 .catch(res => {
                     console.log(res);
                 });
+        },
+        toggleScrabBtn(boardid) {
+            // Axios.post(`${URI}/page/favorite`, { jwt: jwt, boardid: boardid })
+            //     .then(res => {
+            //         this.showAll();
+            //     })
+            //     .catch(res => {
+            //         console.log(res);
+            //     });
         },
     },
 };
