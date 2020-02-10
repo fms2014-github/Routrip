@@ -21,7 +21,7 @@ const actions = {
         console.log('스토어 액션 호출!');
         const jwt = localStorage.getItem('routrip_JWT');
         console.log(jwt);
-        Axios.get('http://192.168.100.70:8083/account/decode/' + jwt).then(res => {
+        Axios.post('http://192.168.100.70:8083/account/decode/' , {jwt : jwt}).then(res => {
             commit('setUser', res);
             console.log(res);
         });

@@ -11,7 +11,7 @@
                     <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정" :changeNick="changeNick" />
 
               
-
+                <button @click="reqUserInfo">테스트</button>
 
                 <div class="none-border">
                     <button class="button-text">회원탈퇴</button>
@@ -43,6 +43,14 @@ import '../../../assets/css/profile.scss';
 import '../../../assets/css/style.scss';
 import Axios from 'axios';
 import Swal from 'sweetalert2';
+import { createNamespacedHelpers } from 'vuex';
+
+
+
+
+const userMapActions = createNamespacedHelpers('User').mapActions;
+
+
 
 export default {
     
@@ -71,6 +79,10 @@ export default {
         
     },
     methods: {
+        ...userMapActions(['reqUserInfo']),
+        
+
+
         // tokener(e) {
         //     console.log("gihihihifgigfdig",e)          
         //     Axios.get('http://192.168.100.70:8083/account/decode'+e)
@@ -107,6 +119,19 @@ export default {
                 this.show = false;
             }
         },
+
+        async changeNick() { await Swal.fire({
+            title: '바꿀 닉네임을 입력해주세요.',
+            input: 'text',
+            inputValue: "테스트",
+            showCancelButton: true,
+            inputValidator: (value) => {
+                if (!value) {
+                    return 'You need to write something!'
+                }
+            }
+        })},
+
 
     },
     data() {
