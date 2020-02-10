@@ -1,5 +1,4 @@
 <template>
-
     <div class="profile-page">
         <div class="wrapD">
             <h2>My Profile</h2>
@@ -10,16 +9,10 @@
                     <HeaderComponent :headerTitle="userinfo.email" :mailIcon="true" />
                     <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정" :changeNick="changeNick" />
 
-              
-
-
-                    <button v-on:click="changeNick">체크체크</button>
-                <div class="none-border">
-                    <button class="button-text">회원탈퇴</button>
+                    <div class="none-border">
+                        <button class="button-text">회원탈퇴</button>
+                    </div>
                 </div>
-                </div>
-
-          
             </div>
             <div class="wrap">
                 <router-link v-bind:to="{ name: 'UserPost' }"><TabComponent tabTitle="글" :isActive="true"/></router-link>
@@ -46,7 +39,6 @@ import Axios from 'axios';
 import Swal from 'sweetalert2';
 
 export default {
-    
     components: {
         HeaderComponent,
         UserPicture,
@@ -58,22 +50,19 @@ export default {
     //         .then(res => {
     //             console.log(res.data)
     //             this.userinfo.token=res.data;
-     
+
     //         }).catch(error=>{
     //             console.error(error);
     //         })
     // },
 
-    
-
     mounted() {
         this.getInfo();
         this.checkLogin();
-        
     },
     methods: {
         // tokener(e) {
-        //     console.log("gihihihifgigfdig",e)          
+        //     console.log("gihihihifgigfdig",e)
         //     Axios.get('http://192.168.100.70:8083/account/decode'+e)
         //         .then(res=>{
         //             console.log(res.data)
@@ -109,27 +98,29 @@ export default {
             }
         },
 
-        async changeNick() { await Swal.fire({
-            title: '바꿀 닉네임을 입력해주세요.',
-            input: 'text',
-            inputValue: "테스트",
-            showCancelButton: true,
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'You need to write something!'
-                }
-            }
-        })},
+        async changeNick() {
+            await Swal.fire({
+                title: '바꿀 닉네임을 입력해주세요.',
+                input: 'text',
+                inputValue: '테스트',
+                showCancelButton: true,
+                inputValidator: value => {
+                    if (!value) {
+                        return 'You need to write something!';
+                    }
+                },
+            });
+        },
     },
     data() {
         return {
             popup: 'false',
             userinfo: {
-                token:'',
+                token: '',
                 email: '',
                 nickname: '',
             },
-            show: false
+            show: false,
         };
     },
 };
