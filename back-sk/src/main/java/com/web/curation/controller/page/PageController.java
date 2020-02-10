@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.*;
 
 import com.web.curation.model.BasicResponse;
 import com.web.curation.model.board.*;
+import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
 import com.web.curation.service.BoardService;
 import com.web.curation.service.UserService;
@@ -63,7 +64,7 @@ public class PageController {
 		List<Integer> usersid = boardService.getFavoriteByBoard(board.getBoardid());
 		List<User> users = new ArrayList<User>();
 		for (int i : usersid)
-			users.add(userService.findUserByUid(i));
+			users.add(userService.findUserSimple(i));
 		return new ResponseEntity<>(users, HttpStatus.OK);
 	}
 
@@ -71,27 +72,35 @@ public class PageController {
 	@ApiOperation(value = "좋아요 누른 게시글")
 	public Object FavoriteListByUser(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
-		List<Integer> boardsid = boardService
-				.getFavoriteByUser((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
-		List<Board> boards = new ArrayList<Board>();
-		for (int i : boardsid) {
-			Board b = boardService.findBoardByBoardId(i);
-			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-			List<Img> repimg = new ArrayList<Img>();// 대표 이미지들 들어갈 리스트
-			for (Img img : imgs) {
-				if (img.getRep() == 1)
-					repimg.add(img);
+		if (isOkJwt(jwt)) {
+			List<Integer> boardsid = boardService
+					.getFavoriteByUser((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+			List<Board> boards = new ArrayList<Board>();
+			for (int i : boardsid) {
+				Board b = boardService.findBoardByBoardId(i);
+				List<Img> imgs = boardService.findBoardImg(b.getBoardid());
+				List<Img> repimg = new ArrayList<Img>();// 대표 이미지들 들어갈 리스트
+				for (Img img : imgs) {
+					if (img.getRep() == 1)
+						repimg.add(img);
+				}
+				b.setImgs(repimg);
+				List<Comment> comments = boardService.findComment(b.getBoardid());
+				for (Comment c : comments) {
+					c.setUser(userService.findUserSimple(c.getUid()));
+				}
+				b.setCommentNum(comments.size());
+				int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+				boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);// 좋아요 수 갱신
+				b.setFavoriteNum(favoriteNum);
+				b.setMarkers(boardService.findMarker(b.getBoardid()));
+				b.setComments(comments);
+				b.setUser(userService.findUserSimple(b.getUid()));
+				boards.add(b);
 			}
-			b.setImgs(repimg);
-			List<Comment> comments = boardService.findComment(b.getBoardid());
-			b.setCommentNum(comments.size());
-			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
-			// boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
-			b.setFavoriteNum(favoriteNum);
-			b.setMarkers(boardService.findMarker(b.getBoardid()));
-			boards.add(b);
+			return new ResponseEntity<>(boards, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(boards, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@DeleteMapping("/favorite")
@@ -100,9 +109,9 @@ public class PageController {
 		String jwt = map.get("jwt");
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
-		int ok = boardService.deleteFavorite((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), boardid);
-		if (ok > 0)
-			return new ResponseEntity<>(HttpStatus.OK);
+			int ok = boardService.deleteFavorite((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), boardid);
+			if (ok > 0)
+				return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -114,21 +123,21 @@ public class PageController {
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
 			int uid = (int) Jwts.parser().parseClaimsJws(jwt).getBody().get("uid");
-		Board board = boardService.findBoardByBoardId(boardid);
-		if (board.getUnveiled() == 0 && uid != board.getUid()) {
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
-		board.setImgs(boardService.findBoardImg(board.getBoardid()));
-		List<Comment> comments = boardService.findComment(board.getBoardid());
-		board.setCommentNum(comments.size());
-		board.setComments(comments);
-		int favoriteNum = boardService.getFavoriteNum(board.getBoardid());
-		boardService.updateFavoriteNum(board.getBoardid(), favoriteNum);
-		board.setFavoriteNum(favoriteNum);
-		board.setMarkers(boardService.findMarker(board.getBoardid()));
-		board.setUser(userService.findUserSimple(board.getUid()));
-		// System.out.println("게시글 상세를 조회하였습니다.");
-		return new ResponseEntity<>(board, HttpStatus.OK);
+			Board board = boardService.findBoardByBoardId(boardid);
+			if (board.getUnveiled() == 0 && uid != board.getUid()) {
+				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+			}
+			board.setImgs(boardService.findBoardImg(board.getBoardid()));
+			List<Comment> comments = boardService.findComment(board.getBoardid());
+			board.setCommentNum(comments.size());
+			board.setComments(comments);
+			int favoriteNum = boardService.getFavoriteNum(board.getBoardid());
+			boardService.updateFavoriteNum(board.getBoardid(), favoriteNum);
+			board.setFavoriteNum(favoriteNum);
+			board.setMarkers(boardService.findMarker(board.getBoardid()));
+			board.setUser(userService.findUserSimple(board.getUid()));
+			// System.out.println("게시글 상세를 조회하였습니다.");
+			return new ResponseEntity<>(board, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -136,7 +145,7 @@ public class PageController {
 	@PostMapping("/board")
 	@ApiOperation(value = "게시글 등록")
 	public Object addBoard(@RequestBody Board board) throws Exception {
-		//uid 는 프론트에서 설정?
+		// uid 는 프론트에서 설정?
 		int ok = boardService.addBoard(board);
 
 		if (ok > 0) {
@@ -161,6 +170,14 @@ public class PageController {
 				boardService.addMarker(m);
 			}
 
+			List<Integer> follower = userService.getFollower(board.getUid());
+			for(int i:follower) {
+				Alarm alarm = new Alarm();
+				alarm.setUid(i);
+				alarm.setBoardid(board.getBoardid());
+				alarm.setAlarmtype(4);
+				alarm.setNickname(board.getUser().getNickname());
+			}
 			// System.out.println("게시글 등록되었습니다.");
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
@@ -170,7 +187,7 @@ public class PageController {
 	@PutMapping("/board")
 	@ApiOperation(value = "게시글 수정")
 	public Object updateBoard(@RequestBody Board board) throws Exception {
-		//uid 는 프론트에서 설정?
+		// uid 는 프론트에서 설정?
 		Board b = boardService.findBoardByBoardId(board.getBoardid());
 		if (board.getTitle() != null)
 			b.setTitle(board.getTitle());
@@ -295,11 +312,16 @@ public class PageController {
 				}
 				b.setImgs(repimg);
 				List<Comment> comments = boardService.findComment(b.getBoardid());
+				for (Comment c : comments) {
+					c.setUser(userService.findUserSimple(c.getUid()));
+				}
 				b.setCommentNum(comments.size());
 				int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
-				// boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+				boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);// 좋아요 수 갱신
 				b.setFavoriteNum(favoriteNum);
 				b.setMarkers(boardService.findMarker(b.getBoardid()));
+				b.setComments(comments);
+				b.setUser(userService.findUserSimple(b.getUid()));
 				board.add(b);
 			}
 		}
@@ -309,9 +331,9 @@ public class PageController {
 
 	@PostMapping("/searchBoard")
 	@ApiOperation(value = "작성한 게시글")
-	public Object writedBoard(@RequestBody String jwt) throws Exception {
-		List<Board> boards = boardService
-				.findBoardListByUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+	public Object writedBoard(@RequestBody Map<String, String> map) throws Exception {
+		int uid = Integer.parseInt(map.get("uid"));
+		List<Board> boards = boardService.findBoardListByUid(uid);
 		for (Board b : boards) {
 			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
 			List<Img> repimg = new ArrayList<Img>();// 대표 이미지들 들어갈 리스트
@@ -334,9 +356,17 @@ public class PageController {
 	@ApiOperation(value = "댓글 등록")
 	public Object addComment(@RequestBody Comment comment) throws Exception {
 		int ok = boardService.addComment(comment);
-		// comment 에 listener 가 있으면 listener 한테 알람? 백엔드에서 보내야하나?
-		if (ok > 0)
+		if (ok > 0) {
+			Alarm alarm = new Alarm();
+			alarm.setUid(comment.getListener()==0?boardService.findBoardByBoardId(comment.getBoardid()).getUid():boardService.findCommentByCommentid(comment.getListener()).getUid());
+			if(comment.getListener()>0)
+				comment.getCommentid();
+			alarm.setBoardid(comment.getBoardid());
+			alarm.setAlarmtype(comment.getListener()==0?2:3);
+			alarm.setNickname(comment.getUser().getNickname());
+			userService.addAlarm(alarm);
 			return new ResponseEntity<>(HttpStatus.OK);
+		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 

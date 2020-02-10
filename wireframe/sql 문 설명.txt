@@ -86,3 +86,14 @@ create table blacklist(
 uid int not null, //토큰이 가지고 있던 uid
 exp datetime not null //토큰이 가지고 있던 만료기간
 );
+
+create table alarm(
+alarmid int primary key auto_increment, //알림 식별자
+uid int not null, //알림 받을 uid
+boardid int, //어느 글 관련인가
+commentid int, //어느 코멘트인가
+follow int, //누가 날 팔로우했는가
+alarmtype int not null, //알림타입(팔로우1, 댓글2, 대댓글3, 팔로잉한글4)
+nickname varchar(20), //알림오도록 행동한 주체의 닉네임
+time datetime not null //알림 생긴 시간
+);

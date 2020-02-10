@@ -2,6 +2,7 @@ package com.web.curation.service;
 
 import java.util.List;
 
+import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
 
 public interface IUserService {//extends JpaRepository<User, String> {
@@ -30,4 +31,9 @@ public interface IUserService {//extends JpaRepository<User, String> {
     int findBlackList(int uid, String exp) throws Exception;
     List<String> findBlackListByUid(int uid) throws Exception;
     int deleteBlackList() throws Exception;
+    
+    int addAlarm(Alarm alarm) throws Exception;
+    List<Alarm> getAlarm(int uid) throws Exception;
+    int deleteAlarm(int alarmid) throws Exception;
+    int deleteAlarmAll(int uid) throws Exception;
 }

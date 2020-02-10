@@ -85,3 +85,14 @@ create table blacklist(
 uid int not null,
 exp datetime not null
 );
+
+create table alarm(
+alarmid int primary key auto_increment,
+uid int not null,
+boardid int,
+commentid int,
+follow int,
+alarmtype int not null,
+nickname varchar(20),
+time datetime not null
+);

@@ -1,6 +1,5 @@
 package com.web.curation.dao;
 
-import java.util.Date;
 import java.util.List;
 
 import com.web.curation.model.board.Board;
@@ -32,6 +31,7 @@ public interface IBoardDao {
     
     int addComment(Comment comment) throws Exception;
     List<Comment> findComment(int boardid) throws Exception;
+    Comment findCommentByCommentid(int commentid) throws Exception;
     int deleteComment(int commentid) throws Exception;
     
     int addMarker(Marker marker) throws Exception;

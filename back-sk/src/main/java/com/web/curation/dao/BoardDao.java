@@ -157,4 +157,9 @@ public class BoardDao implements IBoardDao{
 	public int deleteMarker(int markerid) throws Exception {
 		return sqlSession.delete(ns+"deleteMarker", markerid);
 	}
+
+	@Override
+	public Comment findCommentByCommentid(int commentid) throws Exception {
+		return sqlSession.selectOne(ns+"findCommentByCommentid", commentid);
+	}
 }

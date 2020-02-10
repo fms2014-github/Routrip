@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.web.curation.dao.UserDao;
+import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
 
 @Service//("userService")
@@ -127,5 +128,25 @@ public class UserService implements IUserService{
 	@Override
 	public User findUserSimple(int uid) throws Exception {
 		return userDao.findUserSimple(uid);
+	}
+
+	@Override
+	public int addAlarm(Alarm alarm) throws Exception {
+		return userDao.addAlarm(alarm);
+	}
+
+	@Override
+	public List<Alarm> getAlarm(int uid) throws Exception {
+		return userDao.getAlarm(uid);
+	}
+
+	@Override
+	public int deleteAlarm(int alarmid) throws Exception {
+		return userDao.deleteAlarm(alarmid);
+	}
+
+	@Override
+	public int deleteAlarmAll(int uid) throws Exception {
+		return userDao.deleteAlarmAll(uid);
 	}
 }

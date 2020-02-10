@@ -138,6 +138,9 @@
 	<insert id="addComment" parameterType="comment" useGeneratedKeys="true" keyProperty="commentid">
 	insert into comment(uid, boardid, contents, writedate, listener)
 	values(#{uid}, #{boardid}, #{contents}, now(), #{listener})
+	<selectKey keyProperty="commentid" resultType="int">
+			select LAST_INSERT_ID()
+		</selectKey>
 	</insert>
 	
 	<delete id="deleteComment" parameterType="int">
@@ -149,6 +152,13 @@
 	select commentid, uid, boardid, contents, writedate, listener
 	from comment
 	where boardid = #{value}
+	order by writedate desc
+	</select>
+	
+	<select id="findCommentByCommentid" parameterType="int" resultType="comment">
+	select commentid, uid, boardid, contents, writedate, listener
+	from comment
+	where commentid = #{value}
 	order by writedate desc
 	</select>
 	

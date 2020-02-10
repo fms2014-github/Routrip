@@ -31,6 +31,7 @@ public interface IBoardService {
     
     int addComment(Comment comment) throws Exception;
     List<Comment> findComment(int boardid) throws Exception;
+    Comment findCommentByCommentid(int commentid) throws Exception;
     int deleteComment(int commentid) throws Exception;
     
     int addMarker(Marker marker) throws Exception;

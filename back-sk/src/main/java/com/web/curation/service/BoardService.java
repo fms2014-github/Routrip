@@ -141,4 +141,9 @@ public class BoardService implements IBoardService{
 	public int deleteMarker(int markerid) throws Exception {
 		return boardDao.deleteMarker(markerid);
 	}
+
+	@Override
+	public Comment findCommentByCommentid(int commentid) throws Exception {
+		return boardDao.findCommentByCommentid(commentid);
+	}
 }

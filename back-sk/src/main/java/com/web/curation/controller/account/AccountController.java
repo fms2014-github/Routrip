@@ -32,6 +32,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.web.curation.model.BasicResponse;
+import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
 import com.web.curation.service.UserService;
 
@@ -71,14 +72,16 @@ public class AccountController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		// System.out.println(loginUser.getEmail() + " 님이 로그인하셨습니다.");
 		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
-				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
+				.claim("uid", loginUser.getUid())
+				.claim("email", loginUser.getEmail())
 				.claim("userid", loginUser.getUserid())
 				// .claim("password", loginUser.getPassword())
 				// .claim("name", loginUser.getName())
 				.claim("nickname", loginUser.getNickname())
 				// .claim("phone", loginUser.getPhone())
 				// .claim("birth", loginUser.getBirth())
-				.claim("profileImg", loginUser.getProfileImg()).claim("loginApi", loginUser.getLoginApi())
+				.claim("profileImg", loginUser.getProfileImg())
+				.claim("loginApi", loginUser.getLoginApi())
 				.claim("userkey", loginUser.getUserkey())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))// 하루 뒤 자동 기간 만료됨
 				// .signWith(SignatureAlgorithm.HS256, key)
@@ -90,23 +93,25 @@ public class AccountController {
 	@ApiOperation(value = "sns로그인")
 	public Object snslogin(@RequestBody User user) throws Exception {
 		User loginUser = userService.findUserByUserId(user.getUserid(), user.getLoginApi());
-		// System.out.println("sns로그인이 시도되었습니다.");
+		//System.out.println(user.getUserid());
 		if (loginUser == null)
 			return new ResponseEntity<>(HttpStatus.OK);
 		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
-				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
+				.claim("uid", loginUser.getUid())
+				.claim("email", loginUser.getEmail())
 				.claim("userid", loginUser.getUserid())
 				// .claim("password", loginUser.getPassword())
 				// .claim("name", loginUser.getName())
 				.claim("nickname", loginUser.getNickname())
 				// .claim("phone", loginUser.getPhone())
 				// .claim("birth", loginUser.getBirth())
-				.claim("profileImg", loginUser.getProfileImg()).claim("loginApi", loginUser.getLoginApi())
+				.claim("profileImg", loginUser.getProfileImg())
+				.claim("loginApi", loginUser.getLoginApi())
 				.claim("userkey", loginUser.getUserkey())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
 				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
-		// System.out.println(loginUser.getUserid() + " 님 sns로그인 되었습니다.");
+		//System.out.println(loginUser.getUserid() + " 님 sns로그인 되었습니다.");
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
 
@@ -146,8 +151,15 @@ public class AccountController {
 			}
 			if (flag)
 				ok = userService.addFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), uid);
-			if (ok > 0)
+			if (ok > 0) {
+				Alarm alarm = new Alarm();
+				alarm.setUid(uid);
+				alarm.setFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+				alarm.setAlarmtype(1);
+				alarm.setNickname((String)Jwts.parser().parseClaimsJwt(jwt).getBody().get("nickname"));
+				userService.addAlarm(alarm);
 				return new ResponseEntity<>(HttpStatus.OK);
+			}
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -158,7 +170,7 @@ public class AccountController {
 		List<Integer> list = userService.getFollow(uid);
 		List<User> userlist = new ArrayList<User>();
 		for (Integer i : list)
-			userlist.add(userService.findUserByUid(i));
+			userlist.add(userService.findUserSimple(i));
 		return new ResponseEntity<>(userlist, HttpStatus.OK);
 	}
 
@@ -168,7 +180,7 @@ public class AccountController {
 		List<Integer> list = userService.getFollower(uid);
 		List<User> userlist = new ArrayList<User>();
 		for (Integer i : list)
-			userlist.add(userService.findUserByUid(i));
+			userlist.add(userService.findUserSimple(i));
 		return new ResponseEntity<>(userlist, HttpStatus.OK);
 	}
 
@@ -354,6 +366,31 @@ public class AccountController {
 			user.setProfileImg((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("profileImg"));
 			user.setLoginApi((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("loginApi"));
 			return new ResponseEntity<>(user, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.OK);
+	}
+	
+	@PostMapping("/alarm")
+	@ApiOperation(value = "유저 알림")
+	public Object alarm(@RequestBody Map<String, String> map) throws Exception {
+		String jwt = map.get("jwt");
+		if (isOkJwt(jwt)) {
+			List<Alarm> alarms = userService.getAlarm((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+			return new ResponseEntity<>(alarms, HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+	
+	@DeleteMapping("/alarm")
+	@ApiOperation(value = "알림 삭제")
+	public Object deleteAlarm(@RequestBody Map<String, String> map) throws Exception {
+		//알람 유저가 직접 하나씩 삭제
+		int alarmid = Integer.parseInt(map.get("alarmid"));
+		userService.deleteAlarm(alarmid);
+		//알람 유저가 보고 나면 한꺼번에 삭제
+		String jwt = map.get("jwt");
+		if(isOkJwt(jwt)) {
+			userService.deleteAlarmAll((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}

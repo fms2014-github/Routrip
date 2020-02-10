@@ -8,6 +8,7 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
 
 @Repository//("userDaoImpl")
@@ -150,5 +151,25 @@ public class UserDao implements IUserDao{
 	@Override
 	public User findUserSimple(int uid) throws Exception {
 		return sqlSession.selectOne(ns+"findUserSimple", uid);
+	}
+
+	@Override
+	public int addAlarm(Alarm alarm) throws Exception {
+		return sqlSession.insert(ns+"addAlarm", alarm);
+	}
+
+	@Override
+	public List<Alarm> getAlarm(int uid) throws Exception {
+		return sqlSession.selectList(ns+"getAlarm", uid);
+	}
+
+	@Override
+	public int deleteAlarm(int alarmid) throws Exception {
+		return sqlSession.delete(ns+"deleteAlarm", alarmid);
+	}
+
+	@Override
+	public int deleteAlarmAll(int uid) throws Exception {
+		return sqlSession.delete(ns+"deleteAlarmAll", uid);
 	}
 }
