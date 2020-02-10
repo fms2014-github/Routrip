@@ -72,7 +72,6 @@
                 <div class="logos">
                     <kakaoLogin @loginOrJoin="loginOrJoin" :component="component" v-on:checkLogin="loginOrJoin" />
                     <GoogleLogin :component="component" />
-                    <button @click="reqUserInfo">요청하기</button>
                     <NaverLogin :component="component" />
                 </div>
             </div>

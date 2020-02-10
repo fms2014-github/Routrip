@@ -10,7 +10,7 @@
             </div>
         </div>
         <div class="search">
-            <input v-model="areaTag" class="search-bar" type="text" @keyup.enter="createHash('area')" />
+            <input v-model="areaword" class="search-bar" type="text" @keyup.enter="createHash('area')" />
             <div class="search-result-dropdown">
                 <div class="dropdown-list" v-for="resultArea in resultAreas" :key="resultArea">{{ resultArea }}</div>
             </div>
@@ -91,7 +91,7 @@ export default {
     },
     data() {
         return {
-            areaTag: '',
+            areaword: '',
             keywordTag: '',
             selectDraw: '',
             areaData: [
@@ -157,13 +157,13 @@ export default {
             }
         },
         createHash(s) {
-            if (s === 'area' && this.areaTag !== '') {
+            if (s === 'area' && this.areaword !== '') {
                 if (this.areas.length === 20) {
                     alert('태그는 20개 이상 생성할 수 없습니다.');
                     return;
                 }
-                this.areas.push(this.areaTag);
-                this.areaTag = '';
+                this.areas.push(this.areaword);
+                this.areaword = '';
             } else if (s === 'keyword' && this.keywordTag !== '') {
                 if (this.keywords.length === 10) {
                     alert('태그는 20개 이상 생성할 수 없습니다.');
@@ -176,11 +176,11 @@ export default {
         findArea() {
             this.resultAreas = [];
             for (var i in this.areaData) {
-                if (this.areaData[i].indexOf(this.areaTag) >= 0) {
+                if (this.areaData[i].indexOf(this.areaword) >= 0) {
                     this.resultAreas.push(this.areaData[i]);
                 }
             }
-            if (this.areaTag === '') {
+            if (this.areaword === '') {
                 this.resultAreas = [];
             }
         },
