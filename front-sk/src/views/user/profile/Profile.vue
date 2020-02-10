@@ -13,7 +13,6 @@
               
 
 
-                    <button v-on:click="changeNick">체크체크</button>
                 <div class="none-border">
                     <button class="button-text">회원탈퇴</button>
                 </div>
@@ -109,17 +108,6 @@ export default {
             }
         },
 
-        async changeNick() { await Swal.fire({
-            title: '바꿀 닉네임을 입력해주세요.',
-            input: 'text',
-            inputValue: "테스트",
-            showCancelButton: true,
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'You need to write something!'
-                }
-            }
-        })},
     },
     data() {
         return {
