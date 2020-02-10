@@ -49,4 +49,9 @@ export default {
     actions,
     getters,
     mutations,
+    // data: () => {
+    //     return {
+    //         jwt,
+    //     };
+    // },
 };

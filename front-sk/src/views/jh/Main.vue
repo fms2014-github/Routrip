@@ -9,13 +9,7 @@
             </div>
             <div class="best-posting">
                 <div class="postings-posting">
-                    <hooper
-                        :infiniteScroll="true"
-                        :itemsToShow="3"
-                        :progress="true"
-                        :autoPlay="true"
-                        :playSpeed="2000"
-                    >
+                    <hooper :infiniteScroll="true" :itemsToShow="3" :progress="true" :autoPlay="true" :playSpeed="2000">
                         <slide v-for="(data, dataIdx) in datas" :key="dataIdx">
                             <img :src="'http://192.168.100.70:8083/' + data.imgs[0].src" alt />
                         </slide>
@@ -29,9 +23,7 @@
                         <div class="postings-posting">
                             <div class="post-info">
                                 <div class="profile-img">
-                                    <img
-                                        :src="'http://192.168.100.70:8083/' + data.user.profileImg"
-                                    />
+                                    <img :src="'http://192.168.100.70:8083/' + data.user.profileImg" />
                                 </div>
                                 <div class="name-time">
                                     <strong>{{ data.title }}</strong>
@@ -70,16 +62,9 @@
 
                         <div class="comment-box">
                             <div class="comments">
-                                <div
-                                    class="comment"
-                                    v-for="(comment, commentIdx) in data.comments"
-                                    :key="commentIdx"
-                                >
+                                <div class="comment" v-for="(comment, commentIdx) in data.comments" :key="commentIdx">
                                     <div class="writer-img">
-                                        <img
-                                            :src="'http://192.168.100.70:8083/' + comment.user.profileImg"
-                                            alt
-                                        />
+                                        <img :src="'http://192.168.100.70:8083/' + comment.user.profileImg" alt />
                                     </div>
                                     <div class="comment-info">
                                         <div class="comment-info-box">
@@ -99,13 +84,7 @@
                             </div>
                             <div class="write-comment">
                                 <form action class="comment-form">
-                                    <textarea
-                                        class="comment"
-                                        placeholder="댓글 달기..."
-                                        autocomplete="off"
-                                        wrap="soft"
-                                        v-model="comment"
-                                    ></textarea>
+                                    <textarea class="comment" placeholder="댓글 달기..." autocomplete="off" wrap="soft" v-model="comment"></textarea>
                                 </form>
                                 <div class="comment-btn">
                                     <button @click="addComment(data)">
@@ -168,16 +147,16 @@ export default {
         // using JSONPlaceholder
         Axios.get(`${URI}/page/boardList`)
             .then(res => {
-                console.log(res.data);
+                // console.log(res.data);
                 this.datas = res.data;
             })
             .catch(res => {
                 // console.log(res);
             });
     },
-    // updated: function() {
-    //     this.getAlldata();
-    // },
+    updated: function() {
+        this.getAlldata();
+    },
     computed: {
         ...userMapState(['User']),
         ...userMapGetters(['getUser']),

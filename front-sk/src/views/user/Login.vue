@@ -72,7 +72,6 @@
                 <div class="logos">
                     <kakaoLogin @loginOrJoin="loginOrJoin" :component="component" v-on:checkLogin="loginOrJoin" />
                     <GoogleLogin :component="component" />
-                    <button @click="reqUserInfo">요청하기</button>
                     <NaverLogin :component="component" />
                 </div>
             </div>
@@ -236,8 +235,6 @@ export default {
             this.popup = !this.popup;
         },
         loginOrJoin() {
-            console.log('여기까진 오냐?');
-            const at = localStorage.getItem('kakao_access_token');
             Kakao.API.request({
                 url: '/v1/user/me',
                 success: res => {
@@ -248,19 +245,14 @@ export default {
                         userid: res.id,
                     })
                         .then(res2 => {
-                            console.log(res.kaccount_email);
-                            console.log(res2);
                             localStorage.setItem('routrip_JWT', res2.data);
-                            if (res.kaccount_email !== undefined) {
-                                localStorage.setItem('routrip', res.kaccount_email);
+                            if (res2.data !== '') {
                                 this.reqUserInfo();
                                 this.$router.push('/main');
                                 console.log(this.getUser);
                             }
                         })
                         .then(() => this.popupToggle());
-
-                    // this.$router.puch('/user/join');
                 },
             });
         },
