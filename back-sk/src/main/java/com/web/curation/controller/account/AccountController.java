@@ -276,6 +276,7 @@ public class AccountController {
 			ok = userService.addUser(user);
 			String body = "인증번호는 [ " + authNum + " ] 입니다.<br>자정이 지나기전에 입력해주십시오.";
 			sendEmail(user.getEmail(), body);
+			System.out.println("이메일 발송 에러가 일어나는지 확인중... "+user.getEmail());
 		}
 		if (ok > 0) {
 			return new ResponseEntity<>(HttpStatus.OK);

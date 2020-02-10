@@ -133,10 +133,10 @@ public class PageController {
 			int boardid = Integer.parseInt(map.get("boardid"));
 			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
 			int ok = 0;
-			List<Integer> usersid = boardService.getScrap(boardid);
+			List<Integer> boardsid = boardService.getScrap(uid);
 			boolean flag = true;
-			for (int i : usersid) {
-				if (i == uid) {
+			for (int i : boardsid) {
+				if (i == boardid) {
 					flag = false;
 					Map<String, String> map1 = new HashMap<String, String>();
 					map1.put("jwt", jwt);

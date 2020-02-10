@@ -40,7 +40,7 @@ references user(uid) on update cascade on delete cascade
 create table favorite(
 uid int not null, 좋아요 누른 사람
 boardid int not null, 좋아요 눌러진 글
-makedate date not null, 좋아요 누른 시각
+makedate datetime not null, 좋아요 누른 시각
 foreign key(uid)
 references user(uid) on update cascade on delete cascade,
 foreign key(boardid)
@@ -50,6 +50,7 @@ references board(boardid) on update cascade on delete cascade
 create table scrap(
 uid int not null, 스크랩한 사람
 boardid int not null, 스크랩된 글
+makedate datetime not null, 스크랩한 시간
 foreign key(uid)
 references user(uid) on update cascade on delete cascade,
 foreign key(boardid)

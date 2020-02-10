@@ -91,7 +91,7 @@
 	
 	<insert id="addFavorite" parameterType="map">
 		insert into favorite(uid, boardid, makedate)
-		values(#{uid}, #{boardid}, curdate())
+		values(#{uid}, #{boardid}, now())
 	</insert>
 	
 	<select id="getFavoriteByBoard" parameterType="int" resultType="int">
@@ -114,14 +114,15 @@
 	</delete>
 	
 	<insert id="addScrap" parameterType="map">
-		insert into scrap(uid, boardid)
-		values(#{uid}, #{boardid})
+		insert into scrap(uid, boardid, makedate)
+		values(#{uid}, #{boardid}, now())
 	</insert>
 	
 	<select id="getScrap" parameterType="int" resultType="int">
 	select boardid
 	from scrap
 	where uid=#{value}
+	order by makedate desc
 	</select>
 	
 	<delete id="deleteScrap" parameterType="map">

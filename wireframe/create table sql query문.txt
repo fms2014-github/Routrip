@@ -40,7 +40,7 @@ references user(uid) on update cascade on delete cascade
 create table favorite(
 uid int not null,
 boardid int not null,
-makedate date not null,
+makedate datetime not null,
 foreign key(uid)
 references user(uid) on update cascade on delete cascade,
 foreign key(boardid)
@@ -50,6 +50,7 @@ references board(boardid) on update cascade on delete cascade
 create table scrap(
 uid int not null,
 boardid int not null,
+makedate datetime not null,
 foreign key(uid)
 references user(uid) on update cascade on delete cascade,
 foreign key(boardid)
