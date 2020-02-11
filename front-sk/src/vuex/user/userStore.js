@@ -1,5 +1,4 @@
 import Axios from 'axios';
-import profile from '../../views/user/Profile.vue';
 
 // 상태를 선언하는 부분입니다.
 // 상태? 전역 변수라고 생각하시면 편합니다.
@@ -13,10 +12,9 @@ const state = {
 // dispatch
 const actions = {
     logout({ commit }) {
-        console.log(profile)
         const jwt = localStorage.getItem('routrip_JWT');
         //vuex에 user정보 비우기
-        Axios.post('http://192.168.100.70:8083/account/logout/' , {jwt : jwt}).then(res => {
+        Axios.post('http://192.168.100.70:8083/account/logout/' , {jwt : jwt}).then(() => {
             commit('setUser', null);
             //로컬스토리지 비우기
             localStorage.clear();
@@ -29,6 +27,7 @@ const actions = {
         await Axios.post('http://192.168.100.70:8083/account/decode/' , {jwt : jwt}).then(res => {
             commit('setUser', res);
             console.log(res.data)
+            console.log(res)
             // console.log(res.data.nickname);
             // console.log(res.data.profileImg);
             // console.log(profile)

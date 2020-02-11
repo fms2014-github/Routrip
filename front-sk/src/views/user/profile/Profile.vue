@@ -2,14 +2,13 @@
     <div class="profile-page">
         <div class="wrapD">
             <h2>My Profile</h2>
-            <button @click="logout">logout</button>
+            <button @click="logoutClick">logout</button>
             <div class="profile-wrap">
                 <UserPicture :userPicture="true" />
                 <div class="user-info">
                     <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정" @changeNick="changeNick" />
         
-                <button @click="reqUserInfo">테스트</button>
-                <button @click="test">프린터</button>
+                <button @click="reqInfo">테스트</button>
 
                 <div class="none-border">
                     <button class="button-text">회원탈퇴</button>
@@ -84,8 +83,8 @@ export default {
         ...userMapActions(['logout']),
 
         async reqInfo() {
-            
             await this.reqUserInfo();
+            
             console.log("?", this.getUser);
             this.userinfo.nickname=this.getUser.data.nickname;
         },
@@ -93,27 +92,13 @@ export default {
             
         },
 
-        test() {
-            this.userinfo.nickname=this.getUser.data.nickname
-        },
-        logout() {
+       
+        logoutClick() {
             this.logout().then(() => {
                 this.$router.push('/');
             })
         },
       
-
-        // tokener(e) {
-        //     console.log("gihihihifgigfdig",e)
-        //     Axios.get('http://192.168.100.70:8083/account/decode'+e)
-        //         .then(res=>{
-        //             console.log(res.data)
-        //             this.userinfo.email=res.data.email
-        //             this.userinfo.nickname=res.data.nickname
-        //         }).catch(error=>{
-        //             console.error(error);
-        //         })
-        // },
         popupToggle() {
             this.popup = true;
         },
@@ -149,15 +134,26 @@ export default {
                 }
                 else{
                     const jwt = localStorage.getItem('routrip_JWT');
-                    Axios.put('http://192.168.100.70:8083/account/user/', { 
+                    console.log('hihifgfgfg')
+                    Axios.put('http://192.168.100.70:8083/account/user/',
+                        {
                             nickname: value,
-                            jwt : jwt 
+                            jwt : jwt
                         }
+                        
+                        
+                        // 새로 발급받은 jwt를 로컬스토리지에 저장하고,
+                        // 프로필 표시 칸에서 새로 reqinfo를 할 것
+                        // 기존 jwt는 지워지게 된건지 물어보기
+                
+                        
                     )
-                    // .then(res => {
-                    //     this.reqUserInfo();
-                    //     const jwt = localStorage.getItem('routrip_JWT');
-                    // });
+                    .then(res => {
+                        console.log(res.data);
+                        localStorage.setItem('routrip_JWT', res.data);
+                        this.reqInfo();
+
+                    });
                 }
             }})},
     },
