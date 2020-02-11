@@ -44,7 +44,7 @@ export default {
     },
     methods: {
         ...userMapActions(['logout']),
-        scrollY(event) {
+        scrollY() {
             if (window.scrollY > 40) {
                 this.scrollDown = true;
                 this.headerHeight = true;

@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import UserApi from '../../apis/UserApi';
+// import UserApi from '../../apis/UserApi';
 import HeaderComponent from '../../components/common/Header';
 import UserPicture from '../../components/common/UserPicture';
 import TabComponent from '../../components/common/Tab';

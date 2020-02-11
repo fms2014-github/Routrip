@@ -14,7 +14,7 @@
             {{ headerTitle }}
         </h4>
 
-        <button v-if="rightText" class="right-text" :class="{ disabled: isDisabled }" :disabled="isDisabled" @click="changeNick">
+        <button v-if="rightText" class="right-text" :class="{ disabled: isDisabled }" :disabled="isDisabled" @click="test">
             {{ rightText }}
         </button>
 
@@ -32,7 +32,10 @@ export default {
         console.log(this.headerTitle);
     },
     methods: {
-       
+       test() {
+           console.log("in?");
+           this.$emit('changeNick');
+       }
     }
 };
 </script>

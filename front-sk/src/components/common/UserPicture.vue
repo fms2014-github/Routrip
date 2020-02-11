@@ -35,7 +35,7 @@ export default {
                         icon:'success',
                         imageAlt: 'The uploaded picture'
                     })
-                    console.log(imageUrl)
+                    // console.log(imageUrl)
                 }
                 // watch로 imag 값 변경될때마다 함수 실행
                 // 유저 image 컬럼 업데이트, css상의 이미지 변경

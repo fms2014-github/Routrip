@@ -6,10 +6,10 @@
             <div class="profile-wrap">
                 <UserPicture :userPicture="true" />
                 <div class="user-info">
-                    <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정" :changeNick="changeNick" />
-
-                <!-- <button @click="reqUserInfo">테스트</button>
-                <button @click="test">프린터</button> -->
+                    <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정" @changeNick="changeNick" />
+        
+                <button @click="reqUserInfo">테스트</button>
+                <button @click="test">프린터</button>
 
                 <div class="none-border">
                     <button class="button-text">회원탈퇴</button>
@@ -32,16 +32,19 @@
 </template>
 
 <script>
-import UserApi from '../../../apis/UserApi';
-import HeaderComponent from '../../../components/common/Header';
-import UserPicture from '../../../components/common/UserPicture';
-import TabComponent from '../../../components/common/Tab';
-import '../../../assets/css/profile.scss';
-import '../../../assets/css/style.scss';
+
 import Axios from 'axios';
 import Swal from 'sweetalert2';
 import { createNamespacedHelpers } from 'vuex';
 
+// import UserApi from '../../../apis/UserApi';
+import HeaderComponent from '../../../components/common/Header';
+import UserPicture from '../../../components/common/UserPicture';
+import TabComponent from '../../../components/common/Tab';
+
+
+import '../../../assets/css/profile.scss';
+import '../../../assets/css/style.scss';
 
 
 const userMapActions = createNamespacedHelpers('User').mapActions;
@@ -120,7 +123,7 @@ export default {
         },
         updated() {
             if (localStorage.getItem('popup') !== null) {
-                this.popup = !Boolean(localStorage.getItem('popup'));
+                // this.popup = !Boolean(localStorage.getItem('popup'));
                 localStorage.removeItem('popup');
             }
         },
@@ -133,10 +136,12 @@ export default {
             }
         },
 
-        async changeNick() { await Swal.fire({
+        async changeNick() { 
+
+            await Swal.fire({
             title: '바꿀 닉네임을 입력해주세요.',
             input: 'text',
-            inputValue: "테스트",
+            inputValue: this.userinfo.nickname,
             showCancelButton: true,
             inputValidator: (value) => {
                 if (!value) {
@@ -145,18 +150,21 @@ export default {
                 else{
                     const jwt = localStorage.getItem('routrip_JWT');
                     Axios.put('http://192.168.100.70:8083/account/user/', { 
-                        data: {
-                            value: value,
+                            nickname: value,
                             jwt : jwt 
                         }
-                    }).then(res => {
-                        commit('setUser', res);
-                    });
+                    )
+                    // .then(res => {
+                    //     this.reqUserInfo();
+                    //     const jwt = localStorage.getItem('routrip_JWT');
+                    // });
                 }
             }})},
     },
     data() {
+        
         return {
+            hi:'',
             userinfo: {
                 token: '',
                 email: '',
