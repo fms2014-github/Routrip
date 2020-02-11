@@ -93,7 +93,8 @@ references board(boardid) on update cascade on delete cascade
 
 create table blacklist(
 uid int not null,
-exp datetime not null
+exp datetime not null,
+jwt varchar(500)
 );
 
 create table alarm(
@@ -105,4 +106,10 @@ follow int,
 alarmtype int not null,
 nickname varchar(20),
 time datetime not null
+);
+
+create table token(
+uid int not null,
+jwt varchar(500),
+exp datetime not null
 );

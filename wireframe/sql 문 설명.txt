@@ -94,7 +94,8 @@ references board(boardid) on update cascade on delete cascade
 
 create table blacklist(
 uid int not null, 토큰이 가지고 있던 uid
-exp datetime not null 토큰이 가지고 있던 만료기간
+exp datetime not null, 토큰이 가지고 있던 만료기간
+jwt varchar(500) 해당 토큰
 );
 
 create table alarm(
@@ -106,4 +107,10 @@ follow int, 누가 날 팔로우했는가
 alarmtype int not null, 알림타입(팔로우1, 댓글2, 대댓글3, 팔로잉한글4)
 nickname varchar(20), 알림오도록 행동한 주체의 닉네임
 time datetime not null 알림 생긴 시간
+);
+
+create table token(
+uid int not null, 리프레쉬 토큰의 소지자
+jwt varchar(500), 리프레쉬 토큰 내용
+exp datetime not null 리프레쉬 토큰의 만료기간
 );

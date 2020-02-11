@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
 
-@Repository//("userDaoImpl")
+@Repository
 public class UserDao implements IUserDao{
     @Autowired
     private SqlSession sqlSession;

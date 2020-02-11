@@ -6,15 +6,13 @@
 import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
 
-public interface IUserDao {// extends JpaRepository<User, String> {
+public interface IUserDao {
      User findUserByEmail(String email, int loginApi) throws Exception;
      User findUserByEmailAndPassword(String email, String password) throws Exception;
      int addUser(User user) throws Exception;
      int updateProfile(User user) throws Exception;
-     //int changePw(User user) throws Exception;
      String findPw(User user) throws Exception;
      List<String> findEmail(User user) throws Exception;
-     //int updateProfileImg(User user) throws Exception;
      List<User> getUserList() throws Exception;
      User findUserByUid(int uid) throws Exception;
      int deleteUser(int uid) throws Exception;

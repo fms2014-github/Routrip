@@ -9,7 +9,7 @@ import com.web.curation.dao.UserDao;
 import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
 
-@Service//("userService")
+@Service
 public class UserService implements IUserService{
 
 	@Autowired

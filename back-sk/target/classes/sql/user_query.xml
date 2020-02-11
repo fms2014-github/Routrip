@@ -19,7 +19,7 @@
 	<select id="getUserList" resultType="user">
 	select uid, nickname, name, email, password, phone, birth, profileImg, loginApi, userkey, userid
 	from user
-	where loginApi = 0 and userkey='Y';
+	where loginApi = 0
 	</select>
 
 	<select id="findUserByEmailAndPassword" parameterType="user"
@@ -174,5 +174,21 @@
 	<delete id="deleteAlarmAll" parameterType="int">
 	delete from alarm
 	where uid = #{value} and time <![CDATA[<]]> now()
+	</delete>
+	
+	<insert id="addToken" parameterType="map">
+	insert into token(uid, exp, jwt) values(#{uid}, #{exp}, #{jwt})
+	</insert>
+	
+	<select id="findTokenByUid" parameterType="int" resultType="string">
+	select jwt from blacklist where uid=#{value} and exp <![CDATA[<]]> now
+	</select>
+	
+	<delete id="deleteToken">
+	delete from token where exp <![CDATA[<]]> now()
+	</delete>
+	
+	<delete id="deleteTokenByUid" parameterType="int">
+	delete from token where uid=#{value}
 	</delete>
 </mapper>

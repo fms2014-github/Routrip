@@ -62,16 +62,6 @@ public class PageController {
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
-//	@PostMapping("/favoriteUser")
-//	@ApiOperation(value = "좋아요 누른 사람")
-//	public Object FavoriteListByBoard(@RequestBody Board board) throws Exception {
-//		List<Integer> usersid = boardService.getFavoriteByBoard(board.getBoardid());
-//		List<User> users = new ArrayList<User>();
-//		for (int i : usersid)
-//			users.add(userService.findUserSimple(i));
-//		return new ResponseEntity<>(users, HttpStatus.OK);
-//	}
-
 	@PostMapping("/favoriteBoard")
 	@ApiOperation(value = "좋아요 누른 게시글")
 	public Object FavoriteListByUser(@RequestBody Map<String, String> map) throws Exception {
