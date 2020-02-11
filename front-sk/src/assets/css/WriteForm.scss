@@ -84,6 +84,10 @@ $border-a6cdc6: 1px solid #a6cdc6;
         width: 100%;
         position: relative;
 
+        #map {
+            width: calc(100% - 18px);
+            height: 480px;
+        }
         #edit {
             position: absolute;
             top: 4px;
@@ -188,13 +192,13 @@ $border-a6cdc6: 1px solid #a6cdc6;
             }
         }
 
-        #map {
-            width: 800px;
-            height: 650px;
-        }
-
     }
-
+    #write-content{
+        width: 100%;
+        .ck-content {
+            height: 520px;
+        }
+    }
     #image-upload {
         #image-file {
             display: none;

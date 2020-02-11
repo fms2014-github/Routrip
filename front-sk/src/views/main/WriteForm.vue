@@ -37,8 +37,8 @@
                 <button class="draw-tools" @click="selectDrawTools('ELLIPSE', $event)">타원</button>
                 <button class="draw-tools" @click="selectDrawTools('POLYGON', $event)">다각형</button>
                 <div id="work">
-                    <button id="undo" class="draw-tools disabled" onclick="undo()" disabled>실행취소</button>
-                    <button id="redo" class="draw-tools disabled" onclick="redo()" disabled>원래대로</button>
+                    <button id="undo" class="draw-tools disabled" @click="undo()" disabled>실행취소</button>
+                    <button id="redo" class="draw-tools disabled" @click="redo()" disabled>원래대로</button>
                 </div>
                 <div id="drop-down-wrap" class="drop-up">
                     <div id="insert-comment-wrap">
@@ -60,7 +60,9 @@
                     </div>
                 </div>
             </div>
-            <br />
+        </div>
+        <div id="write-content">
+            <div id="editor"></div>
         </div>
         <div id="image-upload">
             <label id="upload-button" for="image-file">사진 업로드</label>
@@ -72,7 +74,6 @@
                 </div>
             </div>
         </div>
-        <textarea id="text-area"></textarea>
         <div id="calendar-wrapper">
             <label for="calendar-nights"><input id="calendar-nights" name="calendar-nights" class="calendar" type="number" /><span>박</span></label>
             <label for="calendar-days"><input id="calendar-days" name="calendar-days" class="calendar" type="number" /><span>일</span></label>
@@ -83,9 +84,14 @@
 
 <script>
 import '../../assets/css/WriteForm.scss';
+import kakaoMap from '../../apis/kakaoMapAPI.js';
 import InputForm from '../../components/common/Input';
 
 export default {
+    mounted() {
+        //CKEditor.createCKEditor();
+        kakaoMap.createMap();
+    },
     components: {
         InputForm,
     },
@@ -130,7 +136,7 @@ export default {
     },
     methods: {
         createDraw() {
-            selectOverlay(this.createCondition, this.selectDraw, this.commentTitle, this.commentContent);
+            kakaoMap.selectOverlay(this.createCondition, this.selectDraw, this.commentTitle, this.commentContent);
             this.commentTitle = this.commentContent = '';
         },
         selectDrawTools(s, e) {
@@ -187,10 +193,17 @@ export default {
         test1() {
             console.log('');
         },
+        undo() {
+            kakaoMap.undo();
+        },
+        redo() {
+            kakaoMap.redo();
+        },
         submit() {},
         imageFiles(e) {
             var fileList = document.querySelector('#file-list');
             var get_file = e.target.files;
+            console.log('get_file', get_file);
             for (var i = 0; i < get_file.length; i++) {
                 this.imageArr.push(get_file[i]);
             }
@@ -201,6 +214,7 @@ export default {
                 reader.onload = (function(imgab) {
                     return function(e) {
                         imgab.push(e.target.result);
+                        console.log(e.target.result);
                     };
                 })(this.imageArrBase64);
                 if (get_file) {
