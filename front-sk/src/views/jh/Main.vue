@@ -141,9 +141,19 @@
         <div class="else-modal" :class="{ elseModalBackground: !elseModalBackground }">
             <div class="modal-box">
                 <div class="box-content">
-                    <button class="else-btn first" @click="follow">팔로우</button>
-                    <button class="else-btn middle" @click="follow" style="color:red">팔로우 취소</button>
-                    <button class="else-btn middle" @click="detailPage">게시물로 이동</button>
+                    <button class="else-btn first" @click="detailPage">게시물로 이동</button>
+                    <button
+                        :class="{ followBtn : !followBtn }"
+                        class="else-btn middle"
+                        @click="follow"
+                    >팔로우</button>
+                    <button
+                        :class="{ unfollowBtn : !unfollowBtn }"
+                        class="else-btn middle"
+                        @click="follow"
+                    >팔로우 취소</button>
+                    <button :class="{ myPosting : !myPosting }" class="else-btn middle">내글 수정</button>
+                    <button :class="{ myPosting : !myPosting }" class="else-btn middle">내글 삭제</button>
                     <button class="else-btn last" @click="noShowElseBtn">X</button>
                 </div>
             </div>
@@ -199,8 +209,11 @@ export default {
             scrapShow: [],
             followList: [],
             elseModalBackground: false,
-            boardid: '',
+            boardData: '',
             jwt: '',
+            followBtn: false,
+            unfollowBtn: false,
+            myPosting: false,
         };
     },
     created: function() {
@@ -277,23 +290,38 @@ export default {
         },
         showElseBtn(data) {
             // console.log(data);
-            this.boardid = data.boardid;
+            this.boardData = data;
             this.elseModalBackground = true;
-        },
-        noShowElseBtn() {
-            this.elseModalBackground = false;
-        },
-        follow() {
             var uid = this.getUser.data.uid;
-            console.log(uid);
+            // console.log(uid);
             Axios.post(`${URI}/account/following`, { uid: uid })
                 .then(res => {
-                    console.log(res);
+                    // console.log(res.data);
+                    // console.log(this.boardData);
+                    if (this.boardData.uid == uid) {
+                        //선택한 게시글이 내 게시글인경우
+                        this.myPosting = true;
+                    } else {
+                        this.followBtn = true;
+                        for (var i = 0; i < res.data.length; ++i) {
+                            if (res.data[i].uid != this.boardData.uid) continue;
+                            this.followBtn = false;
+                            this.unfollowBtn = true;
+                            break;
+                        }
+                    }
                 })
                 .catch(res => {
                     console.log('팔로우 정보 조회 실패');
                 });
         },
+        noShowElseBtn() {
+            this.elseModalBackground = false;
+            this.followBtn = false;
+            this.unfollowBtn = false;
+            this.myPosting = false;
+        },
+        follow() {},
         detailPage() {
             console.log('detailPage 입니다.');
         },
