@@ -53,12 +53,7 @@ import Axios from 'axios';
 import Swal from 'sweetalert2';
 import { createNamespacedHelpers } from 'vuex';
 
-
-
-
 const userMapActions = createNamespacedHelpers('User').mapActions;
-
-
 
 export default {
     components: {
@@ -84,8 +79,6 @@ export default {
     },
     methods: {
         ...userMapActions(['reqUserInfo']),
-        
-
 
         // tokener(e) {
         //     console.log("gihihihifgigfdig",e)
@@ -124,21 +117,6 @@ export default {
             }
         },
 
-<<<<<<< HEAD
-        async changeNick() { await Swal.fire({
-            title: '바꿀 닉네임을 입력해주세요.',
-            input: 'text',
-            inputValue: "테스트",
-            showCancelButton: true,
-            inputValidator: (value) => {
-                if (!value) {
-                    return 'You need to write something!'
-                }
-            }
-        })},
-
-
-=======
         async changeNick() {
             await Swal.fire({
                 title: '바꿀 닉네임을 입력해주세요.',
@@ -152,7 +130,6 @@ export default {
                 },
             });
         },
->>>>>>> 632e396a444e6b7417a2c200abf381e78398997b
     },
     data() {
         return {
