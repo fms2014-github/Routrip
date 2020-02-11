@@ -7,27 +7,32 @@
                 <UserPicture :userPicture="true" />
                 <div class="user-info">
                     <HeaderComponent :headerTitle="userinfo.email" :mailIcon="true" />
-                    <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정" :changeNick="changeNick" />
+                    <HeaderComponent
+                        :headerTitle="userinfo.nickname"
+                        rightText="수정"
+                        :changeNick="changeNick"
+                    />
 
-<<<<<<< HEAD
-              
-                <button @click="reqUserInfo">테스트</button>
+                    <button @click="reqUserInfo">테스트</button>
 
-                <div class="none-border">
-                    <button class="button-text">회원탈퇴</button>
-                </div>
-=======
                     <div class="none-border">
                         <button class="button-text">회원탈퇴</button>
                     </div>
->>>>>>> 632e396a444e6b7417a2c200abf381e78398997b
                 </div>
             </div>
             <div class="wrap">
-                <router-link v-bind:to="{ name: 'UserPost' }"><TabComponent tabTitle="글" :isActive="true"/></router-link>
-                <router-link v-bind:to="{ name: 'UserComment' }"><TabComponent tabTitle="댓글" :isActive="true"/></router-link>
-                <router-link v-bind:to="{ name: 'UserLike' }"><TabComponent tabTitle="좋아요" :isActive="true"/></router-link>
-                <router-link v-bind:to="{ name: 'UserPeople' }"><TabComponent tabTitle="사람들" :isActive="true"/></router-link>
+                <router-link v-bind:to="{ name: 'UserPost' }">
+                    <TabComponent tabTitle="글" :isActive="true" />
+                </router-link>
+                <router-link v-bind:to="{ name: 'UserComment' }">
+                    <TabComponent tabTitle="댓글" :isActive="true" />
+                </router-link>
+                <router-link v-bind:to="{ name: 'UserLike' }">
+                    <TabComponent tabTitle="좋아요" :isActive="true" />
+                </router-link>
+                <router-link v-bind:to="{ name: 'UserPeople' }">
+                    <TabComponent tabTitle="사람들" :isActive="true" />
+                </router-link>
             </div>
 
             <div class="profile-tab-page">
