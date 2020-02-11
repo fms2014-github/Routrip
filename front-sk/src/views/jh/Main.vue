@@ -39,7 +39,7 @@
                                     <br />
                                     <span>{{ data.user.nickname }}</span>
                                 </div>
-                                <div class="else">
+                                <div class="else" @click="showElseBtn(data)">
                                     <span>
                                         <i class="fas fa-ellipsis-h"></i>
                                     </span>
@@ -138,6 +138,16 @@
                 </div>
             </div>
         </div>
+        <div class="else-modal" :class="{ elseModalBackground: !elseModalBackground }">
+            <div class="modal-box">
+                <div class="box-content">
+                    <button class="else-btn first" @click="follow">팔로우</button>
+                    <button class="else-btn middle" @click="follow" style="color:red">팔로우 취소</button>
+                    <button class="else-btn middle" @click="detailPage">게시물로 이동</button>
+                    <button class="else-btn last" @click="noShowElseBtn">X</button>
+                </div>
+            </div>
+        </div>
         <Footer></Footer>
     </div>
 </template>
@@ -168,8 +178,6 @@ const userMapState = createNamespacedHelpers('User').mapState;
 const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
 const URI = 'http://192.168.100.70:8083/';
-const jwt =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiI1IiwidWlkIjo1LCJlbWFpbCI6InRlc3QzQHNzYWZ5LmNvbSIsIm5pY2tuYW1lIjoidGVzdE5pY2siLCJwcm9maWxlSW1nIjoiaW1nL3Byb2ZpbGUucG5nIiwibG9naW5BcGkiOjAsInVzZXJrZXkiOiJZIiwiZXhwIjoxNTgxNDcwMzY0fQ.';
 export default {
     components: {
         Header,
@@ -189,9 +197,14 @@ export default {
             whoLiked: [],
             scrapList: [],
             scrapShow: [],
+            followList: [],
+            elseModalBackground: false,
+            boardid: '',
+            jwt: '',
         };
     },
     created: function() {
+        this.jwt = localStorage.getItem('routrip_JWT');
         this.showAll();
     },
     // updated: function() {
@@ -202,27 +215,8 @@ export default {
         ...userMapGetters(['getUser']),
     },
     methods: {
-        ...userMapMutations(['setUser']),
-        kakao() {
-            const at = localStorage.getItem('kakao_access_token');
-            const rt = localStorage.getItem('kakao_refresh_token');
-            console.log(at);
-            console.log(rt);
-            Kakao.init('cffc768e4739655aab323adbd9eb2633');
-            console.log(Kakao.isInitialized());
-            Kakao.API.request({
-                url: '/v1/user/me',
-                success: res => {
-                    this.setUser(res);
-                    console.log(res);
-                    // console.log(res.properties.nickname);
-                    // console.log(res.properties.profile_image);
-                    console.log(this.getUser);
-                },
-            });
-        },
         showAll() {
-            Axios.post(`${URI}/page/favoriteBoard`, { jwt: jwt })
+            Axios.post(`${URI}/page/favoriteBoard`, { jwt: this.jwt })
                 .then(res => {
                     // console.log(res.data);
                     this.likeList = [];
@@ -230,7 +224,7 @@ export default {
                         this.likeList.push(res.data[i].boardid);
                     }
 
-                    Axios.post(`${URI}/page/scrapBoard`, { jwt: jwt })
+                    Axios.post(`${URI}/page/scrapBoard`, { jwt: this.jwt })
                         .then(res => {
                             // console.log(res.data);
                             this.scrapList = [];
@@ -281,6 +275,28 @@ export default {
                     // console.log(res);
                 });
         },
+        showElseBtn(data) {
+            // console.log(data);
+            this.boardid = data.boardid;
+            this.elseModalBackground = true;
+        },
+        noShowElseBtn() {
+            this.elseModalBackground = false;
+        },
+        follow() {
+            var uid = this.getUser.data.uid;
+            console.log(uid);
+            Axios.post(`${URI}/account/following`, { uid: uid })
+                .then(res => {
+                    console.log(res);
+                })
+                .catch(res => {
+                    console.log('팔로우 정보 조회 실패');
+                });
+        },
+        detailPage() {
+            console.log('detailPage 입니다.');
+        },
         addComment(info) {
             // console.log(this.comment);
             var commentObject = new Object();
@@ -316,7 +332,7 @@ export default {
             }
         },
         toggleLikeBtn(boardid) {
-            Axios.post(`${URI}/page/favorite`, { jwt: jwt, boardid: boardid })
+            Axios.post(`${URI}/page/favorite`, { jwt: this.jwt, boardid: boardid })
                 .then(res => {
                     this.showAll();
                 })
@@ -325,7 +341,7 @@ export default {
                 });
         },
         toggleScrapBtn(boardid) {
-            Axios.post(`${URI}/page/scrap`, { jwt: jwt, boardid: boardid })
+            Axios.post(`${URI}/page/scrap`, { jwt: this.jwt, boardid: boardid })
                 .then(res => {
                     this.showAll();
                 })
