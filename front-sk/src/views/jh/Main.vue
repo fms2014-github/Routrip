@@ -169,7 +169,7 @@ const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
 const URI = 'http://192.168.100.70:8083/';
 const jwt =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiI1IiwidWlkIjo1LCJlbWFpbCI6InRlc3QzQHNzYWZ5LmNvbSIsIm5pY2tuYW1lIjoidGVzdE5pY2siLCJwcm9maWxlSW1nIjoiaW1nL3Byb2ZpbGUucG5nIiwibG9naW5BcGkiOjAsInVzZXJrZXkiOiJZIiwiZXhwIjoxNTgxNDA5MDczfQ.';
+    'eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiI1IiwidWlkIjo1LCJlbWFpbCI6InRlc3QzQHNzYWZ5LmNvbSIsIm5pY2tuYW1lIjoidGVzdE5pY2siLCJwcm9maWxlSW1nIjoiaW1nL3Byb2ZpbGUucG5nIiwibG9naW5BcGkiOjAsInVzZXJrZXkiOiJZIiwiZXhwIjoxNTgxNDcwMzY0fQ.';
 export default {
     components: {
         Header,
