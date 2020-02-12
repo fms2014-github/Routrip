@@ -98,7 +98,7 @@ public class Comment {
 			Date wd1 = format1.parse(format1.format(format3.parse(this.writedate)));
 			Date wd2 = format2.parse(format2.format(format3.parse(this.writedate)));
 			if ((now1.getTime() - wd1.getTime()) / (1000 * 60 * 60) < 24) {
-				if ((now2.getTime() - wd2.getTime()) / 1000 > 0 && (now2.getTime() - wd2.getTime()) / 1000 < 60) {
+				if ((now2.getTime() - wd2.getTime()) / 1000 >= 0 && (now2.getTime() - wd2.getTime()) / 1000 < 60) {
 					writeday = ((now2.getTime() - wd2.getTime()) / 1000) + "초 전";
 				} else if ((now2.getTime() - wd2.getTime()) / (1000 * 60) > 0 && (now2.getTime() - wd2.getTime()) / (1000 * 60) < 60) {
 					writeday = ((now2.getTime() - wd2.getTime()) / (1000 * 60)) + "분 전";

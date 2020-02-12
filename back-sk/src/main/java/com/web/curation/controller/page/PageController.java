@@ -102,8 +102,8 @@ public class PageController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	//@DeleteMapping("/favorite")
-	//@ApiOperation(value = "좋아요 해제")
+	// @DeleteMapping("/favorite")
+	// @ApiOperation(value = "좋아요 해제")
 	public Object deleteFavorite(Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
 		if (isOkJwt(jwt)) {
@@ -114,7 +114,7 @@ public class PageController {
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@PostMapping("/scrap")
 	@ApiOperation(value = "스크랩 추가")
 	public Object addScrap(@RequestBody Map<String, String> map) throws Exception {
@@ -193,13 +193,14 @@ public class PageController {
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@PostMapping("/followBoard")
 	@ApiOperation(value = "팔로우 게시글")
 	public Object followboard(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
 		if (isOkJwt(jwt)) {
-			List<Board> boards = boardService.findBoardByFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+			List<Board> boards = boardService
+					.findBoardByFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 			for (Board b : boards) {
 				List<Img> imgs = boardService.findBoardImg(b.getBoardid());
 				List<Img> repimg = new ArrayList<Img>();
@@ -264,9 +265,54 @@ public class PageController {
 	}
 
 	@PostMapping("/board")
+	@ApiOperation(value = "게시글 작성 수정 버전(아마 이 방식이 맞다고 봄)")
+	public Object addBoard2(Map<String, Object> map) throws Exception {
+		//이방식 성공하면 수정도 이런식으로 변경
+		String jwt = (String) map.get("jwt");
+		Board board = new Board();
+		board.setBoardid((int) map.get("boardid"));
+		board.setUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+		board.setTitle((String) map.get("title"));
+		board.setTripterm((String) map.get("tripterm"));
+		board.setKeyword((String) map.get("keyword"));
+		board.setLatitude((double) map.get("latitude"));
+		board.setLongitude((double) map.get("longitude"));
+		board.setLevel((int) map.get("level"));
+		board.setUnveiled((int) map.get("unveiled"));
+		int ok = boardService.addBoard(board);		
+		if (ok > 0) {
+			int repnum = 0;
+			List<Img> imgs = (List<Img>) map.get("imgs");
+			for (Img i : imgs) {
+				i.setBoardid(board.getBoardid());
+				if(i.getRep() == 1)
+					repnum++;
+			}
+			if(repnum == 0) {//대표 이미지가 하나도 없으면 게시글 등록 불가능
+				boardService.deleteBoard(board.getBoardid());
+			}else {//나중에 마커 하나이상 제한도 생기면 앞에 마커 size==0 조건도 추가
+				List<Marker> markers = (List<Marker>) map.get("markers");
+				for (Marker m : markers) {
+					m.setBoardid(board.getBoardid());
+					boardService.addMarker(m);
+				}
+				List<Integer> follower = userService.getFollower(board.getUid());
+				for (int i : follower) {
+					Alarm alarm = new Alarm();
+					alarm.setUid(i);
+					alarm.setBoardid(board.getBoardid());
+					alarm.setAlarmtype(4);
+					alarm.setNickname(board.getUser().getNickname());
+					userService.addAlarm(alarm);
+				}
+			}
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+
+	@PostMapping("/board0")
 	@ApiOperation(value = "게시글 등록")
 	public Object addBoard(@RequestBody Board board) throws Exception {
-		// uid 는 프론트에서 설정?
 		int ok = boardService.addBoard(board);
 		if (ok > 0) {
 			int repcnt = 0;
@@ -286,9 +332,9 @@ public class PageController {
 				m.setBoardid(board.getBoardid());
 				boardService.addMarker(m);
 			}
-			
+
 			List<Integer> follower = userService.getFollower(board.getUid());
-			for(int i:follower) {
+			for (int i : follower) {
 				Alarm alarm = new Alarm();
 				alarm.setUid(i);
 				alarm.setBoardid(board.getBoardid());
@@ -406,17 +452,17 @@ public class PageController {
 		for (Board b : boards) {
 			String[] keywords = b.getKeyword().split(" ");
 			boolean flag = false;
-			if (str.contains(b.getTitle()) || b.getTitle().contains(str)) {//제목과 검색어 어느쪽이 완전히 포함할 경우
+			if (str.contains(b.getTitle()) || b.getTitle().contains(str)) {// 제목과 검색어 어느쪽이 완전히 포함할 경우
 				flag = true;
 			} else {
-				for (String k : keywords) {//검색어가 키워드를 포함할 경우
+				for (String k : keywords) {// 검색어가 키워드를 포함할 경우
 					if (str.contains(k)) {
 						flag = true;
 						break;
 					}
 				}
 				if (!flag) {
-					String[] titles = b.getTitle().split(" ");//검색어가 제목의 일부를 포함할 경우
+					String[] titles = b.getTitle().split(" ");// 검색어가 제목의 일부를 포함할 경우
 					for (String t : titles) {
 						if (str.contains(t)) {
 							flag = true;
@@ -425,7 +471,7 @@ public class PageController {
 					}
 				}
 				if (!flag) {
-					String[] strs = str.split(" ");//제목이 검색어의 일부를 포함할 경우
+					String[] strs = str.split(" ");// 제목이 검색어의 일부를 포함할 경우
 					for (String s : strs) {
 						if (b.getTitle().contains(s)) {
 							flag = true;
@@ -503,11 +549,12 @@ public class PageController {
 		int ok = boardService.addComment(comment);
 		if (ok > 0) {
 			Alarm alarm = new Alarm();
-			alarm.setUid(comment.getListener()==0?boardService.findBoardByBoardId(comment.getBoardid()).getUid():boardService.findCommentByCommentid(comment.getListener()).getUid());
-			if(comment.getListener()>0)
+			alarm.setUid(comment.getListener() == 0 ? boardService.findBoardByBoardId(comment.getBoardid()).getUid()
+					: boardService.findCommentByCommentid(comment.getListener()).getUid());
+			if (comment.getListener() > 0)
 				comment.getCommentid();
 			alarm.setBoardid(comment.getBoardid());
-			alarm.setAlarmtype(comment.getListener()==0?2:3);
+			alarm.setAlarmtype(comment.getListener() == 0 ? 2 : 3);
 			alarm.setNickname(userService.findUserByUid(comment.getUid()).getNickname());
 			userService.addAlarm(alarm);
 			return new ResponseEntity<>(HttpStatus.OK);

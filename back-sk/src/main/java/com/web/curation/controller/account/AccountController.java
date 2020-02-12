@@ -38,6 +38,9 @@ import com.web.curation.service.UserService;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
@@ -54,14 +57,6 @@ public class AccountController {
 
 	@Autowired
 	private UserService userService;
-
-	@PostMapping("/test")
-	@ApiOperation("테스트용")
-	public Object test() throws Exception {
-		String jwt = "eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiI4IiwidWlkIjo4LCJlbWFpbCI6InRlc3QwNUBzc2FmeS5jb20iLCJuaWNrbmFtZSI6InN0cmluZyIsInByb2ZpbGVJbWciOiJpbWcvcHJvZmlsZS5wbmciLCJsb2dpbkFwaSI6MCwidXNlcmtleSI6IlkiLCJleHAiOjE1ODE0MDA2Mjh9.";
-		System.out.println("테스트용 jwt 토큰을 되돌려줍니다.");
-		return new ResponseEntity<>(jwt, HttpStatus.OK);
-	}
 
 	// private String key = "webcuration-routrip-secretkey";
 
@@ -92,6 +87,7 @@ public class AccountController {
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
 				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
+		System.out.println(loginUser.getUid()+" "+loginUser.getNickname()+" 님 로그인하셨습니다.");
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
 
@@ -122,6 +118,7 @@ public class AccountController {
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
 				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
+		System.out.println(loginUser.getUid()+" "+loginUser.getNickname()+" 님 로그인하셨습니다.");
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
 
@@ -134,6 +131,9 @@ public class AccountController {
 		String exp = format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration());
 		userService.deleteBlackList();
 		if (isOkJwt(jwt)) {
+			System.out.print((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+			System.out.print(" "+Jwts.parser().parseClaimsJwt(jwt).getBody().get("nickname"));
+			System.out.println(" 님이 로그아웃하셨습니다.");
 			userService.addBlackList(uid, exp, jwt);
 			// refresh 도 DB에서 삭제
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -246,14 +246,13 @@ public class AccountController {
 			// 동시에 변경하게 되면 if&else if || 로 묶고 하나로 합치기
 			if (map.get("profileImg") != null && !profileImg.equals(map.get("profileImg"))) {
 				user.setProfileImg(map.get("profileImg"));
-				// DB안의 내용물은 uid.png 나 디폴트 이미지나 둘 중 하나
-				// 받아온 파일을 정해진 폴더에 uid.png 형식으로 다운받는 코드 짜서 넣기
 				ok = userService.updateProfile(user);
 			} else if (map.get("nickname") != null && !nickname.equals(map.get("nickname"))) {
 				user.setNickname(map.get("nickname"));
 				ok = userService.updateProfile(user);
 			}
 			if (ok > 0) {
+				System.out.println("회원정보가 변경되었습니다.");
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				String exp = format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration());
 				userService.deleteBlackList();
@@ -318,6 +317,7 @@ public class AccountController {
 			ok = userService.addUser(user);
 			String body = "인증번호는 [ " + authNum + " ] 입니다.";
 			sendEmail(user.getEmail(), body);
+			System.out.println("인증번호를 발송했습니다.");
 		}
 		if (ok > 0) {
 			return new ResponseEntity<>(HttpStatus.OK);
@@ -334,19 +334,24 @@ public class AccountController {
 		String emailTemp = userService.findUserByUid(user.getUid()).getEmail();
 		String body = "인증번호는 [ " + authNum + " ] 입니다.";
 		sendEmail(emailTemp, body);
+		System.out.println("인증번호가 재발송 되었습니다.");
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PutMapping("/signup")
 	@ApiOperation(value = "가입완료")
 	public Object updateUserKey(@RequestBody User tempuser) throws Exception {
+		System.out.println(tempuser.getEmail());
+		System.out.println(tempuser.getUserkey());
 		User user = userService.findUserNoJoin(tempuser.getEmail(), 0);
 		if (user.getUserkey().equals(tempuser.getUserkey())) {
 			int ok = userService.updateUserKey(user.getUid());
 			if (ok > 0) {
+				System.out.println("가입완료 됐습니다.");
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 		}
+		System.out.println("인증번호가 일치하지 않습니다.");
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
@@ -531,6 +536,7 @@ public class AccountController {
 			if (exps != null) {
 				for (String e : exps) {
 					if (exp.getTime() < format.parse(e).getTime()) {
+						System.out.println("이미 로그아웃한 아이디입니다. : 현재 시점에 이 jwt보다 최근 아이디가 로그아웃되어있습니다.");
 						return false;
 					}
 				}
@@ -544,9 +550,12 @@ public class AccountController {
 			// 만약 만료되서 uid 자체를 못 가져오면...?
 			// 없으면 return false
 			System.out.println("토큰 기간 만료");
-		} catch (Exception e1) {
+		} catch (UnsupportedJwtException e) {
+			System.out.println("UnsupportedJwtException 발생");
+		} catch (MalformedJwtException e) {
+			System.out.println("MalformedJwtException 발생");
+		} catch (Exception e) {
 			System.out.println("오류가 발생했습니다.");
-			// return false;
 		}
 		return true;
 	}
