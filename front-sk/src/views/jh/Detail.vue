@@ -25,30 +25,30 @@
                     <div class="sns-btn">
                         <div class="like">
                             <button @click="toggleLikeBtn">
-                                <div :class="{ likeit: !likeit }">
+                                <div :class="{ likeit: likeit }">
                                     <i class="far fa-heart"></i>
                                 </div>
-                                <div :class="{ likeit: likeit }">
+                                <div :class="{ likeit: !likeit }">
                                     <i class="fas fa-heart" style="color:red;"></i>
                                 </div>
                             </button>
                         </div>
                         <div class="scrap">
                             <button @click="toggleScrapBtn">
-                                <div :class="{ scrapit: !scrapit }">
+                                <div :class="{ scrapit: scrapit }">
                                     <i class="far fa-bookmark"></i>
                                 </div>
-                                <div :class="{ scrapit: scrapit }">
+                                <div :class="{ scrapit: !scrapit }">
                                     <i class="fas fa-bookmark" style="color:blue;"></i>
                                 </div>
                             </button>
                         </div>
                         <div class="state" v-if="data.favoriteNum == 1">
-                            <strong>{{ whoLiked[0] }}</strong
+                            <strong>{{ whoLiked }}</strong
                             >님이 게시글을 좋아합니다.
                         </div>
                         <div class="state" v-if="data.favoriteNum > 1">
-                            <strong>{{ whoLiked[0] }}</strong>
+                            <strong>{{ whoLiked }}</strong>
                             님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
                         </div>
                     </div>
@@ -87,8 +87,9 @@ export default {
     data: () => {
         return {
             data: '',
+            boardid: '',
             likeit: false,
-            whoLiked: [],
+            whoLiked: '',
             scrapit: false,
             followList: [],
             jwt: '',
@@ -98,15 +99,14 @@ export default {
     },
     created() {
         this.jwt = localStorage.getItem('routrip_JWT');
-        this.data = this.$route.params.data;
-        console.log(this.data);
+        this.boardid = this.$route.params.boardid;
         this.showAll();
     },
     mounted() {
         if (this.getUser.user === undefined) {
             this.req();
         } else {
-            this.getUser();
+            this.getUser;
         }
     },
     computed: {
@@ -118,59 +118,71 @@ export default {
         ...userMapActions(['reqUserInfo']),
         async req() {
             await this.reqUserInfo();
-            this.getUser();
+            this.getUser;
         },
         showAll() {
-            Axios.post(`${URI}/page/scrapBoard`, { jwt: this.jwt })
+            Axios.post(`${URI}/page/boardDetail`, { jwt: this.jwt, boardid: this.boardid })
                 .then(res => {
                     // console.log(res.data);
-                    this.scrapit = false;
-                    for (var i = 0; i < res.data.length; ++i) {
-                        if (res.data[i].boardid == this.data.boardid) {
-                            this.scrapit = true;
-                            break;
-                        }
-                    }
-                })
-                .catch(res => {
-                    console.log('스크랩 게시글 조회 실패');
-                });
-            Axios.post(`${URI}/page/favoriteBoard`, { jwt: this.jwt })
-                .then(res => {
-                    // console.log(res.data);
-                    this.likeit = false;
-                    for (var i = 0; i < res.data.length; ++i) {
-                        if (res.data[i].boardid == this.data.boardid) {
-                            this.likeit = true;
-                            break;
-                        }
-                    }
-                })
-                .catch(res => {
-                    console.log('좋아요 게시글 조회 실패');
-                });
-
-            var uid = this.getUser.data.uid;
-            // console.log('uid : ' + uid);
-            Axios.post(`${URI}/account/following`, { uid: uid })
-                .then(res => {
-                    // console.log(res.data);
-                    // console.log(this.boardData);
-                    this.follow = false;
-                    this.unfollow = false;
-                    if (this.data.uid != uid) {
-                        this.follow = true;
-                        for (var i = 0; i < res.data.length; ++i) {
-                            if (res.data[i].uid == this.data.uid) {
-                                this.follow = false;
-                                this.unfollow = true;
-                                break;
+                    this.data = res.data;
+                    Axios.post(`${URI}/page/scrapBoard`, { jwt: this.jwt })
+                        .then(res => {
+                            // console.log(res.data);
+                            this.scrapit = false;
+                            for (var i = 0; i < res.data.length; ++i) {
+                                if (res.data[i].boardid == this.data.boardid) {
+                                    this.scrapit = true;
+                                    break;
+                                }
                             }
-                        }
-                    }
+                            Axios.post(`${URI}/page/favoriteBoard`, { jwt: this.jwt })
+                                .then(res => {
+                                    // console.log(res.data);
+                                    this.likeit = false;
+                                    for (var i = 0; i < res.data.length; ++i) {
+                                        if (res.data[i].boardid == this.data.boardid) {
+                                            this.likeit = true;
+                                            break;
+                                        }
+                                    }
+
+                                    var uid = this.getUser.data.uid;
+                                    // console.log('uid : ' + uid);
+                                    Axios.post(`${URI}/account/following`, { uid: uid })
+                                        .then(res => {
+                                            // console.log(res.data);
+                                            // console.log(this.boardData);
+                                            this.follow = false;
+                                            this.unfollow = false;
+                                            if (this.data.uid != uid) {
+                                                this.follow = true;
+                                                for (var i = 0; i < res.data.length; ++i) {
+                                                    if (res.data[i].uid == this.data.uid) {
+                                                        this.follow = false;
+                                                        this.unfollow = true;
+                                                        break;
+                                                    }
+                                                }
+                                            }
+                                        })
+                                        .catch(res => {
+                                            console.log('팔로우 정보 조회 실패');
+                                        });
+                                    if (this.data.favoriteNum > 0) {
+                                        this.whoLiked = this.data.favorite[0].nickname;
+                                        // console.log(this.whoLiked);
+                                    }
+                                })
+                                .catch(res => {
+                                    console.log('좋아요 게시글 조회 실패');
+                                });
+                        })
+                        .catch(res => {
+                            console.log('스크랩 게시글 조회 실패');
+                        });
                 })
                 .catch(res => {
-                    console.log('팔로우 정보 조회 실패');
+                    console.log('상세 게시물 조회 실패');
                 });
         },
         toggleLikeBtn() {

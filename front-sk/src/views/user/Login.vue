@@ -207,7 +207,7 @@ export default {
                     data,
                     res => {
                         //통신을 통해 전달받은 값 콘솔에 출력
-                        console.log(res.data);
+                        // console.log(res.data);
 
                         // getters로 가져오는 법
                         // console.log(this.getUser);
@@ -217,12 +217,12 @@ export default {
                         // 1. this.$store.commit('User/setUser', res.data);
                         // 2. helpers 이용
                         this.setUser(res.data);
-                        console.log('뷰엑스!!!!!');
+                        // console.log('뷰엑스!!!!!');
                         localStorage.setItem('routrip_JWT', res.data);
                         this.reqUserInfo();
-                        console.log(this.getUser);
+                        // console.log(this.getUser);
                         localStorage.setItem('loginedEmail', this.email);
-                        console.log(this.getUser);
+                        // console.log(this.getUser);
                         //요청이 끝나면 버튼 활성화
                         this.isSubmit = true;
                         if (this.emailSaveCheck) {
@@ -241,35 +241,35 @@ export default {
             }
         },
         popupToggle() {
-            console.log('이건 오는데..');
+            // console.log('이건 오는데..');
             this.popup = !this.popup;
         },
         snsToggle() {
-            console.log('아니');
+            // console.log('아니');
             this.loginApi = 0;
             this.popup = !this.popup;
         },
         loginOrJoin(loginApi) {
             this.loginApi = loginApi;
-            console.log(this.loginApi);
+            // console.log(this.loginApi);
 
             Kakao.API.request({
                 url: '/v1/user/me',
                 success: res => {
                     this.setUser(res);
                     this.userSnsId = res.id;
-                    console.log(this.userSnsId);
+                    // console.log(this.userSnsId);
                     Axios.post('http://192.168.100.70:8083/account/snslogin', {
                         loginApi: loginApi,
                         userid: res.id,
                     })
                         .then(res2 => {
-                            console.log(res2);
+                            // console.log(res2);
                             localStorage.setItem('routrip_JWT', res2.data);
                             if (res2.data !== '') {
                                 this.reqUserInfo();
                                 this.$router.push('/main');
-                                console.log(this.getUser);
+                                // console.log(this.getUser);
                             }
                         })
                         .then(() => this.popupToggle());

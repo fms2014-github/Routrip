@@ -42,7 +42,7 @@
                         <div class="post-imgs-box">
                             <hooper class="post-img-box">
                                 <slide v-for="(img, imgIdx) in data.imgs" :key="imgIdx">
-                                    <router-link :to="{ name: 'Detail', params: { data: data } }">
+                                    <router-link :to="{ name: 'Detail', params: { boardid: data.boardid } }">
                                         <img :src="'http://192.168.100.70:8083/' + img.src" alt />
                                     </router-link>
                                 </slide>
@@ -204,6 +204,7 @@ export default {
     created: function() {
         this.jwt = localStorage.getItem('routrip_JWT');
         this.showAll();
+        console.log(this.jwt);
     },
     // updated: function() {
     //     this.getAlldata();

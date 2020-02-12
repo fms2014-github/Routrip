@@ -234,7 +234,7 @@ export default {
             .symbols();
     },
     mounted() {
-        console.log('SNSCHECK: ', this.snscheck);
+        // console.log('SNSCHECK: ', this.snscheck);
 
         if (localStorage.getItem('nickname') !== null) {
             this.nickname = localStorage.getItem('nickname');
@@ -246,7 +246,7 @@ export default {
         }
     },
     destroyed() {
-        console.log('디스트로이');
+        // console.log('디스트로이');
     },
     methods: {
         phone_regx() {
@@ -325,7 +325,7 @@ export default {
                     data,
                     res => {
                         //통신을 통해 전달받은 값 콘솔에 출력
-                        console.log(res);
+                        // console.log(res);
                         //요청이 끝나면 버튼 활성화
                         this.isSubmit = true;
                         if (this.snscheck === 0) {
