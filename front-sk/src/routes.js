@@ -15,14 +15,13 @@ import UserPeople from './views/user/profile/UserPeople.vue';
 import PictureRegister from './views/user/profile/PictureRegister.vue';
 import WriteForm from './views/main/WriteForm.vue';
 import Main from './views/jh/Main.vue';
+import Detail from './views/jh/Detail.vue';
 
-export default [
-    {
+export default [{
         path: '/',
         name: 'Login',
         component: Login,
-        children: [
-            {
+        children: [{
                 path: 'user/join',
                 name: 'Join',
                 components: {
@@ -49,8 +48,7 @@ export default [
         path: '/profile',
         name: 'Profile',
         component: Profile,
-        children: [
-            {
+        children: [{
                 path: '',
                 name: 'UserPost',
                 components: {
@@ -117,5 +115,10 @@ export default [
         path: '/main',
         name: 'Main',
         component: Main,
+    },
+    {
+        path: '/detail',
+        name: 'Detail',
+        component: Detail,
     },
 ];
