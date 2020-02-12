@@ -12,7 +12,7 @@
 		longitude, level, keyword, unveiled)
 		values
 		(#{uid}, #{title},
-		curdate(), #{tripterm}, #{latitude}, #{longitude}, #{level},
+		now(), #{tripterm}, #{latitude}, #{longitude}, #{level},
 		#{keyword}, #{unveiled})
 		<selectKey keyProperty="boardid" resultType="int">
 			select LAST_INSERT_ID()
@@ -23,7 +23,7 @@
 		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
 		keyword, unveiled
 		from board
-		order by favoriteNum desc
+		order by writedate desc
 	</select>
 
 	<select id="findBoardListByUid" parameterType="int"
@@ -91,7 +91,7 @@
 	
 	<insert id="addFavorite" parameterType="map">
 		insert into favorite(uid, boardid, makedate)
-		values(#{uid}, #{boardid}, curdate())
+		values(#{uid}, #{boardid}, now())
 	</insert>
 	
 	<select id="getFavoriteByBoard" parameterType="int" resultType="int">
@@ -110,6 +110,23 @@
 	
 	<delete id="deleteFavorite" parameterType="map">
 		delete from favorite
+		where uid=#{uid} and boardid=#{boardid}
+	</delete>
+	
+	<insert id="addScrap" parameterType="map">
+		insert into scrap(uid, boardid, makedate)
+		values(#{uid}, #{boardid}, now())
+	</insert>
+	
+	<select id="getScrap" parameterType="int" resultType="int">
+	select boardid
+	from scrap
+	where uid=#{value}
+	order by makedate desc
+	</select>
+	
+	<delete id="deleteScrap" parameterType="map">
+		delete from scrap
 		where uid=#{uid} and boardid=#{boardid}
 	</delete>
 	
@@ -138,6 +155,9 @@
 	<insert id="addComment" parameterType="comment" useGeneratedKeys="true" keyProperty="commentid">
 	insert into comment(uid, boardid, contents, writedate, listener)
 	values(#{uid}, #{boardid}, #{contents}, now(), #{listener})
+	<selectKey keyProperty="commentid" resultType="int">
+			select LAST_INSERT_ID()
+		</selectKey>
 	</insert>
 	
 	<delete id="deleteComment" parameterType="int">
@@ -149,6 +169,13 @@
 	select commentid, uid, boardid, contents, writedate, listener
 	from comment
 	where boardid = #{value}
+	order by writedate desc
+	</select>
+	
+	<select id="findCommentByCommentid" parameterType="int" resultType="comment">
+	select commentid, uid, boardid, contents, writedate, listener
+	from comment
+	where commentid = #{value}
 	order by writedate desc
 	</select>
 	
@@ -178,4 +205,12 @@
 		from marker
 		where markerid=#{value}
 	</delete>
+	
+	<select id="findBoardByFollow" parameterType="int" resultType="board">
+	select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
+		keyword, unveiled
+		from board
+		where uid in(select follower from follow where following = #{value})
+		order by writedate desc
+	</select>
 </mapper>

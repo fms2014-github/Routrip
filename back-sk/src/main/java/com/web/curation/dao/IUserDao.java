@@ -3,17 +3,17 @@
 
  import java.util.List;
 
+import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
 
-public interface IUserDao {// extends JpaRepository<User, String> {
+public interface IUserDao {
      User findUserByEmail(String email, int loginApi) throws Exception;
+     User findUserNoJoin(String email, int loginApi) throws Exception;
      User findUserByEmailAndPassword(String email, String password) throws Exception;
      int addUser(User user) throws Exception;
      int updateProfile(User user) throws Exception;
-     //int changePw(User user) throws Exception;
      String findPw(User user) throws Exception;
      List<String> findEmail(User user) throws Exception;
-     //int updateProfileImg(User user) throws Exception;
      List<User> getUserList() throws Exception;
      User findUserByUid(int uid) throws Exception;
      int deleteUser(int uid) throws Exception;
@@ -21,6 +21,7 @@ public interface IUserDao {// extends JpaRepository<User, String> {
      int changeUserKey(User user) throws Exception;
      User findUserByUserId(String userid, int loginApi) throws Exception;
      User findUserSimple(int uid) throws Exception;
+     int deleteUserNoJoin(int uid) throws Exception;
      
      int addFollow(int following, int follower) throws Exception;
      int deleteFollow(int following, int follower) throws Exception;
@@ -31,4 +32,9 @@ public interface IUserDao {// extends JpaRepository<User, String> {
      int findBlackList(int uid, String exp) throws Exception;
      List<String> findBlackListByUid(int uid) throws Exception;
      int deleteBlackList() throws Exception;
+     
+     int addAlarm(Alarm alarm) throws Exception;
+     List<Alarm> getAlarm(int uid) throws Exception;
+     int deleteAlarm(int alarmid) throws Exception;
+     int deleteAlarmAll(int uid) throws Exception;
  }
