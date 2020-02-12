@@ -164,6 +164,7 @@ export default {
         snscheck: { type: Number, default: 0 },
         snsToggle: { type: Function },
     },
+
     data: () => {
         return {
             email: '',
@@ -244,6 +245,9 @@ export default {
             localStorage.removeItem('email');
         }
     },
+    destroyed() {
+        console.log('디스트로이');
+    },
     methods: {
         phone_regx() {
             if (this.phone != this.phone.replace(/\D/gi, '')) {
@@ -252,7 +256,24 @@ export default {
             }
         },
         checkForm() {
-            console.log('birth : ' + this.birth);
+            if (this.snscheck === 0) {
+                if (this.email.length >= 0 && !EmailValidator.validate(this.email)) {
+                    this.error.email = '이메일 형식이 아닙니다.';
+                } else {
+                    this.error.email = false;
+                }
+
+                if (this.password.length >= 0 && !this.passwordSchema.validate(this.password)) {
+                    this.error.password = '영문,숫자 포함 8 자리이상이어야 합니다.';
+                } else {
+                    this.error.password = false;
+                }
+
+                if (this.password != this.passwordConfirm) this.error.passwordConfirm = '비밀번호가 일치하지 않습니다.';
+                else {
+                    this.error.passwordConfirm = false;
+                }
+            }
             if (this.name.length < 2) this.error.name = '2자 이상 입력해 주세요.';
             else {
                 this.error.name = false;
@@ -261,23 +282,6 @@ export default {
             if (this.nickname.length < 2 || this.nickname.length > 10) this.error.nickname = '2자 이상 10자 이하로 입력해주세요.';
             else {
                 this.error.nickname = false;
-            }
-
-            if (this.email.length >= 0 && !EmailValidator.validate(this.email)) {
-                this.error.email = '이메일 형식이 아닙니다.';
-            } else {
-                this.error.email = false;
-            }
-
-            if (this.password.length >= 0 && !this.passwordSchema.validate(this.password)) {
-                this.error.password = '영문,숫자 포함 8 자리이상이어야 합니다.';
-            } else {
-                this.error.password = false;
-            }
-
-            if (this.password != this.passwordConfirm) this.error.passwordConfirm = '비밀번호가 일치하지 않습니다.';
-            else {
-                this.error.passwordConfirm = false;
             }
 
             if (this.phone.length < 11) this.error.phone = '휴대폰 번호를 입력해 주세요.';
@@ -322,11 +326,11 @@ export default {
                     res => {
                         //통신을 통해 전달받은 값 콘솔에 출력
                         console.log(res);
-
                         //요청이 끝나면 버튼 활성화
                         this.isSubmit = true;
-                        localStorage.setItem('popup', 'false');
-                        this.$router.push({ name: 'JoinAuth' });
+                        if (this.snscheck === 0) {
+                            this.$emit('nextStep');
+                        }
                     },
                     error => {
                         //요청이 끝나면 버튼 활성화
@@ -340,14 +344,30 @@ export default {
             }
         },
         close() {
+            this.email = '';
+            this.password = '';
+            this.passwordConfirm = '';
+            this.passwordSchema = new PV();
+            this.nickname = '';
+            this.name = '';
+            this.birth = '';
+            this.phone = '';
+            this.isTerm = false;
+
+            this.error.phone = false;
+            this.error.name = false;
+            this.error.email = false;
+            this.error.password = false;
+            this.error.nickname = false;
+            this.error.passwordConfirm = false;
+            this.error.term = false;
+
             console.log('클로즈 불렀냐?');
             console.log(this.snscheck);
             if (this.snscheck == 0) this.$emit('popupToggle');
             else {
-                console.log('여기');
                 this.$emit('snsToggle');
             }
-            // this.$emit('loginApi', 0);
         },
     },
 };

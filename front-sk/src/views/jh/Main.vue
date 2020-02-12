@@ -126,6 +126,8 @@ import { createNamespacedHelpers } from 'vuex';
 const userMapState = createNamespacedHelpers('User').mapState;
 const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
+const userMapActions = createNamespacedHelpers('User').mapActions;
+
 const URI = 'http://192.168.100.70:8083/';
 export default {
     components: {
@@ -143,6 +145,13 @@ export default {
             comment: '',
         };
     },
+    mounted() {
+        if (this.getUser.user === undefined) {
+            this.req();
+        } else {
+            this.getUser();
+        }
+    },
     created: function() {
         // using JSONPlaceholder
         Axios.get(`${URI}/page/boardList`)
@@ -154,15 +163,20 @@ export default {
                 // console.log(res);
             });
     },
-    updated: function() {
-        this.getAlldata();
-    },
+    // updated: function() {
+    //     this.getAlldata();
+    // },
     computed: {
         ...userMapState(['User']),
         ...userMapGetters(['getUser']),
     },
     methods: {
         ...userMapMutations(['setUser']),
+        ...userMapActions(['reqUserInfo']),
+        async req() {
+            await this.reqUserInfo();
+            this.getUser();
+        },
         kakao() {
             const at = localStorage.getItem('kakao_access_token');
             const rt = localStorage.getItem('kakao_refresh_token');

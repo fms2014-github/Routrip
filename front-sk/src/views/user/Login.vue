@@ -93,11 +93,9 @@
                 </div>
             </div>
             <div id="popup-join" :class="{ hideJoin: !popup }">
-                <join @popupToggle="popupToggle" :snscheck="loginApi" @snsToggle="snsToggle" />
+                <join v-if="this.nextStep" @nextStep="nextStepToggle" @popupToggle="popupToggle" :snscheck="loginApi" @snsToggle="snsToggle" />
+                <joinAuth v-if="!this.nextStep" />
             </div>
-            <!-- <div id="popup-snsjoin" :class="{ hideJoin: !popup }">
-                <join @popupToggle="popupToggle" />
-            </div> -->
         </div>
     </div>
 </template>
@@ -113,6 +111,7 @@ import GoogleLogin from '../../components/user/snsLogin/Google.vue';
 import UserApi from '../../apis/UserApi';
 import NaverLogin from '../../components/user/snsLogin/Naver.vue';
 import join from './Join';
+import joinAuth from './JoinAuth';
 
 // store
 // 뷰엑스를 쓰는 방법 중 하나를 가져옴
@@ -133,6 +132,7 @@ export default {
         GoogleLogin,
         NaverLogin,
         join,
+        joinAuth,
     },
     created() {
         this.component = this;
@@ -167,6 +167,9 @@ export default {
         ...userHelper.mapGetters(['getUser']),
     },
     methods: {
+        nextStepToggle() {
+            this.nextStep = !this.nextStep;
+        },
         ...userHelper.mapActions(['reqUserInfo']),
         ...userHelper.mapMutations(['setUser']),
         getImageUrl() {
@@ -207,22 +210,25 @@ export default {
                         console.log(res.data);
 
                         // getters로 가져오는 법
-                        console.log(this.getUser);
+                        // console.log(this.getUser);
 
                         // mutations 쓰는 법
                         // 전역사용
                         // 1. this.$store.commit('User/setUser', res.data);
                         // 2. helpers 이용
                         this.setUser(res.data);
-
+                        console.log('뷰엑스!!!!!');
+                        localStorage.setItem('routrip_JWT', res.data);
+                        this.reqUserInfo();
                         console.log(this.getUser);
                         localStorage.setItem('loginedEmail', this.email);
+                        console.log(this.getUser);
                         //요청이 끝나면 버튼 활성화
                         this.isSubmit = true;
                         if (this.emailSaveCheck) {
                             localStorage.setItem('saveEmail', this.email);
                         }
-                        // this.$router.push({ name: 'Main' });
+                        this.$router.push({ name: 'Main' });
                     },
                     error => {
                         //요청이 끝나면 버튼 활성화
@@ -271,6 +277,7 @@ export default {
     },
     data: () => {
         return {
+            nextStep: true,
             email: '',
             password: '',
             passwordSchema: new PV(),
