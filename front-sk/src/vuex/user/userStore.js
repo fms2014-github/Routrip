@@ -12,20 +12,28 @@ const state = {
 // dispatch
 const actions = {
     logout({ commit }) {
+        const jwt = localStorage.getItem('routrip_JWT');
         //vuex에 user정보 비우기
-        commit('setUser', null);
-        //로컬스토리지 비우기
-        localStorage.clear();
+        Axios.post('http://192.168.100.70:8083/account/logout/' , {jwt : jwt}).then(() => {
+            commit('setUser', null);
+            //로컬스토리지 비우기
+            localStorage.clear();
+        });
     },
-    reqUserInfo({ commit }) {
+    async reqUserInfo({ commit }) {
         console.log('스토어 액션 호출!');
         const jwt = localStorage.getItem('routrip_JWT');
         console.log(jwt);
-        Axios.post('http://192.168.100.70:8083/account/decode/' , {jwt : jwt}).then(res => {
+        await Axios.post('http://192.168.100.70:8083/account/decode/' , {jwt : jwt}).then(res => {
             commit('setUser', res);
-            console.log(res);
+            console.log(res.data)
+            console.log(res)
+            // console.log(res.data.nickname);
+            // console.log(res.data.profileImg);
+            // console.log(profile)
         });
     },
+        
 };
 
 // 위의 state 값을 가져오는 메소드를
