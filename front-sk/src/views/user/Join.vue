@@ -167,15 +167,15 @@ export default {
 
     data: () => {
         return {
-            email: '',
-            password: '',
-            passwordConfirm: '',
+            email: 'hyseo33@naver.com',
+            password: 'qwer1234',
+            passwordConfirm: 'qwer1234',
             passwordSchema: new PV(),
-            nickname: '',
-            name: '',
-            birth: '',
-            phone: '',
-            isTerm: false,
+            nickname: 'gd',
+            name: 'ㅎㅇㅎㅇㅎㅇ',
+            birth: '1892-12-23',
+            phone: '01012345555',
+            isTerm: true,
             isLoading: false,
             error: {
                 phone: false,
@@ -311,17 +311,29 @@ export default {
             if (this.isSubmit) {
                 let { email, password, nickname, name, birth, phone } = this;
                 let data = {
-                    email,
-                    password,
+                    // email,
+                    // password,
                     nickname,
                     name,
                     birth,
                     phone,
                 };
+                // 받법 1
+                // data.haha = this.snscheck;
+                // 방법 2
+                // data['haha'] = this.snsCheck;
+
                 //요청 후에는 버튼 비활성화
                 this.isSubmit = false;
 
-                UserApi.requestSignUp(
+                // 일반회원가입
+                if (this.snscheck === 0) {
+                    data.email = email
+                    data.password = password
+                    
+
+                    sessionStorage.setItem('tempEmail', email)
+                    UserApi.requestSignUp(
                     data,
                     res => {
                         //통신을 통해 전달받은 값 콘솔에 출력
@@ -339,8 +351,27 @@ export default {
                         localStorage.setItem('nickname', this.nickname);
                         localStorage.setItem('email', this.email);
                         this.$router.push({ name: 'ErrorPage' });
-                    },
-                );
+                    });
+                }
+                // sns 회원가입
+                else {
+                    data.loginApi = this.snscheck
+                    data.userid = sessionStorage.getItem('snsId')
+
+                    UserApi.requestSnsSignUp(
+                        data,
+                        res => {
+                            this.isSubmit = true;
+                            alert('가입이 완료되었습니다.');
+                            this.$router.push('/');
+                        },
+                        error => {
+                        this.isSubmit = true;
+                        localStorage.setItem('popup', 'false');
+                        localStorage.setItem('nickname', this.nickname);
+                        this.$router.push({ name: 'ErrorPage' });
+                    });
+                }
             }
         },
         close() {

@@ -194,7 +194,7 @@ export default {
         if (this.getUser.user === undefined) {
             this.req();
         } else {
-            this.getUser();
+            this.getUser;
         }
     },
     created: function() {
@@ -213,7 +213,7 @@ export default {
         ...userMapActions(['reqUserInfo']),
         async req() {
             await this.reqUserInfo();
-            this.getUser();
+            this.getUser;
         },
         kakao() {
             const at = localStorage.getItem('kakao_access_token');
