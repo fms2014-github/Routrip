@@ -39,7 +39,6 @@ import com.web.curation.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
-import io.jsonwebtoken.SignatureException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -425,10 +424,10 @@ public class AccountController {
 		int alarmid = Integer.parseInt(map.get("alarmid"));
 		userService.deleteAlarm(alarmid);
 		// 알람 유저가 보고 나면 한꺼번에 삭제
-		String jwt = map.get("jwt");
-		if (isOkJwt(jwt)) {
-			userService.deleteAlarmAll((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
-		}
+//		String jwt = map.get("jwt");
+//		if (isOkJwt(jwt)) {
+//			userService.deleteAlarmAll((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+//		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
