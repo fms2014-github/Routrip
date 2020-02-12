@@ -321,7 +321,21 @@ export default {
             this.unfollowBtn = false;
             this.myPosting = false;
         },
-        follow() {},
+        follow() {
+            console.log(this.boardData);
+            Axios.post(`${URI}/account/follow`, { jwt: this.jwt, uid: this.boardData.uid })
+                .then(res => {
+                    if (this.followBtn) {
+                        alert('팔로우 되었습니다.');
+                    } else {
+                        alert('팔로우가 취소 되었습니다.');
+                    }
+                    this.noShowElseBtn();
+                })
+                .catch(res => {
+                    console.log('팔로우 등록 및 취소 실패');
+                });
+        },
         detailPage() {
             console.log('detailPage 입니다.');
         },
