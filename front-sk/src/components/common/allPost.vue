@@ -20,7 +20,7 @@
 </template>
 
 <script>
-// import myPost from "../../assets/css/myPost.scss"
+import myPost from "../../assets/css/myPost.scss"
 
 
 export default {

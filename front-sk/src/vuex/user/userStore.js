@@ -26,11 +26,8 @@ const actions = {
         console.log(jwt);
         await Axios.post('http://192.168.100.70:8083/account/decode/' , {jwt : jwt}).then(res => {
             commit('setUser', res);
-            console.log(res.data)
-            console.log(res)
-            // console.log(res.data.nickname);
-            // console.log(res.data.profileImg);
-            // console.log(profile)
+            // console.log(res.data)
+            // console.log(res)
         });
     },
         
