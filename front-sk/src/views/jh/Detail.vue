@@ -1,10 +1,18 @@
 <template>
     <div class="detail">
         <Header></Header>
+        <div class="body">
+            <div class="posting-box">
+                <div class="img-box"></div>
+                <div class="comment-box"></div>
+            </div>
+        </div>
     </div>
 </template>
 
 <script>
+import '../../assets/css/main/detail.scss';
+
 import Header from './Header.vue';
 //axios
 import Axios from 'axios';
@@ -24,6 +32,9 @@ const URI = 'http://192.168.100.70:8083/';
 export default {
     components: {
         Header,
+    },
+    created() {
+        console.log(this.$route.params.data);
     },
 };
 </script>

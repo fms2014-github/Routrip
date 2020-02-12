@@ -315,7 +315,8 @@ export default {
     },
     updated() {
         if (localStorage.getItem('popup') !== null) {
-            this.popup = !Boolean(localStorage.getItem('popup'));
+            this.popup = Boolean(localStorage.getItem('popup'));
+            this.popup = !this.popup;
             localStorage.removeItem('popup');
         }
     },
