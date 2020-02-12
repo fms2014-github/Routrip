@@ -1,24 +1,139 @@
+$iPad: 'screen and (max-width : 768px)';
+$iPadPro: 'screen and (min-width : 769px) and (max-width : 1024px) ';
+$desktop: 'screen and (min-width : 1025px)';
+
 .detail {
+    padding: 40px 0;
+    background-color: #f2f2f2;
+
     .body {
-        background-color: #f2f2f2;
-        height: 700px;
         display: flex;
         justify-content: center;
         align-items: center;
 
         .posting-box {
-            height: 600px;
-            display: flex;
+            margin: 0;
+            padding: 0;
 
-            .img-box {
-                width: 800px;
-                border: 1px solid black;
+            @media #{$iPad, $iPadPro} {
+                display: block;
+
+                .img-box {
+                    background-color: white;
+                    width: 650px;
+                    height: 600px;
+                    border: 1px solid black;
+                    margin: 0;
+                    padding: 20px;
+                }
+
+                .comment-box {
+                    background-color: white;
+                    width: 650px;
+                    height: 300px;
+                    border: 1px solid black;
+                    margin: 0;
+                    padding: 20px;
+                }
             }
 
-            .comment-box {
-                width: 400px;
-                border: 1px solid black;
+            @media #{$desktop} {
+                display: flex;
+
+                .img-box {
+                    background-color: white;
+                    width: 650px;
+                    height: 600px;
+                    border: 1px solid black;
+                    margin: 0;
+                    padding: 20px;
+                }
+
+                .comment-box {
+                    background-color: white;
+                    width: 350px;
+                    height: 600px;
+                    border: 1px solid black;
+                    margin: 0;
+                    padding: 20px;
+                }
             }
+
+            .writer {
+                display: flex;
+                align-items: center;
+                padding-bottom: 10px;
+                margin-bottom: 10px;
+
+                .name-time-follow-box {
+                    display: flex;
+                    justify-content: space-between;
+                    align-items: center;
+                    width: 90%;
+                }
+
+                .followShow,
+                .unfollowShow {
+                    display: none;
+                }
+
+                .profile-img {
+                    margin-right: 15px;
+
+                    img {
+                        vertical-align: middle;
+                        width: 40px;
+                        height: 40px;
+                        border-radius: 20px;
+                    }
+                }
+
+                .name-time {
+
+                    strong {
+                        font-size: 1.2em;
+                        margin-right: 10px;
+                    }
+                }
+
+                .follow {
+                    cursor: pointer;
+
+                    span {
+                        color: red;
+                        font-weight: 600;
+                        font-size: 1.2em;
+                    }
+
+                }
+            }
+
+            .comments {
+                @media #{$iPad, $iPadPro} {}
+
+                @media #{$desktop} {}
+            }
+
+            .sns-btn {
+                padding: 0 0 20px 0;
+                border-bottom: 1px solid rgba(00, 00, 00, 0.5);
+                margin-bottom: 20px;
+
+                .like {
+                    .likeit {
+                        display: none;
+                    }
+                }
+
+                .scrap {
+                    .scrapit {
+                        display: none;
+                    }
+                }
+
+            }
+
+
         }
 
     }

@@ -4,7 +4,58 @@
         <div class="body">
             <div class="posting-box">
                 <div class="img-box"></div>
-                <div class="comment-box"></div>
+                <div class="comment-box">
+                    <div class="writer">
+                        <div class="profile-img">
+                            <img :src="'http://192.168.100.70:8083/' + data.user.profileImg" />
+                        </div>
+                        <div class="name-time-follow-box">
+                            <div class="name-time">
+                                <strong>{{ data.title }}</strong>
+                                <span>{{ data.writeday }}</span>
+                                <br />
+                                <span>{{ data.user.nickname }}</span>
+                            </div>
+                            <div class="follow" @click="toggleFollow">
+                                <span :class="{ followShow: !follow }">팔로우</span>
+                                <span :class="{ unfollowShow: !unfollow }">팔로우 취소</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="sns-btn">
+                        <div class="like">
+                            <button @click="toggleLikeBtn">
+                                <div :class="{ likeit: !likeit }">
+                                    <i class="far fa-heart"></i>
+                                </div>
+                                <div :class="{ likeit: likeit }">
+                                    <i class="fas fa-heart" style="color:red;"></i>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="scrap">
+                            <button @click="toggleScrapBtn">
+                                <div :class="{ scrapit: !scrapit }">
+                                    <i class="far fa-bookmark"></i>
+                                </div>
+                                <div :class="{ scrapit: scrapit }">
+                                    <i class="fas fa-bookmark" style="color:blue;"></i>
+                                </div>
+                            </button>
+                        </div>
+                        <div class="state" v-if="data.favoriteNum == 1">
+                            <strong>{{ whoLiked[0] }}</strong
+                            >님이 게시글을 좋아합니다.
+                        </div>
+                        <div class="state" v-if="data.favoriteNum > 1">
+                            <strong>{{ whoLiked[0] }}</strong>
+                            님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
+                        </div>
+                    </div>
+                    <div class="comments">
+                        댓글들....
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -33,8 +84,129 @@ export default {
     components: {
         Header,
     },
+    data: () => {
+        return {
+            data: '',
+            likeit: false,
+            whoLiked: [],
+            scrapit: false,
+            followList: [],
+            jwt: '',
+            follow: false,
+            unfollow: false,
+        };
+    },
     created() {
-        console.log(this.$route.params.data);
+        this.jwt = localStorage.getItem('routrip_JWT');
+        this.data = this.$route.params.data;
+        console.log(this.data);
+        this.showAll();
+    },
+    mounted() {
+        if (this.getUser.user === undefined) {
+            this.req();
+        } else {
+            this.getUser();
+        }
+    },
+    computed: {
+        ...userMapState(['User']),
+        ...userMapGetters(['getUser']),
+    },
+    methods: {
+        ...userMapMutations(['setUser']),
+        ...userMapActions(['reqUserInfo']),
+        async req() {
+            await this.reqUserInfo();
+            this.getUser();
+        },
+        showAll() {
+            Axios.post(`${URI}/page/scrapBoard`, { jwt: this.jwt })
+                .then(res => {
+                    // console.log(res.data);
+                    this.scrapit = false;
+                    for (var i = 0; i < res.data.length; ++i) {
+                        if (res.data[i].boardid == this.data.boardid) {
+                            this.scrapit = true;
+                            break;
+                        }
+                    }
+                })
+                .catch(res => {
+                    console.log('스크랩 게시글 조회 실패');
+                });
+            Axios.post(`${URI}/page/favoriteBoard`, { jwt: this.jwt })
+                .then(res => {
+                    // console.log(res.data);
+                    this.likeit = false;
+                    for (var i = 0; i < res.data.length; ++i) {
+                        if (res.data[i].boardid == this.data.boardid) {
+                            this.likeit = true;
+                            break;
+                        }
+                    }
+                })
+                .catch(res => {
+                    console.log('좋아요 게시글 조회 실패');
+                });
+
+            var uid = this.getUser.data.uid;
+            // console.log('uid : ' + uid);
+            Axios.post(`${URI}/account/following`, { uid: uid })
+                .then(res => {
+                    // console.log(res.data);
+                    // console.log(this.boardData);
+                    this.follow = false;
+                    this.unfollow = false;
+                    if (this.data.uid != uid) {
+                        this.follow = true;
+                        for (var i = 0; i < res.data.length; ++i) {
+                            if (res.data[i].uid == this.data.uid) {
+                                this.follow = false;
+                                this.unfollow = true;
+                                break;
+                            }
+                        }
+                    }
+                })
+                .catch(res => {
+                    console.log('팔로우 정보 조회 실패');
+                });
+        },
+        toggleLikeBtn() {
+            var boardid = this.data.boardid;
+            Axios.post(`${URI}/page/favorite`, { jwt: this.jwt, boardid: boardid })
+                .then(res => {
+                    this.showAll();
+                })
+                .catch(res => {
+                    console.log('좋아요 버튼 에러');
+                });
+        },
+        toggleScrapBtn() {
+            var boardid = this.data.boardid;
+            Axios.post(`${URI}/page/scrap`, { jwt: this.jwt, boardid: boardid })
+                .then(res => {
+                    this.showAll();
+                })
+                .catch(res => {
+                    console.log('스크랩 버튼 에러');
+                });
+        },
+        toggleFollow() {
+            Axios.post(`${URI}/account/follow`, { jwt: this.jwt, uid: this.data.uid })
+                .then(res => {
+                    if (this.follow) {
+                        alert('팔로우 되었습니다.');
+                    } else {
+                        alert('팔로우가 취소 되었습니다.');
+                    }
+                    this.showAll();
+                })
+                .catch(res => {
+                    console.log('팔로우 등록 및 취소 실패');
+                });
+        },
     },
 };
 </script>

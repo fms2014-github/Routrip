@@ -72,11 +72,11 @@
                                 </button>
                             </div>
                             <div class="state" v-if="data.favoriteNum == 1">
-                                <strong>{{ whoLiked[dataIdx] }}</strong
+                                <strong>{{ whoLiked[0] }}</strong
                                 >님이 게시글을 좋아합니다.
                             </div>
                             <div class="state" v-if="data.favoriteNum > 1">
-                                <strong>{{ whoLiked[dataIdx] }}</strong>
+                                <strong>{{ whoLiked[0] }}</strong>
                                 님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
                             </div>
                         </div>
