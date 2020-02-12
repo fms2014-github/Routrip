@@ -11,11 +11,13 @@ $desktop: 'screen and (min-width : 1025px)';
 
     .profile-img {
         margin-right: 2vw;
-    }
 
-    .profile-img img {
-        vertical-align: middle;
-        width: 33px;
+        img {
+            vertical-align: middle;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+        }
     }
 
     .name-time {
@@ -132,12 +134,21 @@ $desktop: 'screen and (min-width : 1025px)';
     .like {
         font-size: 1.5em;
         margin-right: 10px;
+
+        .likeToggle {
+            display: none;
+        }
     }
 
-    .follow {
+    .scrap {
         font-size: 1.5em;
         margin-right: 10px;
+
+        .scrapToggle {
+            display: none;
+        }
     }
+
 }
 
 .text {
@@ -165,6 +176,7 @@ $desktop: 'screen and (min-width : 1025px)';
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+
                 .writer {
                     margin-bottom: 5px;
 
