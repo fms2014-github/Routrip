@@ -1,9 +1,10 @@
-var mapContainer, mapOption, map, manager, options, toolbox, mapImage;
+var mapContainer, mapOption, map, manager, options;
 var commentIndex = 0;
 var startX, startY, startOverlayPoint;
-var info = [],
-    cusInfo = [];
-var commentCondition = 'false';
+var overlays = [];
+var info = {},
+    cusInfo = {};
+var commentCondition = 'both';
 
 const createMap = () => {
     var mapContainer = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
@@ -86,15 +87,16 @@ const createMap = () => {
     // 위에 작성한 옵션으로 Drawing Manager를 생성합니다
     manager = new kakao.maps.Drawing.DrawingManager(options);
     manager.addListener('drawend', function(mouseEvent) {
-        if (commentCondition) {
+        if (commentCondition === 'both') {
+            console.log('??');
             if (mouseEvent.overlayType === 'marker') {
-                info[info.length - 1].open(map, mouseEvent.target);
+                info['comment-' + (commentIndex - 1)].open(map, mouseEvent.target);
             } else if (mouseEvent.overlayType === 'circle' || mouseEvent.overlayType === 'ellipse') {
-                cusInfo[cusInfo.length - 1].setPosition(mouseEvent.target.getPosition());
-                cusInfo[cusInfo.length - 1].setMap(map);
+                cusInfo['comment-' + (commentIndex - 1)].setPosition(mouseEvent.target.getPosition());
+                cusInfo['comment-' + (commentIndex - 1)].setMap(map);
             } else if (mouseEvent.overlayType === 'arrow' || mouseEvent.overlayType === 'polyline' || mouseEvent.overlayType === 'polygon') {
-                cusInfo[cusInfo.length - 1].setPosition(mouseEvent.target.getPath()[Math.floor(mouseEvent.target.getPath().length / 2)]);
-                cusInfo[cusInfo.length - 1].setMap(map);
+                cusInfo['comment-' + (commentIndex - 1)].setPosition(mouseEvent.target.getPath()[Math.floor(mouseEvent.target.getPath().length / 2)]);
+                cusInfo['comment-' + (commentIndex - 1)].setMap(map);
             } else if (mouseEvent.overlayType === 'rectangle') {
                 let pos_11 = mouseEvent.target
                     .getBounds()
@@ -114,11 +116,8 @@ const createMap = () => {
                     .getLng();
                 let a = pos_11 + Math.abs(pos_11 - pos_21) / 2;
                 let b = pos_12 + Math.abs(pos_12 - pos_22) / 2;
-                cusInfo[cusInfo.length - 1].setPosition(new kakao.maps.LatLng(a, b));
-                cusInfo[cusInfo.length - 1].setMap(map);
-            } else {
-                cusInfo[cusInfo.length - 1].setPosition(mouseEvent.coords);
-                cusInfo[cusInfo.length - 1].setMap(map);
+                cusInfo['comment-' + (commentIndex - 1)].setPosition(new kakao.maps.LatLng(a, b));
+                cusInfo['comment-' + (commentIndex - 1)].setMap(map);
             }
         }
     });
@@ -155,14 +154,15 @@ const selectOverlay = (condition, type, title, content) => {
     // 그리기 중이면 그리기를 취소합니다
     manager.cancel();
     if (condition === 'both') {
-        commentCondition = true;
+        commentCondition = condition;
         insertComment(type, title, content);
         // 클릭한 그리기 요소 타입을 선택합니다
         manager.select(kakao.maps.Drawing.OverlayType[type]);
     } else if (condition === 'comment') {
+        commentCondition = condition;
         insertComment(type, title, content);
     } else if (condition === 'drawtool') {
-        commentCondition = false;
+        commentCondition = condition;
         manager.select(kakao.maps.Drawing.OverlayType[type]);
     }
 };
@@ -178,12 +178,18 @@ const redo = () => {
     // 이전 상태로 되돌린 상태를 취소합니다
     manager.redo();
 };
-
+const getTest = () => {
+    console.log('info', info);
+    console.log('cusInfo', cusInfo);
+    console.log('commentIndex', commentIndex);
+    console.log(manager.getData());
+};
 const KakaoMap = {
     createMap: () => createMap(),
     selectOverlay: (condition, type, title, content) => selectOverlay(condition, type, title, content),
     undo: () => undo(),
     redo: () => redo(),
+    getTest: () => getTest(),
 };
 
 function insertComment(type, title, content) {
@@ -204,13 +210,16 @@ function insertComment(type, title, content) {
     commentWrap.appendChild(commentContent);
     commentTitle.appendChild(titleTextNoded);
     commentContent.appendChild(contentTextNoded);
-    if (type === 'MARKER') {
+    commentTitle.after(commentClose);
+    if (type === 'MARKER' && commentCondition === 'both') {
         var infowindow = new kakao.maps.InfoWindow({
             content: commentWrap,
-            removable: true,
         });
-        info.push(infowindow);
-
+        info[infowindow.getContent().id] = infowindow;
+        commentClose.onclick = function closeinfo() {
+            delete info[infowindow.getContent().id];
+            infowindow.close();
+        };
         // 커스텀 오버레이에 mousedown이벤트를 등록합니다
         addEventHandle(commentWrap, 'mousedown', onMouseDown);
 
@@ -291,16 +300,19 @@ function insertComment(type, title, content) {
             }
         }
     } else {
-        commentWrap.appendChild(commentClose);
         var customOverlay = new kakao.maps.CustomOverlay({
             position: map.getCenter(),
             content: commentWrap,
-            yAnchor: 1.4,
+            yAnchor: 1.3,
         });
-        cusInfo.push(customOverlay);
+        cusInfo[customOverlay.getContent().id] = customOverlay;
         commentClose.onclick = function closeOverlay() {
+            delete info[customOverlay.getContent().id];
             customOverlay.setMap(null);
         };
+        if (commentCondition === 'comment') {
+            customOverlay.setMap(map);
+        }
         // 커스텀 오버레이에 mousedown이벤트를 등록합니다
         addEventHandle(commentWrap, 'mousedown', onMouseDown);
 
@@ -383,4 +395,177 @@ function insertComment(type, title, content) {
     }
 }
 
+function getMapDrawData() {
+    // Drawing Manager에서 그려진 데이터 정보를 가져옵니다
+    var data = manager.getData();
+
+    // 지도에 가져온 데이터로 도형들을 그립니다
+    drawMarker(data[kakao.maps.drawing.OverlayType.MARKER]);
+    drawPolyline(data[kakao.maps.drawing.OverlayType.POLYLINE]);
+    drawRectangle(data[kakao.maps.drawing.OverlayType.RECTANGLE]);
+    drawCircle(data[kakao.maps.drawing.OverlayType.CIRCLE]);
+    drawPolygon(data[kakao.maps.drawing.OverlayType.POLYGON]);
+    drawArrow(data[kakao.maps.Drawing.OverlayType.ARROW]);
+    drawEllipse(data[kakao.maps.Drawing.OverlayType.ELLIPSE]);
+}
+
+// Drawing Manager에서 가져온 데이터 중 마커를 아래 지도에 표시하는 함수입니다
+function drawMarker(markers) {
+    var len = markers.length,
+        i = 0;
+
+    for (; i < len; i++) {
+        var marker = new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(markers[i].y, markers[i].x),
+            zIndex: markers[i].zIndex,
+        });
+
+        overlays.push(marker);
+    }
+}
+
+// Drawing Manager에서 가져온 데이터 중 선을 아래 지도에 표시하는 함수입니다
+function drawPolyline(lines) {
+    var len = lines.length,
+        i = 0;
+
+    for (; i < len; i++) {
+        var path = pointsToPath(lines[i].points);
+        var style = lines[i].options;
+        var polyline = new kakao.maps.Polyline({
+            path: path,
+            strokeColor: style.strokeColor,
+            strokeOpacity: style.strokeOpacity,
+            strokeStyle: style.strokeStyle,
+            strokeWeight: style.strokeWeight,
+        });
+
+        overlays.push(polyline);
+    }
+}
+
+function drawArrow(arrows) {
+    var len = arrows.length,
+        i = 0;
+
+    for (; i < len; i++) {
+        var path = pointsToPath(arrows[i].points);
+        var style = arrows[i].options;
+        var arrow = new kakao.maps.Polyline({
+            endArrow: true,
+            path: path,
+            strokeColor: style.strokeColor,
+            strokeOpacity: style.strokeOpacity,
+            strokeStyle: style.strokeStyle,
+            strokeWeight: style.strokeWeight,
+        });
+
+        overlays.push(arrow);
+    }
+}
+// Drawing Manager에서 가져온 데이터 중 사각형을 아래 지도에 표시하는 함수입니다
+function drawRectangle(rects) {
+    var len = rects.length,
+        i = 0;
+
+    for (; i < len; i++) {
+        var style = rects[i].options;
+        var rect = new kakao.maps.Rectangle({
+            bounds: new kakao.maps.LatLngBounds(
+                new kakao.maps.LatLng(rects[i].sPoint.y, rects[i].sPoint.x),
+                new kakao.maps.LatLng(rects[i].ePoint.y, rects[i].ePoint.x),
+            ),
+            strokeColor: style.strokeColor,
+            strokeOpacity: style.strokeOpacity,
+            strokeStyle: style.strokeStyle,
+            strokeWeight: style.strokeWeight,
+            fillColor: style.fillColor,
+            fillOpacity: style.fillOpacity,
+        });
+
+        overlays.push(rect);
+    }
+}
+
+// Drawing Manager에서 가져온 데이터 중 원을 아래 지도에 표시하는 함수입니다
+function drawCircle(circles) {
+    var len = circles.length,
+        i = 0;
+
+    for (; i < len; i++) {
+        var style = circles[i].options;
+        var circle = new kakao.maps.Circle({
+            center: new kakao.maps.LatLng(circles[i].center.y, circles[i].center.x),
+            radius: circles[i].radius,
+            strokeColor: style.strokeColor,
+            strokeOpacity: style.strokeOpacity,
+            strokeStyle: style.strokeStyle,
+            strokeWeight: style.strokeWeight,
+            fillColor: style.fillColor,
+            fillOpacity: style.fillOpacity,
+        });
+
+        overlays.push(circle);
+    }
+}
+
+function drawEllipse(ellipses) {
+    var len = ellipses.length,
+        i = 0;
+
+    for (; i < len; i++) {
+        var style = ellipses[i].options;
+        var circle = new kakao.maps.Circle({
+            rx: ellipses[i].rx,
+            ry: ellipses[i].ry,
+            center: new kakao.maps.LatLng(ellipses[i].center.y, ellipses[i].center.x),
+            strokeColor: style.strokeColor,
+            strokeOpacity: style.strokeOpacity,
+            strokeStyle: style.strokeStyle,
+            strokeWeight: style.strokeWeight,
+            fillColor: style.fillColor,
+            fillOpacity: style.fillOpacity,
+        });
+
+        overlays.push(circle);
+    }
+}
+
+// Drawing Manager에서 가져온 데이터 중 다각형을 아래 지도에 표시하는 함수입니다
+function drawPolygon(polygons) {
+    var len = polygons.length,
+        i = 0;
+
+    for (; i < len; i++) {
+        var path = pointsToPath(polygons[i].points);
+        var style = polygons[i].options;
+        var polygon = new kakao.maps.Polygon({
+            map: map,
+            path: path,
+            strokeColor: style.strokeColor,
+            strokeOpacity: style.strokeOpacity,
+            strokeStyle: style.strokeStyle,
+            strokeWeight: style.strokeWeight,
+            fillColor: style.fillColor,
+            fillOpacity: style.fillOpacity,
+        });
+
+        overlays.push(polygon);
+    }
+}
+
+// Drawing Manager에서 가져온 데이터 중
+// 선과 다각형의 꼭지점 정보를 kakao.maps.LatLng객체로 생성하고 배열로 반환하는 함수입니다
+function pointsToPath(points) {
+    var len = points.length,
+        path = [],
+        i = 0;
+
+    for (; i < len; i++) {
+        var latlng = new kakao.maps.LatLng(points[i].y, points[i].x);
+        path.push(latlng);
+    }
+
+    return path;
+}
 export default KakaoMap;

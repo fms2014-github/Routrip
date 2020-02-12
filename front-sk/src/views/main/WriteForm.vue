@@ -1,31 +1,5 @@
 <template>
     <div id="content-upload-form">
-        <InputForm id="content-title" :enterInput="test1" :errorText="error.title" placeholder="제목을 입력해 주세요." label="제목" />
-        <div class="select-form">
-            <span class="select-form-title">장소</span>
-            <div class="select-tag">
-                <div class="hashtag-form" v-for="area in areas" :key="area">
-                    {{ area }}<button class="hashtag-cansle" @click="removeHash(area, 'area')">×</button>
-                </div>
-            </div>
-        </div>
-        <div class="search">
-            <input v-model="areaword" class="search-bar" type="text" @keyup.enter="createHash('area')" />
-            <div class="search-result-dropdown">
-                <div class="dropdown-list" v-for="resultArea in resultAreas" :key="resultArea">{{ resultArea }}</div>
-            </div>
-        </div>
-        <div class="select-form">
-            <span class="select-form-title">키워드</span>
-            <div class="select-tag">
-                <div class="hashtag-form" v-for="keyword in keywords" :key="keyword">
-                    {{ keyword }}<button class="hashtag-cansle" @click="removeHash(keyword, 'keyword')">×</button>
-                </div>
-            </div>
-        </div>
-        <div class="search">
-            <input v-model="keywordTag" class="search-bar" type="text" @keyup.enter="createHash('keyword')" />
-        </div>
         <div id="map-wrapper">
             <div id="map"></div>
             <div id="edit">
@@ -43,8 +17,23 @@
                 <div id="drop-down-wrap" class="drop-up">
                     <div id="insert-comment-wrap">
                         <span id="insert-comment-wrap-title">설명 넣기</span>
-                        <label for="comment-title-insert">제목 <input id="comment-title-insert" type="text" v-model="commentTitle"/></label>
-                        <label for="comment-content-insert">내용<textarea id="comment-content-insert" type="text" v-model="commentContent"/></label>
+                        <label for="comment-title-insert"
+                            >제목
+                            <input
+                                id="comment-title-insert"
+                                type="text"
+                                v-model="commentTitle"
+                                maxlength="24"
+                                placeholder="24자 까지 작성 가능합니다."
+                        /></label>
+                        <label for="comment-content-insert"
+                            >내용<textarea
+                                id="comment-content-insert"
+                                type="text"
+                                v-model="commentContent"
+                                maxlength="80"
+                                placeholder="70자 까지 작성 가능합니다."
+                        /></label>
                         <button id="comment-submit" @click="createDraw">생성</button>
                     </div>
                     <div id="create-condition">
@@ -61,29 +50,51 @@
                 </div>
             </div>
         </div>
-        <div id="write-content">
-            <div id="editor"></div>
-        </div>
-        <div id="image-upload">
-            <label id="upload-button" for="image-file">사진 업로드</label>
-            <input id="image-file" type="file" multiple @change="imageFiles" />
-            <div id="file-list">
-                <div class="upload-image-preview" v-for="(image, idx) in imageArr" :key="image.id">
-                    <img class="image-size" :src="imageArrBase64[idx]" />
-                    <button class="deleteImg" @click="deleteImg(image, idx)">×</button>
+        <div id="content-wrapper">
+            <InputForm id="content-title" :enterInput="test1" :errorText="''" placeholder="제목을 입력해 주세요." label="제목" />
+            <div class="select-form">
+                <span class="select-form-title">장소</span>
+                <div class="select-tag">
+                    <div class="hashtag-form" v-for="area in areas" :key="area">
+                        {{ area }}<button class="hashtag-cansle" @click="removeHash(area, 'area')">×</button>
+                    </div>
                 </div>
             </div>
+            <div class="search">
+                <input v-model="areaword" class="search-bar" type="text" @keyup.enter="createHash('area')" />
+                <div class="search-result-dropdown">
+                    <div class="dropdown-list" v-for="resultArea in resultAreas" :key="resultArea">{{ resultArea }}</div>
+                </div>
+            </div>
+            <div class="select-form">
+                <span class="select-form-title">키워드</span>
+                <div class="select-tag">
+                    <div class="hashtag-form" v-for="keyword in keywords" :key="keyword">
+                        {{ keyword }}<button class="hashtag-cansle" @click="removeHash(keyword, 'keyword')">×</button>
+                    </div>
+                </div>
+            </div>
+            <div class="search">
+                <input v-model="keywordTag" class="search-bar" type="text" @keyup.enter="createHash('keyword')" />
+            </div>
+            <div id="write-content">
+                <div id="summernote">Hello Summernote</div>
+            </div>
+            <div id="calendar-wrapper">
+                <span>여행 기간</span>
+                <label for="calendar-nights"
+                    ><input id="calendar-nights" name="calendar-nights" class="calendar" type="number" /><span>박</span></label
+                >
+                <label for="calendar-days"><input id="calendar-days" name="calendar-days" class="calendar" type="number" /><span>일</span></label>
+            </div>
+            <button id="content-submit" @click="submit">제출</button>
         </div>
-        <div id="calendar-wrapper">
-            <label for="calendar-nights"><input id="calendar-nights" name="calendar-nights" class="calendar" type="number" /><span>박</span></label>
-            <label for="calendar-days"><input id="calendar-days" name="calendar-days" class="calendar" type="number" /><span>일</span></label>
-        </div>
-        <button @click="submit">제출</button>
     </div>
 </template>
 
 <script>
 import '../../assets/css/WriteForm.scss';
+import ImageUpload from '../../apis/ImgurAPI.js';
 import kakaoMap from '../../apis/kakaoMapAPI.js';
 import InputForm from '../../components/common/Input';
 
@@ -91,12 +102,38 @@ export default {
     mounted() {
         //CKEditor.createCKEditor();
         kakaoMap.createMap();
+        $(() => {
+            $('#summernote').summernote({
+                height: 400, // set editor height
+                callbacks: {
+                    onImageUpload: function(files) {
+                        // upload image to server and create imgNode...
+                        console.log('file :', files);
+                        for (var i = 0; i < files.length; i++) {
+                            if (files) {
+                                ImageUpload.uploadImage(
+                                    files[i],
+                                    res => {
+                                        console.log(res.data.data.link);
+                                        $('#summernote').summernote('insertImage', res.data.data.link, res.data.data.id);
+                                    },
+                                    error => {
+                                        console.log(error);
+                                    },
+                                );
+                            }
+                        }
+                    },
+                },
+            });
+        });
     },
     components: {
         InputForm,
     },
     data() {
         return {
+            title: '',
             areaword: '',
             keywordTag: '',
             selectDraw: '',
@@ -118,8 +155,6 @@ export default {
             areas: [],
             keywords: ['키워드 #1', '키워드 #2', '키워드 #3', '키워드 #4', '키워드 #5'],
             resultAreas: [],
-            imageArr: [],
-            imageArrBase64: [],
             commentTitle: '',
             commentContent: '',
             error: {
@@ -190,8 +225,8 @@ export default {
                 this.resultAreas = [];
             }
         },
-        test1() {
-            console.log('');
+        test1(v) {
+            this.title = v;
         },
         undo() {
             kakaoMap.undo();
@@ -199,32 +234,11 @@ export default {
         redo() {
             kakaoMap.redo();
         },
-        submit() {},
-        imageFiles(e) {
-            var fileList = document.querySelector('#file-list');
-            var get_file = e.target.files;
-            console.log('get_file', get_file);
-            for (var i = 0; i < get_file.length; i++) {
-                this.imageArr.push(get_file[i]);
-            }
-
-            for (var i = 0; i < get_file.length; i++) {
-                var reader = new FileReader();
-
-                reader.onload = (function(imgab) {
-                    return function(e) {
-                        imgab.push(e.target.result);
-                        console.log(e.target.result);
-                    };
-                })(this.imageArrBase64);
-                if (get_file) {
-                    reader.readAsDataURL(get_file[i]);
-                }
-            }
-        },
-        deleteImg(id, idx) {
-            this.imageArr.splice(idx, 1);
-            this.imageArrBase64.splice(idx, 1);
+        submit() {
+            var markupStr = $('#summernote').summernote('code');
+            kakaoMap.getTest();
+            console.log('title', this.title);
+            console.log('content', markupStr);
         },
     },
 };
