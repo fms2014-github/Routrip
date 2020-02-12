@@ -3,6 +3,7 @@ import Router from 'vue-router';
 
 // Import Common Components
 import Main from './views/jh/Main.vue';
+import Detail from './views/jh/Detail.vue';
 import Login from './views/user/Login.vue';
 import Join from './views/user/Join.vue';
 import JoinAuth from './views/user/JoinAuth.vue';
@@ -25,15 +26,13 @@ import PictureRegister from './views/user/profile/PictureRegister.vue';
 // Import Etc Components
 import Components from './views/Components.vue';
 
-
 export const router = new Router({
     mode: 'history',
     routes: [{
         path: '/',
         name: 'Login',
         component: Login,
-        children: [
-            {
+        children: [{
                 path: 'user/join',
                 name: 'Join',
                 components: {
@@ -60,8 +59,7 @@ export const router = new Router({
         path: '/profile',
         name: 'Profile',
         component: Profile,
-        children: [
-            {
+        children: [{
                 path: '',
                 name: 'UserPost',
                 components: {
@@ -129,4 +127,9 @@ export const router = new Router({
         name: 'Main',
         component: Main,
     },
-]});
+    {
+        path: '/detail',
+        name: 'Detail',
+        component: Detail,
+    },
+];

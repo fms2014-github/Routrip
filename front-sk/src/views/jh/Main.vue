@@ -38,14 +38,17 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="post-imgs-box">
-                            <hooper class="post-img-box">
-                                <slide v-for="(img, imgIdx) in data.imgs" :key="imgIdx">
-                                    <img :src="'http://192.168.100.70:8083/' + img.src" alt />
-                                </slide>
-                                <hooper-pagination slot="hooper-addons"></hooper-pagination>
-                            </hooper>
-                        </div>
+                        <router-link to="/detail">
+                            <div class="post-imgs-box">
+                                <hooper class="post-img-box">
+                                    <slide v-for="(img, imgIdx) in data.imgs" :key="imgIdx">
+                                        <img :src="'http://192.168.100.70:8083/' + img.src" alt />
+                                    </slide>
+                                    <hooper-pagination slot="hooper-addons"></hooper-pagination>
+                                </hooper>
+                            </div>
+                        </router-link>
+
                         <div class="sns-btn">
                             <div class="like">
                                 <button @click="toggleLikeBtn(data.boardid)">
@@ -341,9 +344,6 @@ export default {
                     console.log('팔로우 등록 및 취소 실패');
                 });
         },
-        detailPage() {
-            console.log('detailPage 입니다.');
-        },
         addComment(info) {
             // console.log(this.comment);
             var commentObject = new Object();
@@ -395,6 +395,9 @@ export default {
                 .catch(res => {
                     console.log(res);
                 });
+        },
+        toDetailPage(data) {
+            console.log(data);
         },
     },
 };
