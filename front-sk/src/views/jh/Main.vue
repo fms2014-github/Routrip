@@ -9,13 +9,7 @@
             </div>
             <div class="best-posting">
                 <div class="postings-posting">
-                    <hooper
-                        :infiniteScroll="true"
-                        :itemsToShow="3"
-                        :progress="true"
-                        :autoPlay="true"
-                        :playSpeed="2000"
-                    >
+                    <hooper :infiniteScroll="true" :itemsToShow="3" :progress="true" :autoPlay="true" :playSpeed="2000">
                         <slide v-for="(data, dataIdx) in datas" :key="dataIdx">
                             <img :src="'http://192.168.100.70:8083/' + data.imgs[0].src" alt />
                         </slide>
@@ -29,9 +23,7 @@
                         <div class="postings-posting">
                             <div class="post-info">
                                 <div class="profile-img">
-                                    <img
-                                        :src="'http://192.168.100.70:8083/' + data.user.profileImg"
-                                    />
+                                    <img :src="'http://192.168.100.70:8083/' + data.user.profileImg" />
                                 </div>
                                 <div class="name-time">
                                     <strong>{{ data.title }}</strong>
@@ -39,7 +31,7 @@
                                     <br />
                                     <span>{{ data.user.nickname }}</span>
                                 </div>
-                                <div class="else">
+                                <div class="else" @click="showElseBtn(data)">
                                     <span>
                                         <i class="fas fa-ellipsis-h"></i>
                                     </span>
@@ -57,30 +49,31 @@
                         <div class="sns-btn">
                             <div class="like">
                                 <button @click="toggleLikeBtn(data.boardid)">
-                                    <div :class="{likeToggle : likeShow[dataIdx].like}">
+                                    <div :class="{ likeToggle: likeShow[dataIdx].like }">
                                         <i class="far fa-heart"></i>
                                     </div>
-                                    <div :class="{likeToggle : !likeShow[dataIdx].like}">
+                                    <div :class="{ likeToggle: !likeShow[dataIdx].like }">
                                         <i class="fas fa-heart" style="color:red;"></i>
                                     </div>
                                 </button>
                             </div>
                             <div class="scrap">
                                 <button @click="toggleScrapBtn(data.boardid)">
-                                    <div :class="{scrapToggle : scrapShow[dataIdx].scrap}">
+                                    <div :class="{ scrapToggle: scrapShow[dataIdx].scrap }">
                                         <i class="far fa-bookmark"></i>
                                     </div>
-                                    <div :class="{scrapToggle : !scrapShow[dataIdx].scrap}">
+                                    <div :class="{ scrapToggle: !scrapShow[dataIdx].scrap }">
                                         <i class="fas fa-bookmark" style="color:blue;"></i>
                                     </div>
                                 </button>
                             </div>
-                            <div class="state" v-if="data.favoriteNum==1">
-                                <strong>{{ whoLiked[dataIdx] }}</strong>님이 게시글을 좋아합니다.
+                            <div class="state" v-if="data.favoriteNum == 1">
+                                <strong>{{ whoLiked[dataIdx] }}</strong
+                                >님이 게시글을 좋아합니다.
                             </div>
-                            <div class="state" v-if="data.favoriteNum>1">
+                            <div class="state" v-if="data.favoriteNum > 1">
                                 <strong>{{ whoLiked[dataIdx] }}</strong>
-                                님 외 {{ data.favoriteNum-1 }}명이 이 게시글을 좋아합니다.
+                                님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
                             </div>
                         </div>
 
@@ -90,16 +83,9 @@
 
                         <div class="comment-box">
                             <div class="comments">
-                                <div
-                                    class="comment"
-                                    v-for="(comment, commentIdx) in data.comments"
-                                    :key="commentIdx"
-                                >
+                                <div class="comment" v-for="(comment, commentIdx) in data.comments" :key="commentIdx">
                                     <div class="writer-img">
-                                        <img
-                                            :src="'http://192.168.100.70:8083/' + comment.user.profileImg"
-                                            alt
-                                        />
+                                        <img :src="'http://192.168.100.70:8083/' + comment.user.profileImg" alt />
                                     </div>
                                     <div class="comment-info">
                                         <div class="comment-info-box">
@@ -119,13 +105,7 @@
                             </div>
                             <div class="write-comment">
                                 <form action class="comment-form">
-                                    <textarea
-                                        class="comment"
-                                        placeholder="댓글 달기..."
-                                        autocomplete="off"
-                                        wrap="soft"
-                                        v-model="comment"
-                                    ></textarea>
+                                    <textarea class="comment" placeholder="댓글 달기..." autocomplete="off" wrap="soft" v-model="comment"></textarea>
                                 </form>
                                 <div class="comment-btn">
                                     <button @click="addComment(data)">
@@ -135,6 +115,18 @@
                             </div>
                         </div>
                     </div>
+                </div>
+            </div>
+        </div>
+        <div class="else-modal" :class="{ elseModalBackground: !elseModalBackground }">
+            <div class="modal-box">
+                <div class="box-content">
+                    <button class="else-btn first" @click="detailPage">게시물로 이동</button>
+                    <button :class="{ followBtn: !followBtn }" class="else-btn middle" @click="follow">팔로우</button>
+                    <button :class="{ unfollowBtn: !unfollowBtn }" class="else-btn middle" @click="follow">팔로우 취소</button>
+                    <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 수정</button>
+                    <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 삭제</button>
+                    <button class="else-btn last" @click="noShowElseBtn">X</button>
                 </div>
             </div>
         </div>
@@ -170,8 +162,6 @@ const userMapGetters = createNamespacedHelpers('User').mapGetters;
 const userMapActions = createNamespacedHelpers('User').mapActions;
 
 const URI = 'http://192.168.100.70:8083/';
-const jwt =
-    'eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiI1IiwidWlkIjo1LCJlbWFpbCI6InRlc3QzQHNzYWZ5LmNvbSIsIm5pY2tuYW1lIjoidGVzdE5pY2siLCJwcm9maWxlSW1nIjoiaW1nL3Byb2ZpbGUucG5nIiwibG9naW5BcGkiOjAsInVzZXJrZXkiOiJZIiwiZXhwIjoxNTgxNDcwMzY0fQ.';
 export default {
     components: {
         Header,
@@ -191,6 +181,13 @@ export default {
             whoLiked: [],
             scrapList: [],
             scrapShow: [],
+            followList: [],
+            elseModalBackground: false,
+            boardData: '',
+            jwt: '',
+            followBtn: false,
+            unfollowBtn: false,
+            myPosting: false,
         };
     },
     mounted() {
@@ -201,6 +198,7 @@ export default {
         }
     },
     created: function() {
+        this.jwt = localStorage.getItem('routrip_JWT');
         this.showAll();
     },
     // updated: function() {
@@ -236,7 +234,7 @@ export default {
             });
         },
         showAll() {
-            Axios.post(`${URI}/page/favoriteBoard`, { jwt: jwt })
+            Axios.post(`${URI}/page/favoriteBoard`, { jwt: this.jwt })
                 .then(res => {
                     // console.log(res.data);
                     this.likeList = [];
@@ -244,7 +242,7 @@ export default {
                         this.likeList.push(res.data[i].boardid);
                     }
 
-                    Axios.post(`${URI}/page/scrapBoard`, { jwt: jwt })
+                    Axios.post(`${URI}/page/scrapBoard`, { jwt: this.jwt })
                         .then(res => {
                             // console.log(res.data);
                             this.scrapList = [];
@@ -295,6 +293,57 @@ export default {
                     // console.log(res);
                 });
         },
+        showElseBtn(data) {
+            // console.log(data);
+            this.boardData = data;
+            this.elseModalBackground = true;
+            var uid = this.getUser.data.uid;
+            // console.log(uid);
+            Axios.post(`${URI}/account/following`, { uid: uid })
+                .then(res => {
+                    // console.log(res.data);
+                    // console.log(this.boardData);
+                    if (this.boardData.uid == uid) {
+                        //선택한 게시글이 내 게시글인경우
+                        this.myPosting = true;
+                    } else {
+                        this.followBtn = true;
+                        for (var i = 0; i < res.data.length; ++i) {
+                            if (res.data[i].uid != this.boardData.uid) continue;
+                            this.followBtn = false;
+                            this.unfollowBtn = true;
+                            break;
+                        }
+                    }
+                })
+                .catch(res => {
+                    console.log('팔로우 정보 조회 실패');
+                });
+        },
+        noShowElseBtn() {
+            this.elseModalBackground = false;
+            this.followBtn = false;
+            this.unfollowBtn = false;
+            this.myPosting = false;
+        },
+        follow() {
+            console.log(this.boardData);
+            Axios.post(`${URI}/account/follow`, { jwt: this.jwt, uid: this.boardData.uid })
+                .then(res => {
+                    if (this.followBtn) {
+                        alert('팔로우 되었습니다.');
+                    } else {
+                        alert('팔로우가 취소 되었습니다.');
+                    }
+                    this.noShowElseBtn();
+                })
+                .catch(res => {
+                    console.log('팔로우 등록 및 취소 실패');
+                });
+        },
+        detailPage() {
+            console.log('detailPage 입니다.');
+        },
         addComment(info) {
             // console.log(this.comment);
             var commentObject = new Object();
@@ -330,7 +379,7 @@ export default {
             }
         },
         toggleLikeBtn(boardid) {
-            Axios.post(`${URI}/page/favorite`, { jwt: jwt, boardid: boardid })
+            Axios.post(`${URI}/page/favorite`, { jwt: this.jwt, boardid: boardid })
                 .then(res => {
                     this.showAll();
                 })
@@ -339,7 +388,7 @@ export default {
                 });
         },
         toggleScrapBtn(boardid) {
-            Axios.post(`${URI}/page/scrap`, { jwt: jwt, boardid: boardid })
+            Axios.post(`${URI}/page/scrap`, { jwt: this.jwt, boardid: boardid })
                 .then(res => {
                     this.showAll();
                 })
@@ -351,5 +400,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
