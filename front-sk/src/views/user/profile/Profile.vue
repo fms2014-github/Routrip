@@ -4,11 +4,11 @@
             <h2>My Profile</h2>
             <button @click="logoutClick">logout</button>
             <div class="profile-wrap">
-                <UserPicture :userPicture="true" />
+                <UserPicture :userPicture="true" :pic="userinfo.pic" />
                 <div class="user-info">
                     <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정" @changeNick="changeNick" />
         
-                <button @click="reqInfo">테스트</button>
+                <!-- <button @click="reqlikes">테스트</button> -->
 
                 <div class="none-border">
                     <button class="button-text">회원탈퇴</button>
@@ -20,6 +20,7 @@
                 <router-link v-bind:to="{ name: 'UserPost' }"><TabComponent tabTitle="글" :isActive="true"/></router-link>
                 <router-link v-bind:to="{ name: 'UserComment' }"><TabComponent tabTitle="댓글" :isActive="true"/></router-link>
                 <router-link v-bind:to="{ name: 'UserLike' }"><TabComponent tabTitle="좋아요" :isActive="true"/></router-link>
+                <!-- <button @click="reqlikes"><TabComponent tabTitle="좋아요" :isActive="true"/></button> -->
                 <router-link v-bind:to="{ name: 'UserPeople' }"><TabComponent tabTitle="사람들" :isActive="true"/></router-link>
             </div>
 
@@ -59,33 +60,27 @@ export default {
         ...userMapGetters(['getUser']),
     },
 
-    // created: function(){
-    //     Axios.post('http://192.168.100.70:8083/account/test/')
-    //         .then(res => {
-    //             console.log(res.data)
-    //             this.userinfo.token=res.data;
-
-    //         }).catch(error=>{
-    //             console.error(error);
-    //         })
-    // },
 
     mounted() {
         this.getInfo();
         this.checkLogin();
-
         this.reqInfo();
+
     },
     methods: {
         ...userMapActions(['reqUserInfo']),
         ...userMapActions(['logout']),
+
+        
 
         async reqInfo() {
             await this.reqUserInfo();
             
             console.log("?", this.getUser);
             this.userinfo.nickname=this.getUser.data.nickname;
+            this.userinfo.pic=this.getUser.data.profileImg;
         },
+      
 
         logoutClick() {
             this.logout().then(() => {
@@ -127,19 +122,11 @@ export default {
                 }
                 else{
                     const jwt = localStorage.getItem('routrip_JWT');
-                    console.log('hihifgfgfg')
                     Axios.put('http://192.168.100.70:8083/account/user/',
                         {
                             nickname: value,
                             jwt : jwt
                         }
-                        
-                        
-                        // 새로 발급받은 jwt를 로컬스토리지에 저장하고,
-                        // 프로필 표시 칸에서 새로 reqinfo를 할 것
-                        // 기존 jwt는 지워지게 된건지 물어보기
-                
-                        
                     )
                     .then(res => {
                         console.log(res.data);
@@ -158,7 +145,7 @@ export default {
                 token: '',
                 email: '',
                 nickname: '',
-                posts:[],
+                pic:'',
             },
             show: false,
         };

@@ -129,10 +129,10 @@ export default {
         hashTag: function() {},
     },
     methods: {
-        createDraw() {
-            selectOverlay(this.createCondition, this.selectDraw, this.commentTitle, this.commentContent);
-            this.commentTitle = this.commentContent = '';
-        },
+        // createDraw() {
+        //     selectOverlay(this.createCondition, this.selectDraw, this.commentTitle, this.commentContent);
+        //     this.commentTitle = this.commentContent = '';
+        // },
         selectDrawTools(s, e) {
             var len = document.getElementsByClassName('draw-tools').length;
             if (e.target && !e.target.classList.contains('selected')) {
@@ -195,18 +195,18 @@ export default {
                 this.imageArr.push(get_file[i]);
             }
 
-            for (var i = 0; i < get_file.length; i++) {
-                var reader = new FileReader();
+            // for (var i = 0; i < get_file.length; i++) {
+            //     var reader = new FileReader();
 
-                reader.onload = (function(imgab) {
-                    return function(e) {
-                        imgab.push(e.target.result);
-                    };
-                })(this.imageArrBase64);
-                if (get_file) {
-                    reader.readAsDataURL(get_file[i]);
-                }
-            }
+            //     reader.onload = (function(imgab) {
+            //         return function(e) {
+            //             imgab.push(e.target.result);
+            //         };
+            //     })(this.imageArrBase64);
+            //     if (get_file) {
+            //         reader.readAsDataURL(get_file[i]);
+            //     }
+            // }
         },
         deleteImg(id, idx) {
             this.imageArr.splice(idx, 1);

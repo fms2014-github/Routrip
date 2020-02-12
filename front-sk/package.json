@@ -18,6 +18,7 @@
     "email-validator": "^2.0.4",
     "eslint-plugin-html": "^6.0.0",
     "hooper": "^0.3.4",
+    "jquery": "^3.4.1",
     "local-lib": "^0.1.0",
     "password-validator": "^5.0.3",
     "sass": "^1.24.4",
