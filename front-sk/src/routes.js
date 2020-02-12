@@ -96,7 +96,6 @@ export const router = new Router({
             },
         ],
     },
-
     {
         path: '/user/ChangePassword',
         name: 'ChangePassword',
@@ -132,4 +131,4 @@ export const router = new Router({
         name: 'Detail',
         component: Detail,
     },
-];
+        ]})
