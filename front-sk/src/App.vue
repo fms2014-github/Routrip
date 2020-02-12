@@ -11,7 +11,12 @@ const userMapActions = createNamespacedHelpers('User').mapActions;
 export default {
     name: 'app',
     created() {
-        this.reqUserInfo();
+        if (localStorage.getItem('routrip_JWT') !== null && 
+        localStorage.getItem('routrip_JWT') !== undefined && 
+        localStorage.getItem('routrip_JWT') !== ""){
+
+            this.reqUserInfo();
+        }
     },
     methods: {
         ...userMapActions(['reqUserInfo']),
