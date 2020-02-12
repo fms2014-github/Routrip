@@ -1,7 +1,7 @@
 <template>
     
     <button @click="handleModal" v-if="userPicture">
-        <div> <img :src="pic" style="float:left; width:150px; height:150px; margin:10px; margin-bottom:80px; "> </div>
+        <div class="user-picture"> <img :src="pic" > </div>
     </button>
 
 </template>
