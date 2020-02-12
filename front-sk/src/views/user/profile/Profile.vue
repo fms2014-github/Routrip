@@ -92,7 +92,6 @@ export default {
                 this.$router.push('/');
             })
         },
-      
         popupToggle() {
             this.popup = true;
         },

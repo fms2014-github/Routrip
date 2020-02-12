@@ -25,6 +25,18 @@ const requestSignUp = (data, callback, errorCallback) => {
             errorCallback(false);
         });
 };
+const requestSnsSignUp = (data, callback, errorCallback) => {
+    //백앤드와 sns로그인 통신하는 부분
+    http.post('/account/snssignup', data)
+        .then(res => {
+            console.log(res);
+            callback(res);
+        })
+        .catch(error => {
+            console.log(error);
+            errorCallback(false);
+        });
+};
 const findEmail = (data, callback, errorCallback) => {
     //백앤드와 로그인 통신하는 부분
     http.post('/account/email', data)
@@ -68,6 +80,7 @@ const passwordReset = (data, callback, errorCallback) => {
 const UserApi = {
     requestLogin: (data, callback, errorCallback) => requestLogin(data, callback, errorCallback),
     requestSignUp: (data, callback, errorCallback) => requestSignUp(data, callback, errorCallback),
+    requestSnsSignUp: (data, callback, errorCallback) => requestSnsSignUp(data, callback, errorCallback),
     findEmail: (data, callback, errorCallback) => findEmail(data, callback, errorCallback),
     findPassword: (data, callback, errorCallback) => findPassword(data, callback, errorCallback),
     passwordReset: (data, callback, errorCallback) => passwordReset(data, callback, errorCallback),
