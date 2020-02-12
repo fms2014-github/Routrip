@@ -41,6 +41,7 @@ $desktop: 'screen and (min-width : 1025px)';
 .post-imgs-box {
     display: flex;
     overflow: hidden;
+    cursor: pointer;
 
     .hooper {
         height: unset;
@@ -149,7 +150,6 @@ $desktop: 'screen and (min-width : 1025px)';
             display: none;
         }
     }
-
 }
 
 .text {
@@ -229,7 +229,7 @@ $desktop: 'screen and (min-width : 1025px)';
     display: flex;
     align-items: center;
     justify-content: space-around;
-    background-color: rgba(0, 0, 0, .65);
+    background-color: rgba(0, 0, 0, 0.65);
     -webkit-tap-highlight-color: transparent;
     -webkit-box-align: center;
     top: 0;
@@ -247,10 +247,7 @@ $desktop: 'screen and (min-width : 1025px)';
         @media #{$desktop} {
             width: 400px;
         }
-
         .box-content {
-
-
             .first {
                 border-top: none;
                 border-top-left-radius: 12px;
