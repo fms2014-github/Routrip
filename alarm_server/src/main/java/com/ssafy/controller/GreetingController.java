@@ -19,12 +19,11 @@ public class GreetingController {
 	@MessageMapping("/info")
 	@SendToUser("/queue/info")
 	public Alarm alram(String message) throws Exception {
-		Alarm alarm = alarmService.findLatestAlarm(Integer.parseInt(message));
-		return alarm;
+		return alarmService.findLatestAlarm(Integer.parseInt(message));
 	}
 	
-	@MessageMapping("/infos")
-	@SendToUser("/queue/infos")
+	@MessageMapping("/infoes")
+	@SendToUser("/topic/info")
 	public List<Alarm> alramlist(String message) throws Exception {
 		return alarmService.getAlarm(Integer.parseInt(message));
 	}

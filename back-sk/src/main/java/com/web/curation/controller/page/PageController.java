@@ -254,7 +254,7 @@ public class PageController {
 		String jwt = map.get("jwt");
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
-			int uid = (int) Jwts.parser().parseClaimsJws(jwt).getBody().get("uid");
+			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
 			Board board = boardService.findBoardByBoardId(boardid);
 			if (board.getUnveiled() == 0 && uid != board.getUid()) {
 				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
