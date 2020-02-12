@@ -53,10 +53,10 @@ export default {
                 persistAccessToken: true,
                 persistRefreshToken: true,
                 success: authObj => {
-                    console.log('카카오 로그인 성공! access token 받아옴!');
-                    console.log(JSON.stringify(authObj));
-                    console.log(authObj.access_token);
-                    console.log(authObj.refresh_token);
+                    // console.log('카카오 로그인 성공! access token 받아옴!');
+                    // console.log(JSON.stringify(authObj));
+                    // console.log(authObj.access_token);
+                    // console.log(authObj.refresh_token);
                     localStorage.setItem('kakao_access_token', authObj.access_token);
                     localStorage.setItem('kakao_refresh_token', authObj.refresh_token);
 
