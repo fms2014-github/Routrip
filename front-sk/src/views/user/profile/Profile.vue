@@ -50,8 +50,6 @@ import '../../../assets/css/style.scss';
 const userMapActions = createNamespacedHelpers('User').mapActions; //
 const userMapGetters = createNamespacedHelpers('User').mapGetters; //
 
-
-
 export default {
     components: {
         HeaderComponent,
@@ -84,13 +82,11 @@ export default {
         },
       
 
-       
         logoutClick() {
             this.logout().then(() => {
                 this.$router.push('/');
             })
         },
-      
         popupToggle() {
             this.popup = true;
         },

@@ -10,11 +10,8 @@ const userMapActions = createNamespacedHelpers('User').mapActions;
 
 export default {
     name: 'app',
-    beforeCreate() {
-        this.reqUserInfo;
-    },
-    mounted() {
-        console.log('haha');
+    created() {
+        this.reqUserInfo();
     },
     methods: {
         ...userMapActions(['reqUserInfo']),

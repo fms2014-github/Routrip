@@ -1,28 +1,38 @@
-/* eslint-disable indent */
+// Import Router
+import Router from 'vue-router';
+
+// Import Common Components
+import Main from './views/jh/Main.vue';
+import Detail from './views/jh/Detail.vue';
 import Login from './views/user/Login.vue';
 import Join from './views/user/Join.vue';
-import Components from './views/Components.vue';
-import FindEmailAndPassword from './views/user/FindEmailAndPassword.vue';
-import ChangePassword from './views/user/ChangePassword.vue';
+import JoinAuth from './views/user/JoinAuth.vue';
 import ErrorPage from './views/error/Error.vue';
 import PageNotFound from './views/error/PageNotFound.vue';
-import JoinAuth from './views/user/JoinAuth.vue';
+
+// Import User Service Components
 import Profile from './views/user/profile/Profile.vue';
+import ChangePassword from './views/user/ChangePassword.vue';
+import FindEmailAndPassword from './views/user/FindEmailAndPassword.vue';
+
+// Import Post Components
 import UserPost from './views/user/profile/UserPost.vue';
 import UserComment from './views/user/profile/UserComment.vue';
 import UserLike from './views/user/profile/UserLike.vue';
 import UserPeople from './views/user/profile/UserPeople.vue';
-import PictureRegister from './views/user/profile/PictureRegister.vue';
 import WriteForm from './views/main/WriteForm.vue';
-import Main from './views/jh/Main.vue';
+import PictureRegister from './views/user/profile/PictureRegister.vue';
 
-export default [
-    {
+// Import Etc Components
+import Components from './views/Components.vue';
+
+export const router = new Router({
+    mode: 'history',
+    routes: [{
         path: '/',
         name: 'Login',
         component: Login,
-        children: [
-            {
+        children: [{
                 path: 'user/join',
                 name: 'Join',
                 components: {
@@ -49,8 +59,7 @@ export default [
         path: '/profile',
         name: 'Profile',
         component: Profile,
-        children: [
-            {
+        children: [{
                 path: '',
                 name: 'UserPost',
                 components: {
@@ -117,5 +126,10 @@ export default [
         path: '/main',
         name: 'Main',
         component: Main,
+    },
+    {
+        path: '/detail',
+        name: 'Detail',
+        component: Detail,
     },
 ];
