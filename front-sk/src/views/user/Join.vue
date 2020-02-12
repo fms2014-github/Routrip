@@ -167,15 +167,15 @@ export default {
 
     data: () => {
         return {
-            email: 'hyseo33@naver.com',
-            password: 'qwer1234',
-            passwordConfirm: 'qwer1234',
+            email: '',
+            password: '',
+            passwordConfirm: '',
             passwordSchema: new PV(),
-            nickname: 'gd',
-            name: 'ㅎㅇㅎㅇㅎㅇ',
-            birth: '1892-12-23',
-            phone: '01012345555',
-            isTerm: true,
+            nickname: '',
+            name: '',
+            birth: '',
+            phone: '',
+            isTerm: false,
             isLoading: false,
             error: {
                 phone: false,
@@ -311,8 +311,6 @@ export default {
             if (this.isSubmit) {
                 let { email, password, nickname, name, birth, phone } = this;
                 let data = {
-                    // email,
-                    // password,
                     nickname,
                     name,
                     birth,
@@ -325,7 +323,6 @@ export default {
 
                 //요청 후에는 버튼 비활성화
                 this.isSubmit = false;
-
                 // 일반회원가입
                 if (this.snscheck === 0) {
                     data.email = email
@@ -392,8 +389,6 @@ export default {
             this.error.nickname = false;
             this.error.passwordConfirm = false;
             this.error.term = false;
-
-            console.log('클로즈 불렀냐?');
             console.log(this.snscheck);
             if (this.snscheck == 0) this.$emit('popupToggle');
             else {
