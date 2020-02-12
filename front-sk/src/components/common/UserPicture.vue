@@ -1,19 +1,37 @@
-
-
 <template>
     
     <button @click="handleModal" v-if="userPicture">
-        <div> <img src="../../assets/images/user.png" style="float:left; width:150px; height:150px; margin:10px; margin-bottom:80px;"> </div>
+        <div class="user-picture"> <img :src="pic" > </div>
     </button>
 
 </template>
 
 <script>
 import Swal from 'sweetalert2';
+import $ from 'jquery';
+import Axios from 'axios';
+
+
+var apiUrl='https://api.imgur.com/3/image';
+var apiKey = 'ddbe62505149f6d';
+var settings={
+    processData:false,
+    async:false,
+    crossDomain: true,
+    contentType: false,
+    type:'POST',
+    url:apiUrl,
+    headers:{
+        Authorization: 'Client-ID ' + apiKey,
+        Accept: 'application/json'
+    },
+    mimeType: 'multipart/form-data'
+}
+
 
 export default {
     name: 'userpicture',
-    props: ['userPicture'],
+    props: ['userPicture','pic'],
     methods: {
         async handleModal() {
             const { value: file } = await Swal.fire({
@@ -25,8 +43,30 @@ export default {
                     'aria-label': 'Upload your profile picture'
                 }   
             })
-            console.log(file)
             if (file) {
+                
+                var formData=new FormData();
+                formData.append("image", file);
+                settings.data=formData
+
+                console.log('ready')
+                $.ajax(settings).done(response => {
+                    this.pic = JSON.parse(response).data.link
+                    const jwt = localStorage.getItem('routrip_JWT');
+                    Axios.put('http://192.168.100.70:8083/account/user/',
+                        {
+                            profileImg : JSON.parse(response).data.link,
+                            jwt : jwt
+                        }
+                    )
+                    .then(res => {
+                        console.log(res.data,"안녕나는jwt");
+                        localStorage.setItem('routrip_JWT', res.data);
+                        
+                    });
+
+                });
+
                 const reader = new FileReader()
                 reader.onload = (e) => {
                     Swal.fire({
@@ -35,21 +75,15 @@ export default {
                         icon:'success',
                         imageAlt: 'The uploaded picture'
                     })
-                    // console.log(imageUrl)
                 }
-                // watch로 imag 값 변경될때마다 함수 실행
-                // 유저 image 컬럼 업데이트, css상의 이미지 변경
                 reader.readAsDataURL(file)
             }
         },
     },
     data() {
         return {
-            // userPic:유저한테서 받아온 이미지파일
+
         };
-    },
-    watch:{
-            
     },
 };
 </script>

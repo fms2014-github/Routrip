@@ -1,6 +1,5 @@
 package com.web.curation.dao;
 
-import java.util.Date;
 import java.util.List;
 
 import com.web.curation.model.board.Board;
@@ -25,6 +24,10 @@ public interface IBoardDao {
     List<Integer> getFavoriteByUser(int uid) throws Exception;
     int deleteFavorite(int uid, int boardid) throws Exception;
     
+    int addScrap(int uid, int boardid) throws Exception;
+    List<Integer> getScrap(int uid) throws Exception;
+    int deleteScrap(int uid, int boardid) throws Exception;
+    
     int addImg(Img img) throws Exception;
     List<Img> findBoardImg(int boardid) throws Exception;
     List<Img> findRepImg(int boardid) throws Exception;
@@ -32,10 +35,13 @@ public interface IBoardDao {
     
     int addComment(Comment comment) throws Exception;
     List<Comment> findComment(int boardid) throws Exception;
+    Comment findCommentByCommentid(int commentid) throws Exception;
     int deleteComment(int commentid) throws Exception;
     
     int addMarker(Marker marker) throws Exception;
     List<Marker> findMarker(int boardid) throws Exception;
     int updateMarker(Marker marker) throws Exception;
     int deleteMarker(int markerid) throws Exception;
+    
+    List<Board> findBoardByFollow(int following) throws Exception;
 }

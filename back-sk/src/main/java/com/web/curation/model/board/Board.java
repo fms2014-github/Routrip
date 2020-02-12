@@ -1,5 +1,6 @@
 package com.web.curation.model.board;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -20,6 +21,7 @@ public class Board {
 	private int unveiled = 1; // true = 1, false = 0
 	private List<Comment> comments = new ArrayList<>();
 	private List<Img> imgs = new ArrayList<>();
+	private List<User> favorite = new ArrayList<>();
 	private int favoriteNum = 0;
 	private int commentNum = 0;
 	private List<Marker> markers = new ArrayList<>();
@@ -27,8 +29,8 @@ public class Board {
 	private String writeday;// ~전
 
 	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs, int favoriteNum,
-			int commentNum, List<Marker> markers, String writeday) {
+			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs, List<User> favorite,
+			int favoriteNum, int commentNum, List<Marker> markers, User user, String writeday) {
 		super();
 		this.boardid = boardid;
 		this.uid = uid;
@@ -42,73 +44,16 @@ public class Board {
 		this.unveiled = unveiled;
 		this.comments = comments;
 		this.imgs = imgs;
+		this.favorite = favorite;
 		this.favoriteNum = favoriteNum;
 		this.commentNum = commentNum;
 		this.markers = markers;
+		this.user = user;
 		this.writeday = writeday;
-	}
-
-	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs) {
-		super();
-		this.boardid = boardid;
-		this.uid = uid;
-		this.title = title;
-		this.writedate = writedate;
-		this.tripterm = tripterm;
-		this.keyword = keyword;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
-		this.unveiled = unveiled;
-		this.comments = comments;
-		this.imgs = imgs;
-	}
-
-	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled) {
-		super();
-		this.boardid = boardid;
-		this.uid = uid;
-		this.title = title;
-		this.writedate = writedate;
-		this.tripterm = tripterm;
-		this.keyword = keyword;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
-		this.unveiled = unveiled;
 	}
 
 	public Board() {
 		super();
-	}
-
-	public Board(int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled) {
-		super();
-		this.uid = uid;
-		this.title = title;
-		this.writedate = writedate;
-		this.tripterm = tripterm;
-		this.keyword = keyword;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
-		this.unveiled = unveiled;
-	}
-
-	public Board(int uid, String titile, String writedate, String tripterm, double latitude, double longitude,
-			int level, int unveiled) {
-		super();
-		this.uid = uid;
-		this.title = titile;
-		this.writedate = writedate;
-		this.tripterm = tripterm;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
-		this.unveiled = unveiled;
 	}
 
 	public int getBoardid() {
@@ -136,6 +81,14 @@ public class Board {
 	}
 
 	public String getWritedate() {
+		try {
+			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+
+			writedate = format2.format(format1.parse(writedate));
+		} catch (ParseException e) {
+			System.out.println("writedsate 가져오는 중 오류 발생");
+		}
 		return writedate;
 	}
 
@@ -223,6 +176,14 @@ public class Board {
 		this.commentNum = commentNum;
 	}
 
+	public List<User> getFavorite() {
+		return favorite;
+	}
+
+	public void setFavorite(List<User> favorite) {
+		this.favorite = favorite;
+	}
+
 	public List<Marker> getMarkers() {
 		return markers;
 	}
@@ -253,10 +214,9 @@ public class Board {
 					- Integer.parseInt(format1.format(wd)) / 10000 > 0) {
 				writeday = (Integer.parseInt(format1.format(now)) / 10000
 						- Integer.parseInt(format1.format(wd)) / 10000) + "년 전";
-			} else if (Integer.parseInt(format1.format(now)) / 100
-					- Integer.parseInt(format1.format(wd)) / 100 > 0) {
-				writeday = (Integer.parseInt(format1.format(now)) / 100
-						- Integer.parseInt(format1.format(wd)) / 100) + "달 전";
+			} else if (Integer.parseInt(format1.format(now)) / 100 - Integer.parseInt(format1.format(wd)) / 100 > 0) {
+				writeday = (Integer.parseInt(format1.format(now)) / 100 - Integer.parseInt(format1.format(wd)) / 100)
+						+ "달 전";
 			}
 		} catch (Exception e) {
 			System.out.println("writeday 가져오는 동안 오류 발생");

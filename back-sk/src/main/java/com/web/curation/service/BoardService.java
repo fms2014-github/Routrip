@@ -141,4 +141,29 @@ public class BoardService implements IBoardService{
 	public int deleteMarker(int markerid) throws Exception {
 		return boardDao.deleteMarker(markerid);
 	}
+
+	@Override
+	public Comment findCommentByCommentid(int commentid) throws Exception {
+		return boardDao.findCommentByCommentid(commentid);
+	}
+
+	@Override
+	public List<Board> findBoardByFollow(int following) throws Exception {
+		return boardDao.findBoardByFollow(following);
+	}
+
+	@Override
+	public int addScrap(int uid, int boardid) throws Exception {
+		return boardDao.addScrap(uid, boardid);
+	}
+
+	@Override
+	public List<Integer> getScrap(int uid) throws Exception {
+		return boardDao.getScrap(uid);
+	}
+
+	@Override
+	public int deleteScrap(int uid, int boardid) throws Exception {
+		return boardDao.deleteScrap(uid, boardid);
+	}
 }

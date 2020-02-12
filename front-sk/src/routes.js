@@ -96,39 +96,40 @@ export const router = new Router({
             },
         ],
     },
-    {
-        path: '/user/ChangePassword',
-        name: 'ChangePassword',
-        component: ChangePassword,
-    },
-    {
-        path: '*',
-        name: 'PageNotFound',
-        component: PageNotFound,
-    },
-    {
-        path: '/error',
-        name: 'ErrorPage',
-        component: ErrorPage,
-    },
-    {
-        path: '/WriteForm',
-        name: 'WriteForm',
-        component: WriteForm,
-    },
-    {
-        path: '/components',
-        name: 'Components',
-        component: Components,
-    },
-    {
-        path: '/main',
-        name: 'Main',
-        component: Main,
-    },
-    {
-        path: '/detail',
-        name: 'Detail',
-        component: Detail,
-    },
-        ]})
+        {
+            path: '/user/ChangePassword',
+            name: 'ChangePassword',
+            component: ChangePassword,
+        },
+        {
+            path: '*',
+            name: 'PageNotFound',
+            component: PageNotFound,
+        },
+        {
+            path: '/error',
+            name: 'ErrorPage',
+            component: ErrorPage,
+        },
+        {
+            path: '/WriteForm',
+            name: 'WriteForm',
+            component: WriteForm,
+        },
+        {
+            path: '/components',
+            name: 'Components',
+            component: Components,
+        },
+        {
+            path: '/main',
+            name: 'Main',
+            component: Main,
+        },
+        {
+            path: '/detail',
+            name: 'Detail',
+            component: Detail,
+        },
+    ],
+})
