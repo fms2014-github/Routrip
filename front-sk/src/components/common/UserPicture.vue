@@ -2,8 +2,10 @@
 
 <template>
     
-    <button class="user-picture" @click="handleModal" v-if="userPicture">
+    <button @click="handleModal" v-if="userPicture">
+        <div> <img src="../../assets/images/user.png" style="float:left; width:150px; height:150px; margin:10px; margin-bottom:80px;"> </div>
     </button>
+
 </template>
 
 <script>
@@ -32,14 +34,22 @@ export default {
                         imageUrl: e.target.result,
                         icon:'success',
                         imageAlt: 'The uploaded picture'
-                        
                     })
+                    // console.log(imageUrl)
                 }
                 // watch로 imag 값 변경될때마다 함수 실행
                 // 유저 image 컬럼 업데이트, css상의 이미지 변경
                 reader.readAsDataURL(file)
             }
         },
+    },
+    data() {
+        return {
+            // userPic:유저한테서 받아온 이미지파일
+        };
+    },
+    watch:{
+            
     },
 };
 </script>

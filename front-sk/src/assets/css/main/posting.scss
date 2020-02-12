@@ -11,11 +11,13 @@ $desktop: 'screen and (min-width : 1025px)';
 
     .profile-img {
         margin-right: 2vw;
-    }
 
-    .profile-img img {
-        vertical-align: middle;
-        width: 33px;
+        img {
+            vertical-align: middle;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+        }
     }
 
     .name-time {
@@ -28,6 +30,7 @@ $desktop: 'screen and (min-width : 1025px)';
     .else {
         position: absolute;
         right: 20px;
+        cursor: pointer;
 
         span {
             font-size: 1.2em;
@@ -132,12 +135,21 @@ $desktop: 'screen and (min-width : 1025px)';
     .like {
         font-size: 1.5em;
         margin-right: 10px;
+
+        .likeToggle {
+            display: none;
+        }
     }
 
-    .follow {
+    .scrap {
         font-size: 1.5em;
         margin-right: 10px;
+
+        .scrapToggle {
+            display: none;
+        }
     }
+
 }
 
 .text {
@@ -165,6 +177,7 @@ $desktop: 'screen and (min-width : 1025px)';
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
+
                 .writer {
                     margin-bottom: 5px;
 
@@ -202,5 +215,73 @@ $desktop: 'screen and (min-width : 1025px)';
 
     .comment-btn button {
         color: slateblue;
+    }
+}
+
+.elseModalBackground,
+.followBtn,
+.myPosting,
+.unfollowBtn {
+    display: none !important;
+}
+
+.else-modal {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: rgba(0, 0, 0, .65);
+    -webkit-tap-highlight-color: transparent;
+    -webkit-box-align: center;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: fixed;
+    z-index: 1;
+
+    .modal-box {
+        @media #{$iPad, $iPadPro} {
+            width: 260px;
+        }
+
+        @media #{$desktop} {
+            width: 400px;
+        }
+
+        .box-content {
+
+
+            .first {
+                border-top: none;
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
+            }
+
+            .middle {
+                background-color: transparent;
+                border-bottom: 0;
+                border-left: 0;
+                border-right: 0;
+            }
+
+            .last {
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+                color: red;
+            }
+
+            .else-btn {
+                font-weight: 500;
+                background-color: #ffffff;
+                width: 100%;
+                display: block;
+                text-align: center;
+                padding: 4px 8px;
+                cursor: pointer;
+                font-size: 16px;
+                height: 48px;
+                border-top: 1px solid rgba(var(--b6a, 219, 219, 219), 1);
+            }
+        }
     }
 }

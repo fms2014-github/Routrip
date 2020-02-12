@@ -31,7 +31,7 @@
                                     <br />
                                     <span>{{ data.user.nickname }}</span>
                                 </div>
-                                <div class="else">
+                                <div class="else" @click="showElseBtn(data)">
                                     <span>
                                         <i class="fas fa-ellipsis-h"></i>
                                     </span>
@@ -48,12 +48,33 @@
                         </div>
                         <div class="sns-btn">
                             <div class="like">
-                                <button>🧡</button>
+                                <button @click="toggleLikeBtn(data.boardid)">
+                                    <div :class="{ likeToggle: likeShow[dataIdx].like }">
+                                        <i class="far fa-heart"></i>
+                                    </div>
+                                    <div :class="{ likeToggle: !likeShow[dataIdx].like }">
+                                        <i class="fas fa-heart" style="color:red;"></i>
+                                    </div>
+                                </button>
                             </div>
-                            <div class="follow">
-                                <button>🏹</button>
+                            <div class="scrap">
+                                <button @click="toggleScrapBtn(data.boardid)">
+                                    <div :class="{ scrapToggle: scrapShow[dataIdx].scrap }">
+                                        <i class="far fa-bookmark"></i>
+                                    </div>
+                                    <div :class="{ scrapToggle: !scrapShow[dataIdx].scrap }">
+                                        <i class="fas fa-bookmark" style="color:blue;"></i>
+                                    </div>
+                                </button>
                             </div>
-                            <div class="state">{{ data.favoriteNum }}명이 이 게시글을 좋아합니다.</div>
+                            <div class="state" v-if="data.favoriteNum == 1">
+                                <strong>{{ whoLiked[dataIdx] }}</strong
+                                >님이 게시글을 좋아합니다.
+                            </div>
+                            <div class="state" v-if="data.favoriteNum > 1">
+                                <strong>{{ whoLiked[dataIdx] }}</strong>
+                                님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
+                            </div>
                         </div>
 
                         <div class="text">
@@ -97,6 +118,18 @@
                 </div>
             </div>
         </div>
+        <div class="else-modal" :class="{ elseModalBackground: !elseModalBackground }">
+            <div class="modal-box">
+                <div class="box-content">
+                    <button class="else-btn first" @click="detailPage">게시물로 이동</button>
+                    <button :class="{ followBtn: !followBtn }" class="else-btn middle" @click="follow">팔로우</button>
+                    <button :class="{ unfollowBtn: !unfollowBtn }" class="else-btn middle" @click="follow">팔로우 취소</button>
+                    <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 수정</button>
+                    <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 삭제</button>
+                    <button class="else-btn last" @click="noShowElseBtn">X</button>
+                </div>
+            </div>
+        </div>
         <Footer></Footer>
     </div>
 </template>
@@ -126,6 +159,8 @@ import { createNamespacedHelpers } from 'vuex';
 const userMapState = createNamespacedHelpers('User').mapState;
 const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
+const userMapActions = createNamespacedHelpers('User').mapActions;
+
 const URI = 'http://192.168.100.70:8083/';
 export default {
     components: {
@@ -141,28 +176,45 @@ export default {
         return {
             datas: '',
             comment: '',
+            likeList: [],
+            likeShow: [],
+            whoLiked: [],
+            scrapList: [],
+            scrapShow: [],
+            followList: [],
+            elseModalBackground: false,
+            boardData: '',
+            jwt: '',
+            followBtn: false,
+            unfollowBtn: false,
+            myPosting: false,
         };
     },
+    mounted() {
+        if (this.getUser.user === undefined) {
+            this.req();
+        } else {
+            this.getUser();
+        }
+    },
     created: function() {
-        // using JSONPlaceholder
-        Axios.get(`${URI}/page/boardList`)
-            .then(res => {
-                // console.log(res.data);
-                this.datas = res.data;
-            })
-            .catch(res => {
-                // console.log(res);
-            });
+        this.jwt = localStorage.getItem('routrip_JWT');
+        this.showAll();
     },
-    updated: function() {
-        this.getAlldata();
-    },
+    // updated: function() {
+    //     this.getAlldata();
+    // },
     computed: {
         ...userMapState(['User']),
         ...userMapGetters(['getUser']),
     },
     methods: {
         ...userMapMutations(['setUser']),
+        ...userMapActions(['reqUserInfo']),
+        async req() {
+            await this.reqUserInfo();
+            this.getUser();
+        },
         kakao() {
             const at = localStorage.getItem('kakao_access_token');
             const rt = localStorage.getItem('kakao_refresh_token');
@@ -181,24 +233,123 @@ export default {
                 },
             });
         },
+        showAll() {
+            Axios.post(`${URI}/page/favoriteBoard`, { jwt: this.jwt })
+                .then(res => {
+                    // console.log(res.data);
+                    this.likeList = [];
+                    for (var i = 0; i < res.data.length; ++i) {
+                        this.likeList.push(res.data[i].boardid);
+                    }
+
+                    Axios.post(`${URI}/page/scrapBoard`, { jwt: this.jwt })
+                        .then(res => {
+                            // console.log(res.data);
+                            this.scrapList = [];
+                            for (var i = 0; i < res.data.length; ++i) {
+                                this.scrapList.push(res.data[i].boardid);
+                            }
+
+                            Axios.get(`${URI}/page/boardList`)
+                                .then(res => {
+                                    this.likeShow = [];
+                                    this.scrapShow = [];
+                                    this.whoLiked = [];
+                                    this.datas = res.data;
+                                    for (var i = 0; i < this.datas.length; ++i) {
+                                        if (res.data[i].favorite.length > 0) {
+                                            this.whoLiked.push(res.data[i].favorite[0].nickname);
+                                        } else {
+                                            this.whoLiked.push('');
+                                        }
+
+                                        //좋아요
+                                        if (this.likeList.includes(this.datas[i].boardid)) this.likeShow.push({ like: true });
+                                        else this.likeShow.push({ like: false });
+                                        //스크랩
+
+                                        if (this.scrapList.includes(this.datas[i].boardid)) this.scrapShow.push({ scrap: true });
+                                        else this.scrapShow.push({ scrap: false });
+                                    }
+                                })
+                                .catch(res => {
+                                    console.log('전체 게시글 조회 실패');
+                                });
+                        })
+                        .catch(res => {
+                            console.log('스크랩 게시글 조회 실패');
+                        });
+                })
+                .catch(res => {
+                    console.log('좋아요 게시글 조회 실패');
+                });
+        },
         getAlldata() {
             Axios.get(`${URI}/page/boardList`)
                 .then(res => {
-                    console.log(res.data);
                     this.datas = res.data;
                 })
                 .catch(res => {
                     // console.log(res);
                 });
         },
+        showElseBtn(data) {
+            // console.log(data);
+            this.boardData = data;
+            this.elseModalBackground = true;
+            var uid = this.getUser.data.uid;
+            // console.log(uid);
+            Axios.post(`${URI}/account/following`, { uid: uid })
+                .then(res => {
+                    // console.log(res.data);
+                    // console.log(this.boardData);
+                    if (this.boardData.uid == uid) {
+                        //선택한 게시글이 내 게시글인경우
+                        this.myPosting = true;
+                    } else {
+                        this.followBtn = true;
+                        for (var i = 0; i < res.data.length; ++i) {
+                            if (res.data[i].uid != this.boardData.uid) continue;
+                            this.followBtn = false;
+                            this.unfollowBtn = true;
+                            break;
+                        }
+                    }
+                })
+                .catch(res => {
+                    console.log('팔로우 정보 조회 실패');
+                });
+        },
+        noShowElseBtn() {
+            this.elseModalBackground = false;
+            this.followBtn = false;
+            this.unfollowBtn = false;
+            this.myPosting = false;
+        },
+        follow() {
+            console.log(this.boardData);
+            Axios.post(`${URI}/account/follow`, { jwt: this.jwt, uid: this.boardData.uid })
+                .then(res => {
+                    if (this.followBtn) {
+                        alert('팔로우 되었습니다.');
+                    } else {
+                        alert('팔로우가 취소 되었습니다.');
+                    }
+                    this.noShowElseBtn();
+                })
+                .catch(res => {
+                    console.log('팔로우 등록 및 취소 실패');
+                });
+        },
+        detailPage() {
+            console.log('detailPage 입니다.');
+        },
         addComment(info) {
             // console.log(this.comment);
-            console.log(info);
             var commentObject = new Object();
             commentObject.boardid = info.boardid;
             commentObject.contents = this.comment;
             commentObject.uid = info.uid;
-            console.log(commentObject);
             if (this.comment == null) {
                 alert('댓글을 입력해주세요');
             } else {
@@ -214,7 +365,6 @@ export default {
             }
         },
         deleteComment(info) {
-            console.log(info);
             if (confirm('댓글을 삭제하시겠습니까?')) {
                 Axios.delete(`${URI}/page/comment`, {
                     data: info.commentid,
@@ -227,6 +377,24 @@ export default {
                     });
                 this.getAlldata();
             }
+        },
+        toggleLikeBtn(boardid) {
+            Axios.post(`${URI}/page/favorite`, { jwt: this.jwt, boardid: boardid })
+                .then(res => {
+                    this.showAll();
+                })
+                .catch(res => {
+                    console.log(res);
+                });
+        },
+        toggleScrapBtn(boardid) {
+            Axios.post(`${URI}/page/scrap`, { jwt: this.jwt, boardid: boardid })
+                .then(res => {
+                    this.showAll();
+                })
+                .catch(res => {
+                    console.log(res);
+                });
         },
     },
 };

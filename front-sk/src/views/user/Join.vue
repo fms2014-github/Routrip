@@ -1,56 +1,58 @@
-<!--
-    가입하기는 기본적인 폼만 제공됩니다
-    기능명세에 따라 개발을 진행하세요.
-    Sub PJT I에서는 UX, 디자인 등을 포함하여 백엔드를 제외하여 개발합니다.
- -->
 <template>
     <div>
         <div id="sign-up">
             <div>
-                <h1 id="Join-title">가입하기</h1>
+                <span v-if="snscheck === 0">
+                    <h1 id="Join-title">가입하기</h1>
+                </span>
+                <span v-if="snscheck !== 0">
+                    <h1 id="Join-title">SNS 가입하기</h1>
+                </span>
                 <button class="close" @click="close"><img class="close-img" src="../../assets/images/close.png" /></button>
             </div>
             <div id="term-form">
-                <div class="input-with-label">
-                    <input
-                        id="email"
-                        v-model="email"
-                        :class="{ error: error.email, complete: !error.email && email.length !== 0 }"
-                        placeholder="이메일을 입력하세요."
-                        type="text"
-                        @keyup.enter="submit"
-                    />
-                    <label for="email">이메일</label>
-                    <div v-if="error.email" class="error-text">
-                        {{ error.email }}
+                <div v-if="snscheck === 0">
+                    <div class="input-with-label">
+                        <input
+                            id="email"
+                            v-model="email"
+                            :class="{ error: error.email, complete: !error.email && email.length !== 0 }"
+                            placeholder="이메일을 입력하세요."
+                            type="text"
+                            @keyup.enter="submit"
+                        />
+                        <label for="email">이메일</label>
+                        <div v-if="error.email" class="error-text">
+                            {{ error.email }}
+                        </div>
                     </div>
-                </div>
-                <div class="input-with-label">
-                    <input
-                        id="password"
-                        v-model="password"
-                        type="password"
-                        :class="{ error: error.password, complete: !error.password && password.length !== 0 }"
-                        placeholder="비밀번호를 입력하세요."
-                        @keyup.enter="submit"
-                    />
-                    <label for="password">비밀번호</label>
-                    <div v-if="error.password" class="error-text">
-                        {{ error.password }}
+                    <div class="input-with-label">
+                        <input
+                            id="password"
+                            v-model="password"
+                            type="password"
+                            :class="{ error: error.password, complete: !error.password && password.length !== 0 }"
+                            placeholder="비밀번호를 입력하세요."
+                            @keyup.enter="submit"
+                        />
+                        <label for="password">비밀번호</label>
+                        <div v-if="error.password" class="error-text">
+                            {{ error.password }}
+                        </div>
                     </div>
-                </div>
-                <div class="input-with-label">
-                    <input
-                        id="passwordConfirm"
-                        v-model="passwordConfirm"
-                        type="password"
-                        :class="{ error: error.passwordConfirm, complete: !error.passwordConfirm && passwordConfirm.length !== 0 }"
-                        placeholder="비밀번호를 한번 더 입력하세요."
-                        @keyup.enter="submit"
-                    />
-                    <label for="passwordConfirm">비밀번호 확인</label>
-                    <div v-if="error.passwordConfirm" class="error-text">
-                        {{ error.passwordConfirm }}
+                    <div class="input-with-label">
+                        <input
+                            id="passwordConfirm"
+                            v-model="passwordConfirm"
+                            type="password"
+                            :class="{ error: error.passwordConfirm, complete: !error.passwordConfirm && passwordConfirm.length !== 0 }"
+                            placeholder="비밀번호를 한번 더 입력하세요."
+                            @keyup.enter="submit"
+                        />
+                        <label for="passwordConfirm">비밀번호 확인</label>
+                        <div v-if="error.passwordConfirm" class="error-text">
+                            {{ error.passwordConfirm }}
+                        </div>
                     </div>
                 </div>
                 <div class="input-with-label">
@@ -69,46 +71,46 @@
                 </div>
                 <div class="input-with-label">
                     <input
-                        id="nickName"
-                        v-model="nickName"
-                        :class="{ error: error.nickName, complete: nickName.length >= 2 }"
+                        id="nickname"
+                        v-model="nickname"
+                        :class="{ error: error.nickname, complete: nickname.length >= 2 }"
                         placeholder="닉네임을 입력하세요."
                         type="text"
                         @keyup.enter="submit"
                     />
-                    <label for="nickName">닉네임</label>
-                    <div v-if="error.nickName" class="error-text">
-                        {{ error.nickName }}
+                    <label for="nickname">닉네임</label>
+                    <div v-if="error.nickname" class="error-text">
+                        {{ error.nickname }}
                     </div>
                 </div>
                 <div class="input-with-label">
                     <input
-                        id="birthday"
-                        v-model="birthday"
-                        :class="{ error: error.birthday, complete: birthday.length !== 0 }"
+                        id="birth"
+                        v-model="birth"
+                        :class="{ error: error.birth, complete: birth.length !== 0 }"
                         placeholder="닉네임을 입력하세요."
                         type="date"
                         @keyup.enter="submit"
                     />
-                    <label for="birthday">생년월일</label>
-                    <div v-if="error.birthday" class="error-text">
-                        {{ error.birthday }}
+                    <label for="birth">생년월일</label>
+                    <div v-if="error.birth" class="error-text">
+                        {{ error.birth }}
                     </div>
                 </div>
                 <div class="input-with-label">
                     <input
                         id="phone-number"
-                        v-model="phone_number"
+                        v-model="phone"
                         type="text"
-                        :class="{ error: error.phone_number, complete: !error.phone_number && phone_number.length >= 10 }"
+                        :class="{ error: error.phone, complete: !error.phone && phone.length >= 10 }"
                         placeholder="휴대폰 번호를 입력하세요."
                         @keyup.enter="submit"
                         @keyup="phone_regx"
                         maxlength="11"
                     />
-                    <label for="phone_number">휴대폰 번호</label>
-                    <div v-if="error.phone_number" class="error-text">
-                        {{ error.phone_number }}
+                    <label for="phone">휴대폰 번호</label>
+                    <div v-if="error.phone" class="error-text">
+                        {{ error.phone }}
                     </div>
                 </div>
             </div>
@@ -158,24 +160,29 @@ import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
 
 export default {
+    props: {
+        snscheck: { type: Number, default: 0 },
+        snsToggle: { type: Function },
+    },
+
     data: () => {
         return {
             email: '',
             password: '',
             passwordConfirm: '',
             passwordSchema: new PV(),
-            nickName: '',
+            nickname: '',
             name: '',
-            birthday: '',
-            phone_number: '',
+            birth: '',
+            phone: '',
             isTerm: false,
             isLoading: false,
             error: {
-                phone_number: false,
+                phone: false,
                 name: false,
                 email: false,
                 password: false,
-                nickName: false,
+                nickname: false,
                 passwordConfirm: false,
                 term: false,
             },
@@ -189,7 +196,7 @@ export default {
         name: function(v) {
             this.checkForm();
         },
-        nickName: function(v) {
+        nickname: function(v) {
             this.checkForm();
         },
         email: function(v) {
@@ -201,10 +208,10 @@ export default {
         passwordConfirm: function(v) {
             this.checkForm();
         },
-        phone_number: function(v) {
+        phone: function(v) {
             this.checkForm();
         },
-        birthday: function(v) {
+        birth: function(v) {
             this.checkForm();
         },
         isTerm: function(v) {
@@ -227,59 +234,64 @@ export default {
             .symbols();
     },
     mounted() {
-        if (localStorage.getItem('nickName') !== null) {
-            this.nickName = localStorage.getItem('nickName');
-            localStorage.removeItem('nickName');
+        console.log('SNSCHECK: ', this.snscheck);
+
+        if (localStorage.getItem('nickname') !== null) {
+            this.nickname = localStorage.getItem('nickname');
+            localStorage.removeItem('nickname');
         }
         if (localStorage.getItem('email') !== null) {
             this.email = localStorage.getItem('email');
             localStorage.removeItem('email');
         }
     },
+    destroyed() {
+        console.log('디스트로이');
+    },
     methods: {
         phone_regx() {
-            if (this.phone_number != this.phone_number.replace(/\D/gi, '')) {
-                this.phone_number = this.phone_number.replace(/\D/gi, '');
+            if (this.phone != this.phone.replace(/\D/gi, '')) {
+                this.phone = this.phone.replace(/\D/gi, '');
                 alert('숫자만 입력해 주세요.');
             }
         },
         checkForm() {
-            console.log('birthday : ' + this.birthday);
+            if (this.snscheck === 0) {
+                if (this.email.length >= 0 && !EmailValidator.validate(this.email)) {
+                    this.error.email = '이메일 형식이 아닙니다.';
+                } else {
+                    this.error.email = false;
+                }
+
+                if (this.password.length >= 0 && !this.passwordSchema.validate(this.password)) {
+                    this.error.password = '영문,숫자 포함 8 자리이상이어야 합니다.';
+                } else {
+                    this.error.password = false;
+                }
+
+                if (this.password != this.passwordConfirm) this.error.passwordConfirm = '비밀번호가 일치하지 않습니다.';
+                else {
+                    this.error.passwordConfirm = false;
+                }
+            }
             if (this.name.length < 2) this.error.name = '2자 이상 입력해 주세요.';
             else {
                 this.error.name = false;
             }
 
-            if (this.nickName.length < 2 || this.nickName.length > 10) this.error.nickName = '2자 이상 10자 이하로 입력해주세요.';
+            if (this.nickname.length < 2 || this.nickname.length > 10) this.error.nickname = '2자 이상 10자 이하로 입력해주세요.';
             else {
-                this.error.nickName = false;
+                this.error.nickname = false;
             }
 
-            if (this.email.length >= 0 && !EmailValidator.validate(this.email)) {
-                this.error.email = '이메일 형식이 아닙니다.';
-            } else {
-                this.error.email = false;
-            }
-
-            if (this.password.length >= 0 && !this.passwordSchema.validate(this.password)) {
-                this.error.password = '영문,숫자 포함 8 자리이상이어야 합니다.';
-            } else {
-                this.error.password = false;
-            }
-
-            if (this.password != this.passwordConfirm) this.error.passwordConfirm = '비밀번호가 일치하지 않습니다.';
+            if (this.phone.length < 11) this.error.phone = '휴대폰 번호를 입력해 주세요.';
             else {
-                this.error.passwordConfirm = false;
+                this.error.phone = false;
             }
 
-            if (this.phone_number.length < 11) this.error.phone_number = '휴대폰 번호를 입력해 주세요.';
+            if (this.birth === '') this.error.birth = '생년월일을 입력해 주세요.';
             else {
-                this.error.phone_number = false;
-            }
-
-            if (this.birthday === '') this.error.birthday = '생년월일을 입력해 주세요.';
-            else {
-                this.error.birthday = false;
+                this.error.birth = false;
             }
 
             if (!this.isTerm) this.error.term = '약관 동의에 체크해주세요';
@@ -297,11 +309,14 @@ export default {
         },
         submit() {
             if (this.isSubmit) {
-                let { email, password, nickName } = this;
+                let { email, password, nickname, name, birth, phone } = this;
                 let data = {
                     email,
                     password,
-                    nickName,
+                    nickname,
+                    name,
+                    birth,
+                    phone,
                 };
                 //요청 후에는 버튼 비활성화
                 this.isSubmit = false;
@@ -311,17 +326,17 @@ export default {
                     res => {
                         //통신을 통해 전달받은 값 콘솔에 출력
                         console.log(res);
-
                         //요청이 끝나면 버튼 활성화
                         this.isSubmit = true;
-                        localStorage.setItem('popup', 'false');
-                        this.$router.push({ name: 'JoinAuth' });
+                        if (this.snscheck === 0) {
+                            this.$emit('nextStep');
+                        }
                     },
                     error => {
                         //요청이 끝나면 버튼 활성화
                         this.isSubmit = true;
                         localStorage.setItem('popup', 'false');
-                        localStorage.setItem('nickName', this.nickName);
+                        localStorage.setItem('nickname', this.nickname);
                         localStorage.setItem('email', this.email);
                         this.$router.push({ name: 'ErrorPage' });
                     },
@@ -329,7 +344,30 @@ export default {
             }
         },
         close() {
-            this.$emit('popupToggle');
+            this.email = '';
+            this.password = '';
+            this.passwordConfirm = '';
+            this.passwordSchema = new PV();
+            this.nickname = '';
+            this.name = '';
+            this.birth = '';
+            this.phone = '';
+            this.isTerm = false;
+
+            this.error.phone = false;
+            this.error.name = false;
+            this.error.email = false;
+            this.error.password = false;
+            this.error.nickname = false;
+            this.error.passwordConfirm = false;
+            this.error.term = false;
+
+            console.log('클로즈 불렀냐?');
+            console.log(this.snscheck);
+            if (this.snscheck == 0) this.$emit('popupToggle');
+            else {
+                this.$emit('snsToggle');
+            }
         },
     },
 };
