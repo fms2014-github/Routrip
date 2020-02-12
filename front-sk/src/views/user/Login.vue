@@ -259,6 +259,7 @@ export default {
                     this.setUser(res);
                     this.userSnsId = res.id;
                     console.log(this.userSnsId);
+                    sessionStorage.setItem('snsId', res.id)
                     Axios.post('http://192.168.100.70:8083/account/snslogin', {
                         loginApi: loginApi,
                         userid: res.id,
@@ -315,7 +316,7 @@ export default {
     },
     updated() {
         if (localStorage.getItem('popup') !== null) {
-            this.popup = !Boolean(localStorage.getItem('popup'));
+            this.popup = !localStorage.getItem('popup');
             localStorage.removeItem('popup');
         }
     },
