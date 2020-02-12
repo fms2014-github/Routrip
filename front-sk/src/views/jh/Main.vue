@@ -38,16 +38,17 @@
                                 </div>
                             </div>
                         </div>
-                        <router-link to="/detail">
-                            <div class="post-imgs-box">
-                                <hooper class="post-img-box">
-                                    <slide v-for="(img, imgIdx) in data.imgs" :key="imgIdx">
+
+                        <div class="post-imgs-box">
+                            <hooper class="post-img-box">
+                                <slide v-for="(img, imgIdx) in data.imgs" :key="imgIdx">
+                                    <router-link :to="{ name: 'Detail', params: { boardid: data.boardid } }">
                                         <img :src="'http://192.168.100.70:8083/' + img.src" alt />
-                                    </slide>
-                                    <hooper-pagination slot="hooper-addons"></hooper-pagination>
-                                </hooper>
-                            </div>
-                        </router-link>
+                                    </router-link>
+                                </slide>
+                                <hooper-pagination slot="hooper-addons"></hooper-pagination>
+                            </hooper>
+                        </div>
 
                         <div class="sns-btn">
                             <div class="like">
@@ -71,11 +72,11 @@
                                 </button>
                             </div>
                             <div class="state" v-if="data.favoriteNum == 1">
-                                <strong>{{ whoLiked[dataIdx] }}</strong
+                                <strong>{{ whoLiked[0] }}</strong
                                 >님이 게시글을 좋아합니다.
                             </div>
                             <div class="state" v-if="data.favoriteNum > 1">
-                                <strong>{{ whoLiked[dataIdx] }}</strong>
+                                <strong>{{ whoLiked[0] }}</strong>
                                 님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
                             </div>
                         </div>
@@ -124,7 +125,7 @@
         <div class="else-modal" :class="{ elseModalBackground: !elseModalBackground }">
             <div class="modal-box">
                 <div class="box-content">
-                    <button class="else-btn first" @click="detailPage">게시물로 이동</button>
+                    <button class="else-btn first">게시물로 이동</button>
                     <button :class="{ followBtn: !followBtn }" class="else-btn middle" @click="follow">팔로우</button>
                     <button :class="{ unfollowBtn: !unfollowBtn }" class="else-btn middle" @click="follow">팔로우 취소</button>
                     <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 수정</button>
@@ -203,6 +204,7 @@ export default {
     created: function() {
         this.jwt = localStorage.getItem('routrip_JWT');
         this.showAll();
+        console.log(this.jwt);
     },
     // updated: function() {
     //     this.getAlldata();
