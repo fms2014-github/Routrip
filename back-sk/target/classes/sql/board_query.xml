@@ -12,7 +12,7 @@
 		longitude, level, keyword, unveiled)
 		values
 		(#{uid}, #{title},
-		curdate(), #{tripterm}, #{latitude}, #{longitude}, #{level},
+		now(), #{tripterm}, #{latitude}, #{longitude}, #{level},
 		#{keyword}, #{unveiled})
 		<selectKey keyProperty="boardid" resultType="int">
 			select LAST_INSERT_ID()

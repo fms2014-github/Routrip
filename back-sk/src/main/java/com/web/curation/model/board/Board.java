@@ -1,5 +1,6 @@
 package com.web.curation.model.board;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -80,6 +81,14 @@ public class Board {
 	}
 
 	public String getWritedate() {
+		try {
+			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
+
+			writedate = format2.format(format1.parse(writedate));
+		} catch (ParseException e) {
+			System.out.println("writedsate 가져오는 중 오류 발생");
+		}
 		return writedate;
 	}
 
@@ -205,10 +214,9 @@ public class Board {
 					- Integer.parseInt(format1.format(wd)) / 10000 > 0) {
 				writeday = (Integer.parseInt(format1.format(now)) / 10000
 						- Integer.parseInt(format1.format(wd)) / 10000) + "년 전";
-			} else if (Integer.parseInt(format1.format(now)) / 100
-					- Integer.parseInt(format1.format(wd)) / 100 > 0) {
-				writeday = (Integer.parseInt(format1.format(now)) / 100
-						- Integer.parseInt(format1.format(wd)) / 100) + "달 전";
+			} else if (Integer.parseInt(format1.format(now)) / 100 - Integer.parseInt(format1.format(wd)) / 100 > 0) {
+				writeday = (Integer.parseInt(format1.format(now)) / 100 - Integer.parseInt(format1.format(wd)) / 100)
+						+ "달 전";
 			}
 		} catch (Exception e) {
 			System.out.println("writeday 가져오는 동안 오류 발생");

@@ -542,7 +542,7 @@ public class AccountController {
 			System.out.println("토큰 기간 만료");
 		} catch (Exception e1) {
 			System.out.println("오류가 발생했습니다.");
-			return false;
+			//return false;
 		}
 		return true;
 	}
