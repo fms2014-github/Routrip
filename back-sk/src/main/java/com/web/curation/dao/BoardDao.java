@@ -157,4 +157,35 @@ public class BoardDao implements IBoardDao{
 	public int deleteMarker(int markerid) throws Exception {
 		return sqlSession.delete(ns+"deleteMarker", markerid);
 	}
+
+	@Override
+	public Comment findCommentByCommentid(int commentid) throws Exception {
+		return sqlSession.selectOne(ns+"findCommentByCommentid", commentid);
+	}
+
+	@Override
+	public List<Board> findBoardByFollow(int following) throws Exception {
+		return sqlSession.selectList(ns+"findBoardByFollow", following);
+	}
+
+	@Override
+	public int addScrap(int uid, int boardid) throws Exception {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		map.put("uid", uid);
+		map.put("boardid", boardid);
+		return sqlSession.insert(ns+"addScrap", map);
+	}
+
+	@Override
+	public List<Integer> getScrap(int uid) throws Exception {
+		return sqlSession.selectList(ns+"getScrap", uid);
+	}
+
+	@Override
+	public int deleteScrap(int uid, int boardid) throws Exception {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		map.put("uid", uid);
+		map.put("boardid", boardid);
+		return sqlSession.delete(ns+"deleteScrap", map);
+	}
 }

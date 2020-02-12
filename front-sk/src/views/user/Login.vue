@@ -241,30 +241,26 @@ export default {
             }
         },
         popupToggle() {
-            // console.log('이건 오는데..');
             this.popup = !this.popup;
         },
         snsToggle() {
-            // console.log('아니');
             this.loginApi = 0;
             this.popup = !this.popup;
         },
         loginOrJoin(loginApi) {
             this.loginApi = loginApi;
-            // console.log(this.loginApi);
 
             Kakao.API.request({
                 url: '/v1/user/me',
                 success: res => {
                     this.setUser(res);
                     this.userSnsId = res.id;
-                    // console.log(this.userSnsId);
+                    sessionStorage.setItem('snsId', res.id);
                     Axios.post('http://192.168.100.70:8083/account/snslogin', {
                         loginApi: loginApi,
                         userid: res.id,
                     })
                         .then(res2 => {
-                            // console.log(res2);
                             localStorage.setItem('routrip_JWT', res2.data);
                             if (res2.data !== '') {
                                 this.reqUserInfo();

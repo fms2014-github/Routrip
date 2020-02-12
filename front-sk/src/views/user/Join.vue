@@ -311,17 +311,26 @@ export default {
             if (this.isSubmit) {
                 let { email, password, nickname, name, birth, phone } = this;
                 let data = {
-                    email,
-                    password,
                     nickname,
                     name,
                     birth,
                     phone,
                 };
+                // 받법 1
+                // data.haha = this.snscheck;
+                // 방법 2
+                // data['haha'] = this.snsCheck;
+
                 //요청 후에는 버튼 비활성화
                 this.isSubmit = false;
+                // 일반회원가입
+                if (this.snscheck === 0) {
+                    data.email = email
+                    data.password = password
+                    
 
-                UserApi.requestSignUp(
+                    sessionStorage.setItem('tempEmail', email)
+                    UserApi.requestSignUp(
                     data,
                     res => {
                         //통신을 통해 전달받은 값 콘솔에 출력
@@ -339,8 +348,27 @@ export default {
                         localStorage.setItem('nickname', this.nickname);
                         localStorage.setItem('email', this.email);
                         this.$router.push({ name: 'ErrorPage' });
-                    },
-                );
+                    });
+                }
+                // sns 회원가입
+                else {
+                    data.loginApi = this.snscheck
+                    data.userid = sessionStorage.getItem('snsId')
+
+                    UserApi.requestSnsSignUp(
+                        data,
+                        res => {
+                            this.isSubmit = true;
+                            alert('가입이 완료되었습니다.');
+                            this.$router.push('/');
+                        },
+                        error => {
+                        this.isSubmit = true;
+                        localStorage.setItem('popup', 'false');
+                        localStorage.setItem('nickname', this.nickname);
+                        this.$router.push({ name: 'ErrorPage' });
+                    });
+                }
             }
         },
         close() {
@@ -361,8 +389,6 @@ export default {
             this.error.nickname = false;
             this.error.passwordConfirm = false;
             this.error.term = false;
-
-            console.log('클로즈 불렀냐?');
             console.log(this.snscheck);
             if (this.snscheck == 0) this.$emit('popupToggle');
             else {

@@ -1,4 +1,7 @@
 import Axios from 'axios';
+import {
+    router
+} from "../../routes";
 
 // 상태를 선언하는 부분입니다.
 // 상태? 전역 변수라고 생각하시면 편합니다.
@@ -14,6 +17,7 @@ const actions = {
     logout({
         commit
     }) {
+        // console.log("LOGOUT!!!");
         const jwt = localStorage.getItem('routrip_JWT');
         //vuex에 user정보 비우기
         Axios.post('http://192.168.100.70:8083/account/logout/', {
@@ -22,6 +26,8 @@ const actions = {
             commit('setUser', null);
             //로컬스토리지 비우기
             localStorage.clear();
+        }).then(() => {
+            router.push('/');
         });
     },
     async reqUserInfo({

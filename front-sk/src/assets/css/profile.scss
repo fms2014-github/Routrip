@@ -25,12 +25,14 @@
         color:#41abac;
     }
     .user-picture {
-        min-width: 15vw;
-        min-height: 15vw;
-        @include background-img;
-        background-image: url('../../assets/images/user.png');
-        float: left;
-        margin: 10px;
+        img{
+            float:left;   
+            width: 15vw;
+            height: 15vw;
+            float: left;
+            margin: 10px;
+            border-radius: 170px;
+        }
     }
     .wrap {
         margin-top: 30px;
@@ -39,7 +41,6 @@
         margin-top: 160px;
     }
 }
-    // input
     .input-with-label {
         @include wrap;
         position: relative;

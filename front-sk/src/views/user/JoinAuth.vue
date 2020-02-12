@@ -27,7 +27,7 @@
             </div>
         </div>
         <div>
-            <button class="btn btn--back btn--login" v-on:click="submit" :disabled="!isSubmit" :class="{ disabled: !isSubmit }">
+            <button class="btn btn--back btn--login" @click="submit" :disabled="!isSubmit" :class="{ disabled: !isSubmit }">
                 <span>인증번호 확인</span>
             </button>
             <div class="back" @click="back">뒤로 가기</div>
@@ -40,6 +40,7 @@ import '../../assets/css/user.scss';
 import '../../assets/css/style.scss';
 import UserApi from '../../apis/UserApi';
 import * as EmailValidator from 'email-validator';
+import Axios from 'axios';
 
 export default {
     data: () => {
@@ -56,14 +57,12 @@ export default {
     },
     created() {
         this.component = this;
+        this.email = sessionStorage.getItem('tempEmail')
     },
     watch: {
         auth: function(v) {
             this.checkForm();
-        },
-        email: function(v) {
-            this.checkForm();
-        },
+        }
     },
     methods: {
         checkForm() {
@@ -75,22 +74,33 @@ export default {
         },
         submit() {
             if (this.isSubmit && !this.isEmail) {
-                let { email } = this;
+                let { email, auth } = this;
                 let data = {
                     email,
+                    userkey: auth
                 };
-                //요청 후에는 버튼 비활성화
-                this.isSubmit = false;
-                alert('인증번호가 확인되었습니다.');
-                alert('가입이 완료되었습니다.');
-                this.$router.push('/');
+
+                console.log(data);
+
+                Axios.put('http://192.168.100.70:8083/account/signup', {
+                    email,
+                    userkey: auth
+                }, () => {
+                    this.isSubmit = false;
+                    alert('인증번호가 확인되었습니다.');
+                    alert('가입이 완료되었습니다.');
+                    // this.$router.push('/');
+                }, (error) => {
+                    alert("실패!");
+                    console.log(error);
+                });
             }
         },
         back() {
             this.$router.back();
         },
         close() {
-            this.$router.push('/');
+            // this.$router.push('/');
         },
     },
 };
