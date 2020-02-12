@@ -73,7 +73,7 @@ public class AccountController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		String refresh = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
-				//.claim("userid", loginUser.getUserid())
+				// .claim("userid", loginUser.getUserid())
 				// .claim("password", loginUser.getPassword())
 				// .claim("name", loginUser.getName())
 				.claim("nickname", loginUser.getNickname())
@@ -103,7 +103,7 @@ public class AccountController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		String refresh = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
-				//.claim("userid", loginUser.getUserid())
+				// .claim("userid", loginUser.getUserid())
 				// .claim("password", loginUser.getPassword())
 				// .claim("name", loginUser.getName())
 				.claim("nickname", loginUser.getNickname())
@@ -193,8 +193,8 @@ public class AccountController {
 		return new ResponseEntity<>(userlist, HttpStatus.OK);
 	}
 
-	//@DeleteMapping("/follow")
-	//@ApiOperation(value = "팔로우 해제")
+	// @DeleteMapping("/follow")
+	// @ApiOperation(value = "팔로우 해제")
 	public Object deleteFollow(Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
 		int uid = Integer.parseInt(map.get("uid"));
@@ -261,7 +261,7 @@ public class AccountController {
 				user = userService.findUserByUid(uid);
 				String refresh = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(user.getUid()))
 						.claim("uid", user.getUid()).claim("email", user.getEmail())
-						//.claim("userid", user.getUserid())
+						// .claim("userid", user.getUserid())
 						.claim("nickname", user.getNickname()).claim("profileImg", user.getProfileImg())
 						.claim("loginApi", user.getLoginApi()).claim("userkey", user.getUserkey())
 						.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
@@ -301,8 +301,11 @@ public class AccountController {
 			List<User> userlist = userService.getUserList();
 			for (User u : userlist) {// 해당 이메일이 이미 존재하는지 확인
 				if (u.getEmail().equalsIgnoreCase(user.getEmail())) {
-					System.out.println("이미 존재하는 이메일입니다.");
-					flag = false;
+					int d = userService.deleteUserNoJoin(u.getUid());
+					if (d == 0) {
+						System.out.println("이미 존재하는 이메일입니다.");
+						flag = false;
+					}
 					break;
 				}
 			}
@@ -337,7 +340,7 @@ public class AccountController {
 	@PutMapping("/signup")
 	@ApiOperation(value = "가입완료")
 	public Object updateUserKey(@RequestBody User tempuser) throws Exception {
-		User user = userService.findUserByEmail(tempuser.getEmail(), 0);
+		User user = userService.findUserNoJoin(tempuser.getEmail(), 0);
 		if (user.getUserkey().equals(tempuser.getUserkey())) {
 			int ok = userService.updateUserKey(user.getUid());
 			if (ok > 0) {
@@ -393,8 +396,8 @@ public class AccountController {
 			user.setProfileImg((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("profileImg"));
 			user.setLoginApi((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("loginApi"));
 			return new ResponseEntity<>(user, HttpStatus.OK);
-		}else {
-			System.out.println("유효하지 않은 jwt 입니다. "+jwt);
+		} else {
+			System.out.println("유효하지 않은 jwt 입니다. " + jwt);
 		}
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
@@ -532,17 +535,18 @@ public class AccountController {
 					}
 				}
 			}
-			if (userService.findBlackList(uid, format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration())) > 0)
-				//블랙 리스트에 있으면 인증 실패
+			if (userService.findBlackList(uid,
+					format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration())) > 0)
+				// 블랙 리스트에 있으면 인증 실패
 				return false;
 		} catch (ExpiredJwtException e1) {
-			//refresh 토큰 읽어와서 존재하면 acess 토큰 발급
-			//만약 만료되서 uid 자체를 못 가져오면...?
-			//없으면 return false
+			// refresh 토큰 읽어와서 존재하면 acess 토큰 발급
+			// 만약 만료되서 uid 자체를 못 가져오면...?
+			// 없으면 return false
 			System.out.println("토큰 기간 만료");
 		} catch (Exception e1) {
 			System.out.println("오류가 발생했습니다.");
-			//return false;
+			// return false;
 		}
 		return true;
 	}

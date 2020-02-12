@@ -24,6 +24,14 @@ public class UserDao implements IUserDao{
     	map.put("loginApi", String.valueOf(loginApi));
 		return sqlSession.selectOne(ns+"findUserByEmail", map);
 	}
+    
+    @Override
+	public User findUserNoJoin(String email, int loginApi) throws Exception {
+    	Map<String, String> map = new HashMap<String, String>();
+    	map.put("email", email);
+    	map.put("loginApi", String.valueOf(loginApi));
+		return sqlSession.selectOne(ns+"findUserNoJoin", map);
+	}
 
     @Override
 	public User findUserByEmailAndPassword(String email, String password) throws Exception {
@@ -171,5 +179,10 @@ public class UserDao implements IUserDao{
 	@Override
 	public int deleteAlarmAll(int uid) throws Exception {
 		return sqlSession.delete(ns+"deleteAlarmAll", uid);
+	}
+
+	@Override
+	public int deleteUserNoJoin(int uid) throws Exception {
+		return sqlSession.delete(ns+"deleteUserNoJoin", uid);
 	}
 }

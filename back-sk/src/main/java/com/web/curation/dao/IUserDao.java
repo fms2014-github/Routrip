@@ -8,6 +8,7 @@ import com.web.curation.model.user.User;
 
 public interface IUserDao {
      User findUserByEmail(String email, int loginApi) throws Exception;
+     User findUserNoJoin(String email, int loginApi) throws Exception;
      User findUserByEmailAndPassword(String email, String password) throws Exception;
      int addUser(User user) throws Exception;
      int updateProfile(User user) throws Exception;
@@ -20,6 +21,7 @@ public interface IUserDao {
      int changeUserKey(User user) throws Exception;
      User findUserByUserId(String userid, int loginApi) throws Exception;
      User findUserSimple(int uid) throws Exception;
+     int deleteUserNoJoin(int uid) throws Exception;
      
      int addFollow(int following, int follower) throws Exception;
      int deleteFollow(int following, int follower) throws Exception;

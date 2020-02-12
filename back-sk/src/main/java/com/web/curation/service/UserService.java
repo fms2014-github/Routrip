@@ -149,4 +149,14 @@ public class UserService implements IUserService{
 	public int deleteAlarmAll(int uid) throws Exception {
 		return userDao.deleteAlarmAll(uid);
 	}
+
+	@Override
+	public int deleteUserNoJoin(int uid) throws Exception {
+		return userDao.deleteUserNoJoin(uid);
+	}
+
+	@Override
+	public User findUserNoJoin(String email, int loginApi) throws Exception {
+		return userDao.findUserNoJoin(email, loginApi);
+	}
 }
