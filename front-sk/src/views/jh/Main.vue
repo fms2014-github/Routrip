@@ -167,6 +167,8 @@ import { createNamespacedHelpers } from 'vuex';
 const userMapState = createNamespacedHelpers('User').mapState;
 const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
+const userMapActions = createNamespacedHelpers('User').mapActions;
+
 const URI = 'http://192.168.100.70:8083/';
 const jwt =
     'eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiI1IiwidWlkIjo1LCJlbWFpbCI6InRlc3QzQHNzYWZ5LmNvbSIsIm5pY2tuYW1lIjoidGVzdE5pY2siLCJwcm9maWxlSW1nIjoiaW1nL3Byb2ZpbGUucG5nIiwibG9naW5BcGkiOjAsInVzZXJrZXkiOiJZIiwiZXhwIjoxNTgxNDcwMzY0fQ.';
@@ -191,6 +193,13 @@ export default {
             scrapShow: [],
         };
     },
+    mounted() {
+        if (this.getUser.user === undefined) {
+            this.req();
+        } else {
+            this.getUser();
+        }
+    },
     created: function() {
         this.showAll();
     },
@@ -203,6 +212,11 @@ export default {
     },
     methods: {
         ...userMapMutations(['setUser']),
+        ...userMapActions(['reqUserInfo']),
+        async req() {
+            await this.reqUserInfo();
+            this.getUser();
+        },
         kakao() {
             const at = localStorage.getItem('kakao_access_token');
             const rt = localStorage.getItem('kakao_refresh_token');

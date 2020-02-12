@@ -49,8 +49,6 @@ import '../../../assets/css/style.scss';
 const userMapActions = createNamespacedHelpers('User').mapActions; //
 const userMapGetters = createNamespacedHelpers('User').mapGetters; //
 
-
-
 export default {
     components: {
         HeaderComponent,
@@ -88,11 +86,7 @@ export default {
             console.log("?", this.getUser);
             this.userinfo.nickname=this.getUser.data.nickname;
         },
-        getAllPost(){
-            
-        },
 
-       
         logoutClick() {
             this.logout().then(() => {
                 this.$router.push('/');
