@@ -10,10 +10,7 @@ const userMapActions = createNamespacedHelpers('User').mapActions;
 
 export default {
     name: 'app',
-    beforeCreate() {
-        console.log('app.vue beforecreated');
-    },
-    mounted() {
+    created() {
         this.reqUserInfo();
     },
     methods: {

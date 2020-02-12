@@ -5,7 +5,7 @@
 </template>
 
 <script>
-import common from "../../assets/css/common.scss"
+// import common from "../../assets/css/common.scss"
 
 
 export default {

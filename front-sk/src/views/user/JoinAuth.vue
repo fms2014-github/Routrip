@@ -1,13 +1,9 @@
-<!--
-    가입하기는 기본적인 폼만 제공됩니다
-    기능명세에 따라 개발을 진행하세요.
-    Sub PJT I에서는 UX, 디자인 등을 포함하여 백엔드를 제외하여 개발합니다.
- -->
 <template>
     <div id="JoinAuth" class="wrapC">
         <div id="JoinAuth-form">
             <div>
                 <h1>인증번호 확인</h1>
+                <button class="close" @click="close"><img class="close-img" src="../../assets/images/close.png" /></button>
                 <h3>작성한 이메일 주소로 인증번호가 발송되었습니다.</h3>
             </div>
             <div class="input-with-label">
@@ -74,6 +70,7 @@ export default {
             if (this.auth.length != 6) this.error.auth = '인증번호를 입력하세요.';
             else {
                 this.error.auth = false;
+                this.isSubmit = true;
             }
         },
         submit() {
@@ -95,22 +92,6 @@ export default {
         close() {
             this.$router.push('/');
         },
-    },
-    submit() {
-        if (this.isSubmit && !this.isEmail) {
-            let { email } = this;
-            let data = {
-                email,
-            };
-            //요청 후에는 버튼 비활성화
-            this.isSubmit = false;
-            alert('인증번호가 확인되었습니다.');
-            alert('가입이 완료되었습니다.');
-            this.$router.push('/');
-        }
-    },
-    back() {
-        this.$router.back();
     },
 };
 </script>

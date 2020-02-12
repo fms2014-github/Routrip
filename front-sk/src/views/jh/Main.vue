@@ -9,13 +9,7 @@
             </div>
             <div class="best-posting">
                 <div class="postings-posting">
-                    <hooper
-                        :infiniteScroll="true"
-                        :itemsToShow="3"
-                        :progress="true"
-                        :autoPlay="true"
-                        :playSpeed="2000"
-                    >
+                    <hooper :infiniteScroll="true" :itemsToShow="3" :progress="true" :autoPlay="true" :playSpeed="2000">
                         <slide v-for="(data, dataIdx) in datas" :key="dataIdx">
                             <img :src="'http://192.168.100.70:8083/' + data.imgs[0].src" alt />
                         </slide>
@@ -29,9 +23,7 @@
                         <div class="postings-posting">
                             <div class="post-info">
                                 <div class="profile-img">
-                                    <img
-                                        :src="'http://192.168.100.70:8083/' + data.user.profileImg"
-                                    />
+                                    <img :src="'http://192.168.100.70:8083/' + data.user.profileImg" />
                                 </div>
                                 <div class="name-time">
                                     <strong>{{ data.title }}</strong>
@@ -57,30 +49,31 @@
                         <div class="sns-btn">
                             <div class="like">
                                 <button @click="toggleLikeBtn(data.boardid)">
-                                    <div :class="{likeToggle : likeShow[dataIdx].like}">
+                                    <div :class="{ likeToggle: likeShow[dataIdx].like }">
                                         <i class="far fa-heart"></i>
                                     </div>
-                                    <div :class="{likeToggle : !likeShow[dataIdx].like}">
+                                    <div :class="{ likeToggle: !likeShow[dataIdx].like }">
                                         <i class="fas fa-heart" style="color:red;"></i>
                                     </div>
                                 </button>
                             </div>
                             <div class="scrap">
                                 <button @click="toggleScrapBtn(data.boardid)">
-                                    <div :class="{scrapToggle : scrapShow[dataIdx].scrap}">
+                                    <div :class="{ scrapToggle: scrapShow[dataIdx].scrap }">
                                         <i class="far fa-bookmark"></i>
                                     </div>
-                                    <div :class="{scrapToggle : !scrapShow[dataIdx].scrap}">
+                                    <div :class="{ scrapToggle: !scrapShow[dataIdx].scrap }">
                                         <i class="fas fa-bookmark" style="color:blue;"></i>
                                     </div>
                                 </button>
                             </div>
-                            <div class="state" v-if="data.favoriteNum==1">
-                                <strong>{{ whoLiked[dataIdx] }}</strong>님이 게시글을 좋아합니다.
+                            <div class="state" v-if="data.favoriteNum == 1">
+                                <strong>{{ whoLiked[dataIdx] }}</strong
+                                >님이 게시글을 좋아합니다.
                             </div>
-                            <div class="state" v-if="data.favoriteNum>1">
+                            <div class="state" v-if="data.favoriteNum > 1">
                                 <strong>{{ whoLiked[dataIdx] }}</strong>
-                                님 외 {{ data.favoriteNum-1 }}명이 이 게시글을 좋아합니다.
+                                님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
                             </div>
                         </div>
 
@@ -90,16 +83,9 @@
 
                         <div class="comment-box">
                             <div class="comments">
-                                <div
-                                    class="comment"
-                                    v-for="(comment, commentIdx) in data.comments"
-                                    :key="commentIdx"
-                                >
+                                <div class="comment" v-for="(comment, commentIdx) in data.comments" :key="commentIdx">
                                     <div class="writer-img">
-                                        <img
-                                            :src="'http://192.168.100.70:8083/' + comment.user.profileImg"
-                                            alt
-                                        />
+                                        <img :src="'http://192.168.100.70:8083/' + comment.user.profileImg" alt />
                                     </div>
                                     <div class="comment-info">
                                         <div class="comment-info-box">
@@ -119,13 +105,7 @@
                             </div>
                             <div class="write-comment">
                                 <form action class="comment-form">
-                                    <textarea
-                                        class="comment"
-                                        placeholder="댓글 달기..."
-                                        autocomplete="off"
-                                        wrap="soft"
-                                        v-model="comment"
-                                    ></textarea>
+                                    <textarea class="comment" placeholder="댓글 달기..." autocomplete="off" wrap="soft" v-model="comment"></textarea>
                                 </form>
                                 <div class="comment-btn">
                                     <button @click="addComment(data)">
@@ -142,18 +122,10 @@
             <div class="modal-box">
                 <div class="box-content">
                     <button class="else-btn first" @click="detailPage">게시물로 이동</button>
-                    <button
-                        :class="{ followBtn : !followBtn }"
-                        class="else-btn middle"
-                        @click="follow"
-                    >팔로우</button>
-                    <button
-                        :class="{ unfollowBtn : !unfollowBtn }"
-                        class="else-btn middle"
-                        @click="follow"
-                    >팔로우 취소</button>
-                    <button :class="{ myPosting : !myPosting }" class="else-btn middle">내글 수정</button>
-                    <button :class="{ myPosting : !myPosting }" class="else-btn middle">내글 삭제</button>
+                    <button :class="{ followBtn: !followBtn }" class="else-btn middle" @click="follow">팔로우</button>
+                    <button :class="{ unfollowBtn: !unfollowBtn }" class="else-btn middle" @click="follow">팔로우 취소</button>
+                    <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 수정</button>
+                    <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 삭제</button>
                     <button class="else-btn last" @click="noShowElseBtn">X</button>
                 </div>
             </div>
@@ -187,6 +159,8 @@ import { createNamespacedHelpers } from 'vuex';
 const userMapState = createNamespacedHelpers('User').mapState;
 const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
+const userMapActions = createNamespacedHelpers('User').mapActions;
+
 const URI = 'http://192.168.100.70:8083/';
 export default {
     components: {
@@ -216,6 +190,13 @@ export default {
             myPosting: false,
         };
     },
+    mounted() {
+        if (this.getUser.user === undefined) {
+            this.req();
+        } else {
+            this.getUser();
+        }
+    },
     created: function() {
         this.jwt = localStorage.getItem('routrip_JWT');
         this.showAll();
@@ -228,6 +209,30 @@ export default {
         ...userMapGetters(['getUser']),
     },
     methods: {
+        ...userMapMutations(['setUser']),
+        ...userMapActions(['reqUserInfo']),
+        async req() {
+            await this.reqUserInfo();
+            this.getUser();
+        },
+        kakao() {
+            const at = localStorage.getItem('kakao_access_token');
+            const rt = localStorage.getItem('kakao_refresh_token');
+            console.log(at);
+            console.log(rt);
+            Kakao.init('cffc768e4739655aab323adbd9eb2633');
+            console.log(Kakao.isInitialized());
+            Kakao.API.request({
+                url: '/v1/user/me',
+                success: res => {
+                    this.setUser(res);
+                    console.log(res);
+                    // console.log(res.properties.nickname);
+                    // console.log(res.properties.profile_image);
+                    console.log(this.getUser);
+                },
+            });
+        },
         showAll() {
             Axios.post(`${URI}/page/favoriteBoard`, { jwt: this.jwt })
                 .then(res => {
@@ -395,5 +400,4 @@ export default {
 };
 </script>
 
-<style>
-</style>
+<style></style>
