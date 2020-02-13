@@ -89,7 +89,6 @@ $desktop: 'screen and (min-width : 1025px)';
                 }
 
                 .name-time {
-
                     strong {
                         font-size: 1.2em;
                         margin-right: 10px;
@@ -112,6 +111,23 @@ $desktop: 'screen and (min-width : 1025px)';
                     }
                 }
             }
+            .sns-tag-box {
+                padding: 0;
+                margin-bottom: 15px;
+                .sns-btn {
+                    .like {
+                        .likeit {
+                            display: none;
+                        }
+                    }
+
+                    .scrap {
+                        .scrapit {
+                            display: none;
+                        }
+                    }
+                }
+            }
 
             .comments {
                 max-height: none;
@@ -123,7 +139,7 @@ $desktop: 'screen and (min-width : 1025px)';
 
                 @media #{$iPad, $iPadPro} {
                     .show-comment {
-                        height: 370px;
+                        height: 350px;
                         overflow-y: scroll;
                         overflow-x: hidden;
                     }
@@ -131,7 +147,7 @@ $desktop: 'screen and (min-width : 1025px)';
 
                 @media #{$desktop} {
                     .show-comment {
-                        height: 420px;
+                        height: 390px;
                         overflow-y: scroll;
                         overflow-x: hidden;
                     }
@@ -141,28 +157,6 @@ $desktop: 'screen and (min-width : 1025px)';
                     }
                 }
             }
-
-            .sns-btn {
-                padding: 0 0 20px 0;
-                border-bottom: 1px solid rgba(00, 00, 00, 0.2);
-                margin-bottom: 20px;
-
-                .like {
-                    .likeit {
-                        display: none;
-                    }
-                }
-
-                .scrap {
-                    .scrapit {
-                        display: none;
-                    }
-                }
-
-            }
-
-
         }
-
     }
 }

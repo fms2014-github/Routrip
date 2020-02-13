@@ -50,39 +50,43 @@
                             </hooper>
                         </div>
 
-                        <div class="sns-btn">
-                            <div class="like">
-                                <button @click="toggleLikeBtn(data.boardid)">
-                                    <div :class="{ likeToggle: likeShow[dataIdx].like }">
-                                        <i class="far fa-heart"></i>
-                                    </div>
-                                    <div :class="{ likeToggle: !likeShow[dataIdx].like }">
-                                        <i class="fas fa-heart" style="color:red;"></i>
-                                    </div>
-                                </button>
+                        <div class="sns-tag-box">
+                            <div class="sns-btn">
+                                <div class="like">
+                                    <button @click="toggleLikeBtn(data.boardid)">
+                                        <div :class="{ likeToggle: likeShow[dataIdx].like }">
+                                            <i class="far fa-heart"></i>
+                                        </div>
+                                        <div :class="{ likeToggle: !likeShow[dataIdx].like }">
+                                            <i class="fas fa-heart" style="color:red;"></i>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="scrap">
+                                    <button @click="toggleScrapBtn(data.boardid)">
+                                        <div :class="{ scrapToggle: scrapShow[dataIdx].scrap }">
+                                            <i class="far fa-bookmark"></i>
+                                        </div>
+                                        <div :class="{ scrapToggle: !scrapShow[dataIdx].scrap }">
+                                            <i class="fas fa-bookmark" style="color:blue;"></i>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="state" v-if="data.favoriteNum == 1">
+                                    <strong>{{ whoLiked[dataIdx] }}</strong
+                                    >님이 게시글을 좋아합니다.
+                                </div>
+                                <div class="state" v-if="data.favoriteNum > 1">
+                                    <strong>{{ whoLiked[dataIdx] }}</strong>
+                                    님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
+                                </div>
                             </div>
-                            <div class="scrap">
-                                <button @click="toggleScrapBtn(data.boardid)">
-                                    <div :class="{ scrapToggle: scrapShow[dataIdx].scrap }">
-                                        <i class="far fa-bookmark"></i>
-                                    </div>
-                                    <div :class="{ scrapToggle: !scrapShow[dataIdx].scrap }">
-                                        <i class="fas fa-bookmark" style="color:blue;"></i>
-                                    </div>
-                                </button>
-                            </div>
-                            <div class="state" v-if="data.favoriteNum == 1">
-                                <strong>{{ whoLiked[dataIdx] }}</strong
-                                >님이 게시글을 좋아합니다.
-                            </div>
-                            <div class="state" v-if="data.favoriteNum > 1">
-                                <strong>{{ whoLiked[dataIdx] }}</strong>
-                                님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
-                            </div>
-                        </div>
 
-                        <div class="text">
-                            <span>{{ data.keyword }}</span>
+                            <div class="keywords">
+                                <div class="keyword" v-for="(keyword, keywordIdx) in data.keywords" :key="keywordIdx">
+                                    <span>#{{ keyword }}</span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="comment-box">
