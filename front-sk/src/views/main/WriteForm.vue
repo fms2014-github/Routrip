@@ -117,7 +117,9 @@ export default {
     mounted() {
         //CKEditor.createCKEditor();
         kakaoMap.createMap();
+        // eslint-disable-next-line no-undef
         $(() => {
+            // eslint-disable-next-line no-undef
             $('#summernote').summernote({
                 height: 400, // set editor height
                 callbacks: {
@@ -130,6 +132,7 @@ export default {
                                     files[i],
                                     res => {
                                         console.log(res.data.data.link);
+                                        // eslint-disable-next-line no-undef
                                         $('#summernote').summernote('insertImage', res.data.data.link, res.data.data.id);
                                     },
                                     error => {
@@ -260,6 +263,7 @@ export default {
             kakaoMap.redo();
         },
         submit() {
+            // eslint-disable-next-line no-undef
             var markupStr = $('#summernote').summernote('code');
             kakaoMap.getTest();
             console.log('areasTag', Object.keys(this.areas));
