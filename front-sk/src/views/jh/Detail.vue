@@ -44,8 +44,7 @@
                             </button>
                         </div>
                         <div class="state" v-if="data.favoriteNum == 1">
-                            <strong>{{ whoLiked }}</strong
-                            >님이 게시글을 좋아합니다.
+                            <strong>{{ whoLiked }}</strong>님이 게시글을 좋아합니다.
                         </div>
                         <div class="state" v-if="data.favoriteNum > 1">
                             <strong>{{ whoLiked }}</strong>
@@ -53,7 +52,53 @@
                         </div>
                     </div>
                     <div class="comments">
-                        댓글들....
+                        <div class="show-comment">
+                            <div
+                                class="comment"
+                                v-for="(comment, commentIdx) in data.comments"
+                                :key="commentIdx"
+                            >
+                                <div class="writer-img">
+                                    <img
+                                        :src="'http://192.168.100.70:8083/' + comment.user.profileImg"
+                                        alt
+                                    />
+                                </div>
+                                <div class="comment-info">
+                                    <div class="comment-info-box">
+                                        <div class="writer">
+                                            <strong>{{ comment.user.nickname }}</strong>
+                                            <span>{{ comment.writeday }}</span>
+                                        </div>
+                                        <div class="writer-text">
+                                            <span>{{ comment.contents }}</span>
+                                        </div>
+                                    </div>
+                                    <div
+                                        class="comment-delete"
+                                        v-if="comment.uid==getUser.data.uid"
+                                    >
+                                        <button @click="deleteComment(comment)">삭제</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="write-comment">
+                            <form action class="comment-form">
+                                <textarea
+                                    class="comment"
+                                    placeholder="댓글 달기..."
+                                    autocomplete="off"
+                                    wrap="soft"
+                                    v-model="comment"
+                                ></textarea>
+                            </form>
+                            <div class="comment-btn">
+                                <button @click="addComment">
+                                    <strong>등록</strong>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -95,6 +140,7 @@ export default {
             jwt: '',
             follow: false,
             unfollow: false,
+            comment: '',
         };
     },
     created() {
@@ -125,6 +171,7 @@ export default {
                 .then(res => {
                     // console.log(res.data);
                     this.data = res.data;
+
                     Axios.post(`${URI}/page/scrapBoard`, { jwt: this.jwt })
                         .then(res => {
                             // console.log(res.data);
@@ -218,6 +265,43 @@ export default {
                 .catch(res => {
                     console.log('팔로우 등록 및 취소 실패');
                 });
+        },
+        addComment() {
+            // console.log(this.comment);
+            var commentObject = new Object();
+            commentObject.jwt = this.jwt;
+            commentObject.boardid = this.data.boardid;
+            commentObject.contents = this.comment;
+            commentObject.uid = this.data.uid;
+            if (this.comment == '') {
+                alert('댓글을 입력해주세요');
+            } else {
+                Axios.post(`${URI}/page/comment`, commentObject)
+                    .then(res => {
+                        // console.log('댓글 달기 성공');
+                        this.comment = '';
+                        this.showAll();
+                    })
+                    .catch(res => {
+                        console.log('댓글 달기 실패');
+                    });
+                this.getAlldata();
+            }
+        },
+        deleteComment(comment) {
+            if (confirm('댓글을 삭제하시겠습니까?')) {
+                Axios.delete(`${URI}/page/comment`, {
+                    data: comment.commentid,
+                })
+                    .then(res => {
+                        // console.log('댓글 삭제 성공');
+                        this.showAll();
+                    })
+                    .catch(res => {
+                        console.log('댓글 삭제 실패');
+                    });
+                this.getAlldata();
+            }
         },
     },
 };

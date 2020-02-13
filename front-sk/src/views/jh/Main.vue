@@ -9,7 +9,13 @@
             </div>
             <div class="best-posting">
                 <div class="postings-posting">
-                    <hooper :infiniteScroll="true" :itemsToShow="3" :progress="true" :autoPlay="true" :playSpeed="2000">
+                    <hooper
+                        :infiniteScroll="true"
+                        :itemsToShow="3"
+                        :progress="true"
+                        :autoPlay="true"
+                        :playSpeed="2000"
+                    >
                         <slide v-for="(data, dataIdx) in datas" :key="dataIdx">
                             <img :src="'http://192.168.100.70:8083/' + data.imgs[0].src" alt />
                         </slide>
@@ -23,7 +29,7 @@
                         <div class="postings-posting">
                             <div class="post-info">
                                 <div class="profile-img">
-                                    <img :src="'http://192.168.100.70:8083/' + data.user.profileImg" />
+                                    <img :src="data.user.profileImg" />
                                 </div>
                                 <div class="name-time">
                                     <strong>{{ data.title }}</strong>
@@ -42,7 +48,9 @@
                         <div class="post-imgs-box">
                             <hooper class="post-img-box">
                                 <slide v-for="(img, imgIdx) in data.imgs" :key="imgIdx">
-                                    <router-link :to="{ name: 'Detail', params: { boardid: data.boardid } }">
+                                    <router-link
+                                        :to="{ name: 'Detail', params: { boardid: data.boardid } }"
+                                    >
                                         <img :src="'http://192.168.100.70:8083/' + img.src" alt />
                                     </router-link>
                                 </slide>
@@ -72,11 +80,10 @@
                                 </button>
                             </div>
                             <div class="state" v-if="data.favoriteNum == 1">
-                                <strong>{{ whoLiked[0] }}</strong
-                                >님이 게시글을 좋아합니다.
+                                <strong>{{ whoLiked[dataIdx] }}</strong>님이 게시글을 좋아합니다.
                             </div>
                             <div class="state" v-if="data.favoriteNum > 1">
-                                <strong>{{ whoLiked[0] }}</strong>
+                                <strong>{{ whoLiked[dataIdx] }}</strong>
                                 님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
                             </div>
                         </div>
@@ -87,9 +94,13 @@
 
                         <div class="comment-box">
                             <div class="comments">
-                                <div class="comment" v-for="(comment, commentIdx) in data.comments" :key="commentIdx">
+                                <div
+                                    class="comment"
+                                    v-for="(comment, commentIdx) in data.comments"
+                                    :key="commentIdx"
+                                >
                                     <div class="writer-img">
-                                        <img :src="'http://192.168.100.70:8083/' + comment.user.profileImg" alt />
+                                        <img :src="comment.user.profileImg" alt />
                                     </div>
                                     <div class="comment-info">
                                         <div class="comment-info-box">
@@ -101,7 +112,10 @@
                                                 <span>{{ comment.contents }}</span>
                                             </div>
                                         </div>
-                                        <div class="comment-delete">
+                                        <div
+                                            class="comment-delete"
+                                            v-if="comment.uid==getUser.data.uid"
+                                        >
                                             <button @click="deleteComment(comment)">삭제</button>
                                         </div>
                                     </div>
@@ -109,7 +123,13 @@
                             </div>
                             <div class="write-comment">
                                 <form action class="comment-form">
-                                    <textarea class="comment" placeholder="댓글 달기..." autocomplete="off" wrap="soft" v-model="comment"></textarea>
+                                    <textarea
+                                        class="comment"
+                                        placeholder="댓글 달기..."
+                                        autocomplete="off"
+                                        wrap="soft"
+                                        v-model="comment"
+                                    ></textarea>
                                 </form>
                                 <div class="comment-btn">
                                     <button @click="addComment(data)">
@@ -126,8 +146,16 @@
             <div class="modal-box">
                 <div class="box-content">
                     <button class="else-btn first">게시물로 이동</button>
-                    <button :class="{ followBtn: !followBtn }" class="else-btn middle" @click="follow">팔로우</button>
-                    <button :class="{ unfollowBtn: !unfollowBtn }" class="else-btn middle" @click="follow">팔로우 취소</button>
+                    <button
+                        :class="{ followBtn: !followBtn }"
+                        class="else-btn middle"
+                        @click="follow"
+                    >팔로우</button>
+                    <button
+                        :class="{ unfollowBtn: !unfollowBtn }"
+                        class="else-btn middle"
+                        @click="follow"
+                    >팔로우 취소</button>
                     <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 수정</button>
                     <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 삭제</button>
                     <button class="else-btn last" @click="noShowElseBtn">X</button>
@@ -182,7 +210,7 @@ export default {
             comment: '',
             likeList: [],
             likeShow: [],
-            whoLiked: [],
+            whoLiked: '',
             scrapList: [],
             scrapShow: [],
             followList: [],
@@ -261,8 +289,10 @@ export default {
                                     this.scrapShow = [];
                                     this.whoLiked = [];
                                     this.datas = res.data;
+                                    console.log(this.datas);
+                                    // console.log(this.getUser.data.uid);
                                     for (var i = 0; i < this.datas.length; ++i) {
-                                        if (res.data[i].favorite.length > 0) {
+                                        if (res.data[i].favoriteNum > 0) {
                                             this.whoLiked.push(res.data[i].favorite[0].nickname);
                                         } else {
                                             this.whoLiked.push('');
@@ -349,10 +379,11 @@ export default {
         addComment(info) {
             // console.log(this.comment);
             var commentObject = new Object();
+            commentObject.jwt = this.jwt;
             commentObject.boardid = info.boardid;
             commentObject.contents = this.comment;
             commentObject.uid = info.uid;
-            if (this.comment == null) {
+            if (this.comment == '') {
                 alert('댓글을 입력해주세요');
             } else {
                 Axios.post(`${URI}/page/comment`, commentObject)

@@ -159,11 +159,30 @@ $desktop: 'screen and (min-width : 1025px)';
 .comment-box {
     padding: 20px;
 
+    ::-webkit-scrollbar {
+        width: 3px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: white;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
     .comments {
+        max-height: 270px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+
         .comment {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            width: 100%;
 
             .writer-img img {
                 width: 30px;
@@ -172,19 +191,36 @@ $desktop: 'screen and (min-width : 1025px)';
             }
 
             .comment-info {
-                margin-left: 20px;
                 width: 100%;
+                margin-left: 20px;
+
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
 
+                .comment-info-box {
+                    width: 100%;
+                }
+
+                span {
+                    white-space: pre-line !important;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
                 .writer {
                     margin-bottom: 5px;
+                    width: 300px;
 
                     span {
                         margin-left: 10px;
                         font-size: 12px;
                     }
+                }
+
+                .comment-delete {
+                    margin: 0 10px;
                 }
             }
         }
@@ -195,6 +231,8 @@ $desktop: 'screen and (min-width : 1025px)';
         justify-content: space-between;
         align-items: center;
         margin-top: 20px;
+        padding: 15px 10px 0 10px;
+        border-top: 1px solid rgba(00, 00, 00, 0.2);
     }
 
     .comment-form {
@@ -247,6 +285,7 @@ $desktop: 'screen and (min-width : 1025px)';
         @media #{$desktop} {
             width: 400px;
         }
+
         .box-content {
             .first {
                 border-top: none;
