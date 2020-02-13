@@ -23,7 +23,9 @@
         padding-top: 30px;
         margin-bottom: 20px;
     }
-
+    .input-with-label{
+        float: none;
+    }
     /*로그인*/
     &#login {
         margin-top:50px;
@@ -270,6 +272,7 @@
     bottom: 0;
     .input-with-label{
         height: auto;
+        float: left;
     }
 }
 
