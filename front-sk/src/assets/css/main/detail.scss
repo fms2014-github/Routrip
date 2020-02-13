@@ -30,7 +30,7 @@ $desktop: 'screen and (min-width : 1025px)';
                 .comment-box {
                     background-color: white;
                     width: 650px;
-                    height: 300px;
+                    height: 550px;
                     border: 1px solid black;
                     margin: 0;
                     padding: 20px;
@@ -89,7 +89,6 @@ $desktop: 'screen and (min-width : 1025px)';
                 }
 
                 .name-time {
-
                     strong {
                         font-size: 1.2em;
                         margin-right: 10px;
@@ -99,42 +98,65 @@ $desktop: 'screen and (min-width : 1025px)';
                 .follow {
                     cursor: pointer;
 
-                    span {
-                        color: red;
+                    span:first-child {
+                        color: blue;
                         font-weight: 600;
                         font-size: 1.2em;
                     }
 
+                    span:last-child {
+                        color: red;
+                        font-weight: 600;
+                        font-size: 1.2em;
+                    }
+                }
+            }
+            .sns-tag-box {
+                padding: 0;
+                margin-bottom: 15px;
+                .sns-btn {
+                    .like {
+                        .likeit {
+                            display: none;
+                        }
+                    }
+
+                    .scrap {
+                        .scrapit {
+                            display: none;
+                        }
+                    }
                 }
             }
 
             .comments {
-                @media #{$iPad, $iPadPro} {}
+                max-height: none;
 
-                @media #{$desktop} {}
-            }
+                /* width */
+                ::-webkit-scrollbar {
+                    width: 3px;
+                }
 
-            .sns-btn {
-                padding: 0 0 20px 0;
-                border-bottom: 1px solid rgba(00, 00, 00, 0.5);
-                margin-bottom: 20px;
-
-                .like {
-                    .likeit {
-                        display: none;
+                @media #{$iPad, $iPadPro} {
+                    .show-comment {
+                        height: 350px;
+                        overflow-y: scroll;
+                        overflow-x: hidden;
                     }
                 }
 
-                .scrap {
-                    .scrapit {
-                        display: none;
+                @media #{$desktop} {
+                    .show-comment {
+                        height: 390px;
+                        overflow-y: scroll;
+                        overflow-x: hidden;
+                    }
+
+                    .comment-info {
+                        width: 72%;
                     }
                 }
-
             }
-
-
         }
-
     }
 }

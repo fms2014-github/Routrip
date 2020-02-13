@@ -11,7 +11,7 @@
                 <div class="postings-posting">
                     <hooper :infiniteScroll="true" :itemsToShow="3" :progress="true" :autoPlay="true" :playSpeed="2000">
                         <slide v-for="(data, dataIdx) in datas" :key="dataIdx">
-                            <img :src="'http://192.168.100.70:8083/' + data.imgs[0].src" alt />
+                            <img :src="data.imgs[0].src" alt />
                         </slide>
                         <hooper-navigation slot="hooper-addons"></hooper-navigation>
                     </hooper>
@@ -23,7 +23,7 @@
                         <div class="postings-posting">
                             <div class="post-info">
                                 <div class="profile-img">
-                                    <img :src="'http://192.168.100.70:8083/' + data.user.profileImg" />
+                                    <img :src="data.user.profileImg" />
                                 </div>
                                 <div class="name-time">
                                     <strong>{{ data.title }}</strong>
@@ -43,53 +43,57 @@
                             <hooper class="post-img-box">
                                 <slide v-for="(img, imgIdx) in data.imgs" :key="imgIdx">
                                     <router-link :to="{ name: 'Detail', params: { boardid: data.boardid } }">
-                                        <img :src="'http://192.168.100.70:8083/' + img.src" alt />
+                                        <img :src="img.src" alt />
                                     </router-link>
                                 </slide>
                                 <hooper-pagination slot="hooper-addons"></hooper-pagination>
                             </hooper>
                         </div>
 
-                        <div class="sns-btn">
-                            <div class="like">
-                                <button @click="toggleLikeBtn(data.boardid)">
-                                    <div :class="{ likeToggle: likeShow[dataIdx].like }">
-                                        <i class="far fa-heart"></i>
-                                    </div>
-                                    <div :class="{ likeToggle: !likeShow[dataIdx].like }">
-                                        <i class="fas fa-heart" style="color:red;"></i>
-                                    </div>
-                                </button>
+                        <div class="sns-tag-box">
+                            <div class="sns-btn">
+                                <div class="like">
+                                    <button @click="toggleLikeBtn(data.boardid)">
+                                        <div :class="{ likeToggle: likeShow[dataIdx].like }">
+                                            <i class="far fa-heart"></i>
+                                        </div>
+                                        <div :class="{ likeToggle: !likeShow[dataIdx].like }">
+                                            <i class="fas fa-heart" style="color:red;"></i>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="scrap">
+                                    <button @click="toggleScrapBtn(data.boardid)">
+                                        <div :class="{ scrapToggle: scrapShow[dataIdx].scrap }">
+                                            <i class="far fa-bookmark"></i>
+                                        </div>
+                                        <div :class="{ scrapToggle: !scrapShow[dataIdx].scrap }">
+                                            <i class="fas fa-bookmark" style="color:blue;"></i>
+                                        </div>
+                                    </button>
+                                </div>
+                                <div class="state" v-if="data.favoriteNum == 1">
+                                    <strong>{{ whoLiked[dataIdx] }}</strong
+                                    >님이 게시글을 좋아합니다.
+                                </div>
+                                <div class="state" v-if="data.favoriteNum > 1">
+                                    <strong>{{ whoLiked[dataIdx] }}</strong>
+                                    님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
+                                </div>
                             </div>
-                            <div class="scrap">
-                                <button @click="toggleScrapBtn(data.boardid)">
-                                    <div :class="{ scrapToggle: scrapShow[dataIdx].scrap }">
-                                        <i class="far fa-bookmark"></i>
-                                    </div>
-                                    <div :class="{ scrapToggle: !scrapShow[dataIdx].scrap }">
-                                        <i class="fas fa-bookmark" style="color:blue;"></i>
-                                    </div>
-                                </button>
-                            </div>
-                            <div class="state" v-if="data.favoriteNum == 1">
-                                <strong>{{ whoLiked[0] }}</strong
-                                >님이 게시글을 좋아합니다.
-                            </div>
-                            <div class="state" v-if="data.favoriteNum > 1">
-                                <strong>{{ whoLiked[0] }}</strong>
-                                님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
-                            </div>
-                        </div>
 
-                        <div class="text">
-                            <span>{{ data.keyword }}</span>
+                            <div class="keywords">
+                                <div class="keyword" v-for="(keyword, keywordIdx) in data.keywords" :key="keywordIdx">
+                                    <span>#{{ keyword }}</span>
+                                </div>
+                            </div>
                         </div>
 
                         <div class="comment-box">
                             <div class="comments">
                                 <div class="comment" v-for="(comment, commentIdx) in data.comments" :key="commentIdx">
                                     <div class="writer-img">
-                                        <img :src="'http://192.168.100.70:8083/' + comment.user.profileImg" alt />
+                                        <img :src="comment.user.profileImg" alt />
                                     </div>
                                     <div class="comment-info">
                                         <div class="comment-info-box">
@@ -101,7 +105,7 @@
                                                 <span>{{ comment.contents }}</span>
                                             </div>
                                         </div>
-                                        <div class="comment-delete">
+                                        <div class="comment-delete" v-if="comment.uid == getUser.data.uid">
                                             <button @click="deleteComment(comment)">삭제</button>
                                         </div>
                                     </div>
@@ -182,7 +186,7 @@ export default {
             comment: '',
             likeList: [],
             likeShow: [],
-            whoLiked: [],
+            whoLiked: '',
             scrapList: [],
             scrapShow: [],
             followList: [],
@@ -261,8 +265,10 @@ export default {
                                     this.scrapShow = [];
                                     this.whoLiked = [];
                                     this.datas = res.data;
+                                    console.log(this.datas);
+                                    // console.log(this.getUser.data.uid);
                                     for (var i = 0; i < this.datas.length; ++i) {
-                                        if (res.data[i].favorite.length > 0) {
+                                        if (res.data[i].favoriteNum > 0) {
                                             this.whoLiked.push(res.data[i].favorite[0].nickname);
                                         } else {
                                             this.whoLiked.push('');
@@ -349,10 +355,11 @@ export default {
         addComment(info) {
             // console.log(this.comment);
             var commentObject = new Object();
+            commentObject.jwt = this.jwt;
             commentObject.boardid = info.boardid;
             commentObject.contents = this.comment;
             commentObject.uid = info.uid;
-            if (this.comment == null) {
+            if (this.comment == '') {
                 alert('댓글을 입력해주세요');
             } else {
                 Axios.post(`${URI}/page/comment`, commentObject)

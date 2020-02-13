@@ -93,7 +93,7 @@ const createMap = () => {
 
     // 위에 작성한 옵션으로 Drawing Manager를 생성합니다
     manager = new kakao.maps.Drawing.DrawingManager(options);
-    manager.addListener('drawend', function(mouseEvent) {
+    manager.addListener('drawend', function (mouseEvent) {
         if (commentCondition === 'both') {
             if (mouseEvent.overlayType === 'marker') {
                 info['comment-' + (commentIndex - 1)].open(map, mouseEvent.target);
@@ -127,7 +127,7 @@ const createMap = () => {
             }
         }
     });
-    kakao.maps.event.addListener(map, 'click', function() {
+    kakao.maps.event.addListener(map, 'click', function () {
         for (var i = 0; i < placeResults.length; i++) {
             placeResults[i].setMap(null);
         }
@@ -141,7 +141,7 @@ const createMap = () => {
     // Drawing Manager 객체에 state_changed 이벤트를 등록합니다
     // state_changed 이벤트는 그리기 요소의 생성/수정/이동/삭제 동작
     // 또는 Drawing Manager의 undo, redo 메소드가 실행됐을 때 발생합니다
-    manager.addListener('state_changed', function() {
+    manager.addListener('state_changed', function () {
         // 되돌릴 수 있다면 undo 버튼을 활성화 시킵니다
         if (manager.undoable()) {
             undoBtn.disabled = false;
@@ -243,20 +243,20 @@ const searchPlace = place => {
             // 마커와 검색결과 항목에 mouseover 했을때
             // 해당 장소에 인포윈도우에 장소명을 표시합니다
             // mouseout 했을 때는 인포윈도우를 닫습니다
-            (function(marker, title) {
-                kakao.maps.event.addListener(marker, 'mouseover', function() {
+            (function (marker, title) {
+                kakao.maps.event.addListener(marker, 'mouseover', function () {
                     displayInfowindow(marker, title);
                 });
 
-                kakao.maps.event.addListener(marker, 'mouseout', function() {
+                kakao.maps.event.addListener(marker, 'mouseout', function () {
                     placeResultsInfoWinow.close();
                 });
 
-                itemEl.onmouseover = function() {
+                itemEl.onmouseover = function () {
                     displayInfowindow(marker, title);
                 };
 
-                itemEl.onmouseout = function() {
+                itemEl.onmouseout = function () {
                     placeResultsInfoWinow.close();
                 };
             })(marker, places[i].place_name);
@@ -339,8 +339,8 @@ const searchPlace = place => {
             if (i === pagination.current) {
                 el.className = 'on';
             } else {
-                el.onclick = (function(i) {
-                    return function() {
+                el.onclick = (function (i) {
+                    return function () {
                         pagination.gotoPage(i);
                     };
                 })(i);
