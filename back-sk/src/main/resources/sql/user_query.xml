@@ -6,152 +6,224 @@
 <mapper namespace="usersql">
 
 
-	<insert id="addUser" parameterType="user" useGeneratedKeys="true" keyProperty="uid">
+	<insert id="addUser" parameterType="user"
+		useGeneratedKeys="true" keyProperty="uid">
 		insert into user
-		(nickname, name, email, password, phone, birth, loginApi, userkey, userid)
+		(nickname, name, email, password, phone, birth,
+		loginApi, userkey, userid)
 		values
-		(#{nickname}, #{name}, #{email}, #{password}, #{phone}, #{birth}, #{loginApi}, #{userkey}, #{userid})
+		(#{nickname}, #{name}, #{email},
+		#{password}, #{phone}, #{birth}, #{loginApi}, #{userkey}, #{userid})
 		<selectKey keyProperty="uid" resultType="int">
-			select LAST_INSERT_ID()
+			select
+			LAST_INSERT_ID()
 		</selectKey>
 	</insert>
-	
+
 	<select id="getUserList" resultType="user">
-	select uid, nickname, name, email, password, phone, birth, profileImg, loginApi, userkey, userid
-	from user
-	where loginApi = 0 and userkey='Y';
+		select uid, nickname, name, email, password, phone, birth, profileImg,
+		loginApi, userkey, userid
+		from user
+		where loginApi = 0
 	</select>
 
 	<select id="findUserByEmailAndPassword" parameterType="user"
 		resultType="user">
-		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi, userkey, userid
+		select uid, nickname, name, email, password, phone, birth,
+		profileImg, loginApi, userkey, userid
 		from user
-		where email=#{email} and password=#{password} and loginApi = 0 and userkey='Y'
+		where email=#{email} and
+		password=#{password} and loginApi = 0 and userkey='Y'
 	</select>
 
 	<select id="findUserByUid" parameterType="int" resultType="user">
-		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi, userkey, userid
+		select uid, nickname, name, email, password, phone, birth, profileImg,
+		loginApi, userkey, userid
 		from user
 		where uid = #{value} and userkey='Y'
 	</select>
 
-	<select id="findUserByEmail" parameterType="map" resultType="user">
-		select uid, nickname, name, email, password, phone, birth, profileImg, loginApi, userkey, userid
+	<select id="findUserByUserId" parameterType="map"
+		resultType="user">
+		select uid, nickname, name, email, password, phone, birth,
+		profileImg, loginApi, userkey, userid
 		from user
-		where email = #{email} and loginApi=#{loginApi} and userkey='Y'
+		where userid = #{userid}
+		and loginApi=#{loginApi} and userkey='Y'
 	</select>
-	
-	<select id="findUserByUserId" parameterType="map" resultType="user">
-	select uid, nickname, name, email, password, phone, birth, profileImg, loginApi, userkey, userid
+
+	<select id="findUserByEmail" parameterType="map"
+		resultType="user">
+		select uid, nickname, name, email, password, phone, birth,
+		profileImg, loginApi, userkey, userid
 		from user
-		where userid = #{userid} and loginApi=#{loginApi} and userkey='Y'
+		where email = #{email}
+		and loginApi=#{loginApi} and userkey='Y'
+	</select>
+
+	<select id="findUserNoJoin" parameterType="map"
+		resultType="user">
+		select uid, nickname, name, email, password, phone, birth, profileImg,
+		loginApi, userkey, userid
+		from user
+		where email = #{email} and
+		loginApi=#{loginApi}
 	</select>
 
 	<select id="findEmail" parameterType="user" resultType="string">
-		select email
+		select
+		email
 		from user
-		where name=#{name} and phone = #{phone} and birth=#{birth} and loginApi = 0 and userkey='Y'
+		where name=#{name} and phone = #{phone} and
+		birth=#{birth} and loginApi = 0 and userkey='Y'
 	</select>
 
 	<select id="findPw" parameterType="user" resultType="string">
-		select password
+		select
+		password
 		from user
-		where name=#{name} and phone = #{phone} and birth=#{birth} and email=#{email} and loginApi = 0 and userkey='Y'
+		where name=#{name} and phone = #{phone} and
+		birth=#{birth} and email=#{email} and loginApi = 0 and userkey='Y'
 	</select>
-	
-	<select id="findUserSimple" parameterType="int" resultType="user">
-	select uid, nickname, name, profileImg, loginApi, userkey, userid
+
+	<select id="findUserSimple" parameterType="int"
+		resultType="user">
+		select uid, nickname, profileImg, loginApi, userkey, userid
 		from user
-		where uid = #{userid} and userkey='Y'
+		where
+		uid = #{value} and userkey='Y'
 	</select>
 
 	<delete id="deleteUser" parameterType="int">
 		delete
 		from user
-		where uid=#{value}
+		where
+		uid=#{value}
 	</delete>
-	
+
+	<delete id="deleteUserNoJoin" parameterType="int">
+		delete
+		from user
+		where uid = #{value} and userkey != 'Y'
+	</delete>
+
 	<update id="updateProfile" parameterType="user">
 		update user set
 		<if test="password != null">
-		password=#{password}
+			password=#{password}
 		</if>
 		<if test="profileImg != null">
-		profileImg=#{profileImg}
+			profileImg=#{profileImg}
 		</if>
 		<if test="nickname != null">
-		nickname=#{nickname}
+			nickname=#{nickname}
 		</if>
 		where uid = #{uid} and userkey='Y'
 	</update>
 
-<!-- 
-	<update id="changePw" parameterType="user">
-		UPDATE user
-		SET password=#{password}
-		WHERE uid=#{uid} and userkey='Y'
-	</update>
-	
-	<update id="updateProfileImg" parameterType="user">
-		update user
-		set profileImg = #{profileImg}
-		where uid = #{uid} and userkey='Y'
-	</update>
-	
-	<update id="updateNickName" parameterType="user">
-		update user
-		set nickname = #{nickname}
-		where uid = #{uid} and userkey='Y'
-	</update>
- -->
- 
+	<!-- <update id="changePw" parameterType="user"> UPDATE user SET password=#{password} 
+		WHERE uid=#{uid} and userkey='Y' </update> <update id="updateProfileImg" 
+		parameterType="user"> update user set profileImg = #{profileImg} where uid 
+		= #{uid} and userkey='Y' </update> <update id="updateNickName" parameterType="user"> 
+		update user set nickname = #{nickname} where uid = #{uid} and userkey='Y' 
+		</update> -->
+
 	<update id="updateUserKey" parameterType="int">
 		update user
-		set userkey='Y'
+		set
+		userkey='Y'
 		where uid=#{value}
 	</update>
-	
+
 	<update id="changeUserKey" parameterType="user">
-	update user
-	set userkey=#{userkey}
-	where uid=#{uid}
+		update user
+		set userkey=#{userkey}
+		where uid=#{uid}
 	</update>
-	
+
 	<insert id="addFollow" parameterType="map">
 		insert into follow
 		values(#{following}, #{follower})
 	</insert>
-	
+
 	<delete id="deleteFollow" parameterType="map">
-	delete from follow
-	where following=#{following} and follower=#{follower}
+		delete from follow
+		where following=#{following} and follower=#{follower}
 	</delete>
-	
+
 	<select id="getFollow" parameterType="int" resultType="int">
-		select follower
+		select
+		follower
 		from follow
 		where following = #{value}
 	</select>
 
 	<select id="getFollower" parameterType="int" resultType="int">
-		select following
+		select
+		following
 		from follow
 		where follower = #{value}
 	</select>
-	
+
 	<insert id="addBlackList" parameterType="map">
-	insert into blacklist(uid, exp, jwt) values(#{uid}, #{exp}, #{jwt})
+		insert into blacklist(uid, exp, jwt) values(#{uid}, #{exp}, #{jwt})
 	</insert>
-	
+
 	<select id="findBlackList" parameterType="map" resultType="int">
-	select count(jwt) from blacklist where uid=#{uid} and exp=#{exp}
+		select count(jwt) from blacklist where uid=#{uid} and exp=#{exp}
 	</select>
-	
-	<select id="findBlackListByUid" parameterType="int" resultType="string">
-	select exp from blacklist where uid=#{value}
+
+	<select id="findBlackListByUid" parameterType="int"
+		resultType="string">
+		select exp from blacklist where uid=#{value}
 	</select>
-	
+
 	<delete id="deleteBlackList">
-	delete from blacklist where exp <![CDATA[<]]> now()
+		delete from blacklist where exp <![CDATA[<]]>
+		now()
+	</delete>
+
+	<insert id="addAlarm" parameterType="alarm"
+		useGeneratedKeys="true" keyProperty="alarmid">
+		insert into alarm(uid, alarmtype, boardid, commentid, follow, nickname,
+		time)
+		values(#{uid}, #{alarmtype}, #{boardid}, #{commentid}, #{follow}, #{nickname},
+		now())
+	</insert>
+
+	<select id="getAlarm" parameterType="int" resultType="alarm">
+		select alarmid, uid, alarmtype, boardid, commentid, follow, nickname
+		from alarm
+		where uid = #{value}
+	</select>
+
+	<delete id="deleteAlarm" parameterType="int">
+		delete from alarm
+		where alarmid = #{value}
+	</delete>
+
+	<delete id="deleteAlarmAll" parameterType="int">
+		delete from alarm
+		where uid = #{value} and time <![CDATA[<]]>
+		now()
+	</delete>
+
+	<insert id="addToken" parameterType="map">
+		insert into token(uid, exp, jwt) values(#{uid}, #{exp}, #{jwt})
+	</insert>
+
+	<select id="findTokenByUid" parameterType="int"
+		resultType="string">
+		select jwt from blacklist where uid=#{value} and exp <![CDATA[<]]>
+		now
+	</select>
+
+	<delete id="deleteToken">
+		delete from token where exp <![CDATA[<]]>
+		now()
+	</delete>
+
+	<delete id="deleteTokenByUid" parameterType="int">
+		delete from token where uid=#{value}
 	</delete>
 </mapper>

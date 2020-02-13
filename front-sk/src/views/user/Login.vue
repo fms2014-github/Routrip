@@ -7,6 +7,7 @@
                 <h2 class="mention">
                     Let's share Route, ROUTRIP!
                 </h2>
+                <button @click="gogo">알람 페이지 가보쟈</button>
             </div>
         </div>
 
@@ -93,7 +94,8 @@
                 </div>
             </div>
             <div id="popup-join" :class="{ hideJoin: !popup }">
-                <join @popupToggle="popupToggle" />
+                <join v-if="this.nextStep" @nextStep="nextStepToggle" @popupToggle="popupToggle" :snscheck="loginApi" @snsToggle="snsToggle" />
+                <joinAuth v-if="!this.nextStep" />
             </div>
         </div>
     </div>
@@ -110,6 +112,8 @@ import GoogleLogin from '../../components/user/snsLogin/Google.vue';
 import UserApi from '../../apis/UserApi';
 import NaverLogin from '../../components/user/snsLogin/Naver.vue';
 import join from './Join';
+import joinAuth from './JoinAuth';
+import alarm from './Alarm' 
 
 // store
 // 뷰엑스를 쓰는 방법 중 하나를 가져옴
@@ -130,6 +134,7 @@ export default {
         GoogleLogin,
         NaverLogin,
         join,
+        joinAuth,
     },
     created() {
         this.component = this;
@@ -164,6 +169,12 @@ export default {
         ...userHelper.mapGetters(['getUser']),
     },
     methods: {
+        gogo() {
+            this.$router.push('/alarm')
+        },
+        nextStepToggle() {
+            this.nextStep = !this.nextStep;
+        },
         ...userHelper.mapActions(['reqUserInfo']),
         ...userHelper.mapMutations(['setUser']),
         getImageUrl() {
@@ -201,25 +212,28 @@ export default {
                     data,
                     res => {
                         //통신을 통해 전달받은 값 콘솔에 출력
-                        console.log(res.data);
+                        // console.log(res.data);
 
                         // getters로 가져오는 법
-                        console.log(this.getUser);
+                        // console.log(this.getUser);
 
                         // mutations 쓰는 법
                         // 전역사용
                         // 1. this.$store.commit('User/setUser', res.data);
                         // 2. helpers 이용
                         this.setUser(res.data);
-
-                        console.log(this.getUser);
+                        // console.log('뷰엑스!!!!!');
+                        localStorage.setItem('routrip_JWT', res.data);
+                        this.reqUserInfo();
+                        // console.log(this.getUser);
                         localStorage.setItem('loginedEmail', this.email);
+                        // console.log(this.getUser);
                         //요청이 끝나면 버튼 활성화
                         this.isSubmit = true;
                         if (this.emailSaveCheck) {
                             localStorage.setItem('saveEmail', this.email);
                         }
-                        // this.$router.push({ name: 'Main' });
+                        this.$router.push({ name: 'Main' });
                     },
                     error => {
                         //요청이 끝나면 버튼 활성화
@@ -234,14 +248,21 @@ export default {
         popupToggle() {
             this.popup = !this.popup;
         },
-        loginOrJoin() {
+        snsToggle() {
+            this.loginApi = 0;
+            this.popup = !this.popup;
+        },
+        loginOrJoin(loginApi) {
+            this.loginApi = loginApi;
+
             Kakao.API.request({
                 url: '/v1/user/me',
                 success: res => {
                     this.setUser(res);
                     this.userSnsId = res.id;
+                    sessionStorage.setItem('snsId', res.id);
                     Axios.post('http://192.168.100.70:8083/account/snslogin', {
-                        loginApi: 1,
+                        loginApi: loginApi,
                         userid: res.id,
                     })
                         .then(res2 => {
@@ -249,7 +270,7 @@ export default {
                             if (res2.data !== '') {
                                 this.reqUserInfo();
                                 this.$router.push('/main');
-                                console.log(this.getUser);
+                                // console.log(this.getUser);
                             }
                         })
                         .then(() => this.popupToggle());
@@ -259,6 +280,7 @@ export default {
     },
     data: () => {
         return {
+            nextStep: true,
             email: '',
             password: '',
             passwordSchema: new PV(),
@@ -273,6 +295,7 @@ export default {
             autoLogin: false,
             popup: false,
             userSnsId: '',
+            loginApi: 0,
         };
     },
     mounted() {
@@ -293,7 +316,8 @@ export default {
     },
     updated() {
         if (localStorage.getItem('popup') !== null) {
-            this.popup = !Boolean(localStorage.getItem('popup'));
+            this.popup = Boolean(localStorage.getItem('popup'));
+            this.popup = !this.popup;
             localStorage.removeItem('popup');
         }
     },
