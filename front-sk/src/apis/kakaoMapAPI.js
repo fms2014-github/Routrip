@@ -379,6 +379,7 @@ const getTest = () => {
     console.log('commentIndex', commentIndex);
     console.log(manager.getData());
 };
+
 const KakaoMap = {
     createMap: () => createMap(),
     selectOverlay: (condition, type, title, content) => selectOverlay(condition, type, title, content),
