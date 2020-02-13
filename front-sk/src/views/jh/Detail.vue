@@ -44,8 +44,7 @@
                             </button>
                         </div>
                         <div class="state" v-if="data.favoriteNum == 1">
-                            <strong>{{ whoLiked }}</strong
-                            >님이 게시글을 좋아합니다.
+                            <strong>{{ whoLiked }}</strong>님이 게시글을 좋아합니다.
                         </div>
                         <div class="state" v-if="data.favoriteNum > 1">
                             <strong>{{ whoLiked }}</strong>
@@ -53,7 +52,50 @@
                         </div>
                     </div>
                     <div class="comments">
-                        댓글들....
+                        <div class="show-comment">
+                            <div
+                                class="comment"
+                                v-for="(comment, commentIdx) in data.comments"
+                                :key="commentIdx"
+                            >
+                                <div class="writer-img">
+                                    <img
+                                        :src="'http://192.168.100.70:8083/' + comment.user.profileImg"
+                                        alt
+                                    />
+                                </div>
+                                <div class="comment-info">
+                                    <div class="comment-info-box">
+                                        <div class="writer">
+                                            <strong>{{ comment.user.nickname }}</strong>
+                                            <span>{{ comment.writeday }}</span>
+                                        </div>
+                                        <div class="writer-text">
+                                            <span>{{ comment.contents }}</span>
+                                        </div>
+                                    </div>
+                                    <div class="comment-delete">
+                                        <button @click="deleteComment(comment)">삭제</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="write-comment">
+                            <form action class="comment-form">
+                                <textarea
+                                    class="comment"
+                                    placeholder="댓글 달기..."
+                                    autocomplete="off"
+                                    wrap="soft"
+                                    v-model="comment"
+                                ></textarea>
+                            </form>
+                            <div class="comment-btn">
+                                <button @click="addComment(data)">
+                                    <strong>등록</strong>
+                                </button>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -123,8 +165,9 @@ export default {
         showAll() {
             Axios.post(`${URI}/page/boardDetail`, { jwt: this.jwt, boardid: this.boardid })
                 .then(res => {
-                    // console.log(res.data);
+                    console.log(res.data);
                     this.data = res.data;
+
                     Axios.post(`${URI}/page/scrapBoard`, { jwt: this.jwt })
                         .then(res => {
                             // console.log(res.data);

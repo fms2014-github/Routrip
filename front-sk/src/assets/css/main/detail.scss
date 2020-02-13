@@ -2,6 +2,8 @@ $iPad: 'screen and (max-width : 768px)';
 $iPadPro: 'screen and (min-width : 769px) and (max-width : 1024px) ';
 $desktop: 'screen and (min-width : 1025px)';
 
+
+
 .detail {
     padding: 40px 0;
     background-color: #f2f2f2;
@@ -30,7 +32,7 @@ $desktop: 'screen and (min-width : 1025px)';
                 .comment-box {
                     background-color: white;
                     width: 650px;
-                    height: 300px;
+                    height: 550px;
                     border: 1px solid black;
                     margin: 0;
                     padding: 20px;
@@ -99,24 +101,48 @@ $desktop: 'screen and (min-width : 1025px)';
                 .follow {
                     cursor: pointer;
 
-                    span {
-                        color: red;
+                    span:first-child {
+                        color: blue;
                         font-weight: 600;
                         font-size: 1.2em;
                     }
 
+                    span:last-child {
+                        color: red;
+                        font-weight: 600;
+                        font-size: 1.2em;
+                    }
                 }
             }
 
             .comments {
-                @media #{$iPad, $iPadPro} {}
+                max-height: none;
 
-                @media #{$desktop} {}
+                /* width */
+                ::-webkit-scrollbar {
+                    width: 3px;
+                }
+
+                @media #{$iPad, $iPadPro} {
+                    .show-comment {
+                        height: 380px;
+                        overflow-y: scroll;
+                        overflow-x: hidden;
+                    }
+                }
+
+                @media #{$desktop} {
+                    .show-comment {
+                        height: 420px;
+                        overflow-y: scroll;
+                        overflow-x: hidden;
+                    }
+                }
             }
 
             .sns-btn {
                 padding: 0 0 20px 0;
-                border-bottom: 1px solid rgba(00, 00, 00, 0.5);
+                border-bottom: 1px solid rgba(00, 00, 00, 0.2);
                 margin-bottom: 20px;
 
                 .like {
