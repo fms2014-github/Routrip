@@ -14,16 +14,16 @@
                 <div v-if="snscheck === 0">
                     <div class="input-with-label">
                         <input
-                            id="email"
-                            v-model="email"
-                            :class="{ error: error.email, complete: !error.email && email.length !== 0 }"
+                            id="JoinEmail"
+                            v-model="JoinEmail"
+                            :class="{ error: error.JoinEmail, complete: !error.JoinEmail && JoinEmail.length !== 0 }"
                             placeholder="이메일을 입력하세요."
                             type="text"
                             @keyup.enter="submit"
                         />
-                        <label for="email">이메일</label>
-                        <div v-if="error.email" class="error-text">
-                            {{ error.email }}
+                        <label for="JoinEmail">이메일</label>
+                        <div v-if="error.JoinEmail" class="error-text">
+                            {{ error.JoinEmail }}
                         </div>
                     </div>
                     <div class="input-with-label">
@@ -57,16 +57,16 @@
                 </div>
                 <div class="input-with-label">
                     <input
-                        id="name"
-                        v-model="name"
-                        :class="{ error: error.name, complete: name.length >= 2 }"
+                        id="JoinName"
+                        v-model="JoinName"
+                        :class="{ error: error.JoinName, complete: JoinName.length >= 2 }"
                         placeholder="이름을 입력하세요."
                         type="text"
                         @keyup.enter="submit"
                     />
-                    <label for="name">이름</label>
-                    <div v-if="error.name" class="error-text">
-                        {{ error.name }}
+                    <label for="JoinName">이름</label>
+                    <div v-if="error.JoinName" class="error-text">
+                        {{ error.JoinName }}
                     </div>
                 </div>
                 <div class="input-with-label">
@@ -167,20 +167,20 @@ export default {
 
     data: () => {
         return {
-            email: '',
+            JoinEmail: '',
             password: '',
             passwordConfirm: '',
             passwordSchema: new PV(),
             nickname: '',
-            name: '',
+            JoinName: '',
             birth: '',
             phone: '',
             isTerm: false,
             isLoading: false,
             error: {
                 phone: false,
-                name: false,
-                email: false,
+                JoinName: false,
+                JoinEmail: false,
                 password: false,
                 nickname: false,
                 passwordConfirm: false,
@@ -193,13 +193,13 @@ export default {
         };
     },
     watch: {
-        name: function(v) {
+        JoinName: function(v) {
             this.checkForm();
         },
         nickname: function(v) {
             this.checkForm();
         },
-        email: function(v) {
+        JoinEmail: function(v) {
             this.checkForm();
         },
         password: function(v) {
@@ -240,9 +240,9 @@ export default {
             this.nickname = localStorage.getItem('nickname');
             localStorage.removeItem('nickname');
         }
-        if (localStorage.getItem('email') !== null) {
-            this.email = localStorage.getItem('email');
-            localStorage.removeItem('email');
+        if (localStorage.getItem('JoinEmail') !== null) {
+            this.JoinEmail = localStorage.getItem('JoinEmail');
+            localStorage.removeItem('JoinEmail');
         }
     },
     destroyed() {
@@ -257,10 +257,10 @@ export default {
         },
         checkForm() {
             if (this.snscheck === 0) {
-                if (this.email.length >= 0 && !EmailValidator.validate(this.email)) {
-                    this.error.email = '이메일 형식이 아닙니다.';
+                if (this.JoinEmail.length >= 0 && !EmailValidator.validate(this.JoinEmail)) {
+                    this.error.JoinEmail = '이메일 형식이 아닙니다.';
                 } else {
-                    this.error.email = false;
+                    this.error.JoinEmail = false;
                 }
 
                 if (this.password.length >= 0 && !this.passwordSchema.validate(this.password)) {
@@ -274,9 +274,9 @@ export default {
                     this.error.passwordConfirm = false;
                 }
             }
-            if (this.name.length < 2) this.error.name = '2자 이상 입력해 주세요.';
+            if (this.JoinName.length < 2) this.error.JoinName = '2자 이상 입력해 주세요.';
             else {
-                this.error.name = false;
+                this.error.JoinName = false;
             }
 
             if (this.nickname.length < 2 || this.nickname.length > 10) this.error.nickname = '2자 이상 10자 이하로 입력해주세요.';
@@ -309,10 +309,10 @@ export default {
         },
         submit() {
             if (this.isSubmit) {
-                let { email, password, nickname, name, birth, phone } = this;
+                let { JoinEmail, password, nickname, birth, phone } = this;
                 let data = {
                     nickname,
-                    name,
+                    name: this.JoinName,
                     birth,
                     phone,
                 };
@@ -325,11 +325,11 @@ export default {
                 this.isSubmit = false;
                 // 일반회원가입
                 if (this.snscheck === 0) {
-                    data.email = email
+                    data.email = JoinEmail
                     data.password = password
                     
 
-                    sessionStorage.setItem('tempEmail', email)
+                    sessionStorage.setItem('tempEmail', JoinEmail)
                     UserApi.requestSignUp(
                     data,
                     res => {
@@ -346,7 +346,7 @@ export default {
                         this.isSubmit = true;
                         localStorage.setItem('popup', 'false');
                         localStorage.setItem('nickname', this.nickname);
-                        localStorage.setItem('email', this.email);
+                        localStorage.setItem('JoinEmail', this.JoinEmail);
                         this.$router.push({ name: 'ErrorPage' });
                     });
                 }
@@ -372,19 +372,19 @@ export default {
             }
         },
         close() {
-            this.email = '';
+            this.JoinEmail = '';
             this.password = '';
             this.passwordConfirm = '';
             this.passwordSchema = new PV();
             this.nickname = '';
-            this.name = '';
+            this.JoinName = '';
             this.birth = '';
             this.phone = '';
             this.isTerm = false;
 
             this.error.phone = false;
-            this.error.name = false;
-            this.error.email = false;
+            this.error.JoinName = false;
+            this.error.JoinEmail = false;
             this.error.password = false;
             this.error.nickname = false;
             this.error.passwordConfirm = false;

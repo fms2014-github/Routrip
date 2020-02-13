@@ -8,11 +8,11 @@
             </div>
             <div class="input-with-label">
                 <input
-                    v-model="auth"
+                    v-model="userkey"
                     v-bind:class="{
-                        error: error.auth,
-                        complete: !error.auth && auth.length !== 0,
-                        disabled: !auth,
+                        error: error.userkey,
+                        complete: !error.userkey && userkey.length !== 0,
+                        disabled: !userkey,
                     }"
                     @keyup.enter="submit"
                     id="auth"
@@ -21,8 +21,8 @@
                     maxlength="6"
                 />
                 <label for="auth">인증번호</label>
-                <div class="error-text" v-if="error.auth">
-                    {{ error.auth }}
+                <div class="error-text" v-if="error.userkey">
+                    {{ error.userkey }}
                 </div>
             </div>
         </div>
@@ -40,17 +40,16 @@ import '../../assets/css/user.scss';
 import '../../assets/css/style.scss';
 import UserApi from '../../apis/UserApi';
 import * as EmailValidator from 'email-validator';
-import Axios from 'axios';
 
 export default {
     data: () => {
         return {
             email: '',
-            auth: '',
+            userkey: '',
             isEmail: false,
             isLoading: false,
             error: {
-                auth: false,
+                userkey: false,
             },
             isSubmit: false,
         };
@@ -60,40 +59,36 @@ export default {
         this.email = sessionStorage.getItem('tempEmail')
     },
     watch: {
-        auth: function(v) {
+        userkey: function(v) {
             this.checkForm();
         }
     },
     methods: {
         checkForm() {
-            if (this.auth.length != 6) this.error.auth = '인증번호를 입력하세요.';
+            if (this.userkey.length != 6) this.error.userkey = '인증번호를 입력하세요.';
             else {
-                this.error.auth = false;
+                this.error.userkey = false;
                 this.isSubmit = true;
             }
         },
         submit() {
             if (this.isSubmit && !this.isEmail) {
-                let { email, auth } = this;
+                let { email, userkey } = this;
                 let data = {
                     email,
-                    userkey: auth
+                    userkey
                 };
 
                 console.log(data);
 
-                Axios.put('http://192.168.100.70:8083/account/signup', {
-                    email,
-                    userkey: auth
-                }, () => {
-                    this.isSubmit = false;
-                    alert('인증번호가 확인되었습니다.');
-                    alert('가입이 완료되었습니다.');
-                    // this.$router.push('/');
-                }, (error) => {
-                    alert("실패!");
-                    console.log(error);
-                });
+                UserApi.requestAuthUserKey(data,res =>{
+                    console.log(res)
+                    alert("가입이 완료되었습니다.")
+                    this.$emit('successAuth');
+                }, error=>{
+                    console.log(error)
+                    alert("인증번호가 틀렸습니다.")
+                })
             }
         },
         back() {
