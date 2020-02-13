@@ -20,8 +20,8 @@
                 <router-link v-bind:to="{ name: 'UserPost' }"><TabComponent tabTitle="글" :isActive="true"/></router-link>
                 <router-link v-bind:to="{ name: 'UserComment' }"><TabComponent tabTitle="댓글" :isActive="true"/></router-link>
                 <router-link v-bind:to="{ name: 'UserLike' }"><TabComponent tabTitle="좋아요" :isActive="true"/></router-link>
-                <!-- <button @click="reqlikes"><TabComponent tabTitle="좋아요" :isActive="true"/></button> -->
                 <router-link v-bind:to="{ name: 'UserPeople' }"><TabComponent tabTitle="사람들" :isActive="true"/></router-link>
+                <router-link v-bind:to="{ name: 'UserScrap' }"><TabComponent tabTitle="스크랩" :isActive="true"/></router-link>
             </div>
 
             <div class="profile-tab-page">
