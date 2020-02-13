@@ -66,7 +66,9 @@
                 margin-bottom: 20px;
             }
         }
-        .emailSaveCheck{
+        .emailSaveCheck, .autoLogin{
+            display: inline-block;
+            margin: 0 8px;
             input{
                 &[type=checkbox]{
                     -webkit-appearance: checkbox;
@@ -160,6 +162,12 @@
         display: inline-block;
         margin-right: calc(100% - 280px)
     }
+    #find-email-result{
+        text-align: center;
+        h1, h3{
+            margin: 0 0 16px 0;
+        }
+    }
     #find-email-tab, #find-password-tab{
         margin: 0;
         padding: 4px;
@@ -178,6 +186,7 @@
     .close{
         display: inline;
         background-color: white;
+        opacity: 1;
         .close-img{
             width: 32px;
         }

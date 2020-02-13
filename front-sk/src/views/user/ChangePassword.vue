@@ -42,7 +42,7 @@
             </div>
         </div>
 
-        <button @click="register" class="btn btn--back" :disabled="!registerBtn" :class="{ disabled: registerBtn }">
+        <button @click="register" class="btn btn--back" :disabled="!registerBtn" :class="{ disabled: !registerBtn }">
             비밀번호변경
         </button>
         <div class="back" @click="toLogin">로그인하기</div>
@@ -106,8 +106,7 @@ export default {
                     data,
                     res => {
                         alert('비밀번호가 번경되었습니다.');
-                        console.log(res.data);
-                        this.$router.push('/');
+                        this.$emit('resetPassword')
                     },
                     error => {
                         console.log(error);
