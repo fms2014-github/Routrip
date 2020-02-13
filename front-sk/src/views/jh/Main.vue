@@ -29,9 +29,7 @@
                         <div class="postings-posting">
                             <div class="post-info">
                                 <div class="profile-img">
-                                    <img
-                                        :src="'http://192.168.100.70:8083/' + data.user.profileImg"
-                                    />
+                                    <img :src="data.user.profileImg" />
                                 </div>
                                 <div class="name-time">
                                     <strong>{{ data.title }}</strong>
@@ -102,10 +100,7 @@
                                     :key="commentIdx"
                                 >
                                     <div class="writer-img">
-                                        <img
-                                            :src="'http://192.168.100.70:8083/' + comment.user.profileImg"
-                                            alt
-                                        />
+                                        <img :src="comment.user.profileImg" alt />
                                     </div>
                                     <div class="comment-info">
                                         <div class="comment-info-box">
@@ -294,7 +289,7 @@ export default {
                                     this.scrapShow = [];
                                     this.whoLiked = [];
                                     this.datas = res.data;
-                                    // console.log(this.datas);
+                                    console.log(this.datas);
                                     // console.log(this.getUser.data.uid);
                                     for (var i = 0; i < this.datas.length; ++i) {
                                         if (res.data[i].favoriteNum > 0) {
