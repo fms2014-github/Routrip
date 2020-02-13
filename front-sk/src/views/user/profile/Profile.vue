@@ -1,8 +1,8 @@
 <template>
     <div class="profile-page">
+        <Header></Header>
         <div class="wrapD">
             <h2>My Profile</h2>
-            <button @click="logoutClick">logout</button>
             <div class="profile-wrap">
                 <UserPicture :userPicture="true" :pic="userinfo.pic" />
                 <div class="user-info">
@@ -41,6 +41,7 @@ import { createNamespacedHelpers } from 'vuex';
 import HeaderComponent from '../../../components/common/Header';
 import UserPicture from '../../../components/common/UserPicture';
 import TabComponent from '../../../components/common/Tab';
+import Header from '../../jh/Header';
 
 
 import '../../../assets/css/profile.scss';
@@ -55,6 +56,7 @@ export default {
         HeaderComponent,
         UserPicture,
         TabComponent,
+        Header
     },
     computed: {
         ...userMapGetters(['getUser']),
@@ -79,13 +81,13 @@ export default {
             this.userinfo.nickname=this.getUser.data.nickname;
             this.userinfo.pic=this.getUser.data.profileImg;
         },
-      
 
-        logoutClick() {
-            this.logout().then(() => {
-                this.$router.push('/');
-            })
-        },
+        // logoutClick() {
+        //     this.logout().then(() => {
+        //         this.$router.push('/');
+        //     })
+        // },
+        
         popupToggle() {
             this.popup = true;
         },
