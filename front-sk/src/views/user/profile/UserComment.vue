@@ -1,17 +1,36 @@
 <template>
     <div>
-        <!-- <h1>안녕 여긴 댓글</h1> -->
-        <allComment></allComment>
+        <li v-for="comment in commentList" v-bind:key="comment.commentid">
+            {{ comment.contents }}
+        </li>
+
     </div>
 </template>
 
 <script>
-import allComment from "../../../components/common/allComment"
+import Axios from 'axios'
 
 export default {
-    components:{
-        allComment
+     mounted(){
+        this.reqComments();
+    },
+    methods: {
+        reqComments() {
+        console.log("hihi comment")
+        const jwt = localStorage.getItem('routrip_JWT');
+        Axios.post('http://192.168.100.70:8083/page/searchComment' , {jwt : jwt})
+            .then(res => {
+                console.log(res)
+                this.commentList=res.data
+            });
+        }
+    },
+    data(){
+        return{
+            commentList:[]
+        };
     }
+
 }
 
 

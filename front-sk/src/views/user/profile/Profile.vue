@@ -71,7 +71,6 @@ export default {
         ...userMapActions(['reqUserInfo']),
         ...userMapActions(['logout']),
 
-        
 
         async reqInfo() {
             await this.reqUserInfo();
@@ -110,7 +109,6 @@ export default {
         },
 
         async changeNick() { 
-
             await Swal.fire({
             title: '바꿀 닉네임을 입력해주세요.',
             input: 'text',
