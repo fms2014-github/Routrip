@@ -135,6 +135,10 @@ $desktop: 'screen and (min-width : 1025px)';
                         overflow-y: scroll;
                         overflow-x: hidden;
                     }
+
+                    .comment-info {
+                        width: 72%;
+                    }
                 }
             }
 

@@ -117,7 +117,10 @@
                                                 <span>{{ comment.contents }}</span>
                                             </div>
                                         </div>
-                                        <div class="comment-delete">
+                                        <div
+                                            class="comment-delete"
+                                            v-if="comment.uid==getUser.data.uid"
+                                        >
                                             <button @click="deleteComment(comment)">삭제</button>
                                         </div>
                                     </div>
@@ -291,6 +294,8 @@ export default {
                                     this.scrapShow = [];
                                     this.whoLiked = [];
                                     this.datas = res.data;
+                                    // console.log(this.datas);
+                                    // console.log(this.getUser.data.uid);
                                     for (var i = 0; i < this.datas.length; ++i) {
                                         if (res.data[i].favoriteNum > 0) {
                                             this.whoLiked.push(res.data[i].favorite[0].nickname);
@@ -379,10 +384,11 @@ export default {
         addComment(info) {
             // console.log(this.comment);
             var commentObject = new Object();
+            commentObject.jwt = this.jwt;
             commentObject.boardid = info.boardid;
             commentObject.contents = this.comment;
             commentObject.uid = info.uid;
-            if (this.comment == null) {
+            if (this.comment == '') {
                 alert('댓글을 입력해주세요');
             } else {
                 Axios.post(`${URI}/page/comment`, commentObject)

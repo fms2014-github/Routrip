@@ -74,7 +74,10 @@
                                             <span>{{ comment.contents }}</span>
                                         </div>
                                     </div>
-                                    <div class="comment-delete">
+                                    <div
+                                        class="comment-delete"
+                                        v-if="comment.uid==getUser.data.uid"
+                                    >
                                         <button @click="deleteComment(comment)">삭제</button>
                                     </div>
                                 </div>
@@ -166,7 +169,7 @@ export default {
         showAll() {
             Axios.post(`${URI}/page/boardDetail`, { jwt: this.jwt, boardid: this.boardid })
                 .then(res => {
-                    console.log(res.data);
+                    // console.log(res.data);
                     this.data = res.data;
 
                     Axios.post(`${URI}/page/scrapBoard`, { jwt: this.jwt })
@@ -266,10 +269,11 @@ export default {
         addComment() {
             // console.log(this.comment);
             var commentObject = new Object();
+            commentObject.jwt = this.jwt;
             commentObject.boardid = this.data.boardid;
             commentObject.contents = this.comment;
             commentObject.uid = this.data.uid;
-            if (this.comment == null) {
+            if (this.comment == '') {
                 alert('댓글을 입력해주세요');
             } else {
                 Axios.post(`${URI}/page/comment`, commentObject)
@@ -280,6 +284,21 @@ export default {
                     })
                     .catch(res => {
                         console.log('댓글 달기 실패');
+                    });
+                this.getAlldata();
+            }
+        },
+        deleteComment(comment) {
+            if (confirm('댓글을 삭제하시겠습니까?')) {
+                Axios.delete(`${URI}/page/comment`, {
+                    data: comment.commentid,
+                })
+                    .then(res => {
+                        // console.log('댓글 삭제 성공');
+                        this.showAll();
+                    })
+                    .catch(res => {
+                        console.log('댓글 삭제 실패');
                     });
                 this.getAlldata();
             }

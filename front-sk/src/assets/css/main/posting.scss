@@ -191,14 +191,7 @@ $desktop: 'screen and (min-width : 1025px)';
             }
 
             .comment-info {
-                @media #{$iPad, $iPadPro} {
-                    width: 100%;
-                }
-
-                @media #{$desktop} {
-                    width: 70%;
-                }
-
+                width: 100%;
                 margin-left: 20px;
 
                 display: flex;
