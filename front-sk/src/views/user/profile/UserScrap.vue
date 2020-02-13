@@ -5,18 +5,24 @@
             <div v-for="scrap in scrapList" v-bind:key="scrap.boardid">
                 <div class="gallery">
                     <div class = 'card-header'>
-                        <h1 class = 'card-header-title'>{{ scrap.title }}</h1> <h3>스크랩 날짜</h3>    
+                        <h1 class = 'card-header-title'>
+                            <router-link :to="{ name: 'Detail', params: { boardid: scrap.boardid } }">
+                                {{ scrap.title }}
+                            </router-link>
+                        </h1>
+                        <h3>스크랩 날짜</h3>
                     </div>
-                    <div class= 'card'>
-                        <img :src="scrap.imgs[0].src" class = 'card-image'>
-                        
-                        <div class ='card-info'>
-                            <ul>
-                                <li class="card-likes"><span class="visually-hidden">좋아요 :  </span><i class="fas fa-heart" aria-hidden="true"></i> {{scrap.favorite.length}}</li>
-                                <li class="card-comments"><span class="visually-hidden">댓글 수 : </span><i class="fas fa-comment" aria-hidden="true"></i> {{ scrap.commentNum }}</li>
-                            </ul>
-                        </div> 	
-                    </div>
+                    <router-link :to="{ name: 'Detail', params: { boardid: scrap.boardid } }">
+                        <div class= 'card'>
+                            <img :src="scrap.imgs[0].src" class = 'card-image'>
+                            <div class ='card-info'>
+                                <ul>
+                                    <li class="card-likes"><span class="visually-hidden">좋아요 :  </span><i class="fas fa-heart" aria-hidden="true"></i> {{scrap.favorite.length}}</li>
+                                    <li class="card-comments"><span class="visually-hidden">댓글 수 : </span><i class="fas fa-comment" aria-hidden="true"></i> {{ scrap.commentNum }}</li>
+                                </ul>
+                            </div> 	
+                        </div>
+                    </router-link>
                     <div class = 'card-footer'>
                         <!-- {{keywords}} -->
                     </div>

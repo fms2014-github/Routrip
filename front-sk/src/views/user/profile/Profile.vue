@@ -6,7 +6,8 @@
             <div class="profile-wrap">
                 <UserPicture :userPicture="true" :pic="userinfo.pic" />
                 <div class="user-info">
-                    <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정" @changeNick="changeNick" />
+                    <HeaderComponent :headerTitle="userinfo.email" :mailIcon="true" />
+                    <HeaderComponent :headerTitle="userinfo.nickname" :profileIcon="true" rightText="수정" @changeNick="changeNick" />
         
                 <!-- <button @click="reqlikes">테스트</button> -->
 
@@ -78,8 +79,12 @@ export default {
             await this.reqUserInfo();
             
             console.log("?", this.getUser);
+            
             this.userinfo.nickname=this.getUser.data.nickname;
             this.userinfo.pic=this.getUser.data.profileImg;
+            if(!this.getUser.data.email){
+                this.userinfo.email='SNS유저'
+            }
         },
 
         // logoutClick() {
@@ -87,20 +92,17 @@ export default {
         //         this.$router.push('/');
         //     })
         // },
-        
-        popupToggle() {
-            this.popup = true;
+
+        delUser(){
+
         },
+
+
         getInfo() {
             this.userinfo.email = localStorage.getItem('loginedEmail');
             this.userinfo.nickname = localStorage.getItem('nickName');
         },
-        updated() {
-            if (localStorage.getItem('popup') !== null) {
-                // this.popup = !Boolean(localStorage.getItem('popup'));
-                localStorage.removeItem('popup');
-            }
-        },
+
         
         checkLogin() {
             if (localStorage.getItem('loginedEmail') !== null) {

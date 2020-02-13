@@ -1,9 +1,13 @@
 <template>
     <div>
-        <h1>안녕 여긴 좋아요</h1>
-        
+        <h1 style="padding-bottom:30px;">안녕 여긴 좋아요</h1>
+         
         <li v-for="like in likeList" v-bind:key="like.boardid">
+            <h3>
+            <router-link :to="{ name: 'Detail', params: { boardid: like.boardid } }">
             {{ like.title }} 글에 좋아요를 눌렀습니다. ( {{ like.writedate }} )
+            </router-link>
+            </h3>
         </li>
     </div>  
 </template>

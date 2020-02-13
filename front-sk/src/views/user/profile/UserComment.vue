@@ -1,7 +1,11 @@
 <template>
     <div>
         <li v-for="comment in commentList" v-bind:key="comment.commentid">
+            <h3>
+            <router-link :to="{ name: 'Detail', params: { boardid: comment.boardid } }">
             {{ comment.contents }} {{comment.writedate}}
+            </router-link>
+            </h3>
         </li>
 
     </div>

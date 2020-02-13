@@ -1,6 +1,6 @@
 <template>
     <div class="header-default">
-        <button class="menu" v-if="!isBack"></button>
+        <button class="menu" v-if="isBack"></button>
 
         <button class="menu" v-if="profileIcon"></button>
 
@@ -24,7 +24,7 @@
 <script>
 export default {
     name: 'header',
-    props: ['profileIcon', 'mailIcon', 'headerTitle' , 'rightText', 'isDisabled','changeNick'],
+    props: ['profileIcon', 'mailIcon', 'headerTitle', 'isBack', 'isSearch', 'rightText', 'isDisabled','changeNick'],
     mounted() {
         console.log(this.headerTitle);
     },

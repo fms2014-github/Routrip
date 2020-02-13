@@ -4,20 +4,27 @@
             <div v-for="post in postList" v-bind:key="post.boardid">
                 <div class="gallery">
                     <div class = 'card-header'>
-                        <h1 class = 'card-header-title'>{{ post.title }}</h1> <h3>{{post.writedate}}</h3>    
+                        <h1 class = 'card-header-title' >
+                            <router-link :to="{ name: 'Detail', params: { boardid: post.boardid } }">
+                                {{ post.title }}
+                            </router-link>
+                        </h1>
+                        <h3>{{post.writedate}}</h3>    
                     </div>
-                    <div class= 'card'>
-                        <img :src="post.imgs[0].src" class = 'card-image'>
-                        
-                        <div class ='card-info'>
-                            <ul>
-                                <li class="card-likes"><span class="visually-hidden">좋아요 :  </span><i class="fas fa-heart" aria-hidden="true"></i> {{post.favorite.length}}</li>
-                                <li class="card-comments"><span class="visually-hidden">댓글 수 : </span><i class="fas fa-comment" aria-hidden="true"></i> {{ post.commentNum }}</li>
-                            </ul>
-                        </div> 	
-                    </div>
+                    <router-link :to="{ name: 'Detail', params: { boardid: post.boardid } }">
+                        <div class= 'card'>
+                            <img :src="post.imgs[0].src" class = 'card-image'>
+                            
+                            <div class ='card-info'>
+                                <ul>
+                                    <li class="card-likes"><span class="visually-hidden">좋아요 :  </span><i class="fas fa-heart" aria-hidden="true"></i> {{post.favorite.length}}</li>
+                                    <li class="card-comments"><span class="visually-hidden">댓글 수 : </span><i class="fas fa-comment" aria-hidden="true"></i> {{ post.commentNum }}</li>
+                                </ul>
+                            </div> 	
+                        </div>
+                    </router-link>
                     <div class = 'card-footer'>
-                        <!-- {{keywords}} -->
+                     
                     </div>
                 </div>
             </div>
@@ -26,8 +33,6 @@
         <!-- <li v-for="post in postList" v-bind:key="post.boardid">
             <img :src="post.imgs[0].src" alt="">   {{ post.title }} {{post.writedate}}
         </li> -->
-
-
 
 
         <!-- <allPost title="제주도 3박4일" keywords="#저가여행 #맛집위주" picture="trip1.jpg"> </allPost>
@@ -70,6 +75,11 @@ export default {
             });
         }
     },
+    
+    go(){
+
+    },
+
     data(){
         return{
             postList:[]
