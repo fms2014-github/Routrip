@@ -126,6 +126,9 @@ const createMap = () => {
         }
     });
     kakao.maps.event.addListener(map, 'click', function() {
+        for (var i = 0; i < placeResults.length; i++) {
+            placeResults[i].setMap(null);
+        }
         document.getElementById('menu-search-area').classList.add('hide');
         document.getElementById('hide-info').classList.remove('hide');
         document.getElementById('menu-wrap').classList.add('close-menu');
@@ -362,6 +365,12 @@ const searchPlace = place => {
         }
     }
 };
+
+const reloadPlace = () => {
+    for (var i = 0; i < placeResults.length; i++) {
+        placeResults[i].setMap(map);
+    }
+};
 const getTest = () => {
     console.log('info', info);
     console.log('cusInfo', cusInfo);
@@ -375,6 +384,7 @@ const KakaoMap = {
     redo: () => redo(),
     getTest: () => getTest(),
     searchPlace: place => searchPlace(place),
+    reloadPlace: () => reloadPlace(),
 };
 export default KakaoMap;
 
