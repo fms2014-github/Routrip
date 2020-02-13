@@ -188,4 +188,9 @@ public class BoardDao implements IBoardDao{
 		map.put("boardid", boardid);
 		return sqlSession.delete(ns+"deleteScrap", map);
 	}
+
+	@Override
+	public List<Comment> findCommentByUid(int uid) throws Exception {
+		return sqlSession.selectList(ns+"findCommentByUid", uid);
+	}
 }

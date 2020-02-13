@@ -88,7 +88,7 @@
 
 	<select id="findUserSimple" parameterType="int"
 		resultType="user">
-		select uid, nickname, profileImg, loginApi, userkey, userid
+		select uid, nickname, profileImg, loginApi
 		from user
 		where
 		uid = #{value} and userkey='Y'

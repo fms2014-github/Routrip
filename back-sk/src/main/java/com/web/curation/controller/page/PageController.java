@@ -530,7 +530,7 @@ public class PageController {
 	@PostMapping("/searchBoard")
 	@ApiOperation(value = "작성한 게시글")
 	public Object writedBoard(@RequestBody Map<String, String> map) throws Exception {
-		int uid = Integer.parseInt(map.get("uid"));
+		int uid = (int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid");
 		List<Board> boards = boardService.findBoardListByUid(uid);
 		for (Board b : boards) {
 			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
@@ -558,6 +558,14 @@ public class PageController {
 			b.setUser(userService.findUserSimple(b.getUid()));
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
+	}
+	
+	@PostMapping("/searchComment")
+	@ApiOperation(value = "작성한 댓글")
+	public Object writedComment(@RequestBody Map<String, String> map) throws Exception {
+		int uid = (int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid");
+		List<Comment> comments = boardService.findCommentByUid(uid);
+		return new ResponseEntity<>(comments, HttpStatus.OK);
 	}
 
 	@PostMapping("/comment")

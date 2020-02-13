@@ -172,6 +172,13 @@
 	order by writedate desc
 	</select>
 	
+	<select id="findCommentByUid" parameterType="int" resultType="comment">
+	select commentid, uid, boardid, contents, writedate, listener
+	from comment
+	where uid = #{value}
+	order by writedate desc
+	</select>
+	
 	<select id="findCommentByCommentid" parameterType="int" resultType="comment">
 	select commentid, uid, boardid, contents, writedate, listener
 	from comment

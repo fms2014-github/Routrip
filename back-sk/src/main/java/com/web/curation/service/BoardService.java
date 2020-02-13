@@ -166,4 +166,9 @@ public class BoardService implements IBoardService{
 	public int deleteScrap(int uid, int boardid) throws Exception {
 		return boardDao.deleteScrap(uid, boardid);
 	}
+
+	@Override
+	public List<Comment> findCommentByUid(int uid) throws Exception {
+		return boardDao.findCommentByUid(uid);
+	}
 }
