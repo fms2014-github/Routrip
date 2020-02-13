@@ -20,6 +20,7 @@ import UserPost from './views/user/profile/UserPost.vue';
 import UserComment from './views/user/profile/UserComment.vue';
 import UserLike from './views/user/profile/UserLike.vue';
 import UserPeople from './views/user/profile/UserPeople.vue';
+import UserScrap from './views/user/profile/UserScrap.vue';
 import WriteForm from './views/main/WriteForm.vue';
 import PictureRegister from './views/user/profile/PictureRegister.vue';
 
@@ -93,6 +94,13 @@ export const router = new Router({
                 name: 'UserPeople',
                 components: {
                     profile: UserPeople,
+                },
+            },
+            {
+                path: 'scrap',
+                name: 'UserScrap',
+                components: {
+                    profile: UserScrap,
                 },
             },
         ],

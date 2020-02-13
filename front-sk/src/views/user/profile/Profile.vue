@@ -1,8 +1,8 @@
 <template>
     <div class="profile-page">
+        <Header></Header>
         <div class="wrapD">
             <h2>My Profile</h2>
-            <button @click="logoutClick">logout</button>
             <div class="profile-wrap">
                 <UserPicture :userPicture="true" :pic="userinfo.pic" />
                 <div class="user-info">
@@ -20,8 +20,8 @@
                 <router-link v-bind:to="{ name: 'UserPost' }"><TabComponent tabTitle="글" :isActive="true"/></router-link>
                 <router-link v-bind:to="{ name: 'UserComment' }"><TabComponent tabTitle="댓글" :isActive="true"/></router-link>
                 <router-link v-bind:to="{ name: 'UserLike' }"><TabComponent tabTitle="좋아요" :isActive="true"/></router-link>
-                <!-- <button @click="reqlikes"><TabComponent tabTitle="좋아요" :isActive="true"/></button> -->
                 <router-link v-bind:to="{ name: 'UserPeople' }"><TabComponent tabTitle="사람들" :isActive="true"/></router-link>
+                <router-link v-bind:to="{ name: 'UserScrap' }"><TabComponent tabTitle="스크랩" :isActive="true"/></router-link>
             </div>
 
             <div class="profile-tab-page">
@@ -41,6 +41,7 @@ import { createNamespacedHelpers } from 'vuex';
 import HeaderComponent from '../../../components/common/Header';
 import UserPicture from '../../../components/common/UserPicture';
 import TabComponent from '../../../components/common/Tab';
+import Header from '../../jh/Header';
 
 
 import '../../../assets/css/profile.scss';
@@ -55,6 +56,7 @@ export default {
         HeaderComponent,
         UserPicture,
         TabComponent,
+        Header
     },
     computed: {
         ...userMapGetters(['getUser']),
@@ -71,7 +73,6 @@ export default {
         ...userMapActions(['reqUserInfo']),
         ...userMapActions(['logout']),
 
-        
 
         async reqInfo() {
             await this.reqUserInfo();
@@ -80,13 +81,13 @@ export default {
             this.userinfo.nickname=this.getUser.data.nickname;
             this.userinfo.pic=this.getUser.data.profileImg;
         },
-      
 
-        logoutClick() {
-            this.logout().then(() => {
-                this.$router.push('/');
-            })
-        },
+        // logoutClick() {
+        //     this.logout().then(() => {
+        //         this.$router.push('/');
+        //     })
+        // },
+        
         popupToggle() {
             this.popup = true;
         },
@@ -110,7 +111,6 @@ export default {
         },
 
         async changeNick() { 
-
             await Swal.fire({
             title: '바꿀 닉네임을 입력해주세요.',
             input: 'text',
