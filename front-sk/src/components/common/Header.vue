@@ -6,9 +6,6 @@
 
         <button class="mail" v-if="mailIcon"></button>
 
-        <button v-if="isBack" class="back">
-            <i class="fas fa-chevron-left"></i>
-        </button>
 
         <h4 class="title">
             {{ headerTitle }}
@@ -27,13 +24,13 @@
 <script>
 export default {
     name: 'header',
-    props: ['profileIcon', 'mailIcon', 'headerTitle', 'isBack', 'isSearch', 'rightText', 'isDisabled','changeNick'],
+    props: ['profileIcon', 'mailIcon', 'headerTitle' , 'rightText', 'isDisabled','changeNick'],
     mounted() {
         console.log(this.headerTitle);
     },
     methods: {
        test() {
-           console.log("in?");
+           
            this.$emit('changeNick');
        }
     }
