@@ -13,13 +13,13 @@
 
         <div class="wrapC right-view">
             <div class="input-with-label">
-                <input v-model="email" v-bind:class="{
-                        error: error.email,
-                        complete: !error.email && email.length !== 0,
-                    }" @keyup.enter="login" id="email" placeholder="이메일을 입력하세요." type="text" />
-                <label for="email">이메일</label>
-                <div class="error-text" v-if="error.email">
-                    {{ error.email }}
+                <input v-model="LoginEmail" v-bind:class="{
+                        error: error.LoginEmail,
+                        complete: !error.LoginEmail && LoginEmail.length !== 0,
+                    }" @keyup.enter="login" id="LoginEmail" placeholder="이메일을 입력하세요." type="text" />
+                <label for="LoginEmail">이메일</label>
+                <div class="error-text" v-if="error.LoginEmail">
+                    {{ error.LoginEmail }}
                 </div>
             </div>
 
@@ -145,15 +145,13 @@
             password: function (v) {
                 this.checkForm();
             },
-            email: function (v) {
+            LoginEmail: function (v) {
                 this.checkForm();
             },
             emailSaveCheck: function (v) {
                 if (v) {
                     localStorage.setItem('emailSaveCheck', this.emailSaveCheck);
-                    localStorage.setItem('saveEmail', this.email);
                 } else {
-                    localStorage.removeItem('saveEmail');
                     localStorage.removeItem('emailSaveCheck');
                 }
             },
@@ -182,9 +180,9 @@
                 return require('../../assets/images/routrip_logo.png');
             },
             checkForm() {
-                if (this.email.length >= 0 && !EmailValidator.validate(this.email)) this.error.email = '이메일 형식이 아닙니다.';
+                if (this.LoginEmail.length >= 0 && !EmailValidator.validate(this.LoginEmail)) this.error.LoginEmail = '이메일 형식이 아닙니다.';
                 else {
-                    this.error.email = false;
+                    this.error.LoginEmail = false;
                     this.error.loginFail = false;
                 }
 
@@ -204,11 +202,10 @@
             login() {
                 if (this.isSubmit) {
                     let {
-                        email,
                         password
                     } = this;
                     let data = {
-                        email,
+                        email: this.LoginEmail,
                         password,
                     };
                     this.isSubmit = false;
@@ -230,7 +227,11 @@
                             localStorage.setItem('routrip_JWT', res.data);
                             this.reqUserInfo();
                             // console.log(this.getUser);
-                            localStorage.setItem('loginedEmail', this.email);
+                            if(this.emailSaveCheck){
+                                localStorage.setItem('LoginEmail', this.LoginEmail);
+                            }else{
+                                localStorage.removeItem('LoginEmail');
+                            }
                             // console.log(this.getUser);
                             //요청이 끝나면 버튼 활성화
                             this.isSubmit = true;
@@ -241,7 +242,7 @@
                         error => {
                             //요청이 끝나면 버튼 활성화
                             this.isSubmit = true;
-                            localStorage.setItem('tempInput', this.email);
+                            localStorage.setItem('tempInput', this.LoginEmail);
 
                             this.error.loginFail = '이메일 주소나 비밀번호가 틀렸습니다.';
                         },
@@ -294,12 +295,12 @@
             return {
                 joinNextStep: false,
                 findNextStep: false,
-                email: '',
+                LoginEmail: '',
                 password: '',
                 passwordSchema: new PV(),
                 emailSaveCheck: false,
                 error: {
-                    email: false,
+                    LoginEmail: false,
                     passowrd: false,
                     loginFail: false,
                 },
@@ -314,11 +315,11 @@
         },
         mounted() {
             if (localStorage.getItem('tempInput') !== null) {
-                this.email = localStorage.getItem('tempInput');
+                this.LoginEmail = localStorage.getItem('tempInput');
                 localStorage.removeItem('tempInput');
             }
-            if (localStorage.getItem('saveEmail') !== null) {
-                this.email = localStorage.getItem('saveEmail');
+            if (localStorage.getItem('LoginEmail') !== null) {
+                this.LoginEmail = localStorage.getItem('LoginEmail');
             }
             if (localStorage.getItem('emailSaveCheck') !== null) {
                 this.emailSaveCheck = localStorage.getItem('emailSaveCheck');

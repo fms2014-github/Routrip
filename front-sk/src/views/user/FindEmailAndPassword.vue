@@ -9,12 +9,12 @@
         <div id="find-email" :class="{ showEmail: !showEmail }">
             <div id="find-email-input" v-if="!findSuccess">
                 <div class="input-with-label">
-                    <input v-model="name"
-                        v-bind:class="{ error: error.name, complete: !error.name && name.length !== 0 }"
-                        @keyup.enter="name" id="name" placeholder="이름을 입력해 주세요." type="text" />
-                    <label for="name">이름</label>
-                    <div class="error-text" v-if="error.name">
-                        {{ error.name }}
+                    <input v-model="FindName"
+                        v-bind:class="{ error: error.FindName, complete: !error.FindName && FindName.length !== 0 }"
+                        @keyup.enter="FindName" id="FindName" placeholder="이름을 입력해 주세요." type="text" />
+                    <label for="FindName">이름</label>
+                    <div class="error-text" v-if="error.FindName">
+                        {{ error.FindName }}
                     </div>
                 </div>
                 <div class="input-with-label">
@@ -47,12 +47,12 @@
         </div>
         <div id="find-password" :class="{ showPassword: !showPassword }">
             <div class="input-with-label">
-                <input v-model="email"
-                    v-bind:class="{ error: error.email, complete: !error.email && email.length !== 0 }"
-                    @keyup.enter="checkEmail" id="email" placeholder="이메일을 입력해 주세요." type="text" />
-                <label for="email">이메일</label>
-                <div class="error-text" v-if="error.email">
-                    {{ error.email }}
+                <input v-model="FindEmail"
+                    v-bind:class="{ error: error.FindEmail, complete: !error.FindEmail && FindEmail.length !== 0 }"
+                    @keyup.enter="checkEmail" id="FindEmail" placeholder="이메일을 입력해 주세요." type="text" />
+                <label for="FindEmail">이메일</label>
+                <div class="error-text" v-if="error.FindEmail">
+                    {{ error.FindEmail }}
                 </div>
             </div>
             <div class="input-with-label" :class="{ certNumBox: !certNumBox }">
@@ -91,10 +91,10 @@
             certNum: function (v) {
                 this.checkCertNumFunc();
             },
-            email: function (v) {
+            FindEmail: function (v) {
                 this.checkEmail();
             },
-            name: function (v) {
+            FindName: function (v) {
                 this.checkForm();
             },
             phone: function (v) {
@@ -106,11 +106,11 @@
         },
         methods: {
             checkEmail() {
-                if (this.email.length >= 0 && !EmailValidator.validate(this.email)) {
-                    this.error.email = '이메일 형식이 아닙니다.';
+                if (this.FindEmail.length >= 0 && !EmailValidator.validate(this.FindEmail)) {
+                    this.error.FindEmail = '이메일 형식이 아닙니다.';
                     this.sendCertNum = false;
                 } else {
-                    this.error.email = false;
+                    this.error.FindEmail = false;
                     this.sendCertNum = true;
                 }
             },
@@ -124,9 +124,9 @@
                 }
             },
             checkName() {
-                if (this.name.length >= 0 && this.name.length <= 2) {
-                    this.error.name = '두글자 이상 입력해 주세요.';
-                } else this.error.name = false;
+                if (this.FindName.length >= 0 && this.FindName.length <= 2) {
+                    this.error.FindName = '두글자 이상 입력해 주세요.';
+                } else this.error.FindName = false;
             },
             checkPhone() {
                 if (this.phone.length < 10 || this.phone.length > 11) {
@@ -160,13 +160,13 @@
                 this.init();
             },
             init() {
-                this.email = '';
-                this.name = '';
+                this.FindEmail = '';
+                this.FindName = '';
                 this.phone = '';
                 this.birth = '';
                 this.certNum = '';
-                this.error.email = false;
-                this.error.name = false;
+                this.error.FindEmail = false;
+                this.error.FindName = false;
                 this.error.phone = false;
                 this.error.birth = false;
                 this.error.certNum = false;
@@ -180,10 +180,10 @@
             sendCertNumFunc() {
                 if (this.sendCertNum) {
                     UserApi.findPassword(
-                        this.email,
+                        this.FindEmail,
                         res => {
                             alert('위 이메일로 인증번호를 보냈습니다.');
-                            localStorage.setItem('authEmail', this.email);
+                            localStorage.setItem('authEmail', this.FindEmail);
                             console.log(res.data);
                             this.authCode = res.data;
                         },
@@ -209,12 +209,11 @@
             findEmail() {
                 if (this.findEmailBtn) {
                     var {
-                        name,
                         birth,
                         phone
                     } = this;
                     var data = {
-                        name,
+                        name: this.FindName,
                         birth,
                         phone
                     };
@@ -253,16 +252,16 @@
         },
         data: () => {
             return {
-                email: '',
+                FindEmail: '',
                 certNum: '',
-                name: '',
+                FindName: '',
                 phone: '',
                 birth: '',
                 resultEmail: '',
                 error: {
-                    email: false,
+                    FindEmail: false,
                     certNum: false,
-                    name: false,
+                    FindName: false,
                     phone: false,
                     birth: false,
                 },
