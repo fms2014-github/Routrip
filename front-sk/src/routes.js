@@ -25,6 +25,7 @@ import PictureRegister from './views/user/profile/PictureRegister.vue';
 
 // Import Etc Components
 import Components from './views/Components.vue';
+import Alarm from './views/user/Alarm.vue';
 
 export const router = new Router({
     mode: 'history',
@@ -131,5 +132,10 @@ export const router = new Router({
             name: 'Detail',
             component: Detail,
         },
+        {
+            path: '/alarm',
+            name: 'Alarm',
+            component: Alarm,
+        }
     ],
 })

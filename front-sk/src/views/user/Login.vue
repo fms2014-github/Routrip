@@ -7,6 +7,7 @@
                 <h2 class="mention">
                     Let's share Route, ROUTRIP!
                 </h2>
+                <button @click="gogo">알람 페이지 가보쟈</button>
             </div>
         </div>
 
@@ -112,6 +113,7 @@ import UserApi from '../../apis/UserApi';
 import NaverLogin from '../../components/user/snsLogin/Naver.vue';
 import join from './Join';
 import joinAuth from './JoinAuth';
+import alarm from './Alarm' 
 
 // store
 // 뷰엑스를 쓰는 방법 중 하나를 가져옴
@@ -167,6 +169,9 @@ export default {
         ...userHelper.mapGetters(['getUser']),
     },
     methods: {
+        gogo() {
+            this.$router.push('/alarm')
+        },
         nextStepToggle() {
             this.nextStep = !this.nextStep;
         },
