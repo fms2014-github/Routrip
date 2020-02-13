@@ -3,7 +3,7 @@
         <h1>안녕 여긴 좋아요</h1>
         
         <li v-for="like in likeList" v-bind:key="like.boardid">
-            {{ like.title }} 글에 좋아요를 눌렀습니다.
+            {{ like.title }} 글에 좋아요를 눌렀습니다. ( {{ like.writedate }} )
         </li>
     </div>  
 </template>

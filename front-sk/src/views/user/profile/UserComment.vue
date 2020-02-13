@@ -1,7 +1,7 @@
 <template>
     <div>
         <li v-for="comment in commentList" v-bind:key="comment.commentid">
-            {{ comment.contents }}
+            {{ comment.contents }} {{comment.writedate}}
         </li>
 
     </div>

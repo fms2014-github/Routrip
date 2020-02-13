@@ -1,8 +1,31 @@
 <template>
-    <div class="row">
-        <li v-for="post in postList" v-bind:key="post.boardid">
-            {{ post.title }}
-        </li>
+    <div>
+        <div class="row">
+            <div v-for="post in postList" v-bind:key="post.boardid">
+                <div class="gallery">
+                    <div class = 'card-header'>
+                        <h1 class = 'card-header-title'>{{ post.title }}</h1> <h3>{{post.writedate}}</h3>    
+                    </div>
+                    <div class= 'card'>
+                        <img :src="post.imgs[0].src" class = 'card-image'>
+                        
+                        <div class ='card-info'>
+                            <ul>
+                                <li class="card-likes"><span class="visually-hidden">좋아요 :  </span><i class="fas fa-heart" aria-hidden="true"></i> {{post.favorite.length}}</li>
+                                <li class="card-comments"><span class="visually-hidden">댓글 수 : </span><i class="fas fa-comment" aria-hidden="true"></i> {{ post.commentNum }}</li>
+                            </ul>
+                        </div> 	
+                    </div>
+                    <div class = 'card-footer'>
+                        <!-- {{keywords}} -->
+                    </div>
+                </div>
+            </div>
+        </div>
+     </div>
+        <!-- <li v-for="post in postList" v-bind:key="post.boardid">
+            <img :src="post.imgs[0].src" alt="">   {{ post.title }} {{post.writedate}}
+        </li> -->
 
 
 
@@ -22,11 +45,11 @@
         <allPost title="으아아"> </allPost> -->
 
         
-    </div>
+   
 </template>
 
 <script>
-// import allPost from '../../../components/common/allPost';
+import myPost from "../../../assets/css/myPost.scss"
 import Axios from 'axios'
 
 export default {

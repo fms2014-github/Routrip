@@ -2,15 +2,17 @@
     <div>
 
         <div style="display: inline-block; width:45vw; ">
-            A영역
-            <li v-for="following in followingList" v-bind:key="following.uid">
-                {{ following.nickname }}
-            </li>
+            <h2>following</h2>
+            <div class="follow-picture" style="margin-bottom:100px; margin-right:0px;" v-for="following in followingList" v-bind:key="following.uid">
+                <img :src="following.profileImg" alt="userPic"> 
+                <h3>{{ following.nickname }}</h3>
+            </div>
         </div>
         <div style="display: inline-block; width:45vw; ">
-            B영역
-            <li v-for="follower in followerList" v-bind:key="follower.uid">
-                {{ follower.nickname }}
+            <h2>follower</h2>
+            <li class="follow-picture" style="margin-bottom:100px; margin-right:0px;" v-for="follower in followerList" v-bind:key="follower.uid">
+                <img :src="follower.profileImg" alt="userPic"> 
+                <h3>{{ follower.nickname }}</h3>
             </li>
         </div>
 
