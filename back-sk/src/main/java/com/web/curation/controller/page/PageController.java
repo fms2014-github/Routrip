@@ -570,7 +570,11 @@ public class PageController {
 
 	@PostMapping("/comment")
 	@ApiOperation(value = "댓글 등록")
-	public Object addComment(@RequestBody Comment comment) throws Exception {
+	public Object addComment(@RequestBody Map<String, String> map) throws Exception {
+		Comment comment = new Comment();
+		comment.setUid((int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid"));
+		comment.setBoardid(Integer.parseInt(map.get("boardid")));
+		comment.setContents(map.get("contents"));
 		int ok = boardService.addComment(comment);
 		if (ok > 0) {
 			Alarm alarm = new Alarm();
