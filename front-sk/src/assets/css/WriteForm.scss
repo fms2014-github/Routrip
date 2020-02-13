@@ -10,6 +10,7 @@ $border-a6cdc6: 1px solid #a6cdc6;
 #content-upload-form {
     display: inline-flex;
     border: 1px solid black;
+
     #map-wrapper {
         width: 650px;
         position: relative;
@@ -17,6 +18,65 @@ $border-a6cdc6: 1px solid #a6cdc6;
         #map {
             width: 100%;
             height: 600px;
+            .comment-wrap {
+                width: 160px;
+                position: relative;
+                background: #41a8ac;
+                border: 4px solid #7bbfc8;
+                padding: 8px;
+            
+                &:after,
+                &:before {
+                    top: 100%;
+                    left: 50%;
+                    border: solid transparent;
+                    content: " ";
+                    height: 0;
+                    width: 0;
+                    position: absolute;
+                    pointer-events: none;
+                }
+            
+                &:after {
+                    border-color: rgba(136, 183, 213, 0);
+                    border-top-color: #41a8ac;
+                    border-width: 10px;
+                    margin-left: -10px;
+                }
+            
+                &:before {
+                    border-color: rgba(194, 225, 245, 0);
+                    border-top-color: #7bbfc8;
+                    border-width: 16px;
+                    margin-left: -16px;
+                }
+            
+                .comment-title {
+                    display: inline-block;
+                    width: calc(100% - 12px);
+                    word-wrap: break-word;
+                    white-space: pre-wrap;
+                }
+            
+                hr {
+                    border: 1px solid #a6cdc6;
+                }
+            
+                .comment-content {
+                    width: 100%;
+                    word-wrap: break-word;
+                    white-space: pre-wrap;
+                }
+            
+                .close {
+                    display: inline-block;
+                    background-image: url('../images/close.png');
+                    background-size: cover;
+                    width: 12px;
+                    height: 12px;
+                    opacity: 1;
+                }
+            }
         }
 
         #edit {
@@ -43,13 +103,16 @@ $border-a6cdc6: 1px solid #a6cdc6;
                     flex-direction: column;
                     width: 100%;
                     padding: 4px;
-                    #comment-title-insert{
+
+                    #comment-title-insert {
                         width: 100%;
                     }
-                    #comment-content-insert{
+
+                    #comment-content-insert {
                         width: 100%;
                         border: 1px solid black;
                     }
+
                     #comment-submit {
                         display: inline-block;
                         margin: 8px;
@@ -132,12 +195,206 @@ $border-a6cdc6: 1px solid #a6cdc6;
                 border-bottom: 1px solid white
             }
         }
+
+        #menu-wrap {
+            position: absolute;
+            top: 0;
+            left: 0;
+            bottom: 0;
+            width: 250px;
+            margin: 60px 0 30px 10px;
+            padding: 5px;
+            overflow-y: auto;
+            background: rgba(255, 255, 255, 0.7);
+            z-index: 1;
+            font-size: 12px;
+            border-radius: 10px;
+
+            .option {
+                text-align: center;
+
+                #menu-search-area {
+                    padding: 8px 0px;
+                    label {
+                        white-space: nowrap;
+                        ;
+                        display: inline-block;
+                        width: 60%;
+
+                        input {
+                            width: 72%;
+                        }
+                    }
+
+                    button {
+                        width: 30%;
+                    }
+                }
+                #hide-info{
+                    padding: 8px 0px;
+                    font-size: 0.9rem;
+                    cursor: pointer;
+                }
+                p {
+                    margin: 10px 0;
+                }
+
+                button {
+                    margin-left: 5px;
+                }
+            }
+
+            hr {
+                display: block;
+                height: 1px;
+                border: 0;
+                border-top: 2px solid #5F5F5F;
+                margin: 3px 0;
+            }
+
+            a,
+            a:hover,
+            a:active {
+                color: #000;
+                text-decoration: none;
+            }
+        }
+
+        #placesList {
+            li {
+                list-style: none;
+            }
+
+            h5,
+            .item .info {
+                text-overflow: ellipsis;
+                overflow: hidden;
+                white-space: nowrap;
+            }
+
+            .item {
+                position: relative;
+                border-bottom: 1px solid #888;
+                overflow: hidden;
+                cursor: pointer;
+                min-height: 65px;
+
+                span {
+                    display: block;
+                    margin-top: 4px;
+                }
+
+                .markerbg {
+                    float: left;
+                    position: absolute;
+                    width: 36px;
+                    height: 37px;
+                    margin: 10px 0 0 10px;
+                    background: url(http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/marker_number_blue.png) no-repeat;
+                }
+
+                .marker_1 {
+                    background-position: 0 -10px;
+                }
+
+                .marker_2 {
+                    background-position: 0 -56px;
+                }
+
+                .marker_3 {
+                    background-position: 0 -102px
+                }
+
+                .marker_4 {
+                    background-position: 0 -148px;
+                }
+
+                .marker_5 {
+                    background-position: 0 -194px;
+                }
+
+                .marker_6 {
+                    background-position: 0 -240px;
+                }
+
+                .marker_7 {
+                    background-position: 0 -286px;
+                }
+
+                .marker_8 {
+                    background-position: 0 -332px;
+                }
+
+                .marker_9 {
+                    background-position: 0 -378px;
+                }
+
+                .marker_10 {
+                    background-position: 0 -423px;
+                }
+
+                .marker_11 {
+                    background-position: 0 -470px;
+                }
+
+                .marker_12 {
+                    background-position: 0 -516px;
+                }
+
+                .marker_13 {
+                    background-position: 0 -562px;
+                }
+
+                .marker_14 {
+                    background-position: 0 -608px;
+                }
+
+                .marker_15 {
+                    background-position: 0 -654px;
+                }
+
+            }
+
+            .info {
+                padding: 10px 0 10px 55px;
+
+                .gray {
+                    color: #8a8a8a;
+                }
+
+                .jibun {
+                    padding-left: 26px;
+                    background: url(http://t1.daumcdn.net/localimg/localimages/07/mapapidoc/places_jibun.png) no-repeat;
+                }
+
+                .tel {
+                    color: #009900;
+                }
+            }
+        }
+
+        #pagination {
+            margin: 10px auto;
+            text-align: center;
+
+            a {
+                display: inline-block;
+                margin-right: 10px;
+            }
+
+            .on {
+                font-weight: bold;
+                cursor: default;
+                color: #777;
+            }
+        }
     }
 
     #content-wrapper {
         width: 600px;
         height: 600px;
         overflow: auto;
+
         #content-title {
             float: none;
             margin: 0px;
@@ -227,15 +484,19 @@ $border-a6cdc6: 1px solid #a6cdc6;
 
         #calendar-wrapper {
             padding: 4px;
+
             font: {
                 size: 1.4rem;
             }
-            span{
+
+            span {
                 padding: 4px 12px 4px 4px
             }
+
             label {
                 display: inline-block;
                 padding: 4px 8px;
+
                 .calendar {
                     width: 60px;
                     height: 20px;
@@ -251,7 +512,8 @@ $border-a6cdc6: 1px solid #a6cdc6;
             }
 
         }
-        #content-submit{
+
+        #content-submit {
             display: inline-block;
             padding: 12px 0px;
             width: calc(100% - 32px);
@@ -264,81 +526,31 @@ $border-a6cdc6: 1px solid #a6cdc6;
 }
 
 
-.comment-wrap {
-    width: 160px;
-    position: relative;
-    background: #41a8ac;
-    border: 4px solid #7bbfc8;
-    padding: 8px;
-
-    &:after,
-    &:before {
-        top: 100%;
-        left: 50%;
-        border: solid transparent;
-        content: " ";
-        height: 0;
-        width: 0;
-        position: absolute;
-        pointer-events: none;
-    }
-
-    &:after {
-        border-color: rgba(136, 183, 213, 0);
-        border-top-color: #41a8ac;
-        border-width: 10px;
-        margin-left: -10px;
-    }
-
-    &:before {
-        border-color: rgba(194, 225, 245, 0);
-        border-top-color: #7bbfc8;
-        border-width: 16px;
-        margin-left: -16px;
-    }
-
-    .comment-title {
-        display: inline-block;
-        width: calc(100% - 12px);
-        word-wrap: break-word;
-        white-space: pre-wrap;
-    }
-    hr{
-        border: 1px solid #a6cdc6;
-    }
-    .comment-content {
-        width: 100%;
-        word-wrap: break-word;
-        white-space: pre-wrap;
-    }
-
-    .close {
-        display: inline-block;
-        background-image: url('../images/close.png');
-        background-size: cover;
-        width: 12px;
-        height: 12px;
-        opacity: 1;
-    }
-}
-
 .drop-down {
-    animation-name: down;
+    animation-name: dropDown;
     animation-duration: 1s;
     height: 150px !important;
     overflow: hidden;
 }
 
 .drop-up {
-    animation-name: up;
+    animation-name: dropUp;
     animation-duration: 1s;
     height: 0px;
     overflow: hidden;
 }
 
+.close-menu{
+    animation-name: menuOpen;
+    animation-duration: 1s;
+    margin-top: 530px !important;
+    overflow: hidden !important;
+}
 
-
-@keyframes down {
+.hide{
+    display: none !important;
+}
+@keyframes dropDown {
 
     /* keyframe */
     from {
@@ -351,7 +563,7 @@ $border-a6cdc6: 1px solid #a6cdc6;
     }
 }
 
-@keyframes up {
+@keyframes dropUp {
 
     /* keyframe */
     from {
@@ -361,5 +573,18 @@ $border-a6cdc6: 1px solid #a6cdc6;
     /* keyframe */
     to {
         height: 0;
+    }
+}
+
+@keyframes menuOpen {
+
+    /* keyframe */
+    from {
+        margin-top: 530px !important;
+    }
+
+    /* keyframe */
+    to {
+        margin-top: 60px !important;
     }
 }

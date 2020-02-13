@@ -49,14 +49,28 @@
                     </div>
                 </div>
             </div>
+            <div id="menu-wrap" class="close-menu">
+                <div class="option">
+                    <div id="menu-search-area" class="hide">
+                        <label>키워드 : <input v-model="placeSearch" type="text" id="keyword" size="15"/></label>
+                        <button @click="onPlaceSearch">검색하기</button>
+                    </div>
+                    <div id="hide-info" @click="menuToggle">
+                        검색 화면 펼치기
+                    </div>
+                </div>
+                <hr />
+                <ul id="placesList"></ul>
+                <div id="pagination"></div>
+            </div>
         </div>
         <div id="content-wrapper">
             <InputForm id="content-title" :enterInput="test1" :errorText="''" placeholder="제목을 입력해 주세요." label="제목" />
             <div class="select-form">
                 <span class="select-form-title">장소</span>
                 <div class="select-tag">
-                    <div class="hashtag-form" v-for="area in areas" :key="area">
-                        {{ area }}<button class="hashtag-cansle" @click="removeHash(area, 'area')">×</button>
+                    <div class="hashtag-form" v-for="(area, value) in areas" :key="area.id">
+                        {{ value }}<button class="hashtag-cansle" @click="removeHash(area, 'area')">×</button>
                     </div>
                 </div>
             </div>
@@ -69,8 +83,8 @@
             <div class="select-form">
                 <span class="select-form-title">키워드</span>
                 <div class="select-tag">
-                    <div class="hashtag-form" v-for="keyword in keywords" :key="keyword">
-                        {{ keyword }}<button class="hashtag-cansle" @click="removeHash(keyword, 'keyword')">×</button>
+                    <div class="hashtag-form" v-for="(keyword, value) in keywords" :key="value.id">
+                        {{ value }}<button class="hashtag-cansle" @click="removeHash(keyword, 'keyword')">×</button>
                     </div>
                 </div>
             </div>
@@ -137,23 +151,24 @@ export default {
             areaword: '',
             keywordTag: '',
             selectDraw: '',
-            areaData: [
-                '장소 #1',
-                '장소 #2',
-                '장소 #3',
-                '장소 #4',
-                '장소 #5',
-                '장소 #6',
-                '가',
-                '가나',
-                '가나다',
-                '가나다라',
-                '가나다라마',
-                '가나다라마바',
-                '가나다라마바사',
-            ],
-            areas: [],
-            keywords: ['키워드 #1', '키워드 #2', '키워드 #3', '키워드 #4', '키워드 #5'],
+            placeSearch: '이태원 맛집',
+            areaData: {
+                '장소 #1': '1',
+                '장소 #2': '1',
+                '장소 #3': '1',
+                '장소 #4': '1',
+                '장소 #5': '1',
+                '장소 #6': '1',
+                가: '1',
+                가나: '1',
+                가나다: '1',
+                가나다라: '1',
+                가나다라마: '1',
+                가나다라마바: '1',
+                가나다라마바사: '1',
+            },
+            areas: {},
+            keywords: { '키워드 #1': '1', '키워드 #2': '1', '키워드 #3': '1', '키워드 #4': '1', '키워드 #5': '1' },
             resultAreas: [],
             commentTitle: '',
             commentContent: '',
@@ -170,6 +185,14 @@ export default {
         hashTag: function() {},
     },
     methods: {
+        menuToggle() {
+            document.getElementById('menu-search-area').classList.remove('hide');
+            document.getElementById('hide-info').classList.add('hide');
+            document.getElementById('menu-wrap').classList.remove('close-menu');
+        },
+        onPlaceSearch() {
+            kakaoMap.searchPlace(this.placeSearch);
+        },
         createDraw() {
             kakaoMap.selectOverlay(this.createCondition, this.selectDraw, this.commentTitle, this.commentContent);
             this.commentTitle = this.commentContent = '';
@@ -192,9 +215,9 @@ export default {
         },
         removeHash(a, s) {
             if (s === 'area') {
-                this.areas.splice(this.areas.indexOf(a), 1);
+                delete this.areas.a;
             } else if (s === 'keyword') {
-                this.keywords.splice(this.keywords.indexOf(a), 1);
+                delete this.keywords.a;
             }
         },
         createHash(s) {
@@ -203,14 +226,14 @@ export default {
                     alert('태그는 20개 이상 생성할 수 없습니다.');
                     return;
                 }
-                this.areas.push(this.areaword);
+                this.areas[this.areaword] = 1;
                 this.areaword = '';
             } else if (s === 'keyword' && this.keywordTag !== '') {
                 if (this.keywords.length === 10) {
                     alert('태그는 20개 이상 생성할 수 없습니다.');
                     return;
                 }
-                this.keywords.push(this.keywordTag);
+                this.keywords[this.keywordTag] = 1;
                 this.keywordTag = '';
             }
         },
@@ -237,6 +260,8 @@ export default {
         submit() {
             var markupStr = $('#summernote').summernote('code');
             kakaoMap.getTest();
+            console.log('areasTag', Object.keys(this.areas));
+            console.log('areasTag', Object.keys(this.keywords));
             console.log('title', this.title);
             console.log('content', markupStr);
         },
