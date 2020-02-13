@@ -95,7 +95,7 @@
             </div>
             <div id="popup-join" :class="{ hideJoin: !popup }">
                 <join v-if="this.nextStep" @nextStep="nextStepToggle" @popupToggle="popupToggle" :snscheck="loginApi" @snsToggle="snsToggle" />
-                <joinAuth v-if="!this.nextStep" />
+                <joinAuth v-if="!this.nextStep" @successAuth="popupToggle"/>
             </div>
         </div>
     </div>

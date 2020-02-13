@@ -1,4 +1,9 @@
-/* eslint-disable no-console */
+/* eslint-disable no-empty */
+/* eslint-disable no-cond-assign */
+/* eslint-disable no-prototype-builtins */
+/* eslint-disable no-useless-escape */
+/* eslint-disable no-redeclare */
+/* eslint-disable no-undef */
 /**
  * Kakao Javascript SDK for Kakao Open Platform Service - v1.37.2
  *
@@ -2217,7 +2222,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     } else {
                         pollingAction();
                     }
-                };
+                }
 
                 function _stop() {
                     clearInterval(timer);
@@ -4338,7 +4343,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                         via_list: settings.viaPoints
                     };
                     return _k.URL.navi + "?" + _.buildQueryString(scheme);
-                };
+                }
 
                 function buildShareNaviScheme(settings) {
                     var scheme = new NaviMeta();
@@ -4349,7 +4354,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     scheme.scheme_type = 'sharePoi';
 
                     return _k.URL.naviShare + "?" + _.buildQueryString(scheme);
-                };
+                }
 
                 return Navi;
             }();
@@ -8371,7 +8376,7 @@ var _typeof = typeof Symbol === "function" && typeof Symbol.iterator === "symbol
                     }
 
                     function isMobile(ua) {
-                        if (!!ua.match(/ip(hone|od)|android.+mobile|windows (ce|phone)|blackberry|bb10|symbian|webos|firefox.+fennec|opera m(ob|in)i|polaris|iemobile|lgtelecom|nokia|sonyericsson|dolfin|uzard|natebrowser|ktf;|skt;/)) {
+                        if (ua.match(/ip(hone|od)|android.+mobile|windows (ce|phone)|blackberry|bb10|symbian|webos|firefox.+fennec|opera m(ob|in)i|polaris|iemobile|lgtelecom|nokia|sonyericsson|dolfin|uzard|natebrowser|ktf;|skt;/)) {
                             return true;
                         } else {
                             return false;

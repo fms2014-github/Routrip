@@ -800,6 +800,7 @@ p {
 
 .input-with-label {
     @include wrap;
+    float: none !important;
     position: relative;
     margin-bottom: 10px;
     height: 50px;
