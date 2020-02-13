@@ -176,11 +176,13 @@ $desktop: 'screen and (min-width : 1025px)';
     .comments {
         max-height: 270px;
         overflow-y: scroll;
+        overflow-x: hidden;
 
         .comment {
             display: flex;
             align-items: center;
             margin-bottom: 12px;
+            width: 100%;
 
             .writer-img img {
                 width: 30px;
@@ -189,14 +191,34 @@ $desktop: 'screen and (min-width : 1025px)';
             }
 
             .comment-info {
+                @media #{$iPad, $iPadPro} {
+                    width: 100%;
+                }
+
+                @media #{$desktop} {
+                    width: 70%;
+                }
+
                 margin-left: 20px;
-                width: 100%;
+
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
 
+                .comment-info-box {
+                    width: 100%;
+                }
+
+                span {
+                    white-space: pre-line !important;
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                }
+
                 .writer {
                     margin-bottom: 5px;
+                    width: 300px;
 
                     span {
                         margin-left: 10px;
@@ -205,7 +227,7 @@ $desktop: 'screen and (min-width : 1025px)';
                 }
 
                 .comment-delete {
-                    margin-right: 10px;
+                    margin: 0 10px;
                 }
             }
         }

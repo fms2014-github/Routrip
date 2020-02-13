@@ -91,7 +91,7 @@
                                 ></textarea>
                             </form>
                             <div class="comment-btn">
-                                <button @click="addComment(data)">
+                                <button @click="addComment">
                                     <strong>등록</strong>
                                 </button>
                             </div>
@@ -137,6 +137,7 @@ export default {
             jwt: '',
             follow: false,
             unfollow: false,
+            comment: '',
         };
     },
     created() {
@@ -261,6 +262,27 @@ export default {
                 .catch(res => {
                     console.log('팔로우 등록 및 취소 실패');
                 });
+        },
+        addComment() {
+            // console.log(this.comment);
+            var commentObject = new Object();
+            commentObject.boardid = this.data.boardid;
+            commentObject.contents = this.comment;
+            commentObject.uid = this.data.uid;
+            if (this.comment == null) {
+                alert('댓글을 입력해주세요');
+            } else {
+                Axios.post(`${URI}/page/comment`, commentObject)
+                    .then(res => {
+                        // console.log('댓글 달기 성공');
+                        this.comment = '';
+                        this.showAll();
+                    })
+                    .catch(res => {
+                        console.log('댓글 달기 실패');
+                    });
+                this.getAlldata();
+            }
         },
     },
 };
