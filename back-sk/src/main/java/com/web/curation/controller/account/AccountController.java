@@ -125,6 +125,8 @@ public class AccountController {
 	@ApiOperation(value = "로그아웃")
 	public Object logout(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		String exp = format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration());
@@ -144,6 +146,8 @@ public class AccountController {
 	@ApiOperation(value = "팔로우 등록")
 	public Object following(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		int uid = Integer.parseInt(map.get("uid"));
 		if (isOkJwt(jwt)) {
 			int ok = 0;
@@ -206,6 +210,8 @@ public class AccountController {
 	// @ApiOperation(value = "팔로우 해제")
 	public Object deleteFollow(Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		int uid = Integer.parseInt(map.get("uid"));
 		if (isOkJwt(jwt)) {
 			int ok = userService.deleteFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), uid);
@@ -240,11 +246,27 @@ public class AccountController {
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
+	
+	@PostMapping("/password")
+	@ApiOperation(value = "비밀번호 확인")
+	public Object Password(@RequestBody Map<String, String> map) throws Exception {
+		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		String password = map.get("password");
+		User user = userService.findUserByUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+		if (user != null && user.getPassword().equals(password)) {
+			return new ResponseEntity<>(HttpStatus.OK);
+		}
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
 
 	@PutMapping("/user")
 	@ApiOperation(value = "회원정보 변경") // 프로필 이미지, 닉네임 변경
 	public Object updateProfile(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
 			String profileImg = (String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("profileImg");
@@ -297,6 +319,7 @@ public class AccountController {
 		user.setUserkey("Y");
 		ok = userService.addUser(user);
 		if (ok > 0) {
+			System.out.println(user.getNickname()+" 님 가입완료 됐습니다.");
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -355,7 +378,7 @@ public class AccountController {
 		if (user.getUserkey().equals(tempuser.getUserkey())) {
 			int ok = userService.updateUserKey(user.getUid());
 			if (ok > 0) {
-				System.out.println("가입완료 됐습니다.");
+				System.out.println(user.getNickname()+" 님 가입완료 됐습니다.");
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 		}
@@ -399,6 +422,8 @@ public class AccountController {
 	@ApiOperation(value = "유저 토큰 해석")
 	public Object decode2(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			User user = new User();
 			user.setUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
@@ -417,6 +442,8 @@ public class AccountController {
 	@ApiOperation(value = "유저 알림")
 	public Object alarm(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			List<Alarm> alarms = userService.getAlarm((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 			return new ResponseEntity<>(alarms, HttpStatus.OK);

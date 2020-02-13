@@ -125,4 +125,11 @@ public class Comment {
 	public void setWriteday(String writeday) {
 		this.writeday = writeday;
 	}
+
+	@Override
+	public String toString() {
+		return "Comment [commentid=" + commentid + ", uid=" + uid + ", boardid=" + boardid + ", contents=" + contents
+				+ ", writedate=" + writedate + ", listener=" + listener + ", user=" + user + ", writeday=" + writeday
+				+ "]";
+	}
 }

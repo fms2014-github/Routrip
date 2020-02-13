@@ -15,6 +15,7 @@ public class Board {
 	private String writedate;
 	private String tripterm;
 	private String keyword;
+	private List<String> keywords = new ArrayList<>();
 	private double latitude;
 	private double longitude;
 	private int level;
@@ -27,10 +28,12 @@ public class Board {
 	private List<Marker> markers = new ArrayList<>();
 	private User user;
 	private String writeday;// ~전
+	private String content;
 
-	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs, List<User> favorite,
-			int favoriteNum, int commentNum, List<Marker> markers, User user, String writeday) {
+	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword,
+			List<String> keywords, double latitude, double longitude, int level, int unveiled, List<Comment> comments,
+			List<Img> imgs, List<User> favorite, int favoriteNum, int commentNum, List<Marker> markers, User user,
+			String writeday, String content) {
 		super();
 		this.boardid = boardid;
 		this.uid = uid;
@@ -38,6 +41,7 @@ public class Board {
 		this.writedate = writedate;
 		this.tripterm = tripterm;
 		this.keyword = keyword;
+		this.keywords = keywords;
 		this.latitude = latitude;
 		this.longitude = longitude;
 		this.level = level;
@@ -50,6 +54,7 @@ public class Board {
 		this.markers = markers;
 		this.user = user;
 		this.writeday = writeday;
+		this.content = content;
 	}
 
 	public Board() {
@@ -226,5 +231,33 @@ public class Board {
 
 	public void setWriteday(String writeday) {
 		this.writeday = writeday;
+	}
+
+	public List<String> getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(String keyword) {
+		String[] keywordArray = keyword.split(" ");
+		for(String s : keywordArray)
+			keywords.add(s);
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	@Override
+	public String toString() {
+		return "Board [boardid=" + boardid + ", uid=" + uid + ", title=" + title + ", writedate=" + writedate
+				+ ", tripterm=" + tripterm + ", keyword=" + keyword + ", keywords=" + keywords + ", latitude="
+				+ latitude + ", longitude=" + longitude + ", level=" + level + ", unveiled=" + unveiled + ", comments="
+				+ comments + ", imgs=" + imgs + ", favorite=" + favorite + ", favoriteNum=" + favoriteNum
+				+ ", commentNum=" + commentNum + ", markers=" + markers + ", user=" + user + ", writeday=" + writeday
+				+ ", content=" + content + "]";
 	}
 }

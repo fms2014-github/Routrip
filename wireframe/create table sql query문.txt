@@ -33,6 +33,7 @@ longitude double not null,
 level int not null,
 favoriteNum int not null default 0,
 unveiled boolean not null default true,
+content text(4000000000),
 foreign key(uid)
 references user(uid) on update cascade on delete cascade
 );
@@ -74,7 +75,7 @@ create table img(
 imgid int  primary key auto_increment,
 boardid int not null,
 src varchar(500) not null,
-rep boolean default false,
+rep boolean default true,
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade
 );

@@ -74,4 +74,9 @@ public class Marker {
 	public void setRadius(int radius) {
 		this.radius = radius;
 	}
+	@Override
+	public String toString() {
+		return "Marker [markerid=" + markerid + ", boardid=" + boardid + ", latitude=" + latitude + ", longitude="
+				+ longitude + ", remark=" + remark + ", overlaytype=" + overlaytype + ", radius=" + radius + "]";
+	}
 }

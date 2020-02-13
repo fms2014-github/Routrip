@@ -35,13 +35,13 @@
 		order by writedate desc
 	</select>
 
-	<select id="findBoardListByTitle" parameterType="string"
+	<select id="findBoardListByKeyword" parameterType="string"
 		resultType="board">
 		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
 		keyword, unveiled
 		from board
-		where title like '%'+#{value}+'%'
-		order by favoriteNum desc
+		where keyword like concat('%', #{value}, '%')
+		order by writedate desc
 	</select>
 
 	<select id="findBoardListByWriteDate" parameterType="map"

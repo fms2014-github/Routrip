@@ -33,8 +33,8 @@ public class BoardService implements IBoardService{
 	}
 
 	@Override
-	public List<Board> findBoardListByTitle(String title) throws Exception {
-		return boardDao.findBoardListByTitle(title);
+	public List<Board> findBoardListByKeyword(String keyword) throws Exception {
+		return boardDao.findBoardListByKeyword(keyword);
 	}
 
 	@Override

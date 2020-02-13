@@ -18,9 +18,8 @@ public class GreetingController {
 
 	@MessageMapping("/info")
 	@SendToUser("/queue/info")
-	public Alarm alram(String memberId) throws Exception {//밖에서는 알림 새거가 있는가 없는가 정도만 검사?
-		System.out.println(memberId);
-		return alarmService.findLatestAlarm(Integer.parseInt(memberId));
+	public Alarm alram(int memberId) throws Exception {//밖에서는 알림 새거가 있는가 없는가 정도만 검사?
+		return alarmService.findLatestAlarm(memberId);
 	}
 	
 	@MessageMapping("/infolist")

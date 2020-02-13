@@ -55,6 +55,8 @@ public class PageController {
 	@ApiOperation(value = "좋아요 등록")
 	public Object addFavorite(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
 			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
@@ -83,6 +85,8 @@ public class PageController {
 	@ApiOperation(value = "좋아요 누른 게시글")
 	public Object FavoriteListByUser(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			List<Integer> boardsid = boardService
 					.getFavoriteByUser((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
@@ -112,6 +116,7 @@ public class PageController {
 				for (int ui : usersid)
 					users.add(userService.findUserSimple(ui));
 				b.setFavorite(users);
+				b.setKeywords(b.getKeyword());
 				boards.add(b);
 			}
 			return new ResponseEntity<>(boards, HttpStatus.OK);
@@ -123,6 +128,8 @@ public class PageController {
 	// @ApiOperation(value = "좋아요 해제")
 	public Object deleteFavorite(Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
 			int ok = boardService.deleteFavorite((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), boardid);
@@ -136,6 +143,8 @@ public class PageController {
 	@ApiOperation(value = "스크랩 추가")
 	public Object addScrap(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
 			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
@@ -164,6 +173,8 @@ public class PageController {
 	@ApiOperation(value = "스크랩 게시글")
 	public Object scrapBoard(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			List<Integer> boardsid = boardService
 					.getScrap((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
@@ -193,6 +204,7 @@ public class PageController {
 				for (int ui : usersid)
 					users.add(userService.findUserSimple(ui));
 				b.setFavorite(users);
+				b.setKeywords(b.getKeyword());
 				boards.add(b);
 			}
 			return new ResponseEntity<>(boards, HttpStatus.OK);
@@ -202,6 +214,8 @@ public class PageController {
 
 	public Object deleteScrap(Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
 			int ok = boardService.deleteScrap((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), boardid);
@@ -242,6 +256,7 @@ public class PageController {
 					users.add(userService.findUserSimple(ui));
 				b.setFavorite(users);
 				b.setUser(userService.findUserSimple(b.getUid()));
+				b.setKeywords(b.getKeyword());
 			}
 			return new ResponseEntity<>(boards, HttpStatus.OK);
 		}
@@ -252,6 +267,8 @@ public class PageController {
 	@ApiOperation(value = "게시글 상세 정보")
 	public Object getBoardDetail(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
 			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
@@ -276,6 +293,7 @@ public class PageController {
 				users.add(userService.findUserSimple(ui));
 			board.setFavorite(users);
 			board.setUser(userService.findUserSimple(board.getUid()));
+			board.setKeywords(board.getKeyword());
 			return new ResponseEntity<>(board, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -286,6 +304,13 @@ public class PageController {
 	public Object addBoard2(Map<String, Object> map) throws Exception {
 		//이방식 성공하면 수정도 이런식으로 변경
 		String jwt = (String) map.get("jwt");
+		if(jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		
+		for(String key : map.keySet()){ //어떤식으로 넘어오는지 확인용
+			 System.out.println(map.get(key));
+        }
+		
 		Board board = new Board();
 		board.setBoardid((int) map.get("boardid"));
 		board.setUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
@@ -295,13 +320,15 @@ public class PageController {
 		board.setLatitude((double) map.get("latitude"));
 		board.setLongitude((double) map.get("longitude"));
 		board.setLevel((int) map.get("level"));
-		board.setUnveiled((int) map.get("unveiled"));
-		int ok = boardService.addBoard(board);		
+		board.setContent((String)map.get("content"));
+		board.setUnveiled(1);
+		int ok = boardService.addBoard(board);
 		if (ok > 0) {
 			int repnum = 0;
 			List<Img> imgs = (List<Img>) map.get("imgs");
 			for (Img i : imgs) {
 				i.setBoardid(board.getBoardid());
+				i.setRep(1);
 				if(i.getRep() == 1)
 					repnum++;
 			}
@@ -456,6 +483,7 @@ public class PageController {
 				users.add(userService.findUserSimple(ui));
 			b.setFavorite(users);
 			b.setUser(userService.findUserSimple(b.getUid()));
+			b.setKeywords(b.getKeyword());
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
@@ -521,6 +549,7 @@ public class PageController {
 					users.add(userService.findUserSimple(ui));
 				b.setFavorite(users);
 				b.setUser(userService.findUserSimple(b.getUid()));
+				b.setKeywords(b.getKeyword());
 				board.add(b);
 			}
 		}
@@ -530,6 +559,8 @@ public class PageController {
 	@PostMapping("/searchBoard")
 	@ApiOperation(value = "작성한 게시글")
 	public Object writedBoard(@RequestBody Map<String, String> map) throws Exception {
+		if(map.get("jwt") == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		int uid = (int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid");
 		List<Board> boards = boardService.findBoardListByUid(uid);
 		for (Board b : boards) {
@@ -556,6 +587,7 @@ public class PageController {
 				users.add(userService.findUserSimple(ui));
 			b.setFavorite(users);
 			b.setUser(userService.findUserSimple(b.getUid()));
+			b.setKeywords(b.getKeyword());
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
@@ -563,6 +595,8 @@ public class PageController {
 	@PostMapping("/searchComment")
 	@ApiOperation(value = "작성한 댓글")
 	public Object writedComment(@RequestBody Map<String, String> map) throws Exception {
+		if(map.get("jwt") == null)
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		int uid = (int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid");
 		List<Comment> comments = boardService.findCommentByUid(uid);
 		return new ResponseEntity<>(comments, HttpStatus.OK);
@@ -571,6 +605,8 @@ public class PageController {
 	@PostMapping("/comment")
 	@ApiOperation(value = "댓글 등록")
 	public Object addComment(@RequestBody Map<String, String> map) throws Exception {
+		if(map.get("jwt") == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		Comment comment = new Comment();
 		comment.setUid((int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid"));
 		comment.setBoardid(Integer.parseInt(map.get("boardid")));
@@ -607,6 +643,39 @@ public class PageController {
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
+	
+	@GetMapping("/board/{keyword}")
+	@ApiOperation(value = "키워드 게시글")
+	public Object keywordBoard(@PathVariable String keyword) throws Exception {
+		List<Board> boards = boardService.findBoardListByKeyword(keyword);
+		for (Board b : boards) {
+			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
+			List<Img> repimg = new ArrayList<Img>();
+			for (Img i : imgs) {
+				if (i.getRep() == 1)
+					repimg.add(i);
+			}
+			b.setImgs(repimg);
+			List<Comment> comments = boardService.findComment(b.getBoardid());
+			for (Comment c : comments) {
+				c.setUser(userService.findUserSimple(c.getUid()));
+			}
+			b.setCommentNum(comments.size());
+			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+			b.setFavoriteNum(favoriteNum);
+			b.setMarkers(boardService.findMarker(b.getBoardid()));
+			b.setComments(comments);
+			List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
+			List<User> users = new ArrayList<User>();
+			for (int ui : usersid)
+				users.add(userService.findUserSimple(ui));
+			b.setFavorite(users);
+			b.setUser(userService.findUserSimple(b.getUid()));
+			b.setKeywords(b.getKeyword());
+		}
+		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
 
 	public boolean isOkJwt(String jwt) throws Exception {

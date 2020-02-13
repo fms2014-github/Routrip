@@ -36,8 +36,8 @@ public class BoardDao implements IBoardDao{
 	}
 
 	@Override
-	public List<Board> findBoardListByTitle(String title) throws Exception {
-		return sqlSession.selectList(ns+"findBoardListByTitle", title);
+	public List<Board> findBoardListByKeyword(String keyword) throws Exception {
+		return sqlSession.selectList(ns+"findBoardListByKeyword", keyword);
 	}
 
 	@Override

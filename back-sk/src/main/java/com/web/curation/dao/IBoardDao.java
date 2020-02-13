@@ -11,7 +11,7 @@ public interface IBoardDao {
 	int addBoard(Board board) throws Exception;
 	List<Board> getBoardList() throws Exception;
 	List<Board> findBoardListByUid(int uid) throws Exception;
-	List<Board> findBoardListByTitle(String title) throws Exception;
+	List<Board> findBoardListByKeyword(String keyword) throws Exception;
 	List<Board> findBoardListByWriteDate(String startdate, String enddate) throws Exception;
 	Board findBoardByBoardId(int boardid) throws Exception;
 	int deleteBoard(int boardid) throws Exception;
