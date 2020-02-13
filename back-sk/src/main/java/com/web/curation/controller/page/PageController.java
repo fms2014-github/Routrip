@@ -587,6 +587,15 @@ public class PageController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
+	
+	@DeleteMapping("/board")
+	@ApiOperation(value = "게시글 삭제")
+	public Object deleteBoard(@RequestBody String boardid) throws Exception {
+		int ok = boardService.deleteBoard(Integer.parseInt(boardid));
+		if (ok > 0)
+			return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+	}
 
 	public boolean isOkJwt(String jwt) throws Exception {
 		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

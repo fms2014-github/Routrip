@@ -16,13 +16,13 @@ public class GreetingController {
 	@Autowired
 	private AlarmSerivce alarmService;
 
-	@MessageMapping("/info")
+	@MessageMapping("/newinfo")
 	@SendToUser("/queue/info")
 	public Alarm alram(String message) throws Exception {
 		return alarmService.findLatestAlarm(Integer.parseInt(message));
 	}
 	
-	@MessageMapping("/infoes")
+	@MessageMapping("/info")
 	@SendToUser("/topic/info")
 	public List<Alarm> alramlist(String message) throws Exception {
 		return alarmService.getAlarm(Integer.parseInt(message));
