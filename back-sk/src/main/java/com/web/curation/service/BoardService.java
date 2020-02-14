@@ -33,8 +33,8 @@ public class BoardService implements IBoardService{
 	}
 
 	@Override
-	public List<Board> findBoardListByTitle(String title) throws Exception {
-		return boardDao.findBoardListByTitle(title);
+	public List<Board> findBoardListByKeyword(String keyword) throws Exception {
+		return boardDao.findBoardListByKeyword(keyword);
 	}
 
 	@Override
@@ -90,11 +90,6 @@ public class BoardService implements IBoardService{
 	@Override
 	public List<Img> findBoardImg(int boardid) throws Exception {
 		return boardDao.findBoardImg(boardid);
-	}
-
-	@Override
-	public List<Img> findRepImg(int boardid) throws Exception {
-		return boardDao.findRepImg(boardid);
 	}
 
 	@Override
@@ -165,5 +160,25 @@ public class BoardService implements IBoardService{
 	@Override
 	public int deleteScrap(int uid, int boardid) throws Exception {
 		return boardDao.deleteScrap(uid, boardid);
+	}
+
+	@Override
+	public List<Comment> findCommentByUid(int uid) throws Exception {
+		return boardDao.findCommentByUid(uid);
+	}
+
+	@Override
+	public List<Comment> findCommentByListener(int listener) throws Exception {
+		return boardDao.findCommentByListener(listener);
+	}
+
+	@Override
+	public List<Board> getBoardList5(String writedate) throws Exception {
+		return boardDao.getBoardList5(writedate);
+	}
+
+	@Override
+	public List<Board> findBoardBest() throws Exception {
+		return boardDao.findBoardBest();
 	}
 }

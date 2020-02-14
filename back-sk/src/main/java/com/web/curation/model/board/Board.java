@@ -1,6 +1,5 @@
 package com.web.curation.model.board;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -15,9 +14,7 @@ public class Board {
 	private String writedate;
 	private String tripterm;
 	private String keyword;
-	private double latitude;
-	private double longitude;
-	private int level;
+	private List<String> keywords = new ArrayList<>();
 	private int unveiled = 1; // true = 1, false = 0
 	private List<Comment> comments = new ArrayList<>();
 	private List<Img> imgs = new ArrayList<>();
@@ -27,10 +24,14 @@ public class Board {
 	private List<Marker> markers = new ArrayList<>();
 	private User user;
 	private String writeday;// ~전
+	private String content;
+	private String info;
+	private String cusInfo;
 
-	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs, List<User> favorite,
-			int favoriteNum, int commentNum, List<Marker> markers, User user, String writeday) {
+	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword,
+			List<String> keywords, int unveiled, List<Comment> comments,
+			List<Img> imgs, List<User> favorite, int favoriteNum, int commentNum, List<Marker> markers, User user,
+			String writeday, String content) {
 		super();
 		this.boardid = boardid;
 		this.uid = uid;
@@ -38,9 +39,7 @@ public class Board {
 		this.writedate = writedate;
 		this.tripterm = tripterm;
 		this.keyword = keyword;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
+		this.keywords = keywords;
 		this.unveiled = unveiled;
 		this.comments = comments;
 		this.imgs = imgs;
@@ -50,6 +49,7 @@ public class Board {
 		this.markers = markers;
 		this.user = user;
 		this.writeday = writeday;
+		this.content = content;
 	}
 
 	public Board() {
@@ -81,14 +81,6 @@ public class Board {
 	}
 
 	public String getWritedate() {
-		try {
-			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			SimpleDateFormat format2 = new SimpleDateFormat("yyyy-MM-dd");
-
-			writedate = format2.format(format1.parse(writedate));
-		} catch (ParseException e) {
-			System.out.println("writedsate 가져오는 중 오류 발생");
-		}
 		return writedate;
 	}
 
@@ -110,30 +102,6 @@ public class Board {
 
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
-	}
-
-	public double getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
-
-	public double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
 	}
 
 	public int getUnveiled() {
@@ -226,5 +194,52 @@ public class Board {
 
 	public void setWriteday(String writeday) {
 		this.writeday = writeday;
+	}
+
+	public List<String> getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(String keyword) {
+		String[] keywordArray = keyword.split(" ");
+		for(String s : keywordArray)
+			keywords.add(s);
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+	public String getCusInfo() {
+		return cusInfo;
+	}
+
+	public void setCusInfo(String cusInfo) {
+		this.cusInfo = cusInfo;
+	}
+
+	public void setKeywords(List<String> keywords) {
+		this.keywords = keywords;
+	}
+
+	@Override
+	public String toString() {
+		return "Board [boardid=" + boardid + ", uid=" + uid + ", title=" + title + ", writedate=" + writedate
+				+ ", tripterm=" + tripterm + ", keyword=" + keyword + ", keywords=" + keywords + ", unveiled=" + unveiled + ", comments="
+				+ comments + ", imgs=" + imgs + ", favorite=" + favorite + ", favoriteNum=" + favoriteNum
+				+ ", commentNum=" + commentNum + ", markers=" + markers + ", user=" + user + ", writeday=" + writeday
+				+ ", content=" + content + "]";
 	}
 }

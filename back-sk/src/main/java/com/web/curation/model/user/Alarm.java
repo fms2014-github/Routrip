@@ -111,4 +111,10 @@ public class Alarm {
 	public void setAlarmtime(String alarmtime) {
 		this.alarmtime = alarmtime;
 	}
+	@Override
+	public String toString() {
+		return "Alarm [alarmid=" + alarmid + ", uid=" + uid + ", boardid=" + boardid + ", commentid=" + commentid
+				+ ", follow=" + follow + ", alarmtype=" + alarmtype + ", nickname=" + nickname + ", time=" + time
+				+ ", alarmtime=" + alarmtime + "]";
+	}
 }

@@ -36,8 +36,8 @@ public class BoardDao implements IBoardDao{
 	}
 
 	@Override
-	public List<Board> findBoardListByTitle(String title) throws Exception {
-		return sqlSession.selectList(ns+"findBoardListByTitle", title);
+	public List<Board> findBoardListByKeyword(String keyword) throws Exception {
+		return sqlSession.selectList(ns+"findBoardListByKeyword", keyword);
 	}
 
 	@Override
@@ -103,11 +103,6 @@ public class BoardDao implements IBoardDao{
 	@Override
 	public List<Img> findBoardImg(int boardid) throws Exception {
 		return sqlSession.selectList(ns+"findBoardImg", boardid);
-	}
-
-	@Override
-	public List<Img> findRepImg(int boardid) throws Exception {
-		return sqlSession.selectList(ns+"findRepImg", boardid);
 	}
 
 	@Override
@@ -187,5 +182,25 @@ public class BoardDao implements IBoardDao{
 		map.put("uid", uid);
 		map.put("boardid", boardid);
 		return sqlSession.delete(ns+"deleteScrap", map);
+	}
+
+	@Override
+	public List<Comment> findCommentByUid(int uid) throws Exception {
+		return sqlSession.selectList(ns+"findCommentByUid", uid);
+	}
+
+	@Override
+	public List<Comment> findCommentByListener(int listener) throws Exception {
+		return sqlSession.selectList(ns+"findCommentByListener", listener);
+	}
+
+	@Override
+	public List<Board> getBoardList5(String writedate) throws Exception {
+		return sqlSession.selectList(ns+"getBoardList5", writedate);
+	}
+
+	@Override
+	public List<Board> findBoardBest() throws Exception {
+		return sqlSession.selectList(ns+"findBoardBest");
 	}
 }
