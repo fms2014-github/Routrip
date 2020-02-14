@@ -54,7 +54,7 @@
                     <div id="menu-search-area" class="hide">
                         <label>키워드 : <input v-model="placeSearch" type="text" id="keyword" size="15"/></label>
                         <button @click="onPlaceSearch">검색하기</button>
-                        <sapn>(지도를 클릭하면 줄어듭니다.)</sapn>
+                        <span>(지도를 클릭하면 줄어듭니다.)</span>
                     </div>
                     <div id="hide-info" @click="menuToggle">
                         검색 화면 펼치기
@@ -66,41 +66,36 @@
             </div>
         </div>
         <div id="content-wrapper">
-            <InputForm id="content-title" :enterInput="test1" :errorText="''" placeholder="제목을 입력해 주세요." label="제목" />
-            <div class="select-form">
-                <span class="select-form-title">장소</span>
-                <div class="select-tag">
-                    <div class="hashtag-form" v-for="(area, value) in areas" :key="area.id">
-                        {{ area }}<button class="hashtag-cansle" @click="removeHash(value, 'area')">×</button>
-                    </div>
-                </div>
-            </div>
-            <div class="search">
-                <input v-model="areaword" class="search-bar" type="text" @keyup.enter="createHash('area')" />
-                <div class="search-result-dropdown">
-                    <div class="dropdown-list" v-for="resultArea in resultAreas" :key="resultArea">{{ resultArea }}</div>
-                </div>
-            </div>
+            <InputForm id="content-title" :enterInput="titleInput" :errorText="''" placeholder="제목을 입력해 주세요." label="제목" />
             <div class="select-form">
                 <span class="select-form-title">키워드</span>
                 <div class="select-tag">
-                    <div class="hashtag-form" v-for="(keyword, value) in keywords" :key="value.id">
-                        {{ keyword }}<button class="hashtag-cansle" @click="removeHash(value, 'keyword')">×</button>
+                    <div class="hashtag-form" v-for="(keyword, index) in keywords" :key="index.id">
+                        {{ keyword }}<button class="hashtag-cansle" @click="removeHash(index)">×</button>
                     </div>
                 </div>
             </div>
             <div class="search">
-                <input v-model="keywordTag" class="search-bar" type="text" @keyup.enter="createHash('keyword')" />
+                <input v-model="keywordTag" class="search-bar" type="text" @keyup.enter="createHash()" />
             </div>
             <div id="write-content">
-                <div id="summernote">Hello Summernote</div>
+                <div id="summernote"></div>
+            </div>
+            <div id="inserted-image-list">
+                <span>삽입한 이미지</span>
+                <hr>
+                <div class="image-list-wrap" v-for="(image, index) in imageArr" :key="index.id">
+                    <img class="inserted-image" @click="setRepresentative(image)" :src="image" :class="{representative: getRepresentative(image)}">
+                    <button @click="deleteImage(image)" class="delete-image" :class="{ 'representative-button': getRepresentative(image)}">×</button>
+                    <span v-if="getRepresentative(image)" class="representative-image">대표이미지</span>
+                </div>
             </div>
             <div id="calendar-wrapper">
                 <span>여행 기간</span>
                 <label for="calendar-nights"
-                    ><input id="calendar-nights" name="calendar-nights" class="calendar" type="number" /><span>박</span></label
+                    ><input id="calendar-nights" name="calendar-nights" class="calendar" type="number" v-model="night"/><span>박</span></label
                 >
-                <label for="calendar-days"><input id="calendar-days" name="calendar-days" class="calendar" type="number" /><span>일</span></label>
+                <label for="calendar-days"><input id="calendar-days" name="calendar-days" class="calendar" type="number" v-model="day" /><span>일</span></label>
             </div>
             <button id="content-submit" @click="submit">제출</button>
         </div>
@@ -112,11 +107,14 @@ import '../../assets/css/WriteForm.scss';
 import ImageUpload from '../../apis/ImgurAPI.js';
 import kakaoMap from '../../apis/kakaoMapAPI.js';
 import InputForm from '../../components/common/Input';
+import Axios from 'axios';
 
 export default {
     mounted() {
         //CKEditor.createCKEditor();
         kakaoMap.createMap();
+        var imageArr = this.imageArr
+        var representativeImage = this.representativeImage
         // eslint-disable-next-line no-undef
         $(() => {
             // eslint-disable-next-line no-undef
@@ -132,6 +130,12 @@ export default {
                                     files[i],
                                     res => {
                                         console.log(res.data.data.link);
+                                        imageArr.push(res.data.data.link)
+                                        representativeImage.push(res.data.data.link)
+                                        if(representativeImage.length > 10){
+                                            const idx = representativeImage.indexOf(res.data.data.link) 
+                                            if (idx > -1) representativeImage.splice(idx, 1)
+                                        }
                                         // eslint-disable-next-line no-undef
                                         $('#summernote').summernote('insertImage', res.data.data.link, res.data.data.id);
                                     },
@@ -152,26 +156,11 @@ export default {
     data() {
         return {
             title: '',
-            areaword: '',
             keywordTag: '',
             selectDraw: '',
+            imageArr: [],
+            representativeImage: [],
             placeSearch: '이태원 맛집',
-            areaData: [
-                '장소 #1',
-                '장소 #2',
-                '장소 #3',
-                '장소 #4',
-                '장소 #5',
-                '장소 #6',
-                '가',
-                '가나',
-                '가나다',
-                '가나다라',
-                '가나다라마',
-                '가나다라마바',
-                '가나다라마바사',
-            ],
-            areas: [],
             keywords: ['키워드 #1', '키워드 #2', '키워드 #3', '키워드 #4', '키워드 #5'],
             resultAreas: [],
             commentTitle: '',
@@ -179,16 +168,34 @@ export default {
             error: {
                 title: '',
             },
+            night: '',
+            day: '',
             createCondition: 'both',
         };
     },
     watch: {
-        areaword: function(v) {
-            this.findArea();
-        },
-        hashTag: function() {},
     },
     methods: {
+        setRepresentative(image){
+            let idx = this.representativeImage.indexOf(image)
+            let len = this.representativeImage.length
+            if(idx > -1){
+                this.representativeImage.splice(idx,1)
+            }else if(len === 10){
+                this.representativeImage.splice(len-1,1)
+                this.representativeImage.push(image)
+            }else{
+                this.representativeImage.push(image)
+            }
+        },
+        getRepresentative(image){
+            let idx = this.representativeImage.indexOf(image)
+            if(idx > -1){
+                return true;
+            }else{
+                return false;
+            }
+        },
         menuToggle() {
             document.getElementById('menu-search-area').classList.remove('hide');
             document.getElementById('hide-info').classList.add('hide');
@@ -218,22 +225,11 @@ export default {
             }
             this.selectDraw = s;
         },
-        removeHash(a, s) {
-            if (s === 'area') {
-                this.areas.splice(a, 1);
-            } else if (s === 'keyword') {
-                this.keywords.splice(a, 1);
-            }
+        removeHash(a) {
+            this.keywords.splice(a, 1);
         },
-        createHash(s) {
-            if (s === 'area' && this.areaword !== '') {
-                if (this.areas.length === 20) {
-                    alert('태그는 20개 이상 생성할 수 없습니다.');
-                    return;
-                }
-                this.areas.push(this.areaword);
-                this.areaword = '';
-            } else if (s === 'keyword' && this.keywordTag !== '') {
+        createHash() {
+            if (this.keywordTag !== '') {
                 if (this.keywords.length === 10) {
                     alert('태그는 20개 이상 생성할 수 없습니다.');
                     return;
@@ -242,18 +238,7 @@ export default {
                 this.keywordTag = '';
             }
         },
-        findArea() {
-            this.resultAreas = [];
-            for (var i in this.areaData) {
-                if (this.areaData[i].indexOf(this.areaword) >= 0) {
-                    this.resultAreas.push(this.areaData[i]);
-                }
-            }
-            if (this.areaword === '') {
-                this.resultAreas = [];
-            }
-        },
-        test1(v) {
+        titleInput(v) {
             this.title = v;
         },
         undo() {
@@ -262,14 +247,57 @@ export default {
         redo() {
             kakaoMap.redo();
         },
+        deleteImage(image){
+            let selectedImg = document.querySelector('.note-editable img[src="'+image+'"]')
+            let imageArrIdx = this.imageArr.indexOf(image)
+            let representativeIdx;
+            
+            if(imageArrIdx > -1){
+                this.imageArr.splice(imageArrIdx, 1)
+                selectedImg.parentNode.removeChild(selectedImg)
+            }
+            if(this.getRepresentative(image)){
+                representativeIdx = this.representativeImage.indexOf(image)
+                this.representativeImage.splice(representativeIdx, 1)
+            }
+        },
         submit() {
             // eslint-disable-next-line no-undef
             var markupStr = $('#summernote').summernote('code');
-            kakaoMap.getTest();
-            console.log('areasTag', Object.keys(this.areas));
-            console.log('areasTag', Object.keys(this.keywords));
-            console.log('title', this.title);
-            console.log('content', markupStr);
+            var mapData = kakaoMap.getTest();
+            var tempKeyword = ''
+            console.log('data', kakaoMap.getTest())
+            // console.log('areasTag', Object.keys(this.areas));
+            // console.log('keywords', Object.keys(this.keywords));
+            // console.log('title', this.title);
+            // console.log('content', markupStr);
+            for(var i in this.keywords){
+                tempKeyword += this.keywords[i] + ' ';
+            }
+            var jwt = {
+            'jwt': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiIxNDciLCJ1aWQiOjE0NywiZW1haWwiOiJmbXMyMDE0QG5hdmVyLmNvbSIsIm5pY2tuYW1lIjoi6rmA7ISd7JqpIiwicHJvZmlsZUltZyI6Imh0dHBzOi8vaS5pbWd1ci5jb20vQ1J1aWVvdy5wbmciLCJsb2dpbkFwaSI6MCwiZXhwIjoxNTgxNjk0OTQzfQ.',
+            'title': this.title,
+            'keywords': tempKeyword,
+            'content': markupStr,
+            'info': mapData.infoData,
+            'cusInfo': mapData.infoData,
+            'marker': mapData.marker,
+            'polyline': mapData.polyline,
+            'rectangle': mapData.rectangle,
+            'circle': mapData.circle,
+            'polygon': mapData.polygon,
+            'arrow': mapData.arrow,
+            'ellipse': mapData.ellipse,
+            'night':  this.night,
+            'day': this.day,
+            'image': this.representativeImage
+            }
+            console.log('jwt', jwt)
+            Axios.post('http://192.168.100.70:8083/page/board/', jwt).then(res =>{
+                console.log(res)
+            }).catch(error=>{
+                console.log(error)
+            })
         },
     },
 };
