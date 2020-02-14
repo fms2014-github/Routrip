@@ -15,10 +15,12 @@ $desktop: 'screen and (min-width : 1025px)';
     position: fixed;
     width: 100%;
     height: 80px;
-    background-color: skyblue;
+    background-color: white;
     z-index: 100;
     -webkit-transition: height 0.3s ease-in-out;
     transition: height 0.3s ease-in-out;
+
+    .search-box {}
 
     @media #{$iPad, $iPadPro} {
         .hambuger {
@@ -44,9 +46,6 @@ $desktop: 'screen and (min-width : 1025px)';
             }
         }
 
-        .search-ipad {
-            margin-right: 4vw;
-        }
 
         .menu {
             display: none;

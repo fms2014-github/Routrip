@@ -5,6 +5,8 @@ import Router from 'vue-router';
 import Main from './views/jh/Main.vue';
 import Detail from './views/jh/Detail.vue';
 import Search from './views/jh/Search.vue';
+import SearchAll from './views/jh/SearchAll.vue';
+import Middleware from './views/jh/Middleware.vue';
 import Login from './views/user/Login.vue';
 import Join from './views/user/Join.vue';
 import JoinAuth from './views/user/JoinAuth.vue';
@@ -145,6 +147,16 @@ export const router = new Router({
             path: '/search',
             name: 'Search',
             component: Search,
+        },
+        {
+            path: '/searchAll/:searchWord',
+            name: 'SearchAll',
+            component: SearchAll,
+        },
+        {
+            path: '/middleware',
+            name: 'Middleware',
+            component: Middleware,
         },
         {
             path: '/alarm',

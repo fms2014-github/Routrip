@@ -216,7 +216,7 @@ export default {
     },
     created: function() {
         this.jwt = localStorage.getItem('routrip_JWT');
-        this.keyword = this.$route.params.keyword;
+        this.keyword = this.$route.params.searchWord;
         this.showAll();
     },
     computed: {
@@ -247,7 +247,7 @@ export default {
                                 this.scrapList.push(res.data[i].boardid);
                             }
 
-                            Axios.get(`${URI}/page/board/${this.keyword}`)
+                            Axios.get(`${URI}/page/searchBoard/${this.keyword}`)
                                 .then(res => {
                                     // console.log(res.data);
                                     this.likeShow = [];
@@ -398,9 +398,8 @@ export default {
             console.log(data);
         },
         search(keyword) {
-            console.log(keyword);
-            this.keyword = keyword;
-            this.showAll();
+            // console.log(keyword);
+            this.$router.push({ name: 'Search', params: { keyword: keyword } });
         },
     },
 };
