@@ -193,4 +193,9 @@ public class BoardDao implements IBoardDao{
 	public List<Comment> findCommentByUid(int uid) throws Exception {
 		return sqlSession.selectList(ns+"findCommentByUid", uid);
 	}
+
+	@Override
+	public List<Comment> findCommentByListener(int listener) throws Exception {
+		return sqlSession.selectList(ns+"findCommentByListener", listener);
+	}
 }

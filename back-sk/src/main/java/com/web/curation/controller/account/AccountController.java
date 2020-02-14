@@ -196,9 +196,9 @@ public class AccountController {
 	public Object followerList(@RequestBody Map<String, String> map) throws Exception {
 		List<Integer> list = new ArrayList<Integer>();
 		if(map.get("uid")!=null) {
-				list = userService.getFollow(Integer.parseInt(map.get("uid")));
+				list = userService.getFollower(Integer.parseInt(map.get("uid")));
 		}else if(map.get("jwt")!=null) {
-			list = userService.getFollow((int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid"));
+			list = userService.getFollower((int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid"));
 		}
 		List<User> userlist = new ArrayList<User>();
 		for (Integer i : list)

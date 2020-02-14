@@ -7,6 +7,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.json.JSONStringer;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -55,7 +59,7 @@ public class PageController {
 	@ApiOperation(value = "좋아요 등록")
 	public Object addFavorite(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
-		if(jwt == null)
+		if (jwt == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
@@ -85,7 +89,7 @@ public class PageController {
 	@ApiOperation(value = "좋아요 누른 게시글")
 	public Object FavoriteListByUser(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
-		if(jwt == null)
+		if (jwt == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			List<Integer> boardsid = boardService
@@ -128,7 +132,7 @@ public class PageController {
 	// @ApiOperation(value = "좋아요 해제")
 	public Object deleteFavorite(Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
-		if(jwt == null)
+		if (jwt == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
@@ -143,7 +147,7 @@ public class PageController {
 	@ApiOperation(value = "스크랩 추가")
 	public Object addScrap(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
-		if(jwt == null)
+		if (jwt == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
@@ -173,7 +177,7 @@ public class PageController {
 	@ApiOperation(value = "스크랩 게시글")
 	public Object scrapBoard(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
-		if(jwt == null)
+		if (jwt == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			List<Integer> boardsid = boardService
@@ -214,7 +218,7 @@ public class PageController {
 
 	public Object deleteScrap(Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
-		if(jwt == null)
+		if (jwt == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
@@ -267,7 +271,7 @@ public class PageController {
 	@ApiOperation(value = "게시글 상세 정보")
 	public Object getBoardDetail(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
-		if(jwt == null)
+		if (jwt == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			int boardid = Integer.parseInt(map.get("boardid"));
@@ -301,45 +305,155 @@ public class PageController {
 
 	@PostMapping("/board")
 	@ApiOperation(value = "게시글 작성 수정 버전(아마 이 방식이 맞다고 봄)")
-	public Object addBoard2(Map<String, Object> map) throws Exception {
-		//이방식 성공하면 수정도 이런식으로 변경
+	public Object addBoard2(@RequestBody Map<String, Object> map) throws Exception {
+		System.out.println("게시글 작성 시작");
+		// 이방식 성공하면 수정도 이런식으로 변경
 		String jwt = (String) map.get("jwt");
-		if(jwt == null)
+		if (jwt == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-		
-		for(String key : map.keySet()){ //어떤식으로 넘어오는지 확인용
-			 System.out.println(map.get(key));
-        }
-		
+
+		for (String key : map.keySet()) { // 어떤식으로 넘어오는지 확인용
+			System.out.println(key + " : " + JSONStringer.valueToString(map.get(key)));
+		}
+		//return new ResponseEntity<>(HttpStatus.OK);
+
 		Board board = new Board();
-		board.setBoardid((int) map.get("boardid"));
 		board.setUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 		board.setTitle((String) map.get("title"));
-		board.setTripterm((String) map.get("tripterm"));
+		board.setTripterm((String) map.get("night") + " " + (String) map.get("day"));
 		board.setKeyword((String) map.get("keyword"));
-		board.setLatitude((double) map.get("latitude"));
-		board.setLongitude((double) map.get("longitude"));
-		board.setLevel((int) map.get("level"));
-		board.setContent((String)map.get("content"));
+		board.setContent((String) map.get("content"));
+		board.setInfo(JSONStringer.valueToString(map.get("info")));
+		board.setCusInfo((String) map.get(JSONStringer.valueToString(map.get("cusInfo"))));
 		board.setUnveiled(1);
 		int ok = boardService.addBoard(board);
 		if (ok > 0) {
 			int repnum = 0;
-			List<Img> imgs = (List<Img>) map.get("imgs");
-			for (Img i : imgs) {
-				i.setBoardid(board.getBoardid());
-				i.setRep(1);
-				if(i.getRep() == 1)
-					repnum++;
-			}
-			if(repnum == 0) {//대표 이미지가 하나도 없으면 게시글 등록 불가능
-				boardService.deleteBoard(board.getBoardid());
-			}else {//나중에 마커 하나이상 제한도 생기면 앞에 마커 size==0 조건도 추가
-				List<Marker> markers = (List<Marker>) map.get("markers");
-				for (Marker m : markers) {
-					m.setBoardid(board.getBoardid());
-					boardService.addMarker(m);
+			
+			for (String key : map.keySet()) {
+				if (key.equals("jwt") || key.equals("title") || key.equals("night") || key.equals("day")
+						|| key.equals("keyword") || key.equals("content") || key.equals("info")
+						|| key.equals("cusInfo"))
+					continue;
+				if(key.equals("marker")) {
+					String marker = JSONStringer.valueToString(map.get("marker"));
+					JSONArray array = (JSONArray) new JSONParser().parse(marker);
+					for (int i = 0; i < array.size(); i++) {
+						Marker m = new Marker();
+						m.setBoardid(board.getBoardid());
+						m.setLatitude((String)((JSONObject) array.get(i)).get("lat"));
+						m.setLongitude((String)((JSONObject) array.get(i)).get("lng"));
+						m.setOverlaytype("marker");
+						boardService.addMarker(m);
+					}
+				}else if(key.equals("polyline")) {
+					String marker = JSONStringer.valueToString(map.get("polyline"));
+					JSONArray array = (JSONArray) new JSONParser().parse(marker);
+					for (int i = 0; i < array.size(); i++) {
+						Marker m = new Marker();
+						String latitude = "";
+						String longitude = "";
+							JSONArray array2 = (JSONArray) array.get(i);
+							for (int j = 0; j < array2.size(); j++) {
+								latitude += ((JSONObject) array2.get(j)).get("lat")+ " ";
+								longitude += ((JSONObject) array2.get(j)).get("lng")+ " ";
+							}
+						m.setLatitude(latitude);
+						m.setLongitude(longitude);
+						m.setOverlaytype("polyline");
+						boardService.addMarker(m);
+					}
+				}else if(key.equals("rectangle")) {
+					String marker = JSONStringer.valueToString(map.get("rectangle"));
+					JSONArray array = (JSONArray) new JSONParser().parse(marker);
+					for (int i = 0; i < array.size(); i++) {
+						Marker m = new Marker();
+						m.setBoardid(board.getBoardid());
+						JSONObject sPoint = (JSONObject)((JSONObject) array.get(i)).get("sPoint");
+						JSONObject ePoint = (JSONObject)((JSONObject) array.get(i)).get("ePoint");
+						m.setLatitude((String)sPoint.get("lat")+" "+(String)ePoint.get("lat"));
+						m.setLongitude((String)sPoint.get("lng")+" "+(String)ePoint.get("lng"));
+						m.setOverlaytype("rectangle");
+						boardService.addMarker(m);
+					}
+				}else if(key.equals("circle")) {
+					String marker = JSONStringer.valueToString(map.get("circle"));
+					JSONArray array = (JSONArray) new JSONParser().parse(marker);
+					for (int i = 0; i < array.size(); i++) {
+						Marker m = new Marker();
+						m.setBoardid(board.getBoardid());
+						m.setLatitude((String)((JSONObject) array.get(i)).get("lat"));
+						m.setLongitude((String)((JSONObject) array.get(i)).get("lng"));
+						m.setRadius((double)((JSONObject) array.get(i)).get("radius"));
+						m.setOverlaytype("circle");
+						boardService.addMarker(m);
+					}
+				}else if(key.equals("polygon")) {
+					String marker = JSONStringer.valueToString(map.get("polygon"));
+					JSONArray array = (JSONArray) new JSONParser().parse(marker);
+					for (int i = 0; i < array.size(); i++) {
+						Marker m = new Marker();
+						String latitude = "";
+						String longitude = "";
+							JSONArray array2 = (JSONArray) array.get(i);
+							for (int j = 0; j < array2.size(); j++) {
+								latitude += ((JSONObject) array2.get(j)).get("lat")+ " ";
+								longitude += ((JSONObject) array2.get(j)).get("lng")+ " ";
+							}
+						m.setLatitude(latitude);
+						m.setLongitude(longitude);
+						m.setOverlaytype("polygon");
+						boardService.addMarker(m);
+					}
+				}else if(key.equals("arrow")) {
+					String marker = JSONStringer.valueToString(map.get("arrow"));
+					JSONArray array = (JSONArray) new JSONParser().parse(marker);
+					for (int i = 0; i < array.size(); i++) {
+						Marker m = new Marker();
+						String latitude = "";
+						String longitude = "";
+							JSONArray array2 = (JSONArray) array.get(i);
+							for (int j = 0; j < array2.size(); j++) {
+								latitude += ((JSONObject) array2.get(j)).get("lat")+ " ";
+								longitude += ((JSONObject) array2.get(j)).get("lng")+ " ";
+							}
+						m.setLatitude(latitude);
+						m.setLongitude(longitude);
+						m.setOverlaytype("arrow");
+						boardService.addMarker(m);
+					}
+				}else if(key.equals("ellipse")) {
+					String marker = JSONStringer.valueToString(map.get("ellipse"));
+					JSONArray array = (JSONArray) new JSONParser().parse(marker);
+					for (int i = 0; i < array.size(); i++) {
+						Marker m = new Marker();
+						m.setBoardid(board.getBoardid());
+						m.setLatitude((String)((JSONObject) array.get(i)).get("lat"));
+						m.setLongitude((String)((JSONObject) array.get(i)).get("lng"));
+						m.setRx((double)((JSONObject) array.get(i)).get("rx"));
+						m.setRy((double)((JSONObject) array.get(i)).get("ry"));
+						m.setOverlaytype("ellipse");
+						boardService.addMarker(m);
+					}
 				}
+				else if(key.equals("image")) {
+					String marker = JSONStringer.valueToString(map.get("image"));
+					JSONArray array = (JSONArray) new JSONParser().parse(marker);
+					for (int i = 0; i < array.size(); i++) {
+						Img img = new Img();
+						img.setBoardid(board.getBoardid());
+						img.setSrc((String)array.get(i));
+						img.setRep(1);
+						if (img.getRep() == 1)
+							repnum++;
+						boardService.addImg(img);
+					}
+				}
+			}
+
+			if (repnum == 0) {// 대표 이미지가 하나도 없으면 게시글 등록 불가능
+				boardService.deleteBoard(board.getBoardid());
+			} else {
 				List<Integer> follower = userService.getFollower(board.getUid());
 				for (int i : follower) {
 					Alarm alarm = new Alarm();
@@ -349,6 +463,7 @@ public class PageController {
 					alarm.setNickname(board.getUser().getNickname());
 					userService.addAlarm(alarm);
 				}
+				return new ResponseEntity<>(HttpStatus.OK);
 			}
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -357,6 +472,7 @@ public class PageController {
 	@PostMapping("/board0")
 	@ApiOperation(value = "게시글 등록")
 	public Object addBoard(@RequestBody Board board) throws Exception {
+		// 삭제 예정
 		int ok = boardService.addBoard(board);
 		if (ok > 0) {
 			int repcnt = 0;
@@ -395,7 +511,7 @@ public class PageController {
 	@PutMapping("/board")
 	@ApiOperation(value = "게시글 수정")
 	public Object updateBoard(@RequestBody Board board) throws Exception {
-		// uid 는 프론트에서 설정?
+		// 나중에 게시물 작성을 보고 따라 바꿀 예정
 		Board b = boardService.findBoardByBoardId(board.getBoardid());
 		if (board.getTitle() != null)
 			b.setTitle(board.getTitle());
@@ -404,7 +520,7 @@ public class PageController {
 		if (board.getKeyword() != null)
 			b.setKeyword(board.getKeyword());
 		if (board.getUnveiled() != b.getUnveiled())
-			b.setUnveiled(board.getUnveiled());
+			b.setUnveiled(1);
 
 		boolean change = false;
 		int repcnt = 0;
@@ -559,7 +675,7 @@ public class PageController {
 	@PostMapping("/searchBoard")
 	@ApiOperation(value = "작성한 게시글")
 	public Object writedBoard(@RequestBody Map<String, String> map) throws Exception {
-		if(map.get("jwt") == null)
+		if (map.get("jwt") == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		int uid = (int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid");
 		List<Board> boards = boardService.findBoardListByUid(uid);
@@ -591,26 +707,44 @@ public class PageController {
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/searchComment")
 	@ApiOperation(value = "작성한 댓글")
 	public Object writedComment(@RequestBody Map<String, String> map) throws Exception {
-		if(map.get("jwt") == null)
+		if (map.get("jwt") == null)
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		int uid = (int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid");
-		List<Comment> comments = boardService.findCommentByUid(uid);
+		List<Comment> comment = boardService.findCommentByUid(uid);
+		List<Comment> comments = new ArrayList<Comment>();
+		for (Comment c : comment) {
+			if (c.getListener() == 0) {
+				addListener(comments, c, c.getBoardid());
+			}
+		}
 		return new ResponseEntity<>(comments, HttpStatus.OK);
+	}
+
+	public void addListener(List<Comment> comments, Comment c, int boardid) throws Exception {
+		List<Comment> comment = boardService.findCommentByListener(c.getCommentid());
+		if (comment == null)
+			return;
+		comments.add(c);
+		for (Comment co : comment) {
+			addListener(comments, co, boardid);
+		}
 	}
 
 	@PostMapping("/comment")
 	@ApiOperation(value = "댓글 등록")
 	public Object addComment(@RequestBody Map<String, String> map) throws Exception {
-		if(map.get("jwt") == null)
+		if (map.get("jwt") == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		Comment comment = new Comment();
 		comment.setUid((int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid"));
 		comment.setBoardid(Integer.parseInt(map.get("boardid")));
 		comment.setContents(map.get("contents"));
+		if (map.get("listener") != null)
+			comment.setListener(Integer.parseInt(map.get("listenter")));
 		int ok = boardService.addComment(comment);
 		if (ok > 0) {
 			Alarm alarm = new Alarm();
@@ -635,7 +769,7 @@ public class PageController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@DeleteMapping("/board")
 	@ApiOperation(value = "게시글 삭제")
 	public Object deleteBoard(@RequestBody String boardid) throws Exception {
@@ -644,7 +778,7 @@ public class PageController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
-	
+
 	@GetMapping("/board/{keyword}")
 	@ApiOperation(value = "키워드 게시글")
 	public Object keywordBoard(@PathVariable String keyword) throws Exception {

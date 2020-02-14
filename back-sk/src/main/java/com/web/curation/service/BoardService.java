@@ -171,4 +171,9 @@ public class BoardService implements IBoardService{
 	public List<Comment> findCommentByUid(int uid) throws Exception {
 		return boardDao.findCommentByUid(uid);
 	}
+
+	@Override
+	public List<Comment> findCommentByListener(int listener) throws Exception {
+		return boardDao.findCommentByListener(listener);
+	}
 }

@@ -16,9 +16,6 @@ public class Board {
 	private String tripterm;
 	private String keyword;
 	private List<String> keywords = new ArrayList<>();
-	private double latitude;
-	private double longitude;
-	private int level;
 	private int unveiled = 1; // true = 1, false = 0
 	private List<Comment> comments = new ArrayList<>();
 	private List<Img> imgs = new ArrayList<>();
@@ -29,9 +26,11 @@ public class Board {
 	private User user;
 	private String writeday;// ~전
 	private String content;
+	private String info;
+	private String cusInfo;
 
 	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword,
-			List<String> keywords, double latitude, double longitude, int level, int unveiled, List<Comment> comments,
+			List<String> keywords, int unveiled, List<Comment> comments,
 			List<Img> imgs, List<User> favorite, int favoriteNum, int commentNum, List<Marker> markers, User user,
 			String writeday, String content) {
 		super();
@@ -42,9 +41,6 @@ public class Board {
 		this.tripterm = tripterm;
 		this.keyword = keyword;
 		this.keywords = keywords;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
 		this.unveiled = unveiled;
 		this.comments = comments;
 		this.imgs = imgs;
@@ -115,30 +111,6 @@ public class Board {
 
 	public void setKeyword(String keyword) {
 		this.keyword = keyword;
-	}
-
-	public double getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
-
-	public double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
 	}
 
 	public int getUnveiled() {
@@ -251,11 +223,30 @@ public class Board {
 		this.content = content;
 	}
 
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+	public String getCusInfo() {
+		return cusInfo;
+	}
+
+	public void setCusInfo(String cusInfo) {
+		this.cusInfo = cusInfo;
+	}
+
+	public void setKeywords(List<String> keywords) {
+		this.keywords = keywords;
+	}
+
 	@Override
 	public String toString() {
 		return "Board [boardid=" + boardid + ", uid=" + uid + ", title=" + title + ", writedate=" + writedate
-				+ ", tripterm=" + tripterm + ", keyword=" + keyword + ", keywords=" + keywords + ", latitude="
-				+ latitude + ", longitude=" + longitude + ", level=" + level + ", unveiled=" + unveiled + ", comments="
+				+ ", tripterm=" + tripterm + ", keyword=" + keyword + ", keywords=" + keywords + ", unveiled=" + unveiled + ", comments="
 				+ comments + ", imgs=" + imgs + ", favorite=" + favorite + ", favoriteNum=" + favoriteNum
 				+ ", commentNum=" + commentNum + ", markers=" + markers + ", user=" + user + ", writeday=" + writeday
 				+ ", content=" + content + "]";

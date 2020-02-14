@@ -28,12 +28,11 @@ title varchar(100) not null,
 writedate datetime not null,
 tripterm varchar(10) not null,
 keyword varchar(500),
-latitude double not null,
-longitude double not null,
-level int not null,
 favoriteNum int not null default 0,
 unveiled boolean not null default true,
 content text(4000000000),
+info text(4000000000),
+cusinfo text(4000000000),
 foreign key(uid)
 references user(uid) on update cascade on delete cascade
 );
@@ -83,11 +82,11 @@ references board(boardid) on update cascade on delete cascade
 create table marker(
 markerid int primary key auto_increment,
 boardid int not null,
-latitude varchar(500) not null,
-longitude varchar(500) not null,
+latitude varchar(1000) not null,
+longitude varchar(1000) not null,
 remark varchar(1000),
 overlaytype varchar(100) not null,
-radius int,
+radius double,
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade
 );

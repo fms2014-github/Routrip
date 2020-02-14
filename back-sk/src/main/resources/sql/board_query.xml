@@ -8,28 +8,26 @@
 	<insert id="addBoard" parameterType="board"
 		useGeneratedKeys="true" keyProperty="boardid">
 		insert into board
-		(uid, title, writedate, tripterm, latitude,
-		longitude, level, keyword, unveiled)
+		(uid, title, writedate, tripterm, keyword, unveiled, content)
 		values
 		(#{uid}, #{title},
-		now(), #{tripterm}, #{latitude}, #{longitude}, #{level},
-		#{keyword}, #{unveiled})
+		now(), #{tripterm}, #{keyword}, #{unveiled}, #{content})
 		<selectKey keyProperty="boardid" resultType="int">
 			select LAST_INSERT_ID()
 		</selectKey>
 	</insert>
 
 	<select id="getBoardList" resultType="board">
-		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
-		keyword, unveiled
+		select boardid, uid, title, writedate, tripterm,
+		keyword, unveiled, content
 		from board
 		order by writedate desc
 	</select>
 
 	<select id="findBoardListByUid" parameterType="int"
 		resultType="board">
-		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
-		keyword, unveiled
+		select boardid, uid, title, writedate, tripterm,
+		keyword, unveiled, content
 		from board
 		where uid = #{value}
 		order by writedate desc
@@ -37,8 +35,8 @@
 
 	<select id="findBoardListByKeyword" parameterType="string"
 		resultType="board">
-		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
-		keyword, unveiled
+		select boardid, uid, title, writedate, tripterm,
+		keyword, unveiled, content
 		from board
 		where keyword like concat('%', #{value}, '%')
 		order by writedate desc
@@ -46,8 +44,8 @@
 
 	<select id="findBoardListByWriteDate" parameterType="map"
 		resultType="board">
-		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
-		keyword, unveiled
+		select boardid, uid, title, writedate, tripterm,
+		keyword, unveiled, content
 		from board
 		where writedate <![CDATA[>=]]> #{startdate} and writedate <![CDATA[<=]]> #{enddate}
 		order by favoriteNum desc
@@ -55,8 +53,8 @@
 
 	<select id="findBoardByBoardId" parameterType="int"
 		resultType="board">
-		select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
-		keyword, unveiled
+		select boardid, uid, title, writedate, tripterm,
+		keyword, unveiled, content
 		from board
 		where boardid = #{value}
 	</select>
@@ -74,6 +72,7 @@
 		tripterm = #{tripterm},
 		keyword = #{keyword},
 		unveiled = #{unveiled}
+		content = #{content}
 		where boardid = #{boardid}
 	</update>
 
@@ -186,13 +185,20 @@
 	order by writedate desc
 	</select>
 	
+	<select id="findCommentByListener" parameterType="int" resultType="comment">
+	select commentid, uid, boardid, contents, writedate, listener
+	from comment
+	where listener = #{value}
+	order by writedate desc
+	</select>
+	
 	<insert id="addMarker" parameterType="marker" useGeneratedKeys="true" keyProperty="markerid">
-	insert into marker(boardid, latitude, longitude, remark, overlaytype, radius)
-	values(#{boardid}, #{latitude}, #{longitude}, #{remark}, #{overlaytype}, #{radius})
+	insert into marker(boardid, latitude, longitude, remark, overlaytype, radius, rx, ry)
+	values(#{boardid}, #{latitude}, #{longitude}, #{remark}, #{overlaytype}, #{radius}, #{rx}, #{ry})
 	</insert>
 	
 	<select id="findMarker" parameterType="int" resultType="marker">
-	select markerid, boardid, latitude, longitude, remark, overlaytype, radius
+	select markerid, boardid, latitude, longitude, remark, overlaytype, radius, rx, ry
 	from marker
 	where boardid=#{value}
 	</select>
@@ -203,7 +209,9 @@
 		longitude = #{longitude},
 		remark = #{remark},
 		overlaytype = #{overlaytype},
-		radius = #{radius}
+		radius = #{radius},
+		rx = #{rx},
+		ry = #{ry}
 		where markerid=#{markerid}
 	</update>
 	
@@ -214,7 +222,7 @@
 	</delete>
 	
 	<select id="findBoardByFollow" parameterType="int" resultType="board">
-	select boardid, uid, title, writedate, tripterm, latitude, longitude, level,
+	select boardid, uid, title, writedate, tripterm,
 		keyword, unveiled
 		from board
 		where uid in(select follower from follow where following = #{value})
