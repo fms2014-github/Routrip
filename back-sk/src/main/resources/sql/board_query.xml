@@ -8,10 +8,10 @@
 	<insert id="addBoard" parameterType="board"
 		useGeneratedKeys="true" keyProperty="boardid">
 		insert into board
-		(uid, title, writedate, tripterm, keyword, unveiled, content)
+		(uid, title, writedate, tripterm, keyword, unveiled, content, info, cusInfo)
 		values
 		(#{uid}, #{title},
-		now(), #{tripterm}, #{keyword}, #{unveiled}, #{content})
+		now(), #{tripterm}, #{keyword}, #{unveiled}, #{content}, #{info}, #{cusInfo})
 		<selectKey keyProperty="boardid" resultType="int">
 			select LAST_INSERT_ID()
 		</selectKey>
@@ -19,15 +19,24 @@
 
 	<select id="getBoardList" resultType="board">
 		select boardid, uid, title, writedate, tripterm,
-		keyword, unveiled, content
+		keyword, unveiled, content, info, cusInfo
 		from board
 		order by writedate desc
+	</select>
+	
+	<select id="getBoardList5" parameterType="string" resultType="board">
+		select boardid, uid, title, writedate, tripterm,
+		keyword, unveiled, content, info, cusInfo
+		from board
+		where writedate <![CDATA[<]]> #{value}
+		order by writedate desc
+		limit 5
 	</select>
 
 	<select id="findBoardListByUid" parameterType="int"
 		resultType="board">
 		select boardid, uid, title, writedate, tripterm,
-		keyword, unveiled, content
+		keyword, unveiled, content, info, cusInfo
 		from board
 		where uid = #{value}
 		order by writedate desc
@@ -36,7 +45,7 @@
 	<select id="findBoardListByKeyword" parameterType="string"
 		resultType="board">
 		select boardid, uid, title, writedate, tripterm,
-		keyword, unveiled, content
+		keyword, unveiled, content, info, cusInfo
 		from board
 		where keyword like concat('%', #{value}, '%')
 		order by writedate desc
@@ -45,7 +54,7 @@
 	<select id="findBoardListByWriteDate" parameterType="map"
 		resultType="board">
 		select boardid, uid, title, writedate, tripterm,
-		keyword, unveiled, content
+		keyword, unveiled, content, info, cusInfo
 		from board
 		where writedate <![CDATA[>=]]> #{startdate} and writedate <![CDATA[<=]]> #{enddate}
 		order by favoriteNum desc
@@ -54,7 +63,7 @@
 	<select id="findBoardByBoardId" parameterType="int"
 		resultType="board">
 		select boardid, uid, title, writedate, tripterm,
-		keyword, unveiled, content
+		keyword, unveiled, content, info, cusInfo
 		from board
 		where boardid = #{value}
 	</select>
@@ -72,7 +81,9 @@
 		tripterm = #{tripterm},
 		keyword = #{keyword},
 		unveiled = #{unveiled}
-		content = #{content}
+		content = #{content},
+		info = #{info},
+		cusInfo = #{cusInfo}
 		where boardid = #{boardid}
 	</update>
 
@@ -130,20 +141,14 @@
 	</delete>
 	
 	<insert id="addImg" parameterType="img" useGeneratedKeys="true" keyProperty="imgid">
-	insert into img(boardid, src, rep)
-	values(#{boardid}, #{src}, #{rep})
+	insert into img(boardid, src)
+	values(#{boardid}, #{src})
 	</insert>
 	
 	<select id="findBoardImg" parameterType="int" resultType="img">
-		select imgid, boardid, src, rep
+		select imgid, boardid, src
 		from img
 		where boardid = #{value}
-	</select>
-	
-	<select id="findRepImg" parameterType="int" resultType="img">
-		select imgid, boardid, src, rep
-		from img
-		where boardid=#{value} and rep=1
 	</select>
 	
 	<delete id="deleteImg" parameterType="int">
@@ -193,12 +198,12 @@
 	</select>
 	
 	<insert id="addMarker" parameterType="marker" useGeneratedKeys="true" keyProperty="markerid">
-	insert into marker(boardid, latitude, longitude, remark, overlaytype, radius, rx, ry)
-	values(#{boardid}, #{latitude}, #{longitude}, #{remark}, #{overlaytype}, #{radius}, #{rx}, #{ry})
+	insert into marker(boardid, latitude, longitude, overlaytype, radius, rx, ry)
+	values(#{boardid}, #{latitude}, #{longitude}, #{overlaytype}, #{radius}, #{rx}, #{ry})
 	</insert>
 	
 	<select id="findMarker" parameterType="int" resultType="marker">
-	select markerid, boardid, latitude, longitude, remark, overlaytype, radius, rx, ry
+	select markerid, boardid, latitude, longitude, overlaytype, radius, rx, ry
 	from marker
 	where boardid=#{value}
 	</select>
@@ -207,7 +212,6 @@
 		update marker
 		set latitude=#{latitude},
 		longitude = #{longitude},
-		remark = #{remark},
 		overlaytype = #{overlaytype},
 		radius = #{radius},
 		rx = #{rx},
@@ -223,7 +227,7 @@
 	
 	<select id="findBoardByFollow" parameterType="int" resultType="board">
 	select boardid, uid, title, writedate, tripterm,
-		keyword, unveiled
+		keyword, unveiled, info, cusInfo
 		from board
 		where uid in(select follower from follow where following = #{value})
 		order by writedate desc

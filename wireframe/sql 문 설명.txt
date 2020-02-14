@@ -74,7 +74,6 @@ create table img(
 imgid int  primary key auto_increment, 이미지 식별자
 boardid int not null, 이미지 달린 글
 src varchar(500) not null, 이미지 주소
-rep boolean default true, 대표이미지인가
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade
 );
@@ -85,7 +84,6 @@ markerid int primary key auto_increment, 마커 식별자
 boardid int not null, 마커 달린 게시글
 latitude varchar(1000) not null, 마커 위도
 longitude varchar(1000) not null, 마커 경도
-remark varchar(1000), 주석 - 삭제 예정
 overlaytype varchar(100) not null, 마커모양
 radius double, 원일 경우 반지름
 foreign key(boardid)

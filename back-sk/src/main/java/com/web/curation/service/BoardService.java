@@ -93,11 +93,6 @@ public class BoardService implements IBoardService{
 	}
 
 	@Override
-	public List<Img> findRepImg(int boardid) throws Exception {
-		return boardDao.findRepImg(boardid);
-	}
-
-	@Override
 	public int deleteImg(int imgid) throws Exception {
 		return boardDao.deleteImg(imgid);
 	}
@@ -175,5 +170,10 @@ public class BoardService implements IBoardService{
 	@Override
 	public List<Comment> findCommentByListener(int listener) throws Exception {
 		return boardDao.findCommentByListener(listener);
+	}
+
+	@Override
+	public List<Board> getBoardList5(String writedate) throws Exception {
+		return boardDao.getBoardList5(writedate);
 	}
 }

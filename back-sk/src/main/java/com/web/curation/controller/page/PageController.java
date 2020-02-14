@@ -98,12 +98,7 @@ public class PageController {
 			for (int i : boardsid) {
 				Board b = boardService.findBoardByBoardId(i);
 				List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-				List<Img> repimg = new ArrayList<Img>();
-				for (Img img : imgs) {
-					if (img.getRep() == 1)
-						repimg.add(img);
-				}
-				b.setImgs(repimg);
+				b.setImgs(imgs);
 				List<Comment> comments = boardService.findComment(b.getBoardid());
 				for (Comment c : comments) {
 					c.setUser(userService.findUserSimple(c.getUid()));
@@ -186,12 +181,7 @@ public class PageController {
 			for (int i : boardsid) {
 				Board b = boardService.findBoardByBoardId(i);
 				List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-				List<Img> repimg = new ArrayList<Img>();
-				for (Img img : imgs) {
-					if (img.getRep() == 1)
-						repimg.add(img);
-				}
-				b.setImgs(repimg);
+				b.setImgs(imgs);
 				List<Comment> comments = boardService.findComment(b.getBoardid());
 				for (Comment c : comments) {
 					c.setUser(userService.findUserSimple(c.getUid()));
@@ -238,12 +228,7 @@ public class PageController {
 					.findBoardByFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 			for (Board b : boards) {
 				List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-				List<Img> repimg = new ArrayList<Img>();
-				for (Img img : imgs) {
-					if (img.getRep() == 1)
-						repimg.add(img);
-				}
-				b.setImgs(repimg);
+				b.setImgs(imgs);
 				List<Comment> comments = boardService.findComment(b.getBoardid());
 				for (Comment c : comments) {
 					c.setUser(userService.findUserSimple(c.getUid()));
@@ -304,7 +289,7 @@ public class PageController {
 	}
 
 	@PostMapping("/board")
-	@ApiOperation(value = "게시글 작성 수정 버전(아마 이 방식이 맞다고 봄)")
+	@ApiOperation(value = "게시글 작성")
 	public Object addBoard2(@RequestBody Map<String, Object> map) throws Exception {
 		System.out.println("게시글 작성 시작");
 		// 이방식 성공하면 수정도 이런식으로 변경
@@ -321,15 +306,13 @@ public class PageController {
 		board.setUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 		board.setTitle((String) map.get("title"));
 		board.setTripterm((String) map.get("night") + " " + (String) map.get("day"));
-		board.setKeyword((String) map.get("keyword"));
+		board.setKeyword((String) map.get("keywords"));
 		board.setContent((String) map.get("content"));
 		board.setInfo(JSONStringer.valueToString(map.get("info")));
 		board.setCusInfo((String) map.get(JSONStringer.valueToString(map.get("cusInfo"))));
 		board.setUnveiled(1);
 		int ok = boardService.addBoard(board);
 		if (ok > 0) {
-			int repnum = 0;
-			
 			for (String key : map.keySet()) {
 				if (key.equals("jwt") || key.equals("title") || key.equals("night") || key.equals("day")
 						|| key.equals("keyword") || key.equals("content") || key.equals("info")
@@ -341,8 +324,8 @@ public class PageController {
 					for (int i = 0; i < array.size(); i++) {
 						Marker m = new Marker();
 						m.setBoardid(board.getBoardid());
-						m.setLatitude((String)((JSONObject) array.get(i)).get("lat"));
-						m.setLongitude((String)((JSONObject) array.get(i)).get("lng"));
+						m.setLatitude(String.valueOf((double)((JSONObject) array.get(i)).get("lat")));
+						m.setLongitude(String.valueOf((double)((JSONObject) array.get(i)).get("lng")));
 						m.setOverlaytype("marker");
 						boardService.addMarker(m);
 					}
@@ -351,6 +334,7 @@ public class PageController {
 					JSONArray array = (JSONArray) new JSONParser().parse(marker);
 					for (int i = 0; i < array.size(); i++) {
 						Marker m = new Marker();
+						m.setBoardid(board.getBoardid());
 						String latitude = "";
 						String longitude = "";
 							JSONArray array2 = (JSONArray) array.get(i);
@@ -371,8 +355,8 @@ public class PageController {
 						m.setBoardid(board.getBoardid());
 						JSONObject sPoint = (JSONObject)((JSONObject) array.get(i)).get("sPoint");
 						JSONObject ePoint = (JSONObject)((JSONObject) array.get(i)).get("ePoint");
-						m.setLatitude((String)sPoint.get("lat")+" "+(String)ePoint.get("lat"));
-						m.setLongitude((String)sPoint.get("lng")+" "+(String)ePoint.get("lng"));
+						m.setLatitude(String.valueOf((double)sPoint.get("lat"))+" "+String.valueOf((double)ePoint.get("lat")));
+						m.setLongitude(String.valueOf((double)sPoint.get("lng"))+" "+String.valueOf((double)ePoint.get("lng")));
 						m.setOverlaytype("rectangle");
 						boardService.addMarker(m);
 					}
@@ -382,8 +366,8 @@ public class PageController {
 					for (int i = 0; i < array.size(); i++) {
 						Marker m = new Marker();
 						m.setBoardid(board.getBoardid());
-						m.setLatitude((String)((JSONObject) array.get(i)).get("lat"));
-						m.setLongitude((String)((JSONObject) array.get(i)).get("lng"));
+						m.setLatitude(String.valueOf((double)((JSONObject) array.get(i)).get("lat")));
+						m.setLongitude(String.valueOf((double)((JSONObject) array.get(i)).get("lng")));
 						m.setRadius((double)((JSONObject) array.get(i)).get("radius"));
 						m.setOverlaytype("circle");
 						boardService.addMarker(m);
@@ -393,6 +377,7 @@ public class PageController {
 					JSONArray array = (JSONArray) new JSONParser().parse(marker);
 					for (int i = 0; i < array.size(); i++) {
 						Marker m = new Marker();
+						m.setBoardid(board.getBoardid());
 						String latitude = "";
 						String longitude = "";
 							JSONArray array2 = (JSONArray) array.get(i);
@@ -410,6 +395,7 @@ public class PageController {
 					JSONArray array = (JSONArray) new JSONParser().parse(marker);
 					for (int i = 0; i < array.size(); i++) {
 						Marker m = new Marker();
+						m.setBoardid(board.getBoardid());
 						String latitude = "";
 						String longitude = "";
 							JSONArray array2 = (JSONArray) array.get(i);
@@ -428,10 +414,12 @@ public class PageController {
 					for (int i = 0; i < array.size(); i++) {
 						Marker m = new Marker();
 						m.setBoardid(board.getBoardid());
-						m.setLatitude((String)((JSONObject) array.get(i)).get("lat"));
-						m.setLongitude((String)((JSONObject) array.get(i)).get("lng"));
-						m.setRx((double)((JSONObject) array.get(i)).get("rx"));
-						m.setRy((double)((JSONObject) array.get(i)).get("ry"));
+						m.setLatitude(String.valueOf((double)((JSONObject) array.get(i)).get("lat")));
+						m.setLongitude(String.valueOf((double)((JSONObject) array.get(i)).get("lng")));
+						String rx = String.valueOf(((JSONObject) array.get(i)).get("rx"));
+						String ry = String.valueOf(((JSONObject) array.get(i)).get("ry"));
+						m.setRx(Double.valueOf(rx));
+						m.setRy(Double.valueOf(ry));
 						m.setOverlaytype("ellipse");
 						boardService.addMarker(m);
 					}
@@ -443,17 +431,11 @@ public class PageController {
 						Img img = new Img();
 						img.setBoardid(board.getBoardid());
 						img.setSrc((String)array.get(i));
-						img.setRep(1);
-						if (img.getRep() == 1)
-							repnum++;
 						boardService.addImg(img);
 					}
 				}
 			}
 
-			if (repnum == 0) {// 대표 이미지가 하나도 없으면 게시글 등록 불가능
-				boardService.deleteBoard(board.getBoardid());
-			} else {
 				List<Integer> follower = userService.getFollower(board.getUid());
 				for (int i : follower) {
 					Alarm alarm = new Alarm();
@@ -463,47 +445,8 @@ public class PageController {
 					alarm.setNickname(board.getUser().getNickname());
 					userService.addAlarm(alarm);
 				}
+				System.out.println("게시글 작성 완료");
 				return new ResponseEntity<>(HttpStatus.OK);
-			}
-		}
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-	}
-
-	@PostMapping("/board0")
-	@ApiOperation(value = "게시글 등록")
-	public Object addBoard(@RequestBody Board board) throws Exception {
-		// 삭제 예정
-		int ok = boardService.addBoard(board);
-		if (ok > 0) {
-			int repcnt = 0;
-			for (Img i : board.getImgs()) {
-				i.setBoardid(board.getBoardid());
-				if (i.getRep() == 1)
-					repcnt++;
-			}
-			if (repcnt == 0 || board.getMarkers().size() == 0) {
-				boardService.deleteBoard(board.getBoardid());
-				return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-			}
-			for (Img i : board.getImgs()) {
-				boardService.addImg(i);
-			}
-			for (Marker m : board.getMarkers()) {
-				m.setBoardid(board.getBoardid());
-				boardService.addMarker(m);
-			}
-
-			List<Integer> follower = userService.getFollower(board.getUid());
-			for (int i : follower) {
-				Alarm alarm = new Alarm();
-				alarm.setUid(i);
-				alarm.setBoardid(board.getBoardid());
-				alarm.setAlarmtype(4);
-				alarm.setNickname(board.getUser().getNickname());
-				userService.addAlarm(alarm);
-			}
-			// System.out.println("게시글 등록되었습니다.");
-			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -523,38 +466,15 @@ public class PageController {
 			b.setUnveiled(1);
 
 		boolean change = false;
-		int repcnt = 0;
 		List<Img> imgs = boardService.findBoardImg(board.getBoardid());
 
-		if (imgs.size() != board.getImgs().size())
-			change = true;
-
-		if (!change) {
-			List<Img> newimgs = board.getImgs();
-			for (int i = 0; i < imgs.size(); i++) {
-				if (imgs.get(i).getRep() != newimgs.get(i).getRep()
-						|| !imgs.get(i).getSrc().equals(newimgs.get(i).getSrc())) {
-					change = true;
-				}
-				if (newimgs.get(i).getRep() == 1)
-					repcnt++;
-			}
-		}
-
-		if (repcnt == 0)
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
-		if (change) {
 			for (Img i : imgs) {
 				boardService.deleteImg(i.getImgid());
 			}
 			for (Img i : board.getImgs()) {
 				i.setBoardid(board.getBoardid());
 				boardService.addImg(i);
-				if (i.getRep() == 1)
-					repcnt++;
 			}
-		}
 
 		for (Marker m : board.getMarkers()) {
 			if (m.getMarkerid() > 0) {// 있던 마커면 수정
@@ -571,18 +491,17 @@ public class PageController {
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
-	@GetMapping("/boardList")
+	@GetMapping("/boardList/{lastDate}")
 	@ApiOperation(value = "게시글 전체보기")
-	public Object getBoardList() throws Exception {
-		List<Board> boards = boardService.getBoardList();
+	public Object getBoardList(@PathVariable String lastDate) throws Exception {
+		if(lastDate.equals("0")) {
+			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			lastDate = format1.format(new Date());
+		}
+		List<Board> boards = boardService.getBoardList5(lastDate);
 		for (Board b : boards) {
 			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-			List<Img> repimg = new ArrayList<Img>();
-			for (Img i : imgs) {
-				if (i.getRep() == 1)
-					repimg.add(i);
-			}
-			b.setImgs(repimg);
+			b.setImgs(imgs);
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			for (Comment c : comments) {
 				c.setUser(userService.findUserSimple(c.getUid()));
@@ -599,7 +518,8 @@ public class PageController {
 				users.add(userService.findUserSimple(ui));
 			b.setFavorite(users);
 			b.setUser(userService.findUserSimple(b.getUid()));
-			b.setKeywords(b.getKeyword());
+			if(b.getKeyword()!=null)
+				b.setKeywords(b.getKeyword());
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
@@ -643,12 +563,7 @@ public class PageController {
 			}
 			if (flag) {// 보드 정보를 다 모아서 목록에 넣는다
 				List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-				List<Img> repimg = new ArrayList<Img>();
-				for (Img i : imgs) {
-					if (i.getRep() == 1)
-						repimg.add(i);
-				}
-				b.setImgs(repimg);
+				b.setImgs(imgs);
 				List<Comment> comments = boardService.findComment(b.getBoardid());
 				for (Comment c : comments) {
 					c.setUser(userService.findUserSimple(c.getUid()));
@@ -681,12 +596,7 @@ public class PageController {
 		List<Board> boards = boardService.findBoardListByUid(uid);
 		for (Board b : boards) {
 			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-			List<Img> repimg = new ArrayList<Img>();
-			for (Img i : imgs) {
-				if (i.getRep() == 1)
-					repimg.add(i);
-			}
-			b.setImgs(repimg);
+			b.setImgs(imgs);
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			for (Comment c : comments) {
 				c.setUser(userService.findUserSimple(c.getUid()));
@@ -785,12 +695,7 @@ public class PageController {
 		List<Board> boards = boardService.findBoardListByKeyword(keyword);
 		for (Board b : boards) {
 			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-			List<Img> repimg = new ArrayList<Img>();
-			for (Img i : imgs) {
-				if (i.getRep() == 1)
-					repimg.add(i);
-			}
-			b.setImgs(repimg);
+			b.setImgs(imgs);
 			List<Comment> comments = boardService.findComment(b.getBoardid());
 			for (Comment c : comments) {
 				c.setUser(userService.findUserSimple(c.getUid()));

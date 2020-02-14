@@ -10,6 +10,7 @@ import com.web.curation.model.board.Marker;
 public interface IBoardService {
 	int addBoard(Board board) throws Exception;
 	List<Board> getBoardList() throws Exception;
+	List<Board> getBoardList5(String writedate) throws Exception;
 	List<Board> findBoardListByUid(int uid) throws Exception;
 	List<Board> findBoardListByKeyword(String keyword) throws Exception;
 	List<Board> findBoardListByWriteDate(String startdate, String enddate) throws Exception;
@@ -30,7 +31,6 @@ public interface IBoardService {
 
     int addImg(Img img) throws Exception;
     List<Img> findBoardImg(int boardid) throws Exception;
-    List<Img> findRepImg(int boardid) throws Exception;
     int deleteImg(int imgid) throws Exception;
     
     int addComment(Comment comment) throws Exception;

@@ -106,11 +106,6 @@ public class BoardDao implements IBoardDao{
 	}
 
 	@Override
-	public List<Img> findRepImg(int boardid) throws Exception {
-		return sqlSession.selectList(ns+"findRepImg", boardid);
-	}
-
-	@Override
 	public int deleteImg(int imgid) throws Exception {
 		return sqlSession.delete(ns+"deleteImg", imgid);
 	}
@@ -197,5 +192,10 @@ public class BoardDao implements IBoardDao{
 	@Override
 	public List<Comment> findCommentByListener(int listener) throws Exception {
 		return sqlSession.selectList(ns+"findCommentByListener", listener);
+	}
+
+	@Override
+	public List<Board> getBoardList5(String writedate) throws Exception {
+		return sqlSession.selectList(ns+"getBoardList5", writedate);
 	}
 }

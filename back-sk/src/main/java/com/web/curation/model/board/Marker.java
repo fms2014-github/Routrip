@@ -5,7 +5,6 @@ public class Marker {
 	private int boardid;
 	private String latitude;
 	private String longitude;
-	private String remark;
 	private String overlaytype;
 	private double radius;
 	private double rx;
@@ -18,7 +17,6 @@ public class Marker {
 		this.boardid = boardid;
 		this.latitude = latitude;
 		this.longitude = longitude;
-		this.remark = remark;
 		this.overlaytype = overlaytype;
 		this.radius = radius;
 		this.rx = rx;
@@ -51,12 +49,6 @@ public class Marker {
 	public void setLongitude(String longitude) {
 		this.longitude = longitude;
 	}
-	public String getRemark() {
-		return remark;
-	}
-	public void setRemark(String remark) {
-		this.remark = remark;
-	}
 	public String getOverlaytype() {
 		return overlaytype;
 	}
@@ -84,7 +76,7 @@ public class Marker {
 	@Override
 	public String toString() {
 		return "Marker [markerid=" + markerid + ", boardid=" + boardid + ", latitude=" + latitude + ", longitude="
-				+ longitude + ", remark=" + remark + ", overlaytype=" + overlaytype + ", radius=" + radius + ", rx="
+				+ longitude + ", overlaytype=" + overlaytype + ", radius=" + radius + ", rx="
 				+ rx + ", ry=" + ry + "]";
 	}
 }

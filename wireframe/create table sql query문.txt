@@ -74,7 +74,6 @@ create table img(
 imgid int  primary key auto_increment,
 boardid int not null,
 src varchar(500) not null,
-rep boolean default true,
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade
 );
@@ -84,7 +83,6 @@ markerid int primary key auto_increment,
 boardid int not null,
 latitude varchar(1000) not null,
 longitude varchar(1000) not null,
-remark varchar(1000),
 overlaytype varchar(100) not null,
 radius double,
 foreign key(boardid)
