@@ -176,4 +176,9 @@ public class BoardService implements IBoardService{
 	public List<Board> getBoardList5(String writedate) throws Exception {
 		return boardDao.getBoardList5(writedate);
 	}
+
+	@Override
+	public List<Board> findBoardBest() throws Exception {
+		return boardDao.findBoardBest();
+	}
 }

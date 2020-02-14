@@ -14,6 +14,7 @@ public interface IBoardService {
 	List<Board> findBoardListByUid(int uid) throws Exception;
 	List<Board> findBoardListByKeyword(String keyword) throws Exception;
 	List<Board> findBoardListByWriteDate(String startdate, String enddate) throws Exception;
+	List<Board> findBoardBest() throws Exception;
 	Board findBoardByBoardId(int boardid) throws Exception;
 	int deleteBoard(int boardid) throws Exception;
 	int updateBoard(Board board) throws Exception;

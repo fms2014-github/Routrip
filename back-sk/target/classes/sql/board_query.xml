@@ -19,24 +19,24 @@
 
 	<select id="getBoardList" resultType="board">
 		select boardid, uid, title, writedate, tripterm,
-		keyword, unveiled, content, info, cusInfo
+		keyword, unveiled, content, info, cusInfo, favoriteNum
 		from board
 		order by writedate desc
 	</select>
 	
 	<select id="getBoardList5" parameterType="string" resultType="board">
 		select boardid, uid, title, writedate, tripterm,
-		keyword, unveiled, content, info, cusInfo
+		keyword, unveiled, content, info, cusInfo, favoriteNum
 		from board
 		where writedate <![CDATA[<]]> #{value}
 		order by writedate desc
-		limit 5
+		limit 4
 	</select>
 
 	<select id="findBoardListByUid" parameterType="int"
 		resultType="board">
 		select boardid, uid, title, writedate, tripterm,
-		keyword, unveiled, content, info, cusInfo
+		keyword, unveiled, content, info, cusInfo, favoriteNum
 		from board
 		where uid = #{value}
 		order by writedate desc
@@ -45,7 +45,7 @@
 	<select id="findBoardListByKeyword" parameterType="string"
 		resultType="board">
 		select boardid, uid, title, writedate, tripterm,
-		keyword, unveiled, content, info, cusInfo
+		keyword, unveiled, content, info, cusInfo, favoriteNum
 		from board
 		where keyword like concat('%', #{value}, '%')
 		order by writedate desc
@@ -54,7 +54,7 @@
 	<select id="findBoardListByWriteDate" parameterType="map"
 		resultType="board">
 		select boardid, uid, title, writedate, tripterm,
-		keyword, unveiled, content, info, cusInfo
+		keyword, unveiled, content, info, cusInfo, favoriteNum
 		from board
 		where writedate <![CDATA[>=]]> #{startdate} and writedate <![CDATA[<=]]> #{enddate}
 		order by favoriteNum desc
@@ -63,9 +63,17 @@
 	<select id="findBoardByBoardId" parameterType="int"
 		resultType="board">
 		select boardid, uid, title, writedate, tripterm,
-		keyword, unveiled, content, info, cusInfo
+		keyword, unveiled, content, info, cusInfo, favoriteNum
 		from board
 		where boardid = #{value}
+	</select>
+	
+	<select id="findBoardBest" resultType="board">
+		select boardid, uid, title, writedate, tripterm,
+		keyword, unveiled, content, info, cusInfo, favoriteNum
+		from board
+		order by favoriteNum desc
+		limit 5
 	</select>
 
 	<delete id="deleteBoard" parameterType="int">
@@ -227,7 +235,7 @@
 	
 	<select id="findBoardByFollow" parameterType="int" resultType="board">
 	select boardid, uid, title, writedate, tripterm,
-		keyword, unveiled, info, cusInfo
+		keyword, unveiled, info, cusInfo, favoriteNum
 		from board
 		where uid in(select follower from follow where following = #{value})
 		order by writedate desc

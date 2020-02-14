@@ -292,15 +292,14 @@ public class PageController {
 	@ApiOperation(value = "게시글 작성")
 	public Object addBoard2(@RequestBody Map<String, Object> map) throws Exception {
 		System.out.println("게시글 작성 시작");
-		// 이방식 성공하면 수정도 이런식으로 변경
+		// 수정도 이런식으로 변경
 		String jwt = (String) map.get("jwt");
 		if (jwt == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 
-		for (String key : map.keySet()) { // 어떤식으로 넘어오는지 확인용
-			System.out.println(key + " : " + JSONStringer.valueToString(map.get(key)));
-		}
-		//return new ResponseEntity<>(HttpStatus.OK);
+//		for (String key : map.keySet()) {
+//			System.out.println(key + " : " + JSONStringer.valueToString(map.get(key)));
+//		}
 
 		Board board = new Board();
 		board.setUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
@@ -499,6 +498,35 @@ public class PageController {
 			lastDate = format1.format(new Date());
 		}
 		List<Board> boards = boardService.getBoardList5(lastDate);
+		for (Board b : boards) {
+			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
+			b.setImgs(imgs);
+			List<Comment> comments = boardService.findComment(b.getBoardid());
+			for (Comment c : comments) {
+				c.setUser(userService.findUserSimple(c.getUid()));
+			}
+			b.setCommentNum(comments.size());
+			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+			b.setFavoriteNum(favoriteNum);
+			b.setMarkers(boardService.findMarker(b.getBoardid()));
+			b.setComments(comments);
+			List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
+			List<User> users = new ArrayList<User>();
+			for (int ui : usersid)
+				users.add(userService.findUserSimple(ui));
+			b.setFavorite(users);
+			b.setUser(userService.findUserSimple(b.getUid()));
+			if(b.getKeyword()!=null)
+				b.setKeywords(b.getKeyword());
+		}
+		return new ResponseEntity<>(boards, HttpStatus.OK);
+	}
+	
+	@GetMapping("/bestBoard")
+	@ApiOperation(value = "베스트 게시글")
+	public Object bestBoard() throws Exception {
+		List<Board> boards = boardService.findBoardBest();
 		for (Board b : boards) {
 			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
 			b.setImgs(imgs);

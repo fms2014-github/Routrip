@@ -198,4 +198,9 @@ public class BoardDao implements IBoardDao{
 	public List<Board> getBoardList5(String writedate) throws Exception {
 		return sqlSession.selectList(ns+"getBoardList5", writedate);
 	}
+
+	@Override
+	public List<Board> findBoardBest() throws Exception {
+		return sqlSession.selectList(ns+"findBoardBest");
+	}
 }
