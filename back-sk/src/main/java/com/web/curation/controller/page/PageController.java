@@ -115,7 +115,8 @@ public class PageController {
 				for (int ui : usersid)
 					users.add(userService.findUserSimple(ui));
 				b.setFavorite(users);
-				b.setKeywords(b.getKeyword());
+				if (b.getKeyword() != null)
+					b.setKeywords(b.getKeyword());
 				boards.add(b);
 			}
 			return new ResponseEntity<>(boards, HttpStatus.OK);
@@ -198,7 +199,8 @@ public class PageController {
 				for (int ui : usersid)
 					users.add(userService.findUserSimple(ui));
 				b.setFavorite(users);
-				b.setKeywords(b.getKeyword());
+				if (b.getKeyword() != null)
+					b.setKeywords(b.getKeyword());
 				boards.add(b);
 			}
 			return new ResponseEntity<>(boards, HttpStatus.OK);
@@ -245,7 +247,8 @@ public class PageController {
 					users.add(userService.findUserSimple(ui));
 				b.setFavorite(users);
 				b.setUser(userService.findUserSimple(b.getUid()));
-				b.setKeywords(b.getKeyword());
+				if (b.getKeyword() != null)
+					b.setKeywords(b.getKeyword());
 			}
 			return new ResponseEntity<>(boards, HttpStatus.OK);
 		}
@@ -282,7 +285,8 @@ public class PageController {
 				users.add(userService.findUserSimple(ui));
 			board.setFavorite(users);
 			board.setUser(userService.findUserSimple(board.getUid()));
-			board.setKeywords(board.getKeyword());
+			if (board.getKeyword() != null)
+				board.setKeywords(board.getKeyword());
 			return new ResponseEntity<>(board, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -317,18 +321,18 @@ public class PageController {
 						|| key.equals("keyword") || key.equals("content") || key.equals("info")
 						|| key.equals("cusInfo"))
 					continue;
-				if(key.equals("marker")) {
+				if (key.equals("marker")) {
 					String marker = JSONStringer.valueToString(map.get("marker"));
 					JSONArray array = (JSONArray) new JSONParser().parse(marker);
 					for (int i = 0; i < array.size(); i++) {
 						Marker m = new Marker();
 						m.setBoardid(board.getBoardid());
-						m.setLatitude(String.valueOf((double)((JSONObject) array.get(i)).get("lat")));
-						m.setLongitude(String.valueOf((double)((JSONObject) array.get(i)).get("lng")));
+						m.setLatitude(String.valueOf((double) ((JSONObject) array.get(i)).get("lat")));
+						m.setLongitude(String.valueOf((double) ((JSONObject) array.get(i)).get("lng")));
 						m.setOverlaytype("marker");
 						boardService.addMarker(m);
 					}
-				}else if(key.equals("polyline")) {
+				} else if (key.equals("polyline")) {
 					String marker = JSONStringer.valueToString(map.get("polyline"));
 					JSONArray array = (JSONArray) new JSONParser().parse(marker);
 					for (int i = 0; i < array.size(); i++) {
@@ -336,42 +340,44 @@ public class PageController {
 						m.setBoardid(board.getBoardid());
 						String latitude = "";
 						String longitude = "";
-							JSONArray array2 = (JSONArray) array.get(i);
-							for (int j = 0; j < array2.size(); j++) {
-								latitude += ((JSONObject) array2.get(j)).get("lat")+ " ";
-								longitude += ((JSONObject) array2.get(j)).get("lng")+ " ";
-							}
+						JSONArray array2 = (JSONArray) array.get(i);
+						for (int j = 0; j < array2.size(); j++) {
+							latitude += ((JSONObject) array2.get(j)).get("lat") + " ";
+							longitude += ((JSONObject) array2.get(j)).get("lng") + " ";
+						}
 						m.setLatitude(latitude);
 						m.setLongitude(longitude);
 						m.setOverlaytype("polyline");
 						boardService.addMarker(m);
 					}
-				}else if(key.equals("rectangle")) {
+				} else if (key.equals("rectangle")) {
 					String marker = JSONStringer.valueToString(map.get("rectangle"));
 					JSONArray array = (JSONArray) new JSONParser().parse(marker);
 					for (int i = 0; i < array.size(); i++) {
 						Marker m = new Marker();
 						m.setBoardid(board.getBoardid());
-						JSONObject sPoint = (JSONObject)((JSONObject) array.get(i)).get("sPoint");
-						JSONObject ePoint = (JSONObject)((JSONObject) array.get(i)).get("ePoint");
-						m.setLatitude(String.valueOf((double)sPoint.get("lat"))+" "+String.valueOf((double)ePoint.get("lat")));
-						m.setLongitude(String.valueOf((double)sPoint.get("lng"))+" "+String.valueOf((double)ePoint.get("lng")));
+						JSONObject sPoint = (JSONObject) ((JSONObject) array.get(i)).get("sPoint");
+						JSONObject ePoint = (JSONObject) ((JSONObject) array.get(i)).get("ePoint");
+						m.setLatitude(String.valueOf((double) sPoint.get("lat")) + " "
+								+ String.valueOf((double) ePoint.get("lat")));
+						m.setLongitude(String.valueOf((double) sPoint.get("lng")) + " "
+								+ String.valueOf((double) ePoint.get("lng")));
 						m.setOverlaytype("rectangle");
 						boardService.addMarker(m);
 					}
-				}else if(key.equals("circle")) {
+				} else if (key.equals("circle")) {
 					String marker = JSONStringer.valueToString(map.get("circle"));
 					JSONArray array = (JSONArray) new JSONParser().parse(marker);
 					for (int i = 0; i < array.size(); i++) {
 						Marker m = new Marker();
 						m.setBoardid(board.getBoardid());
-						m.setLatitude(String.valueOf((double)((JSONObject) array.get(i)).get("lat")));
-						m.setLongitude(String.valueOf((double)((JSONObject) array.get(i)).get("lng")));
-						m.setRadius((double)((JSONObject) array.get(i)).get("radius"));
+						m.setLatitude(String.valueOf((double) ((JSONObject) array.get(i)).get("lat")));
+						m.setLongitude(String.valueOf((double) ((JSONObject) array.get(i)).get("lng")));
+						m.setRadius((double) ((JSONObject) array.get(i)).get("radius"));
 						m.setOverlaytype("circle");
 						boardService.addMarker(m);
 					}
-				}else if(key.equals("polygon")) {
+				} else if (key.equals("polygon")) {
 					String marker = JSONStringer.valueToString(map.get("polygon"));
 					JSONArray array = (JSONArray) new JSONParser().parse(marker);
 					for (int i = 0; i < array.size(); i++) {
@@ -379,17 +385,17 @@ public class PageController {
 						m.setBoardid(board.getBoardid());
 						String latitude = "";
 						String longitude = "";
-							JSONArray array2 = (JSONArray) array.get(i);
-							for (int j = 0; j < array2.size(); j++) {
-								latitude += ((JSONObject) array2.get(j)).get("lat")+ " ";
-								longitude += ((JSONObject) array2.get(j)).get("lng")+ " ";
-							}
+						JSONArray array2 = (JSONArray) array.get(i);
+						for (int j = 0; j < array2.size(); j++) {
+							latitude += ((JSONObject) array2.get(j)).get("lat") + " ";
+							longitude += ((JSONObject) array2.get(j)).get("lng") + " ";
+						}
 						m.setLatitude(latitude);
 						m.setLongitude(longitude);
 						m.setOverlaytype("polygon");
 						boardService.addMarker(m);
 					}
-				}else if(key.equals("arrow")) {
+				} else if (key.equals("arrow")) {
 					String marker = JSONStringer.valueToString(map.get("arrow"));
 					JSONArray array = (JSONArray) new JSONParser().parse(marker);
 					for (int i = 0; i < array.size(); i++) {
@@ -397,24 +403,24 @@ public class PageController {
 						m.setBoardid(board.getBoardid());
 						String latitude = "";
 						String longitude = "";
-							JSONArray array2 = (JSONArray) array.get(i);
-							for (int j = 0; j < array2.size(); j++) {
-								latitude += ((JSONObject) array2.get(j)).get("lat")+ " ";
-								longitude += ((JSONObject) array2.get(j)).get("lng")+ " ";
-							}
+						JSONArray array2 = (JSONArray) array.get(i);
+						for (int j = 0; j < array2.size(); j++) {
+							latitude += ((JSONObject) array2.get(j)).get("lat") + " ";
+							longitude += ((JSONObject) array2.get(j)).get("lng") + " ";
+						}
 						m.setLatitude(latitude);
 						m.setLongitude(longitude);
 						m.setOverlaytype("arrow");
 						boardService.addMarker(m);
 					}
-				}else if(key.equals("ellipse")) {
+				} else if (key.equals("ellipse")) {
 					String marker = JSONStringer.valueToString(map.get("ellipse"));
 					JSONArray array = (JSONArray) new JSONParser().parse(marker);
 					for (int i = 0; i < array.size(); i++) {
 						Marker m = new Marker();
 						m.setBoardid(board.getBoardid());
-						m.setLatitude(String.valueOf((double)((JSONObject) array.get(i)).get("lat")));
-						m.setLongitude(String.valueOf((double)((JSONObject) array.get(i)).get("lng")));
+						m.setLatitude(String.valueOf((double) ((JSONObject) array.get(i)).get("lat")));
+						m.setLongitude(String.valueOf((double) ((JSONObject) array.get(i)).get("lng")));
 						String rx = String.valueOf(((JSONObject) array.get(i)).get("rx"));
 						String ry = String.valueOf(((JSONObject) array.get(i)).get("ry"));
 						m.setRx(Double.valueOf(rx));
@@ -422,30 +428,29 @@ public class PageController {
 						m.setOverlaytype("ellipse");
 						boardService.addMarker(m);
 					}
-				}
-				else if(key.equals("image")) {
+				} else if (key.equals("image")) {
 					String marker = JSONStringer.valueToString(map.get("image"));
 					JSONArray array = (JSONArray) new JSONParser().parse(marker);
 					for (int i = 0; i < array.size(); i++) {
 						Img img = new Img();
 						img.setBoardid(board.getBoardid());
-						img.setSrc((String)array.get(i));
+						img.setSrc((String) array.get(i));
 						boardService.addImg(img);
 					}
 				}
 			}
 
-				List<Integer> follower = userService.getFollower(board.getUid());
-				for (int i : follower) {
-					Alarm alarm = new Alarm();
-					alarm.setUid(i);
-					alarm.setBoardid(board.getBoardid());
-					alarm.setAlarmtype(4);
-					alarm.setNickname(board.getUser().getNickname());
-					userService.addAlarm(alarm);
-				}
-				System.out.println("게시글 작성 완료");
-				return new ResponseEntity<>(HttpStatus.OK);
+			List<Integer> follower = userService.getFollower(board.getUid());
+			for (int i : follower) {
+				Alarm alarm = new Alarm();
+				alarm.setUid(i);
+				alarm.setBoardid(board.getBoardid());
+				alarm.setAlarmtype(4);
+				alarm.setNickname(board.getUser().getNickname());
+				userService.addAlarm(alarm);
+			}
+			System.out.println("게시글 작성 완료");
+			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -467,13 +472,13 @@ public class PageController {
 		boolean change = false;
 		List<Img> imgs = boardService.findBoardImg(board.getBoardid());
 
-			for (Img i : imgs) {
-				boardService.deleteImg(i.getImgid());
-			}
-			for (Img i : board.getImgs()) {
-				i.setBoardid(board.getBoardid());
-				boardService.addImg(i);
-			}
+		for (Img i : imgs) {
+			boardService.deleteImg(i.getImgid());
+		}
+		for (Img i : board.getImgs()) {
+			i.setBoardid(board.getBoardid());
+			boardService.addImg(i);
+		}
 
 		for (Marker m : board.getMarkers()) {
 			if (m.getMarkerid() > 0) {// 있던 마커면 수정
@@ -493,7 +498,7 @@ public class PageController {
 	@GetMapping("/boardList/{lastDate}")
 	@ApiOperation(value = "게시글 전체보기")
 	public Object getBoardList(@PathVariable String lastDate) throws Exception {
-		if(lastDate.equals("0")) {
+		if (lastDate.equals("0")) {
 			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			lastDate = format1.format(new Date());
 		}
@@ -517,12 +522,12 @@ public class PageController {
 				users.add(userService.findUserSimple(ui));
 			b.setFavorite(users);
 			b.setUser(userService.findUserSimple(b.getUid()));
-			if(b.getKeyword()!=null)
+			if (b.getKeyword() != null)
 				b.setKeywords(b.getKeyword());
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
-	
+
 	@GetMapping("/bestBoard")
 	@ApiOperation(value = "베스트 게시글")
 	public Object bestBoard() throws Exception {
@@ -546,7 +551,7 @@ public class PageController {
 				users.add(userService.findUserSimple(ui));
 			b.setFavorite(users);
 			b.setUser(userService.findUserSimple(b.getUid()));
-			if(b.getKeyword()!=null)
+			if (b.getKeyword() != null)
 				b.setKeywords(b.getKeyword());
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
@@ -608,7 +613,8 @@ public class PageController {
 					users.add(userService.findUserSimple(ui));
 				b.setFavorite(users);
 				b.setUser(userService.findUserSimple(b.getUid()));
-				b.setKeywords(b.getKeyword());
+				if (b.getKeyword() != null)
+					b.setKeywords(b.getKeyword());
 				board.add(b);
 			}
 		}
@@ -641,7 +647,8 @@ public class PageController {
 				users.add(userService.findUserSimple(ui));
 			b.setFavorite(users);
 			b.setUser(userService.findUserSimple(b.getUid()));
-			b.setKeywords(b.getKeyword());
+			if (b.getKeyword() != null)
+				b.setKeywords(b.getKeyword());
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
@@ -740,7 +747,8 @@ public class PageController {
 				users.add(userService.findUserSimple(ui));
 			b.setFavorite(users);
 			b.setUser(userService.findUserSimple(b.getUid()));
-			b.setKeywords(b.getKeyword());
+			if (b.getKeyword() != null)
+				b.setKeywords(b.getKeyword());
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
