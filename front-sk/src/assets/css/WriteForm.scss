@@ -481,7 +481,56 @@ $border-a6cdc6: 1px solid #a6cdc6;
                 box-shadow: none;
             }
         }
-
+        #inserted-image-list{
+            padding: 8px;
+            border: 1px solid black;
+            hr{
+                margin: 4px 0px;
+                border: 1px solid black;
+            }
+            .image-list-wrap{
+                display: inline-block;
+                position: relative;
+                .inserted-image{
+                    width: 72px;
+                    height: 96px;
+                    margin: 4px;
+                    border: 2px solid black;
+                }
+                .representative{
+                    border: 2px solid #41a8ac;
+                }
+                .delete-image{
+                    position: absolute;
+                    right: 6px;
+                    top: 6px;
+                    background-color: whitesmoke;
+                    border: {
+                        width: 0 0 1px 1px;
+                        style: solid;
+                        color: black;
+                    };
+                    width: 16px;
+                    height: 16px;
+                }
+                .representative-button{
+                    border: {
+                        width: 0 0 1px 1px;
+                        style: solid;
+                        color: #41a8ac;
+                    };
+                }
+                .representative-image{
+                    position: absolute;
+                    top: 6px;
+                    left: 6px;
+                    background-color: #befff3;
+                    color: rgb(37, 37, 37);
+                    font-size: 4pt;
+                    padding: 1px;
+                }
+            }
+        }
         #calendar-wrapper {
             padding: 4px;
 
