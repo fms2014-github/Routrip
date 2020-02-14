@@ -42,6 +42,7 @@ export default {
     watch: {
         checkLogin: function() {
             if (this.checkLogin) {
+                this.checkLogin = false;
                 this.$emit('loginOrJoin', 1);
             }
         },
@@ -66,6 +67,7 @@ export default {
                     console(JSON.stringify(errObj));
                     alert('죄송합니다. 다시 로그인 요청 해주세요!');
                 },
+                
             });
         },
     },

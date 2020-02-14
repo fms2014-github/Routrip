@@ -1,4 +1,5 @@
-$iPad: 'screen and (max-width : 768px)';
+$phone: 'screen and (max-width : 430px)';
+$iPad: 'screen and (min-width : 431px) and (max-width : 768px) ';
 $iPadPro: 'screen and (min-width : 769px) and (max-width : 1024px) ';
 $desktop: 'screen and (min-width : 1025px)';
 
@@ -15,6 +16,27 @@ $desktop: 'screen and (min-width : 1025px)';
             margin: 0;
             padding: 0;
 
+            @media #{$phone} {
+                display: block;
+
+                .img-box {
+                    background-color: white;
+                    width: 80vw;
+                    height: 80vh;
+                    margin: 0;
+                    padding: 20px;
+                }
+
+                .comment-box {
+                    background-color: white;
+                    width: 80vw;
+                    height: 80vh;
+                    margin: 0;
+                    padding: 20px;
+                    border-top: 1px solid rgba(0, 0, 0, 0.3);
+                }
+            }
+
             @media #{$iPad, $iPadPro} {
                 display: block;
 
@@ -22,7 +44,6 @@ $desktop: 'screen and (min-width : 1025px)';
                     background-color: white;
                     width: 650px;
                     height: 600px;
-                    border: 1px solid black;
                     margin: 0;
                     padding: 20px;
                 }
@@ -30,10 +51,10 @@ $desktop: 'screen and (min-width : 1025px)';
                 .comment-box {
                     background-color: white;
                     width: 650px;
-                    height: 550px;
-                    border: 1px solid black;
+                    height: 650px;
                     margin: 0;
                     padding: 20px;
+                    border-top: 1px solid rgba(0, 0, 0, 0.3);
                 }
             }
 
@@ -43,8 +64,7 @@ $desktop: 'screen and (min-width : 1025px)';
                 .img-box {
                     background-color: white;
                     width: 650px;
-                    height: 600px;
-                    border: 1px solid black;
+                    height: 700px;
                     margin: 0;
                     padding: 20px;
                 }
@@ -52,8 +72,8 @@ $desktop: 'screen and (min-width : 1025px)';
                 .comment-box {
                     background-color: white;
                     width: 350px;
-                    height: 600px;
-                    border: 1px solid black;
+                    height: 700px;
+                    border-left: 1px solid rgba(0, 0, 0, 0.3);
                     margin: 0;
                     padding: 20px;
                 }
@@ -111,9 +131,11 @@ $desktop: 'screen and (min-width : 1025px)';
                     }
                 }
             }
+
             .sns-tag-box {
                 padding: 0;
                 margin-bottom: 15px;
+
                 .sns-btn {
                     .like {
                         .likeit {
@@ -135,6 +157,14 @@ $desktop: 'screen and (min-width : 1025px)';
                 /* width */
                 ::-webkit-scrollbar {
                     width: 3px;
+                }
+
+                @media #{$phone} {
+                    .show-comment {
+                        height: 30vh;
+                        overflow-y: scroll;
+                        overflow-x: hidden;
+                    }
                 }
 
                 @media #{$iPad, $iPadPro} {

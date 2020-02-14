@@ -1,7 +1,9 @@
 package com.web.curation.model.board;
 
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
 import com.web.curation.model.user.User;
 
@@ -14,6 +16,7 @@ public class Comment {
 	private int listener = 0;
 	private User user;
 	private String writeday;// ~전
+	private List<Comment> comments = new ArrayList<>();
 
 	public Comment(int commentid, int uid, int boardid, String contents, String writedate, int listener, User user,
 			String writeday) {
@@ -124,5 +127,24 @@ public class Comment {
 
 	public void setWriteday(String writeday) {
 		this.writeday = writeday;
+	}
+
+	public List<Comment> getComments() {
+		return comments;
+	}
+
+	public void setComments(List<Comment> comments) {
+		this.comments = comments;
+	}
+
+	public void setComment(Comment comment) {
+		this.comments.add(comment);
+	}
+
+	@Override
+	public String toString() {
+		return "Comment [commentid=" + commentid + ", uid=" + uid + ", boardid=" + boardid + ", contents=" + contents
+				+ ", writedate=" + writedate + ", listener=" + listener + ", user=" + user + ", writeday=" + writeday
+				+ ", comments=" + comments + "]";
 	}
 }

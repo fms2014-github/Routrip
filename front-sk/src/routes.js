@@ -4,6 +4,9 @@ import Router from 'vue-router';
 // Import Common Components
 import Main from './views/jh/Main.vue';
 import Detail from './views/jh/Detail.vue';
+import Search from './views/jh/Search.vue';
+import SearchAll from './views/jh/SearchAll.vue';
+import Middleware from './views/jh/Middleware.vue';
 import Login from './views/user/Login.vue';
 import Join from './views/user/Join.vue';
 import JoinAuth from './views/user/JoinAuth.vue';
@@ -20,6 +23,7 @@ import UserPost from './views/user/profile/UserPost.vue';
 import UserComment from './views/user/profile/UserComment.vue';
 import UserLike from './views/user/profile/UserLike.vue';
 import UserPeople from './views/user/profile/UserPeople.vue';
+import UserScrap from './views/user/profile/UserScrap.vue';
 import WriteForm from './views/main/WriteForm.vue';
 import PictureRegister from './views/user/profile/PictureRegister.vue';
 
@@ -38,43 +42,44 @@ export const router = new Router({
         path: '/profile',
         name: 'Profile',
         component: Profile,
-        children: [{
+        children: [
+            {
                 path: '',
                 name: 'UserPost',
                 components: {
                     profile: UserPost,
                 },
             },
-            {
-                path: 'picture',
-                name: 'PictureRegister',
-                components: {
-                    picture_register: PictureRegister,
+                {
+                    path: 'comment',
+                    name: 'UserComment',
+                    components: {
+                        profile: UserComment,
+                    },
                 },
-            },
-            {
-                path: 'comment',
-                name: 'UserComment',
-                components: {
-                    profile: UserComment,
+                {
+                    path: 'like',
+                    name: 'UserLike',
+                    components: {
+                        profile: UserLike,
+                    },
                 },
-            },
-            {
-                path: 'like',
-                name: 'UserLike',
-                components: {
-                    profile: UserLike,
+                {
+                    path: 'people',
+                    name: 'UserPeople',
+                    components: {
+                        profile: UserPeople,
+                    },
                 },
-            },
-            {
-                path: 'people',
-                name: 'UserPeople',
-                components: {
-                    profile: UserPeople,
+                {
+                    path: 'scrap',
+                    name: 'UserScrap',
+                    components: {
+                        profile: UserScrap,
+                    },
                 },
-            },
-        ],
-    },
+            ],
+        },
         {
             path: '/user/ChangePassword',
             name: 'ChangePassword',
@@ -109,6 +114,21 @@ export const router = new Router({
             path: '/detail',
             name: 'Detail',
             component: Detail,
+        },
+        {
+            path: '/search',
+            name: 'Search',
+            component: Search,
+        },
+        {
+            path: '/searchAll/:searchWord',
+            name: 'SearchAll',
+            component: SearchAll,
+        },
+        {
+            path: '/middleware',
+            name: 'Middleware',
+            component: Middleware,
         },
         {
             path: '/alarm',

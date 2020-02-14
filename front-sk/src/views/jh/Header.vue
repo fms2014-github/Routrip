@@ -7,11 +7,14 @@
             <router-link v-bind:to="{ name: 'Main' }" class="btn--text">
                 <img class="logo" src="../../assets/images/routrip_logo.png" />
             </router-link>
-            <span class="title" :class="{scrollDown : scrollDown}">루 : 트립</span>
+            <span class="title" :class="{ scrollDown: scrollDown }">루 : 트립</span>
         </div>
-        <div class="search-ipad" :class="{ scrollDown: !scrollDown }">
-            <form action class="search-form">
-                <input type="text" placeholder="검색..." />
+        <div class="search-box">
+            <form>
+                <input v-model="searchWord" />
+                <button @click="searchAll">
+                    <i class="fa fa-search"></i>
+                </button>
             </form>
         </div>
         <div class="menu">
@@ -21,7 +24,7 @@
             <span class="menu-icon">
                 <i class="far fa-comment-alt"></i>
             </span>
-            <a href="#">
+            <a href="/profile">
                 <img class="profile-img" src="../../assets/images/user.png" />
             </a>
             <button @click="logout">logout</button>
@@ -32,9 +35,10 @@
 <script>
 import '../../assets/css/main/header.scss';
 import { createNamespacedHelpers } from 'vuex';
+import Axios from 'axios';
 
 const userMapActions = createNamespacedHelpers('User').mapActions;
-
+const URI = 'http://192.168.100.70:8083/';
 export default {
     created() {
         window.addEventListener('scroll', this.scrollY);
@@ -53,11 +57,17 @@ export default {
                 this.headerHeight = false;
             }
         },
+        searchAll() {
+            // console.log(this.searchWord);
+            this.$router.push({ name: 'Middleware', params: { searchWord: this.searchWord } });
+        },
     },
     data: () => {
         return {
             scrollDown: false,
             headerHeight: false,
+            searchWord: '',
+            isSearchPage: false,
         };
     },
 };

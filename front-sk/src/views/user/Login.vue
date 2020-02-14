@@ -263,27 +263,37 @@
             },
             loginOrJoin(loginApi) {
                 this.loginApi = loginApi;
-
+                console.log('loginOrJoin(loginApi)')
                 Kakao.API.request({
                     url: '/v1/user/me',
                     success: res => {
                         this.setUser(res);
+                        console.log('this.setUser(res)', res)
                         this.userSnsId = res.id;
+                        console.log('this.userSnsId = res.id', res.id)
                         sessionStorage.setItem('snsId', res.id);
                         Axios.post('http://192.168.100.70:8083/account/snslogin', {
                                 loginApi: loginApi,
                                 userid: res.id,
                             })
                             .then(res2 => {
+                                console.log('login')
                                 localStorage.setItem('routrip_JWT', res2.data);
                                 if (res2.data !== '') {
+                                    console.log('login')
                                     this.reqUserInfo();
                                     this.$router.push('/main');
                                     // console.log(this.getUser);
                                 }
                             })
-                            .then(() => this.popupToggle());
+                            .then(() => {
+                                console.log('Join')
+                                this.popupJoinToggle()
+                            });
                     },
+                    fail: error => {
+                        console.log('error', error)
+                    }
                 });
             },
             init() {

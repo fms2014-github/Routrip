@@ -1,12 +1,12 @@
 create table user(
 uid int primary key auto_increment, 회원 식별자
 nickname varchar(20) not null, 닉네임
-name varchar(20) not null, 이름
+name varchar(20), 이름
 email varchar(50), 이메일(아이디 대용)
 password varchar(50), 비밀번호
-phone varchar(20) not null, 전화번호
-birth date not null, 생년월일
-profileImg varchar(500) default 'img/profile.png', 프로필 사진
+phone varchar(20), 전화번호
+birth date, 생년월일
+profileImg varchar(500) default 'https://i.imgur.com/CRuieow.png', 프로필 사진
 loginApi int not null default 0, 로그인api 종류(카카오1, 구글2, 네이버3)
 userkey varchar(10) not null, 유저 인증여부(인증되있으면 Y 라 됨)
 userid varchar(20) sns로그인 유저 식별자
@@ -24,15 +24,15 @@ references user(uid) on update cascade on delete cascade
 create table board(
 boardid int primary key auto_increment, 게시물 식별자
 uid int not null, 게시물 작성자
-title varchar(50) not null, 제목
-writedate date not null, 작성일자
+title varchar(100) not null, 제목
+writedate datetime not null, 작성일자
 tripterm varchar(10) not null, 여행기간
-keyword varchar(200), 검색 키워드
-latitude double not null, 위도
-longitude double not null, 경도
-level int not null, 지도 축소 정도
+keyword varchar(500), 검색 키워드
 favoriteNum int not null default 0, 좋아요 수(게시글 조회시마다 갱신)
 unveiled boolean not null default true, 게시글 공개 비공개 여부
+content text(4000000000), 이미지 텍스트 내부 정보 통째 저장
+info text(4000000000), 주석 정보 통째 저장 1
+cusinfo text(4000000000), 주석 정보 통째 저장 2
 foreign key(uid)
 references user(uid) on update cascade on delete cascade
 );
@@ -61,7 +61,7 @@ create table comment(
 commentid int primary key auto_increment, 코멘트 식별자
 uid int not null, 코멘트 작성자
 boardid int not null, 코멘트 달린 글
-contents varchar(100) not null, 코멘트 내용
+contents varchar(1000) not null, 코멘트 내용
 writedate datetime not null, 코멘트 작성시간
 listener int not null default 0, 코멘트 달은 댓글(상대commentid값)
 foreign key(uid)
@@ -74,7 +74,6 @@ create table img(
 imgid int  primary key auto_increment, 이미지 식별자
 boardid int not null, 이미지 달린 글
 src varchar(500) not null, 이미지 주소
-rep boolean default false, 대표이미지인가
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade
 );
@@ -83,11 +82,10 @@ create table marker( 맵에 하나씩 들어가는 마커에 대응
 게시글 하나당 지도 하나라는 가정하에 만들어져 있다
 markerid int primary key auto_increment, 마커 식별자
 boardid int not null, 마커 달린 게시글
-latitude varchar(500) not null, 마커 위도
-longitude varchar(500) not null, 마커 경도
-remark varchar(500), 주석
+latitude varchar(1000) not null, 마커 위도
+longitude varchar(1000) not null, 마커 경도
 overlaytype varchar(100) not null, 마커모양
-radius int, 원일 경우 반지름
+radius double, 원일 경우 반지름
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade
 );

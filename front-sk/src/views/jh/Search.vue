@@ -2,22 +2,6 @@
     <div id="main">
         <Header></Header>
         <div class="body">
-            <div class="best-posting">
-                <div class="postings-posting">
-                    <hooper
-                        :infiniteScroll="true"
-                        :itemsToShow="3"
-                        :progress="true"
-                        :autoPlay="true"
-                        :playSpeed="2000"
-                    >
-                        <slide v-for="(data, dataIdx) in datas" :key="dataIdx">
-                            <img :src="data.imgs[0].src" alt />
-                        </slide>
-                        <hooper-navigation slot="hooper-addons"></hooper-navigation>
-                    </hooper>
-                </div>
-            </div>
             <div class="posting-box">
                 <div class="postings">
                     <div class="posting-component" v-for="(data, dataIdx) in datas" :key="dataIdx">
@@ -203,7 +187,6 @@ export default {
         Hooper,
         Slide,
         HooperPagination,
-        HooperNavigation,
     },
     data: () => {
         return {
@@ -221,6 +204,7 @@ export default {
             followBtn: false,
             unfollowBtn: false,
             myPosting: false,
+            keyword: '',
         };
     },
     mounted() {
@@ -232,11 +216,9 @@ export default {
     },
     created: function() {
         this.jwt = localStorage.getItem('routrip_JWT');
+        this.keyword = this.$route.params.keyword;
         this.showAll();
     },
-    // updated: function() {
-    //     this.getAlldata();
-    // },
     computed: {
         ...userMapState(['User']),
         ...userMapGetters(['getUser']),
@@ -247,24 +229,6 @@ export default {
         async req() {
             await this.reqUserInfo();
             this.getUser;
-        },
-        kakao() {
-            const at = localStorage.getItem('kakao_access_token');
-            const rt = localStorage.getItem('kakao_refresh_token');
-            console.log(at);
-            console.log(rt);
-            Kakao.init('cffc768e4739655aab323adbd9eb2633');
-            console.log(Kakao.isInitialized());
-            Kakao.API.request({
-                url: '/v1/user/me',
-                success: res => {
-                    this.setUser(res);
-                    console.log(res);
-                    // console.log(res.properties.nickname);
-                    // console.log(res.properties.profile_image);
-                    console.log(this.getUser);
-                },
-            });
         },
         showAll() {
             Axios.post(`${URI}/page/favoriteBoard`, { jwt: this.jwt })
@@ -283,8 +247,9 @@ export default {
                                 this.scrapList.push(res.data[i].boardid);
                             }
 
-                            Axios.get(`${URI}/page/boardList`)
+                            Axios.get(`${URI}/page/board/${this.keyword}`)
                                 .then(res => {
+                                    // console.log(res.data);
                                     this.likeShow = [];
                                     this.scrapShow = [];
                                     this.whoLiked = [];
@@ -308,7 +273,7 @@ export default {
                                     }
                                 })
                                 .catch(res => {
-                                    console.log('전체 게시글 조회 실패');
+                                    console.log('키워드 검색 실패');
                                 });
                         })
                         .catch(res => {
@@ -429,9 +394,13 @@ export default {
                     console.log(res);
                 });
         },
+        toDetailPage(data) {
+            console.log(data);
+        },
         search(keyword) {
-            // console.log(keyword);
-            this.$router.push({ name: 'Search', params: { keyword: keyword } });
+            console.log(keyword);
+            this.keyword = keyword;
+            this.showAll();
         },
     },
 };
