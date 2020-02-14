@@ -1,6 +1,8 @@
 <template>
     <div>
         <div class="row">
+            <h2 style="text-align:center; font-size: 2vw; @include wrap;">
+                총 {{postList.length}} 개의 글이 있습니다.</h2>
             <div v-for="post in postList" v-bind:key="post.boardid">
                 <div class="gallery">
                     <div class = 'card-header'>
@@ -23,8 +25,20 @@
                             </div> 	
                         </div>
                     </router-link>
-                    <div class = 'card-footer'>
-                     
+                    
+                    
+                    <!-- <div class="keywords">
+                        <div @click="search(keyword)" class="keyword" v-for="(keyword, keywordIdx) in data.keywords" :key="keywordIdx">
+                            <span>#{{ keyword }}</span>
+                        </div>
+                    </div> -->
+
+                    <div class="keywords">
+                        <div class = 'card-footer' >
+                            <div class="keyword" v-for="keyword in post.keywords" v-bind:key="keyword">
+                                <span>#{{keyword}}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>

@@ -6,13 +6,13 @@
             <div class="profile-wrap">
                 <UserPicture :userPicture="true" :pic="userinfo.pic" />
                 <div class="user-info">
-                    <HeaderComponent :headerTitle="userinfo.email" :mailIcon="true" />
+                    <HeaderComponent :headerTitle="userinfo.email" :profileIcon="false" :mailIcon="true" />
                     <HeaderComponent :headerTitle="userinfo.nickname" :profileIcon="true" rightText="수정" @changeNick="changeNick" />
         
                 <!-- <button @click="reqlikes">테스트</button> -->
 
                 <div class="none-border">
-                    <button class="button-text">회원탈퇴</button>
+                    <button class="button-text" @click="delUser">회원탈퇴</button>
                 </div>
                 </div>
             </div>
@@ -77,15 +77,14 @@ export default {
 
         async reqInfo() {
             await this.reqUserInfo();
-            
-            console.log("?", this.getUser);
-            
             this.userinfo.nickname=this.getUser.data.nickname;
             this.userinfo.pic=this.getUser.data.profileImg;
+            this.userinfo.email=this.getUser.data.email;
             if(!this.getUser.data.email){
                 this.userinfo.email='SNS유저'
             }
         },
+
 
         // logoutClick() {
         //     this.logout().then(() => {
@@ -93,8 +92,42 @@ export default {
         //     })
         // },
 
-        delUser(){
-
+        async delUser(){
+            await Swal.fire({
+            title: 'Enter your password',
+            input: 'password',
+            icon: 'warning',
+            inputPlaceholder: 'Enter your password',
+            inputValue: '',
+            inputValidator:(value)=>{
+            if (!value) {
+                return '뭐를 써'
+            }
+            else{
+                const jwt = localStorage.getItem('routrip_JWT');
+                Axios.post('http://192.168.100.70:8083/account/password',
+                        {
+                            password: value,
+                            jwt : jwt
+                        }
+                    )
+                    .then(res => {
+                        console.log('비밀번호 확인 응답----',res);
+                        Axios.delete('http://192.168.100.70:8083/account/user',
+                            {
+                                jwt : jwt
+                            })
+                            .then(res=>{
+                                console.log('탈퇴',res)
+                                Swal.fire({
+                                icon:"success",
+                                title:'잘가요..'
+                            })
+                        this.$router.push('/');
+                    })
+                });
+            }}})
+                        
         },
 
 
@@ -105,6 +138,7 @@ export default {
 
         
         checkLogin() {
+            
             if (localStorage.getItem('loginedEmail') !== null) {
                 this.show = true;
             } else {
@@ -140,7 +174,7 @@ export default {
             }})},
     },
     data() {
-        
+
         return {
             hi:'',
             userinfo: {

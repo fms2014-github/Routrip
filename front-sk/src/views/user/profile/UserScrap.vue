@@ -1,7 +1,7 @@
 <template>
     <div>
-        <h2>스크랩</h2><br><br><br><br>
         <div class="row">
+            <h2 style="text-align:center; font-size:2vw;">총 {{scrapList.length}} 개의 스크랩</h2>
             <div v-for="scrap in scrapList" v-bind:key="scrap.boardid">
                 <div class="gallery">
                     <div class = 'card-header'>
@@ -23,8 +23,13 @@
                             </div> 	
                         </div>
                     </router-link>
-                    <div class = 'card-footer'>
-                        <!-- {{keywords}} -->
+                       
+                    <div class="keywords">
+                         <div class = 'card-footer' >
+                            <div class="keyword" v-for="keyword in scrap.keywords" v-bind:key="keyword">
+                                <span>#{{keyword}}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -58,9 +63,7 @@ export default {
     },
     data(){
         return{
-            
             scrapList:[]
-
         };
     },
 
