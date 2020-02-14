@@ -16,7 +16,7 @@
         </div>
         <div class="menu">
             <span class="menu-icon">
-                <i class="far fa-plus-square"></i>
+                <router-link v-bind:to="{ name: 'WriteForm' }" class="btn--text"><i class="far fa-plus-square"></i></router-link>
             </span>
             <span class="menu-icon">
                 <i class="far fa-comment-alt"></i>

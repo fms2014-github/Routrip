@@ -33,28 +33,6 @@ export const router = new Router({
         path: '/',
         name: 'Login',
         component: Login,
-        children: [{
-                path: 'user/join',
-                name: 'Join',
-                components: {
-                    join: Join,
-                },
-            },
-            {
-                path: 'user/joinauth',
-                name: 'JoinAuth',
-                components: {
-                    join: JoinAuth,
-                },
-            },
-            {
-                path: '/user/FindEmailAndPassword',
-                name: 'FindEmailAndPassword',
-                components: {
-                    find: FindEmailAndPassword,
-                },
-            },
-        ],
     },
     {
         path: '/profile',
