@@ -8,8 +8,6 @@
                 <div class="user-info">
                     <HeaderComponent :headerTitle="userinfo.email" :profileIcon="false" :mailIcon="true" />
                     <HeaderComponent :headerTitle="userinfo.nickname" :profileIcon="true" rightText="수정" @changeNick="changeNick" />
-        
-                <!-- <button @click="reqlikes">테스트</button> -->
 
                 <div class="none-border">
                     <button class="button-text" @click="delUser">회원탈퇴</button>
@@ -39,16 +37,13 @@ import Axios from 'axios';
 import Swal from 'sweetalert2';
 import { createNamespacedHelpers } from 'vuex';
 
-// import UserApi from '../../../apis/UserApi';
 import HeaderComponent from '../../../components/common/Header';
 import UserPicture from '../../../components/common/UserPicture';
 import TabComponent from '../../../components/common/Tab';
 import Header from '../../jh/Header';
 
-
 import '../../../assets/css/profile.scss';
 import '../../../assets/css/style.scss';
-
 
 const userMapActions = createNamespacedHelpers('User').mapActions; //
 const userMapGetters = createNamespacedHelpers('User').mapGetters; //
@@ -63,13 +58,10 @@ export default {
     computed: {
         ...userMapGetters(['getUser']),
     },
-
-
     mounted() {
         this.getInfo();
         this.checkLogin();
         this.reqInfo();
-
     },
     methods: {
         ...userMapActions(['reqUserInfo']),
@@ -85,12 +77,6 @@ export default {
             }
         },
 
-        // logoutClick() {
-        //     this.logout().then(() => {
-        //         this.$router.push('/');
-        //     })
-        // },
-
         async delUser(){
             await Swal.fire({
             title: 'Enter your password',
@@ -103,7 +89,6 @@ export default {
                 return '뭐를 써'
             }
             else{
-                
                 const jwt = localStorage.getItem('routrip_JWT');
                 Axios.delete('http://192.168.100.70:8083/account/user/',
                         {   
@@ -134,9 +119,7 @@ export default {
             this.userinfo.email = localStorage.getItem('loginedEmail');
             this.userinfo.nickname = localStorage.getItem('nickName');
         },
-
         checkLogin() {
-            
             if (localStorage.getItem('loginedEmail') !== null) {
                 this.show = true;
             } else {

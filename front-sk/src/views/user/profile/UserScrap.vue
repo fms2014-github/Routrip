@@ -1,17 +1,15 @@
 <template>
     <div>
         <div class="row">
-            <h2 style="text-align:center; font-size:2vw;">총 {{scrapList.length}} 개의 스크랩</h2>
+            <h2 style="text-align:center; font-size:2.1vw; @include wrap;">총 {{scrapList.length}} 개의 스크랩</h2>
             <div v-for="scrap in scrapList" v-bind:key="scrap.boardid">
                 <div class="gallery">
-                    <div class = 'card-header'>
-                        <h1 class = 'card-header-title'>
-                            <router-link :to="{ name: 'Detail', params: { boardid: scrap.boardid } }">
-                                {{ scrap.title }}
-                            </router-link>
-                        </h1>
-                        <h3>스크랩 날짜</h3>
-                    </div>
+                    <h1 class = 'card-header-title'>
+                        <router-link :to="{ name: 'Detail', params: { boardid: scrap.boardid } }">
+                            {{ scrap.title }}
+                        </router-link>
+                    </h1>
+                <h4 style="text-align:right;">{{ scrap.scrapdate.split(':')[0]+":"+scrap.scrapdate.split(':')[1] }}</h4>
                     <router-link :to="{ name: 'Detail', params: { boardid: scrap.boardid } }">
                         <div class= 'card'>
                             <img :src="scrap.imgs[0].src" class = 'card-image'>

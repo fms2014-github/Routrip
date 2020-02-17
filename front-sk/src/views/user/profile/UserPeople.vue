@@ -1,7 +1,7 @@
 <template>
     <div style="width: 100%;">
         <div style="float: left; width: 45%;">
-            <div style="margin: 0px;">
+            <div style="margin-bottom:2vw;">
                 <h2 style="ab">following</h2>
                 <h3>총 {{ followingList.length }}명을 팔로우하고 있습니다.</h3>
             </div>
@@ -13,7 +13,7 @@
             </div>
         </div>
         <div style="float: left; width: 45%;">
-            <div style="margin: 0px;">
+            <div style="margin-bottom:2vw;">
                 <h2 style="ab">follower</h2>
                 <h3>총 {{ followerList.length }}명이 당신을 팔로우하고 있습니다.</h3>
             </div>
