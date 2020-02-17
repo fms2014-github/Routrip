@@ -73,18 +73,18 @@ public class AccountController {
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		String refresh = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
-				.claim("nickname", loginUser.getNickname())
-				.claim("profileImg", loginUser.getProfileImg()).claim("loginApi", loginUser.getLoginApi())
+				.claim("nickname", loginUser.getNickname()).claim("profileImg", loginUser.getProfileImg())
+				.claim("loginApi", loginUser.getLoginApi())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))// 하루 뒤 자동 기간 만료됨
-				//.signWith(SignatureAlgorithm.HS256, signingKey)
+				// .signWith(SignatureAlgorithm.HS256, signingKey)
 				.compact();
-		//System.out.println(Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key)).parseClaimsJwt(refresh).getBody().get("email"));
+		// System.out.println(Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key)).parseClaimsJwt(refresh).getBody().get("email"));
 		// refresh 토큰은 DB 에 저장
 		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
 				.claim("nickname", loginUser.getNickname()).claim("profileImg", loginUser.getProfileImg())
 				.claim("loginApi", loginUser.getLoginApi())
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))//한나절 후 자동 기간 만료됨
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))// 한나절 후 자동 기간 만료됨
 				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
 		System.out.println(loginUser.getUid() + " " + loginUser.getNickname() + " 님 로그인하셨습니다.");
@@ -99,8 +99,8 @@ public class AccountController {
 			return new ResponseEntity<>(HttpStatus.OK);
 		String refresh = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
-				.claim("nickname", loginUser.getNickname())
-				.claim("profileImg", loginUser.getProfileImg()).claim("loginApi", loginUser.getLoginApi())
+				.claim("nickname", loginUser.getNickname()).claim("profileImg", loginUser.getProfileImg())
+				.claim("loginApi", loginUser.getLoginApi())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
 				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
@@ -224,7 +224,10 @@ public class AccountController {
 			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
 			User user = userService.findUserByUid(uid);
 			int ok = 0;
-			if (user.getPassword().equals(map.get("password")))
+			boolean flag = false;
+			if ((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("loginApi")!=0 || user.getPassword().equals(map.get("password")))
+				flag = true;
+			if (flag)
 				ok = userService.deleteUser(uid);
 			if (ok > 0) {
 				System.out.println(user.getNickname() + " 님 탈퇴하셨습니다.");
@@ -438,7 +441,7 @@ public class AccountController {
 	public Object deleteAlarm(@RequestBody Map<String, String> map) throws Exception {
 		int alarmid = Integer.parseInt(map.get("alarmid"));
 		int ok = userService.deleteAlarm(alarmid);
-		if(ok > 0)
+		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
