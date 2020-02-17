@@ -19,7 +19,8 @@ $desktop: 'screen and (min-width : 1025px)';
     z-index: 100;
     -webkit-transition: height 0.3s ease-in-out;
     transition: height 0.3s ease-in-out;
-    a:visited{
+
+    a:visited {
         color: black;
     }
 
@@ -85,17 +86,55 @@ $desktop: 'screen and (min-width : 1025px)';
 
         .menu {
             margin-right: 10vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
 
             .menu-icon {
                 vertical-align: middle;
                 margin-right: 20px;
                 font-size: 30px;
+                cursor: pointer;
             }
 
-            .profile-img {
-                vertical-align: middle;
-                width: 45px;
+            .mypage {
+                position: relative;
+
+                .profile-img {
+                    vertical-align: middle;
+                    width: 45px;
+                    border-radius: 45px;
+                }
+
+                .dropBox {
+                    display: none;
+                }
+
+                .drop-box {
+                    z-index: 100;
+                    position: absolute;
+                    left: -55px;
+                    top: 50px;
+                    cursor: pointer;
+
+                    div {
+                        background-color: #F2F2F2;
+                        width: 160px;
+                        height: 35px;
+                        text-align: center;
+                        color: black;
+                        padding-top: 20px;
+                        font-size: 1.1em;
+                        margin-bottom: 1px;
+                    }
+
+                    div a {
+                        color: black;
+                    }
+                }
             }
+
+
         }
     }
 }
