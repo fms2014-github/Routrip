@@ -636,7 +636,7 @@ public class PageController {
 	}
 
 	@PostMapping("/boardList/{lastDate}")
-	@ApiOperation(value = "게시글 전체보기(4개씩)")
+	@ApiOperation(value = "게시글 전체보기(날짜구분/4개씩)")
 	public Object postBoardList(@PathVariable String lastDate) throws Exception {
 		if (lastDate == null || lastDate.equals("0")) {
 			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -669,7 +669,7 @@ public class PageController {
 	}
 	
 	@PostMapping("/boardList")
-	@ApiOperation(value = "게시글 전체보기")
+	@ApiOperation(value = "게시글 전체보기(날짜구분)")
 	public Object BoardList(@RequestBody Map<String, String> map) throws Exception {
 		String lastDate = map.get("lastDate");
 		if (lastDate == null || lastDate.equals("0")) {
@@ -770,6 +770,8 @@ public class PageController {
 				if (!flag) {
 					String[] strs = strlow.split(" ");// 제목이 검색어의 일부를 포함할 경우
 					for (String s : strs) {
+						if(s.length()==0)
+							continue;
 						if (title.contains(s)) {
 							flag = true;
 							break;
