@@ -102,7 +102,6 @@
     import joinAuth from './JoinAuth';
     import FindEmailAndPassword from './FindEmailAndPassword';
     import ChangePassword from './ChangePassword'
-    import alarm from './Alarm'
 
     // store
     // 뷰엑스를 쓰는 방법 중 하나를 가져옴
@@ -130,6 +129,10 @@
             ChangePassword,
         },
         created() {
+
+            // console.log("GET LOADING: ", this.$store.getters.getLoading);
+            // console.log("STATE LOADING", this.$store.state.flag);
+
             this.component = this;
             this.passwordSchema
                 .is()
@@ -200,6 +203,8 @@
                 this.isSubmit = isSubmit;
             },
             login() {
+                this.$store.commit('setLoading')
+                console.log("GET LOADING: ", this.$store.getters.getLoading);
                 if (this.isSubmit) {
                     let {
                         password
@@ -235,9 +240,12 @@
                             // console.log(this.getUser);
                             //요청이 끝나면 버튼 활성화
                             this.isSubmit = true;
+                            
+                            this.$store.commit('setLoading')
                             this.$router.push({
                                 name: 'Main'
                             });
+                            
                         },
                         error => {
                             //요청이 끝나면 버튼 활성화
@@ -247,6 +255,7 @@
                             this.error.loginFail = '이메일 주소나 비밀번호가 틀렸습니다.';
                         },
                     );
+                    console.log("GET LOADING: ", this.$store.getters.getLoading);
                 }
             },
             popupJoinToggle() {
@@ -299,7 +308,7 @@
             init() {
                 this.joinNextStep = false
                 this.findNextStep = false
-             },
+            },
         },
         data: () => {
             return {
