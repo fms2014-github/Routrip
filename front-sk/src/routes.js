@@ -134,6 +134,6 @@ export const router = new Router({
             path: '/alarm',
             name: 'Alarm',
             component: Alarm,
-        }
+        },
     ],
 })

@@ -3,7 +3,9 @@
         <Header></Header>
         <div class="body">
             <div class="posting-box">
-                <div class="img-box"></div>
+                <div class="img-box">
+                    <div id="detaila"></div>
+                </div>
                 <div class="comment-box">
                     <div class="writer">
                         <div class="profile-img">
@@ -123,6 +125,8 @@ import Header from './Header.vue';
 //axios
 import Axios from 'axios';
 
+import kakaoMap from '../../apis/kakaoMapAPI.js'
+
 //component
 import { Hooper, Slide, Pagination as HooperPagination, Navigation as HooperNavigation } from 'hooper';
 
@@ -164,6 +168,8 @@ export default {
         } else {
             this.getUser;
         }
+        kakaoMap.viewMap();
+        
     },
     computed: {
         ...userMapState(['User']),

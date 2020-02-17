@@ -15,7 +15,12 @@ $desktop: 'screen and (min-width : 1025px)';
         .posting-box {
             margin: 0;
             padding: 0;
-
+                .img-box{
+                    #view-map{
+                        width: 100%;
+                        height: 500px;
+                    }
+                }
             @media #{$phone} {
                 display: block;
 

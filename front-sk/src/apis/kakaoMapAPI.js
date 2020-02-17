@@ -1,6 +1,6 @@
 /* eslint-disable no-inner-declarations */
 /* eslint-disable no-undef */
-var mapContainer, mapOption, map, manager, options, ps, placeResultsInfoWinow;
+var map, detailMap1, manager, options, ps, placeResultsInfoWinow;
 var commentIndex = 0;
 var startX, startY, startOverlayPoint;
 var overlays = [];
@@ -8,8 +8,6 @@ var placeResults = [];
 var info = {},
     cusInfo = {};
 var commentCondition = 'both';
-var sendData = {}
-
 const createMap = () => {
     var mapContainer = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
     var mapOption = {
@@ -411,6 +409,19 @@ const getTest = () => {
     }
 };
 
+const viewMap = () =>{
+    console.log('asdasd', document.getElementById('detail-map'))
+    var detailMapContainer = document.getElementById('detail-map'),
+    detailMapOption = {
+        //지도를 생성할 때 필요한 기본 옵션
+        center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
+        level: 3, //지도의 레벨(확대, 축소 정도)
+    };
+    detailMap1 = new kakao.maps.Map(detailMapContainer, detailMapOption); //지도 생성 및 객체 리턴
+    var zoomControl = new kakao.maps.ZoomControl();
+    detailMap1.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+}
+
 const KakaoMap = {
     createMap: () => createMap(),
     selectOverlay: (condition, type, title, content) => selectOverlay(condition, type, title, content),
@@ -419,6 +430,7 @@ const KakaoMap = {
     getTest: () => getTest(),
     searchPlace: place => searchPlace(place),
     reloadPlace: () => reloadPlace(),
+    viewMap: () => viewMap(),
 };
 export default KakaoMap;
 
