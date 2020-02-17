@@ -24,7 +24,20 @@ $desktop: 'screen and (min-width : 1025px)';
         color: black;
     }
 
-    .search-box {}
+    .search-box {
+        border-bottom: 2px solid;
+        padding: 5px 10px;
+        margin-right: 20px;
+
+        input:focus {
+            outline: none;
+        }
+
+        input {
+            padding: 10px;
+            border: 0em;
+        }
+    }
 
     @media #{$iPad, $iPadPro} {
         .hambuger {

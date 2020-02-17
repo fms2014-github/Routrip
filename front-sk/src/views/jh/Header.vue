@@ -11,7 +11,7 @@
         </div>
         <div class="search-box">
             <form>
-                <input v-model="searchWord" />
+                <input v-model="searchWord" placeholder="Search..." />
                 <button @click="searchAll">
                     <i class="fa fa-search"></i>
                 </button>
