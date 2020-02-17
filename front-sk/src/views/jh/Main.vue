@@ -292,7 +292,7 @@ export default {
                                 this.scrapList.push(res.data[i].boardid);
                             }
 
-                            Axios.get(`${URI}/page/boardList`)
+                            Axios.get(`${URI}page/boardList`)
                                 .then(res => {
                                     this.datas = res.data;
                                     this.likeShow = [];
