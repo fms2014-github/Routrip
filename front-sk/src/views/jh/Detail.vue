@@ -77,8 +77,13 @@
                                 <div class="comment-info">
                                     <div class="comment-info-box">
                                         <div class="writer">
-                                            <strong>{{ comment.user.nickname }}</strong>
-                                            <span>{{ comment.writeday }}</span>
+                                            <div class="writer-info">
+                                                <strong>{{ comment.user.nickname }}</strong>
+                                                <span>{{ comment.writeday }}</span>
+                                            </div>
+                                            <div class="writer-reply">
+                                                <span>댓글달기</span>
+                                            </div>
                                         </div>
                                         <div class="writer-text">
                                             <span>{{ comment.contents }}</span>
