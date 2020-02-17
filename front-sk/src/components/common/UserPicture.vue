@@ -69,12 +69,18 @@ export default {
 
                 const reader = new FileReader()
                 reader.onload = (e) => {
+                    
                     Swal.fire({
                         title: '성공적으로 변경되었습니다!',
                         imageUrl: e.target.result,
                         icon:'success',
                         imageAlt: 'The uploaded picture'
-                    })
+                    }).then( (dismiss)=>{
+                            if (dismiss){
+                                location.reload(true);
+                            }
+                        }
+                    )
                 }
                 reader.readAsDataURL(file)
             }

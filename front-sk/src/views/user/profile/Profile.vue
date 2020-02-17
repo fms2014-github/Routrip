@@ -13,6 +13,7 @@
 
                 <div class="none-border">
                     <button class="button-text" @click="delUser">회원탈퇴</button>
+
                 </div>
                 </div>
             </div>
@@ -74,7 +75,6 @@ export default {
         ...userMapActions(['reqUserInfo']),
         ...userMapActions(['logout']),
 
-
         async reqInfo() {
             await this.reqUserInfo();
             this.userinfo.nickname=this.getUser.data.nickname;
@@ -84,7 +84,6 @@ export default {
                 this.userinfo.email='SNS유저'
             }
         },
-
 
         // logoutClick() {
         //     this.logout().then(() => {
@@ -104,39 +103,38 @@ export default {
                 return '뭐를 써'
             }
             else{
+                
                 const jwt = localStorage.getItem('routrip_JWT');
-                Axios.post('http://192.168.100.70:8083/account/password',
-                        {
+                Axios.delete('http://192.168.100.70:8083/account/user/',
+                        {   
+                            jwt: jwt,
                             password: value,
-                            jwt : jwt
                         }
-                    )
-                    .then(res => {
-                        console.log('비밀번호 확인 응답----',res);
-                        Axios.delete('http://192.168.100.70:8083/account/user',
-                            {
-                                jwt : jwt
-                            })
-                            .then(res=>{
-                                console.log('탈퇴',res)
-                                Swal.fire({
-                                icon:"success",
-                                title:'잘가요..'
-                            })
+                    ).then(res => {
+                        console.log(res.headers);
+                        console.log(jwt)
+                        console.log('탈퇴',res)
+                            Swal.fire({
+                            icon:"success",
+                            title:'잘가요..'
+                        })
                         this.$router.push('/');
-                    })
-                });
+                    }).catch(error=>{
+                        console.log(value);
+                        console.log(error.headers);
+                        console.log(error);
+                        console.log(jwt)
+                    });
+                    
             }}})
                         
         },
-
 
         getInfo() {
             this.userinfo.email = localStorage.getItem('loginedEmail');
             this.userinfo.nickname = localStorage.getItem('nickName');
         },
 
-        
         checkLogin() {
             
             if (localStorage.getItem('loginedEmail') !== null) {
@@ -168,7 +166,6 @@ export default {
                         console.log(res.data);
                         localStorage.setItem('routrip_JWT', res.data);
                         this.reqInfo();
-
                     });
                 }
             }})},

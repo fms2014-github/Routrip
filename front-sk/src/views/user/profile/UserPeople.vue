@@ -3,7 +3,7 @@
         <div style="float: left; width: 45%;">
             <div style="margin: 0px;">
                 <h2 style="ab">following</h2>
-                <h3>{{ followingList.length }}</h3>
+                <h3>총 {{ followingList.length }}명을 팔로우하고 있습니다.</h3>
             </div>
             <div>
                 <div class="follow-picture" v-for="following in followingList" v-bind:key="following.uid">
@@ -15,7 +15,7 @@
         <div style="float: left; width: 45%;">
             <div style="margin: 0px;">
                 <h2 style="ab">follower</h2>
-                <h3>{{ followerList.length }}</h3>
+                <h3>총 {{ followerList.length }}명이 당신을 팔로우하고 있습니다.</h3>
             </div>
             <div>
                 <div class="follow-picture" v-for="follower in followerList" v-bind:key="follower.uid">
