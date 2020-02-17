@@ -1,15 +1,17 @@
 <template>
     <div>
-        <h1>안녕 여긴 좋아요</h1>
-        
+        <h2 style="text-align:center; font-size:2.1vw; @include wrap; margin-bottom:7vw;">총 {{ likeList.length }}개의 글에 좋아요를 눌렀네요. </h2>
         <li v-for="like in likeList" v-bind:key="like.boardid">
-            {{ like.title }} 글에 좋아요를 눌렀습니다. ( {{ like.writedate }} )
+            <h4 style="font-size:1.4vw; margin-bottom:1.4vw;">
+                <router-link :to="{ name: 'Detail', params: { boardid: like.boardid } }">
+                {{ like.title }} 글에 좋아요를 눌렀습니다. ( {{ like.writedate }} )
+                </router-link>
+            </h4>
         </li>
     </div>  
 </template>
-
+ 
 <script>
-// import allLike from "../../../components/common/allLike"
 import Axios from 'axios';
 
 
@@ -33,7 +35,7 @@ export default {
     },
     data(){
         return{
-            
+        
             likeList:[]
 
         };

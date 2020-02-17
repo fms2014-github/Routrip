@@ -20,7 +20,11 @@
             </div>
             <div class="posting-box">
                 <div class="postings">
-                    <div class="posting-component" v-for="(data, dataIdx) in datas" :key="dataIdx">
+                    <div
+                        class="posting-component"
+                        v-for="(data, dataIdx) in datas"
+                        :key="(dataIdx)"
+                    >
                         <div class="postings-posting">
                             <div class="post-info">
                                 <div class="profile-img">
@@ -143,9 +147,12 @@
                             </div>
                         </div>
                     </div>
+                    <!-- defualt, spiral, circles, bubbles, waveDots  -->
+                    <!-- <infinite-loading @infinite="infiniteHandler" spinner="bubbles"></infinite-loading> -->
                 </div>
             </div>
         </div>
+
         <div class="else-modal" :class="{ elseModalBackground: !elseModalBackground }">
             <div class="modal-box">
                 <div class="box-content">
@@ -186,7 +193,7 @@ import Axios from 'axios';
 
 //component
 import { Hooper, Slide, Pagination as HooperPagination, Navigation as HooperNavigation } from 'hooper';
-
+import InfiniteLoading from 'vue-infinite-loading';
 // 뷰엑스를 가져옴
 import { createNamespacedHelpers } from 'vuex';
 // load user store 필요한 부분만 가져오기
@@ -195,7 +202,7 @@ const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
 const userMapActions = createNamespacedHelpers('User').mapActions;
 
-const URI = 'http://192.168.100.70:8083/';
+const URI = 'http://192.168.100.70:8083';
 export default {
     components: {
         Header,
@@ -204,10 +211,11 @@ export default {
         Slide,
         HooperPagination,
         HooperNavigation,
+        // InfiniteLoading,
     },
     data: () => {
         return {
-            datas: '',
+            datas: [],
             comment: '',
             likeList: [],
             likeShow: [],
@@ -221,6 +229,9 @@ export default {
             followBtn: false,
             unfollowBtn: false,
             myPosting: false,
+            lastDate: '0',
+            cnt: 0,
+            list: [],
         };
     },
     mounted() {
@@ -230,13 +241,10 @@ export default {
             this.getUser;
         }
     },
-    created: function() {
+    created() {
         this.jwt = localStorage.getItem('routrip_JWT');
         this.showAll();
     },
-    // updated: function() {
-    //     this.getAlldata();
-    // },
     computed: {
         ...userMapState(['User']),
         ...userMapGetters(['getUser']),
@@ -267,6 +275,7 @@ export default {
             });
         },
         showAll() {
+            // console.log(this.jwt);
             Axios.post(`${URI}/page/favoriteBoard`, { jwt: this.jwt })
                 .then(res => {
                     // console.log(res.data);
@@ -283,33 +292,30 @@ export default {
                                 this.scrapList.push(res.data[i].boardid);
                             }
 
-                            Axios.get(`${URI}/page/boardList`)
+                            Axios.get(`${URI}page/boardList`)
                                 .then(res => {
+                                    this.datas = res.data;
                                     this.likeShow = [];
                                     this.scrapShow = [];
                                     this.whoLiked = [];
-                                    this.datas = res.data;
-                                    // console.log(this.datas);
-                                    // console.log(this.getUser.data.uid);
-                                    for (var i = 0; i < this.datas.length; ++i) {
-                                        if (res.data[i].favoriteNum > 0) {
-                                            this.whoLiked.push(res.data[i].favorite[0].nickname);
+
+                                    for (i = 0; i < this.datas.length; ++i) {
+                                        if (this.datas[i].favoriteNum > 0) {
+                                            this.whoLiked.push(this.datas[i].favorite[0].nickname);
                                         } else {
                                             this.whoLiked.push('');
                                         }
-
                                         //좋아요
                                         if (this.likeList.includes(this.datas[i].boardid)) this.likeShow.push({ like: true });
                                         else this.likeShow.push({ like: false });
-                                        //스크랩
 
+                                        //스크랩
                                         if (this.scrapList.includes(this.datas[i].boardid)) this.scrapShow.push({ scrap: true });
                                         else this.scrapShow.push({ scrap: false });
                                     }
+                                    // console.log(this.whoLiked);
                                 })
-                                .catch(res => {
-                                    console.log('전체 게시글 조회 실패');
-                                });
+                                .catch(res => {});
                         })
                         .catch(res => {
                             console.log('스크랩 게시글 조회 실패');
@@ -403,7 +409,7 @@ export default {
                     data: info.commentid,
                 })
                     .then(res => {
-                        // console.log('댓글 삭제 성공');
+                        console.log('댓글 삭제 성공');
                     })
                     .catch(res => {
                         console.log('댓글 삭제 실패');
@@ -433,6 +439,25 @@ export default {
             // console.log(keyword);
             this.$router.push({ name: 'Search', params: { keyword: keyword } });
         },
+        // infiniteHandler($state) {
+        //     Axios.post(`${URI}/page/boardList/${this.lastDate}`).then(({ data }) => {
+        //         if (data.length > 0) {
+        //             this.cnt++;
+        //             this.lastDate = data[data.length - 1].writedate;
+        //             this.list.push(data);
+        //             this.datas = [];
+        //             for (var i = 0; i < this.list.length; ++i) {
+        //                 for (var j = 0; j < this.list[i].length; ++j) {
+        //                     this.datas.push(this.list[i][j]);
+        //                 }
+        //             }
+        //             this.showAll();
+        //             $state.loaded();
+        //         } else {
+        //             $state.complete();
+        //         }
+        //     });
+        // },
     },
 };
 </script>

@@ -34,50 +34,22 @@ import Alarm from './views/user/Alarm.vue';
 export const router = new Router({
     mode: 'history',
     routes: [{
-            path: '/',
-            name: 'Login',
-            component: Login,
-            children: [{
-                    path: 'user/join',
-                    name: 'Join',
-                    components: {
-                        join: Join,
-                    },
+        path: '/',
+        name: 'Login',
+        component: Login,
+    },
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: Profile,
+        children: [
+            {
+                path: '',
+                name: 'UserPost',
+                components: {
+                    profile: UserPost,
                 },
-                {
-                    path: 'user/joinauth',
-                    name: 'JoinAuth',
-                    components: {
-                        join: JoinAuth,
-                    },
-                },
-                {
-                    path: '/user/FindEmailAndPassword',
-                    name: 'FindEmailAndPassword',
-                    components: {
-                        find: FindEmailAndPassword,
-                    },
-                },
-            ],
-        },
-        {
-            path: '/profile',
-            name: 'Profile',
-            component: Profile,
-            children: [{
-                    path: '',
-                    name: 'UserPost',
-                    components: {
-                        profile: UserPost,
-                    },
-                },
-                {
-                    path: 'picture',
-                    name: 'PictureRegister',
-                    components: {
-                        picture_register: PictureRegister,
-                    },
-                },
+            },
                 {
                     path: 'comment',
                     name: 'UserComment',

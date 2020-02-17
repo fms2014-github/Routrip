@@ -6,12 +6,12 @@
             <div class="profile-wrap">
                 <UserPicture :userPicture="true" :pic="userinfo.pic" />
                 <div class="user-info">
-                    <HeaderComponent :headerTitle="userinfo.nickname" rightText="수정" @changeNick="changeNick" />
-        
-                <!-- <button @click="reqlikes">테스트</button> -->
+                    <HeaderComponent :headerTitle="userinfo.email" :profileIcon="false" :mailIcon="true" />
+                    <HeaderComponent :headerTitle="userinfo.nickname" :profileIcon="true" rightText="수정" @changeNick="changeNick" />
 
                 <div class="none-border">
-                    <button class="button-text">회원탈퇴</button>
+                    <button class="button-text" @click="delUser">회원탈퇴</button>
+
                 </div>
                 </div>
             </div>
@@ -37,16 +37,13 @@ import Axios from 'axios';
 import Swal from 'sweetalert2';
 import { createNamespacedHelpers } from 'vuex';
 
-// import UserApi from '../../../apis/UserApi';
 import HeaderComponent from '../../../components/common/Header';
 import UserPicture from '../../../components/common/UserPicture';
 import TabComponent from '../../../components/common/Tab';
 import Header from '../../jh/Header';
 
-
 import '../../../assets/css/profile.scss';
 import '../../../assets/css/style.scss';
-
 
 const userMapActions = createNamespacedHelpers('User').mapActions; //
 const userMapGetters = createNamespacedHelpers('User').mapGetters; //
@@ -61,47 +58,67 @@ export default {
     computed: {
         ...userMapGetters(['getUser']),
     },
-
-
     mounted() {
         this.getInfo();
         this.checkLogin();
         this.reqInfo();
-
     },
     methods: {
         ...userMapActions(['reqUserInfo']),
         ...userMapActions(['logout']),
 
-
         async reqInfo() {
             await this.reqUserInfo();
-            
-            console.log("?", this.getUser);
             this.userinfo.nickname=this.getUser.data.nickname;
             this.userinfo.pic=this.getUser.data.profileImg;
+            this.userinfo.email=this.getUser.data.email;
+            if(!this.getUser.data.email){
+                this.userinfo.email='SNS유저'
+            }
         },
 
-        // logoutClick() {
-        //     this.logout().then(() => {
-        //         this.$router.push('/');
-        //     })
-        // },
-        
-        popupToggle() {
-            this.popup = true;
+        async delUser(){
+            await Swal.fire({
+            title: 'Enter your password',
+            input: 'password',
+            icon: 'warning',
+            inputPlaceholder: 'Enter your password',
+            inputValue: '',
+            inputValidator:(value)=>{
+            if (!value) {
+                return '뭐를 써'
+            }
+            else{
+                const jwt = localStorage.getItem('routrip_JWT');
+                Axios.delete('http://192.168.100.70:8083/account/user/',
+                        {   
+                            jwt: jwt,
+                            password: value,
+                        }
+                    ).then(res => {
+                        console.log(res.headers);
+                        console.log(jwt)
+                        console.log('탈퇴',res)
+                            Swal.fire({
+                            icon:"success",
+                            title:'잘가요..'
+                        })
+                        this.$router.push('/');
+                    }).catch(error=>{
+                        console.log(value);
+                        console.log(error.headers);
+                        console.log(error);
+                        console.log(jwt)
+                    });
+                    
+            }}})
+                        
         },
+
         getInfo() {
             this.userinfo.email = localStorage.getItem('loginedEmail');
             this.userinfo.nickname = localStorage.getItem('nickName');
         },
-        updated() {
-            if (localStorage.getItem('popup') !== null) {
-                // this.popup = !Boolean(localStorage.getItem('popup'));
-                localStorage.removeItem('popup');
-            }
-        },
-        
         checkLogin() {
             if (localStorage.getItem('loginedEmail') !== null) {
                 this.show = true;
@@ -132,13 +149,12 @@ export default {
                         console.log(res.data);
                         localStorage.setItem('routrip_JWT', res.data);
                         this.reqInfo();
-
                     });
                 }
             }})},
     },
     data() {
-        
+
         return {
             hi:'',
             userinfo: {
