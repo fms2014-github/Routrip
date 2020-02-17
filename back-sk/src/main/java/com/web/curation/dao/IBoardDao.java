@@ -33,6 +33,7 @@ public interface IBoardDao {
     int addImg(Img img) throws Exception;
     List<Img> findBoardImg(int boardid) throws Exception;
     int deleteImg(int imgid) throws Exception;
+    int deleteImgByBoardid(int boardid) throws Exception;
     
     int addComment(Comment comment) throws Exception;
     List<Comment> findComment(int boardid) throws Exception;
@@ -45,6 +46,7 @@ public interface IBoardDao {
     List<Marker> findMarker(int boardid) throws Exception;
     int updateMarker(Marker marker) throws Exception;
     int deleteMarker(int markerid) throws Exception;
+    int deleteMarkerByBoardid(int boardid) throws Exception;
     
     List<Board> findBoardByFollow(int following) throws Exception;
 }

@@ -203,4 +203,14 @@ public class BoardDao implements IBoardDao{
 	public List<Board> findBoardBest() throws Exception {
 		return sqlSession.selectList(ns+"findBoardBest");
 	}
+
+	@Override
+	public int deleteImgByBoardid(int boardid) throws Exception {
+		return sqlSession.delete(ns+"deleteImgByBoardid", boardid);
+	}
+
+	@Override
+	public int deleteMarkerByBoardid(int boardid) throws Exception {
+		return sqlSession.delete(ns+"deleteMarkerByBoardid", boardid);
+	}
 }

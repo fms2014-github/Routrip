@@ -124,8 +124,6 @@ public class PageController {
 		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
-	// @DeleteMapping("/favorite")
-	// @ApiOperation(value = "좋아요 해제")
 	public Object deleteFavorite(Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
 		if (jwt == null)
@@ -296,14 +294,11 @@ public class PageController {
 	@ApiOperation(value = "게시글 작성")
 	public Object addBoard2(@RequestBody Map<String, Object> map) throws Exception {
 		System.out.println("게시글 작성 시작");
-		// 수정도 이런식으로 변경
 		String jwt = (String) map.get("jwt");
 		if (jwt == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-
-//		for (String key : map.keySet()) {
-//			System.out.println(key + " : " + JSONStringer.valueToString(map.get(key)));
-//		}
+		if (!isOkJwt(jwt))
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
 		Board board = new Board();
 		board.setUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
@@ -457,48 +452,188 @@ public class PageController {
 
 	@PutMapping("/board")
 	@ApiOperation(value = "게시글 수정")
-	public Object updateBoard(@RequestBody Board board) throws Exception {
-		// 나중에 게시물 작성을 보고 따라 바꿀 예정
-		Board b = boardService.findBoardByBoardId(board.getBoardid());
-		if (board.getTitle() != null)
-			b.setTitle(board.getTitle());
-		if (board.getTripterm() != null)
-			b.setTripterm(board.getTripterm());
-		if (board.getKeyword() != null)
-			b.setKeyword(board.getKeyword());
-		if (board.getUnveiled() != b.getUnveiled())
-			b.setUnveiled(1);
+	public Object updateBoard(@RequestBody Map<String, Object> map) throws Exception {
+		System.out.println("게시글 수정 시작");
+		String jwt = (String) map.get("jwt");
+		if (jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		Board board = boardService.findBoardByBoardId((int) map.get("boardid"));
+		int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
+		if (!isOkJwt(jwt) || uid != board.getUid())
+			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
-		boolean change = false;
-		List<Img> imgs = boardService.findBoardImg(board.getBoardid());
-
-		for (Img i : imgs) {
-			boardService.deleteImg(i.getImgid());
-		}
-		for (Img i : board.getImgs()) {
-			i.setBoardid(board.getBoardid());
-			boardService.addImg(i);
-		}
-
-		for (Marker m : board.getMarkers()) {
-			if (m.getMarkerid() > 0) {// 있던 마커면 수정
-				boardService.updateMarker(m);
-			} else {// 없던 마커면 새로 등록
-				m.setBoardid(board.getBoardid());
-				boardService.addMarker(m);
+		board.setTitle((String) map.get("title"));
+		board.setTripterm((String) map.get("night") + " " + (String) map.get("day"));
+		board.setKeyword((String) map.get("keywords"));
+		board.setContent((String) map.get("content"));
+		board.setInfo(JSONStringer.valueToString(map.get("info")));
+		board.setCusInfo((String) map.get(JSONStringer.valueToString(map.get("cusInfo"))));
+		board.setUnveiled(1);
+		int ok = boardService.updateBoard(new Board());
+		boardService.deleteImgByBoardid(board.getBoardid());// 싹 다 날리고 새로 추가한다
+		boardService.deleteMarkerByBoardid(board.getBoardid());
+		for (String key : map.keySet()) {
+			if (key.equals("jwt") || key.equals("title") || key.equals("night") || key.equals("day")
+					|| key.equals("keyword") || key.equals("content") || key.equals("info") || key.equals("cusInfo"))
+				continue;
+			if (key.equals("marker")) {
+				String marker = JSONStringer.valueToString(map.get("marker"));
+				JSONArray array = (JSONArray) new JSONParser().parse(marker);
+				for (int i = 0; i < array.size(); i++) {
+					Marker m = new Marker();
+					m.setBoardid(board.getBoardid());
+					m.setLatitude(String.valueOf((double) ((JSONObject) array.get(i)).get("lat")));
+					m.setLongitude(String.valueOf((double) ((JSONObject) array.get(i)).get("lng")));
+					m.setOverlaytype("marker");
+					boardService.addMarker(m);
+				}
+			} else if (key.equals("polyline")) {
+				String marker = JSONStringer.valueToString(map.get("polyline"));
+				JSONArray array = (JSONArray) new JSONParser().parse(marker);
+				for (int i = 0; i < array.size(); i++) {
+					Marker m = new Marker();
+					m.setBoardid(board.getBoardid());
+					String latitude = "";
+					String longitude = "";
+					JSONArray array2 = (JSONArray) array.get(i);
+					for (int j = 0; j < array2.size(); j++) {
+						latitude += ((JSONObject) array2.get(j)).get("lat") + " ";
+						longitude += ((JSONObject) array2.get(j)).get("lng") + " ";
+					}
+					m.setLatitude(latitude);
+					m.setLongitude(longitude);
+					m.setOverlaytype("polyline");
+					boardService.addMarker(m);
+				}
+			} else if (key.equals("rectangle")) {
+				String marker = JSONStringer.valueToString(map.get("rectangle"));
+				JSONArray array = (JSONArray) new JSONParser().parse(marker);
+				for (int i = 0; i < array.size(); i++) {
+					Marker m = new Marker();
+					m.setBoardid(board.getBoardid());
+					JSONObject sPoint = (JSONObject) ((JSONObject) array.get(i)).get("sPoint");
+					JSONObject ePoint = (JSONObject) ((JSONObject) array.get(i)).get("ePoint");
+					m.setLatitude(String.valueOf((double) sPoint.get("lat")) + " "
+							+ String.valueOf((double) ePoint.get("lat")));
+					m.setLongitude(String.valueOf((double) sPoint.get("lng")) + " "
+							+ String.valueOf((double) ePoint.get("lng")));
+					m.setOverlaytype("rectangle");
+					boardService.addMarker(m);
+				}
+			} else if (key.equals("circle")) {
+				String marker = JSONStringer.valueToString(map.get("circle"));
+				JSONArray array = (JSONArray) new JSONParser().parse(marker);
+				for (int i = 0; i < array.size(); i++) {
+					Marker m = new Marker();
+					m.setBoardid(board.getBoardid());
+					m.setLatitude(String.valueOf((double) ((JSONObject) array.get(i)).get("lat")));
+					m.setLongitude(String.valueOf((double) ((JSONObject) array.get(i)).get("lng")));
+					m.setRadius((double) ((JSONObject) array.get(i)).get("radius"));
+					m.setOverlaytype("circle");
+					boardService.addMarker(m);
+				}
+			} else if (key.equals("polygon")) {
+				String marker = JSONStringer.valueToString(map.get("polygon"));
+				JSONArray array = (JSONArray) new JSONParser().parse(marker);
+				for (int i = 0; i < array.size(); i++) {
+					Marker m = new Marker();
+					m.setBoardid(board.getBoardid());
+					String latitude = "";
+					String longitude = "";
+					JSONArray array2 = (JSONArray) array.get(i);
+					for (int j = 0; j < array2.size(); j++) {
+						latitude += ((JSONObject) array2.get(j)).get("lat") + " ";
+						longitude += ((JSONObject) array2.get(j)).get("lng") + " ";
+					}
+					m.setLatitude(latitude);
+					m.setLongitude(longitude);
+					m.setOverlaytype("polygon");
+					boardService.addMarker(m);
+				}
+			} else if (key.equals("arrow")) {
+				String marker = JSONStringer.valueToString(map.get("arrow"));
+				JSONArray array = (JSONArray) new JSONParser().parse(marker);
+				for (int i = 0; i < array.size(); i++) {
+					Marker m = new Marker();
+					m.setBoardid(board.getBoardid());
+					String latitude = "";
+					String longitude = "";
+					JSONArray array2 = (JSONArray) array.get(i);
+					for (int j = 0; j < array2.size(); j++) {
+						latitude += ((JSONObject) array2.get(j)).get("lat") + " ";
+						longitude += ((JSONObject) array2.get(j)).get("lng") + " ";
+					}
+					m.setLatitude(latitude);
+					m.setLongitude(longitude);
+					m.setOverlaytype("arrow");
+					boardService.addMarker(m);
+				}
+			} else if (key.equals("ellipse")) {
+				String marker = JSONStringer.valueToString(map.get("ellipse"));
+				JSONArray array = (JSONArray) new JSONParser().parse(marker);
+				for (int i = 0; i < array.size(); i++) {
+					Marker m = new Marker();
+					m.setBoardid(board.getBoardid());
+					m.setLatitude(String.valueOf((double) ((JSONObject) array.get(i)).get("lat")));
+					m.setLongitude(String.valueOf((double) ((JSONObject) array.get(i)).get("lng")));
+					String rx = String.valueOf(((JSONObject) array.get(i)).get("rx"));
+					String ry = String.valueOf(((JSONObject) array.get(i)).get("ry"));
+					m.setRx(Double.valueOf(rx));
+					m.setRy(Double.valueOf(ry));
+					m.setOverlaytype("ellipse");
+					boardService.addMarker(m);
+				}
+			} else if (key.equals("image")) {
+				String marker = JSONStringer.valueToString(map.get("image"));
+				JSONArray array = (JSONArray) new JSONParser().parse(marker);
+				for (int i = 0; i < array.size(); i++) {
+					Img img = new Img();
+					img.setBoardid(board.getBoardid());
+					img.setSrc((String) array.get(i));
+					boardService.addImg(img);
+				}
 			}
 		}
-
-		int ok = boardService.updateBoard(b);
-		if (ok > 0)
+		if (ok > 0) {
+			System.out.println("게시글 수정 완료");
 			return new ResponseEntity<>(HttpStatus.OK);
+		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
-	@GetMapping("/boardList/{lastDate}")
+	@GetMapping("/boardList")
 	@ApiOperation(value = "게시글 전체보기")
-	public Object getBoardList(@PathVariable String lastDate) throws Exception {
-		if (lastDate.equals("0")) {
+	public Object getBoardList() throws Exception {
+		List<Board> boards = boardService.getBoardList();
+		for (Board b : boards) {
+			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
+			b.setImgs(imgs);
+			List<Comment> comments = boardService.findComment(b.getBoardid());
+			for (Comment c : comments) {
+				c.setUser(userService.findUserSimple(c.getUid()));
+			}
+			b.setCommentNum(comments.size());
+			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+			b.setFavoriteNum(favoriteNum);
+			b.setMarkers(boardService.findMarker(b.getBoardid()));
+			b.setComments(comments);
+			List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
+			List<User> users = new ArrayList<User>();
+			for (int ui : usersid)
+				users.add(userService.findUserSimple(ui));
+			b.setFavorite(users);
+			b.setUser(userService.findUserSimple(b.getUid()));
+			if (b.getKeyword() != null)
+				b.setKeywords(b.getKeyword());
+		}
+		return new ResponseEntity<>(boards, HttpStatus.OK);
+	}
+
+	@PostMapping("/boardList/{lastDate}")
+	@ApiOperation(value = "게시글 전체보기")
+	public Object postBoardList(@PathVariable String lastDate) throws Exception {
+		if (lastDate == null || lastDate.equals("0")) {
 			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			lastDate = format1.format(new Date());
 		}

@@ -164,6 +164,12 @@
 		where imgid = #{value}
 	</delete>
 	
+	<delete id="deleteImgByBoardid" parameterType="int">
+		delete
+		from img
+		where boardid <![CDATA[>=]]> #{value} and boardid <![CDATA[<=]]> #{value}
+	</delete>
+	
 	<insert id="addComment" parameterType="comment" useGeneratedKeys="true" keyProperty="commentid">
 	insert into comment(uid, boardid, contents, writedate, listener)
 	values(#{uid}, #{boardid}, #{contents}, now(), #{listener})
@@ -231,6 +237,12 @@
 		delete
 		from marker
 		where markerid=#{value}
+	</delete>
+	
+	<delete id="deleteMarkerByBoardid" parameterType="int">
+		delete
+		from marker
+		where boardid <![CDATA[>=]]> #{value} and boardid <![CDATA[<=]]> #{value}
 	</delete>
 	
 	<select id="findBoardByFollow" parameterType="int" resultType="board">

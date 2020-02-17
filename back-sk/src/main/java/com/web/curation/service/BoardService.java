@@ -181,4 +181,14 @@ public class BoardService implements IBoardService{
 	public List<Board> findBoardBest() throws Exception {
 		return boardDao.findBoardBest();
 	}
+
+	@Override
+	public int deleteImgByBoardid(int boardid) throws Exception {
+		return boardDao.deleteImgByBoardid(boardid);
+	}
+
+	@Override
+	public int deleteMarkerByBoardid(int boardid) throws Exception {
+		return boardDao.deleteMarkerByBoardid(boardid);
+	}
 }
