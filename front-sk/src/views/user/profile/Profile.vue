@@ -8,10 +8,8 @@
                 <div class="user-info">
                     <HeaderComponent :headerTitle="userinfo.email" :profileIcon="false" :mailIcon="true" />
                     <HeaderComponent :headerTitle="userinfo.nickname" :profileIcon="true" rightText="수정" @changeNick="changeNick" />
-
                 <div class="none-border">
                     <button class="button-text" @click="delUser">회원탈퇴</button>
-
                 </div>
                 </div>
             </div>
@@ -79,7 +77,7 @@ export default {
 
         async delUser(){
             await Swal.fire({
-            title: 'Enter your password',
+            title: '계정이 영구 삭제됩니다. \n 패스워드를 입력해주세요.',
             input: 'password',
             icon: 'warning',
             inputPlaceholder: 'Enter your password',
@@ -91,9 +89,9 @@ export default {
             else{
                 const jwt = localStorage.getItem('routrip_JWT');
                 Axios.delete('http://192.168.100.70:8083/account/user/',
-                        {   
+                        {   data:{
                             jwt: jwt,
-                            password: value,
+                            password: value}
                         }
                     ).then(res => {
                         console.log(res.headers);
@@ -101,12 +99,18 @@ export default {
                         console.log('탈퇴',res)
                             Swal.fire({
                             icon:"success",
-                            title:'잘가요..'
-                        })
-                        this.$router.push('/');
+                            title:'모든 정보가 삭제되었습니다. \n 다음에 다시 만나요!'
+                        }).then( (dismiss)=>{
+                            if (dismiss){
+                                
+                                this.$router.push('/');
+                            }
+                        }
+                    )
+                        
                     }).catch(error=>{
                         console.log(value);
-                        console.log(error.headers);
+                
                         console.log(error);
                         console.log(jwt)
                     });
