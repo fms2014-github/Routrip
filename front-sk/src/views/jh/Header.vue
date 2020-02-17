@@ -1,7 +1,33 @@
 <template>
     <div id="header" :class="{ headerHeight: headerHeight }">
         <div class="hambuger">
-            <i class="fas fa-bars"></i>
+            <div class="hambuger-box" @click="toggle1" :class="{ dtoggle1: dtoggle1 }">
+                <a class="menu-trigger" href="#">
+                    <span></span>
+                    <span></span>
+                    <span></span>
+                </a>
+            </div>
+            <div :class="{ dtoggle1: dtoggle1 }">
+                <div class="hambuger-drop">
+                    <div class="profile">
+                        <div class="profile-img">
+                            <img :src="user.profileImg" />
+                        </div>
+                        <div class="profile-info">
+                            <div class="profile-nickname">{{ user.nickname }}</div>
+                            <div class="profile-email">{{ user.email }}</div>
+                        </div>
+                    </div>
+                    <div class="hambuger-menu"><i class="far fa-bell"></i><span>알림</span></div>
+                    <div class="hambuger-menu">
+                        <router-link v-bind:to="{ name: 'WriteForm' }"><i class="far fa-plus-square"></i><span>글쓰기</span></router-link>
+                    </div>
+                    <div class="hambuger-menu">
+                        <a href="/profile"><i class="far fa-user"></i><span>마이페이지</span></a>
+                    </div>
+                </div>
+            </div>
         </div>
         <div class="home">
             <router-link v-bind:to="{ name: 'Main' }" class="btn--text">
@@ -30,7 +56,7 @@
             </div>
             <div class="menu-box mypage" @click="toggleDropBox">
                 <span class="menu-icon">
-                    <img class="profile-img" :src="userImg" />
+                    <img class="profile-img" :src="user.profileImg" />
                 </span>
                 <div class="drop-box" :class="{ dropBox: !dropBox }">
                     <!-- <div><router-link :to="{ name: 'Profile' }">마이페이지</router-link></div> -->
@@ -41,7 +67,6 @@
         </div>
     </div>
 </template>
-
 <script>
 import '../../assets/css/main/header.scss';
 import { createNamespacedHelpers } from 'vuex';
@@ -56,8 +81,8 @@ export default {
     created() {
         this.jwt = localStorage.getItem('routrip_JWT');
         Axios.post(`${URI}/account/decode`, { jwt: this.jwt }).then(res => {
-            this.userImg = res.data.profileImg;
-            // console.log(res.data);
+            this.user = res.data;
+            console.log(res.data);
         });
         window.addEventListener('scroll', this.scrollY);
     },
@@ -88,6 +113,9 @@ export default {
         toggleDropBox() {
             this.dropBox = !this.dropBox;
         },
+        toggle1() {
+            this.dtoggle1 = !this.dtoggle1;
+        },
     },
     data: () => {
         return {
@@ -95,8 +123,9 @@ export default {
             headerHeight: false,
             searchWord: '',
             isSearchPage: false,
-            userImg: '',
+            user: '',
             dropBox: false,
+            dtoggle1: false,
         };
     },
 };
