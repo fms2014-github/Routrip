@@ -159,4 +159,9 @@ public class UserService implements IUserService{
 	public User findUserNoJoin(String email, int loginApi) throws Exception {
 		return userDao.findUserNoJoin(email, loginApi);
 	}
+
+	@Override
+	public int updateAlarm(int uid) throws Exception {
+		return userDao.updateAlarm(uid);
+	}
 }

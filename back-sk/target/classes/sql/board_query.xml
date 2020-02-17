@@ -24,6 +24,14 @@
 		order by writedate desc
 	</select>
 	
+	<select id="getBoardListByLastWrite" parameterType="string" resultType="board">
+		select boardid, uid, title, writedate, tripterm,
+		keyword, unveiled, content, info, cusInfo, favoriteNum
+		from board
+		where writedate <![CDATA[>=]]> #{value}
+		order by writedate desc
+	</select>
+	
 	<select id="getBoardList5" parameterType="string" resultType="board">
 		select boardid, uid, title, writedate, tripterm,
 		keyword, unveiled, content, info, cusInfo, favoriteNum
@@ -140,6 +148,13 @@
 	select boardid
 	from scrap
 	where uid=#{value}
+	order by makedate desc
+	</select>
+	
+	<select id="getScrapDate" parameterType="map" resultType="string">
+	select makedate
+	from scrap
+	where uid=#{uid} and boardid=#{boardid}
 	order by makedate desc
 	</select>
 	

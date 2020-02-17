@@ -104,7 +104,8 @@ commentid int, 어느 코멘트인가
 follow int, 누가 날 팔로우했는가
 alarmtype int not null, 알림타입(팔로우1, 댓글2, 대댓글3, 팔로잉한글4)
 nickname varchar(20), 알림오도록 행동한 주체의 닉네임
-time datetime not null 알림 생긴 시간
+time datetime not null, 알림 생긴 시간
+isread boolean not null default fasle 알림 읽었나 여부
 );
 
 create table token(

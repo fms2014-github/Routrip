@@ -190,9 +190,15 @@
 		values(#{uid}, #{alarmtype}, #{boardid}, #{commentid}, #{follow}, #{nickname},
 		now())
 	</insert>
+	
+	<update id="updateAlarm">
+		update alarm
+		set isread = 1
+		where uid = #{value} and time <![CDATA[<]]> now
+	</update>
 
 	<select id="getAlarm" parameterType="int" resultType="alarm">
-		select alarmid, uid, alarmtype, boardid, commentid, follow, nickname
+		select alarmid, uid, alarmtype, boardid, commentid, follow, nickname, isread
 		from alarm
 		where uid = #{value}
 	</select>

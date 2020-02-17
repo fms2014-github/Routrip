@@ -191,4 +191,14 @@ public class BoardService implements IBoardService{
 	public int deleteMarkerByBoardid(int boardid) throws Exception {
 		return boardDao.deleteMarkerByBoardid(boardid);
 	}
+
+	@Override
+	public List<Board> getBoardListByLastWrite(String writedate) throws Exception {
+		return boardDao.getBoardListByLastWrite(writedate);
+	}
+
+	@Override
+	public String getScrapDate(int uid, int boardid) throws Exception {
+		return boardDao.getScrapDate(uid, boardid);
+	}
 }

@@ -185,4 +185,9 @@ public class UserDao implements IUserDao{
 	public int deleteUserNoJoin(int uid) throws Exception {
 		return sqlSession.delete(ns+"deleteUserNoJoin", uid);
 	}
+
+	@Override
+	public int updateAlarm(int uid) throws Exception {
+		return sqlSession.update(ns+"updateAlarm", uid);
+	}
 }

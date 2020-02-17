@@ -1,6 +1,7 @@
 package com.web.curation.controller.account;
 
 import java.io.UnsupportedEncodingException;
+import java.security.Key;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import javax.crypto.spec.SecretKeySpec;
 import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.PasswordAuthentication;
@@ -17,6 +19,7 @@ import javax.mail.internet.AddressException;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
+import javax.xml.bind.DatatypeConverter;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -39,6 +42,7 @@ import com.web.curation.service.UserService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
@@ -57,7 +61,9 @@ public class AccountController {
 	@Autowired
 	private UserService userService;
 
-	// private String key = "webcuration-routrip-secretkey";
+//	private String key = "webcuration-routrip-secretkey";
+//	byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(key);
+//	Key signingKey = new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
 
 	@PostMapping("/login")
 	@ApiOperation(value = "로그인")
@@ -70,8 +76,9 @@ public class AccountController {
 				.claim("nickname", loginUser.getNickname())
 				.claim("profileImg", loginUser.getProfileImg()).claim("loginApi", loginUser.getLoginApi())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))// 하루 뒤 자동 기간 만료됨
-				// .signWith(SignatureAlgorithm.HS256, key)
+				//.signWith(SignatureAlgorithm.HS256, signingKey)
 				.compact();
+		//System.out.println(Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key)).parseClaimsJwt(refresh).getBody().get("email"));
 		// refresh 토큰은 DB 에 저장
 		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
@@ -211,8 +218,6 @@ public class AccountController {
 	@ApiOperation(value = "탈퇴하기")
 	public Object deleteUser(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
-		System.out.println("여기까진 왔다.");
-		System.out.println(map.get("password")+" "+jwt);
 		if (jwt == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
@@ -226,7 +231,6 @@ public class AccountController {
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 		}
-		System.out.println("설마 여기로 오나");
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
@@ -240,20 +244,6 @@ public class AccountController {
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
-
-//	@PostMapping("/password")
-//	@ApiOperation(value = "비밀번호 확인")
-//	public Object Password(@RequestBody Map<String, String> map) throws Exception {
-//		String jwt = map.get("jwt");
-//		if (jwt == null)
-//			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-//		String password = map.get("password");
-//		User user = userService.findUserByUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
-//		if (user != null && user.getPassword().equals(password)) {
-//			return new ResponseEntity<>(HttpStatus.OK);
-//		}
-//		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-//	}
 
 	@PutMapping("/user")
 	@ApiOperation(value = "회원정보 변경") // 프로필 이미지, 닉네임 변경
@@ -437,6 +427,7 @@ public class AccountController {
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			List<Alarm> alarms = userService.getAlarm((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+			userService.updateAlarm((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 			return new ResponseEntity<>(alarms, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -445,10 +436,11 @@ public class AccountController {
 	@DeleteMapping("/alarm")
 	@ApiOperation(value = "알림 삭제")
 	public Object deleteAlarm(@RequestBody Map<String, String> map) throws Exception {
-		// 알람 유저가 직접 하나씩 삭제
 		int alarmid = Integer.parseInt(map.get("alarmid"));
-		userService.deleteAlarm(alarmid);
-		return new ResponseEntity<>(HttpStatus.OK);
+		int ok = userService.deleteAlarm(alarmid);
+		if(ok > 0)
+			return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	// 인증번호 생성기 (6글자)

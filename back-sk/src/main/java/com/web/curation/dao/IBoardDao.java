@@ -11,6 +11,7 @@ public interface IBoardDao {
 	int addBoard(Board board) throws Exception;
 	List<Board> getBoardList() throws Exception;
 	List<Board> getBoardList5(String writedate) throws Exception;
+	List<Board> getBoardListByLastWrite(String writedate) throws Exception;
 	List<Board> findBoardListByUid(int uid) throws Exception;
 	List<Board> findBoardListByKeyword(String keyword) throws Exception;
 	List<Board> findBoardListByWriteDate(String startdate, String enddate) throws Exception;
@@ -29,6 +30,7 @@ public interface IBoardDao {
     int addScrap(int uid, int boardid) throws Exception;
     List<Integer> getScrap(int uid) throws Exception;
     int deleteScrap(int uid, int boardid) throws Exception;
+    String getScrapDate(int uid, int boardid) throws Exception;
     
     int addImg(Img img) throws Exception;
     List<Img> findBoardImg(int boardid) throws Exception;

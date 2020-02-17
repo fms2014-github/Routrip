@@ -103,7 +103,8 @@ commentid int,
 follow int,
 alarmtype int not null,
 nickname varchar(20),
-time datetime not null
+time datetime not null,
+isread boolean not null default fasle
 );
 
 create table token(

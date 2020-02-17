@@ -37,4 +37,5 @@ public interface IUserDao {
      List<Alarm> getAlarm(int uid) throws Exception;
      int deleteAlarm(int alarmid) throws Exception;
      int deleteAlarmAll(int uid) throws Exception;
+     int updateAlarm(int uid) throws Exception;
  }

@@ -2,6 +2,7 @@ package com.web.curation.controller.page;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -199,6 +200,7 @@ public class PageController {
 				b.setFavorite(users);
 				if (b.getKeyword() != null)
 					b.setKeywords(b.getKeyword());
+				b.setScrapdate(boardService.getScrapDate((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), b.getBoardid()));
 				boards.add(b);
 			}
 			return new ResponseEntity<>(boards, HttpStatus.OK);
@@ -287,6 +289,7 @@ public class PageController {
 				board.setKeywords(board.getKeyword());
 			return new ResponseEntity<>(board, HttpStatus.OK);
 		}
+		System.out.println("jwt가 만료되면 여기까지 올까?");
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
@@ -297,8 +300,10 @@ public class PageController {
 		String jwt = (String) map.get("jwt");
 		if (jwt == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-		if (!isOkJwt(jwt))
+		if (!isOkJwt(jwt)) {
+			System.out.println("jwt가 만료되면 여기까지 올까?");
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		}
 
 		Board board = new Board();
 		board.setUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
@@ -307,7 +312,7 @@ public class PageController {
 		board.setKeyword((String) map.get("keywords"));
 		board.setContent((String) map.get("content"));
 		board.setInfo(JSONStringer.valueToString(map.get("info")));
-		board.setCusInfo((String) map.get(JSONStringer.valueToString(map.get("cusInfo"))));
+		board.setCusInfo(JSONStringer.valueToString(map.get("cusInfo")));
 		board.setUnveiled(1);
 		int ok = boardService.addBoard(board);
 		if (ok > 0) {
@@ -441,7 +446,7 @@ public class PageController {
 				alarm.setUid(i);
 				alarm.setBoardid(board.getBoardid());
 				alarm.setAlarmtype(4);
-				alarm.setNickname(board.getUser().getNickname());
+				alarm.setNickname(userService.findUserByUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid")).getNickname());
 				userService.addAlarm(alarm);
 			}
 			System.out.println("게시글 작성 완료");
@@ -631,7 +636,7 @@ public class PageController {
 	}
 
 	@PostMapping("/boardList/{lastDate}")
-	@ApiOperation(value = "게시글 전체보기")
+	@ApiOperation(value = "게시글 전체보기(4개씩)")
 	public Object postBoardList(@PathVariable String lastDate) throws Exception {
 		if (lastDate == null || lastDate.equals("0")) {
 			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
@@ -662,11 +667,16 @@ public class PageController {
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
-
-	@GetMapping("/bestBoard")
-	@ApiOperation(value = "베스트 게시글")
-	public Object bestBoard() throws Exception {
-		List<Board> boards = boardService.findBoardBest();
+	
+	@PostMapping("/boardList")
+	@ApiOperation(value = "게시글 전체보기")
+	public Object BoardList(@RequestBody Map<String, String> map) throws Exception {
+		String lastDate = map.get("lastDate");
+		if (lastDate == null || lastDate.equals("0")) {
+			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			lastDate = format1.format(new Date());
+		}
+		List<Board> boards = boardService.getBoardListByLastWrite(lastDate);
 		for (Board b : boards) {
 			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
 			b.setImgs(imgs);
@@ -692,6 +702,38 @@ public class PageController {
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
 
+	@GetMapping("/bestBoard")
+	@ApiOperation(value = "베스트 게시글")
+	public Object bestBoard() throws Exception {
+		List<Board> tempboards = boardService.getBoardList();
+		for(Board b : tempboards) {
+			boardService.updateFavoriteNum(b.getBoardid(), boardService.getFavoriteNum(b.getBoardid()));
+		}
+		List<Board> boards = boardService.findBoardBest();
+		for (Board b : boards) {
+			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
+			b.setImgs(imgs);
+			List<Comment> comments = boardService.findComment(b.getBoardid());
+			for (Comment c : comments) {
+				c.setUser(userService.findUserSimple(c.getUid()));
+			}
+			b.setCommentNum(comments.size());
+			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+			b.setFavoriteNum(favoriteNum);
+			b.setMarkers(boardService.findMarker(b.getBoardid()));
+			b.setComments(comments);
+			List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
+			List<User> users = new ArrayList<User>();
+			for (int ui : usersid)
+				users.add(userService.findUserSimple(ui));
+			b.setFavorite(users);
+			b.setUser(userService.findUserSimple(b.getUid()));
+			if (b.getKeyword() != null)
+				b.setKeywords(b.getKeyword());
+		}
+		return new ResponseEntity<>(boards, HttpStatus.OK);
+	}
+
 	@GetMapping("/searchBoard/{str}")
 	@ApiOperation(value = "게시글 검색")
 	public Object search(@PathVariable String str) throws Exception {
@@ -699,30 +741,36 @@ public class PageController {
 		List<Board> board = new ArrayList<Board>();
 
 		for (Board b : boards) {
-			String[] keywords = b.getKeyword().split(" ");
+			String title = b.getTitle().toLowerCase();
+			String strlow = str.toLowerCase();
+			String[] keywords = {"                 "};
+			if(b.getKeyword()!=null)
+				keywords = b.getKeyword().toLowerCase().split(" ");
 			boolean flag = false;
-			if (str.contains(b.getTitle()) || b.getTitle().contains(str)) {// 제목과 검색어 어느쪽이 완전히 포함할 경우
+			if (strlow.contains(title) || title.contains(strlow)) {// 제목과 검색어 어느쪽이 완전히 포함할 경우
 				flag = true;
 			} else {
 				for (String k : keywords) {// 검색어가 키워드를 포함할 경우
-					if (str.contains(k)) {
+					if (strlow.contains(k)) {
 						flag = true;
 						break;
 					}
 				}
 				if (!flag) {
-					String[] titles = b.getTitle().split(" ");// 검색어가 제목의 일부를 포함할 경우
+					String[] titles = title.split(" ");// 검색어가 제목의 일부를 포함할 경우
 					for (String t : titles) {
-						if (str.contains(t)) {
+						if(t.length()==0)
+							continue;
+						if (strlow.contains(t)) {
 							flag = true;
 							break;
 						}
 					}
 				}
 				if (!flag) {
-					String[] strs = str.split(" ");// 제목이 검색어의 일부를 포함할 경우
+					String[] strs = strlow.split(" ");// 제목이 검색어의 일부를 포함할 경우
 					for (String s : strs) {
-						if (b.getTitle().contains(s)) {
+						if (title.contains(s)) {
 							flag = true;
 							break;
 						}
