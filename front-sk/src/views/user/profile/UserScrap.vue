@@ -1,24 +1,33 @@
 <template>
     <div>
-        <h2>스크랩</h2><br><br><br><br>
         <div class="row">
+            <h2 style="text-align:center; font-size:2.1vw; @include wrap;">총 {{scrapList.length}} 개의 스크랩</h2>
             <div v-for="scrap in scrapList" v-bind:key="scrap.boardid">
                 <div class="gallery">
-                    <div class = 'card-header'>
-                        <h1 class = 'card-header-title'>{{ scrap.title }}</h1> <h3>스크랩 날짜</h3>    
-                    </div>
-                    <div class= 'card'>
-                        <img :src="scrap.imgs[0].src" class = 'card-image'>
-                        
-                        <div class ='card-info'>
-                            <ul>
-                                <li class="card-likes"><span class="visually-hidden">좋아요 :  </span><i class="fas fa-heart" aria-hidden="true"></i> {{scrap.favorite.length}}</li>
-                                <li class="card-comments"><span class="visually-hidden">댓글 수 : </span><i class="fas fa-comment" aria-hidden="true"></i> {{ scrap.commentNum }}</li>
-                            </ul>
-                        </div> 	
-                    </div>
-                    <div class = 'card-footer'>
-                        <!-- {{keywords}} -->
+                    <h1 class = 'card-header-title'>
+                        <router-link :to="{ name: 'Detail', params: { boardid: scrap.boardid } }">
+                            {{ scrap.title }}
+                        </router-link>
+                    </h1>
+                <h4 style="text-align:right;">{{ scrap.scrapdate.split(':')[0]+":"+scrap.scrapdate.split(':')[1] }}</h4>
+                    <router-link :to="{ name: 'Detail', params: { boardid: scrap.boardid } }">
+                        <div class= 'card'>
+                            <img :src="scrap.imgs[0].src" class = 'card-image'>
+                            <div class ='card-info'>
+                                <ul>
+                                    <li class="card-likes"><span class="visually-hidden">좋아요 :  </span><i class="fas fa-heart" aria-hidden="true"></i> {{scrap.favorite.length}}</li>
+                                    <li class="card-comments"><span class="visually-hidden">댓글 수 : </span><i class="fas fa-comment" aria-hidden="true"></i> {{ scrap.commentNum }}</li>
+                                </ul>
+                            </div> 	
+                        </div>
+                    </router-link>
+                       
+                    <div class="keywords">
+                         <div class = 'card-footer' >
+                            <div class="keyword" v-for="keyword in scrap.keywords" v-bind:key="keyword">
+                                <span>#{{keyword}}</span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -52,9 +61,7 @@ export default {
     },
     data(){
         return{
-            
             scrapList:[]
-
         };
     },
 
