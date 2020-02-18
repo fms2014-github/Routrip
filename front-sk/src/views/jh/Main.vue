@@ -5,11 +5,11 @@
             <div class="best-posting">
                 <div class="postings-posting">
                     <hooper
-                        :infiniteScroll="true"
-                        :itemsToShow="3"
+                        :infinite-scroll="true"
+                        :items-to-show="3"
                         :progress="true"
-                        :autoPlay="true"
-                        :playSpeed="2000"
+                        :auto-play="true"
+                        :play-speed="2000"
                     >
                         <slide v-for="(data, dataIdx) in datas" :key="dataIdx">
                             <img :src="data.imgs[0].src" alt />
@@ -20,7 +20,7 @@
             </div>
             <div class="posting-box">
                 <div class="postings">
-                    <div class="posting-component" v-for="(data, dataIdx) in datas" :key="dataIdx">
+                    <div v-for="(data, dataIdx) in datas" :key="dataIdx" class="posting-component">
                         <div class="postings-posting">
                             <div class="post-info">
                                 <div class="profile-img">
@@ -75,10 +75,10 @@
                                         </div>
                                     </button>
                                 </div>
-                                <div class="state" v-if="data.favoriteNum == 1">
+                                <div v-if="data.favoriteNum == 1" class="state">
                                     <strong>{{ whoLiked[dataIdx] }}</strong>님이 게시글을 좋아합니다.
                                 </div>
-                                <div class="state" v-if="data.favoriteNum > 1">
+                                <div v-if="data.favoriteNum > 1" class="state">
                                     <strong>{{ whoLiked[dataIdx] }}</strong>
                                     님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
                                 </div>
@@ -86,10 +86,10 @@
 
                             <div class="keywords">
                                 <div
-                                    @click="search(keyword)"
-                                    class="keyword"
                                     v-for="(keyword, keywordIdx) in data.keywords"
                                     :key="keywordIdx"
+                                    class="keyword"
+                                    @click="search(keyword)"
                                 >
                                     <span>#{{ keyword }}</span>
                                 </div>
@@ -99,9 +99,9 @@
                         <div class="comment-box">
                             <div class="comments">
                                 <div
-                                    class="comment"
                                     v-for="(comment, commentIdx) in data.comments"
                                     :key="commentIdx"
+                                    class="comment"
                                 >
                                     <div class="writer-img">
                                         <img :src="comment.user.profileImg" alt />
@@ -117,8 +117,8 @@
                                             </div>
                                         </div>
                                         <div
-                                            class="comment-delete"
                                             v-if="comment.uid == getUser.data.uid"
+                                            class="comment-delete"
                                         >
                                             <button @click="deleteComment(comment)">삭제</button>
                                         </div>
@@ -128,11 +128,11 @@
                             <div class="write-comment">
                                 <form action class="comment-form">
                                     <textarea
+                                        v-model="comment"
                                         class="comment"
                                         placeholder="댓글 달기..."
                                         autocomplete="off"
                                         wrap="soft"
-                                        v-model="comment"
                                     ></textarea>
                                 </form>
                                 <div class="comment-btn">
@@ -145,7 +145,7 @@
                     </div>
                 </div>
             </div>
-        </div>
+        </div>          
         <div class="else-modal" :class="{ elseModalBackground: !elseModalBackground }">
             <div class="modal-box">
                 <div class="box-content">
@@ -197,243 +197,243 @@ const userMapActions = createNamespacedHelpers('User').mapActions;
 
 const URI = 'http://192.168.100.70:8083/';
 export default {
-    components: {
-        Header,
-        // Posting,
-        Hooper,
-        Slide,
-        HooperPagination,
-        HooperNavigation,
+  components: {
+    Header,
+    // Posting,
+    Hooper,
+    Slide,
+    HooperPagination,
+    HooperNavigation,
+  },
+  data: () => {
+    return {
+      datas: '',
+      comment: '',
+      likeList: [],
+      likeShow: [],
+      whoLiked: '',
+      scrapList: [],
+      scrapShow: [],
+      followList: [],
+      elseModalBackground: false,
+      boardData: '',
+      jwt: '',
+      followBtn: false,
+      unfollowBtn: false,
+      myPosting: false,
+    };
+  },
+  mounted() {
+    if (this.getUser.user === undefined) {
+      this.req();
+    } else {
+      this.getUser;
+    }
+  },
+  created: function() {
+    this.jwt = localStorage.getItem('routrip_JWT');
+    this.showAll();
+  },
+  // updated: function() {
+  //     this.getAlldata();
+  // },
+  computed: {
+    ...userMapState(['User']),
+    ...userMapGetters(['getUser']),
+  },
+  methods: {
+    ...userMapMutations(['setUser']),
+    ...userMapActions(['reqUserInfo']),
+    async req() {
+      await this.reqUserInfo();
+      this.getUser;
     },
-    data: () => {
-        return {
-            datas: '',
-            comment: '',
-            likeList: [],
-            likeShow: [],
-            whoLiked: '',
-            scrapList: [],
-            scrapShow: [],
-            followList: [],
-            elseModalBackground: false,
-            boardData: '',
-            jwt: '',
-            followBtn: false,
-            unfollowBtn: false,
-            myPosting: false,
-        };
-    },
-    mounted() {
-        if (this.getUser.user === undefined) {
-            this.req();
-        } else {
-            this.getUser;
-        }
-    },
-    created: function() {
-        this.jwt = localStorage.getItem('routrip_JWT');
-        this.showAll();
-    },
-    // updated: function() {
-    //     this.getAlldata();
-    // },
-    computed: {
-        ...userMapState(['User']),
-        ...userMapGetters(['getUser']),
-    },
-    methods: {
-        ...userMapMutations(['setUser']),
-        ...userMapActions(['reqUserInfo']),
-        async req() {
-            await this.reqUserInfo();
-            this.getUser;
+    kakao() {
+      const at = localStorage.getItem('kakao_access_token');
+      const rt = localStorage.getItem('kakao_refresh_token');
+      console.log(at);
+      console.log(rt);
+      Kakao.init('cffc768e4739655aab323adbd9eb2633');
+      console.log(Kakao.isInitialized());
+      Kakao.API.request({
+        url: '/v1/user/me',
+        success: res => {
+          this.setUser(res);
+          console.log(res);
+          // console.log(res.properties.nickname);
+          // console.log(res.properties.profile_image);
+          console.log(this.getUser);
         },
-        kakao() {
-            const at = localStorage.getItem('kakao_access_token');
-            const rt = localStorage.getItem('kakao_refresh_token');
-            console.log(at);
-            console.log(rt);
-            Kakao.init('cffc768e4739655aab323adbd9eb2633');
-            console.log(Kakao.isInitialized());
-            Kakao.API.request({
-                url: '/v1/user/me',
-                success: res => {
-                    this.setUser(res);
-                    console.log(res);
-                    // console.log(res.properties.nickname);
-                    // console.log(res.properties.profile_image);
-                    console.log(this.getUser);
-                },
+      });
+    },
+    showAll() {
+      Axios.post(`${URI}/page/favoriteBoard`, { jwt: this.jwt })
+        .then(res => {
+          // console.log(res.data);
+          this.likeList = [];
+          for (var i = 0; i < res.data.length; ++i) {
+            this.likeList.push(res.data[i].boardid);
+          }
+
+          Axios.post(`${URI}/page/scrapBoard`, { jwt: this.jwt })
+            .then(res => {
+              // console.log(res.data);
+              this.scrapList = [];
+              for (var i = 0; i < res.data.length; ++i) {
+                this.scrapList.push(res.data[i].boardid);
+              }
+
+              Axios.get(`${URI}/page/boardList`)
+                .then(res => {
+                  this.likeShow = [];
+                  this.scrapShow = [];
+                  this.whoLiked = [];
+                  this.datas = res.data;
+                  // console.log(this.datas);
+                  // console.log(this.getUser.data.uid);
+                  for (var i = 0; i < this.datas.length; ++i) {
+                    if (res.data[i].favoriteNum > 0) {
+                      this.whoLiked.push(res.data[i].favorite[0].nickname);
+                    } else {
+                      this.whoLiked.push('');
+                    }
+
+                    //좋아요
+                    if (this.likeList.includes(this.datas[i].boardid)) this.likeShow.push({ like: true });
+                    else this.likeShow.push({ like: false });
+                    //스크랩
+
+                    if (this.scrapList.includes(this.datas[i].boardid)) this.scrapShow.push({ scrap: true });
+                    else this.scrapShow.push({ scrap: false });
+                  }
+                })
+                .catch(res => {
+                  console.log('전체 게시글 조회 실패');
+                });
+            })
+            .catch(res => {
+              console.log('스크랩 게시글 조회 실패');
             });
-        },
-        showAll() {
-            Axios.post(`${URI}/page/favoriteBoard`, { jwt: this.jwt })
-                .then(res => {
-                    // console.log(res.data);
-                    this.likeList = [];
-                    for (var i = 0; i < res.data.length; ++i) {
-                        this.likeList.push(res.data[i].boardid);
-                    }
-
-                    Axios.post(`${URI}/page/scrapBoard`, { jwt: this.jwt })
-                        .then(res => {
-                            // console.log(res.data);
-                            this.scrapList = [];
-                            for (var i = 0; i < res.data.length; ++i) {
-                                this.scrapList.push(res.data[i].boardid);
-                            }
-
-                            Axios.get(`${URI}/page/boardList`)
-                                .then(res => {
-                                    this.likeShow = [];
-                                    this.scrapShow = [];
-                                    this.whoLiked = [];
-                                    this.datas = res.data;
-                                    // console.log(this.datas);
-                                    // console.log(this.getUser.data.uid);
-                                    for (var i = 0; i < this.datas.length; ++i) {
-                                        if (res.data[i].favoriteNum > 0) {
-                                            this.whoLiked.push(res.data[i].favorite[0].nickname);
-                                        } else {
-                                            this.whoLiked.push('');
-                                        }
-
-                                        //좋아요
-                                        if (this.likeList.includes(this.datas[i].boardid)) this.likeShow.push({ like: true });
-                                        else this.likeShow.push({ like: false });
-                                        //스크랩
-
-                                        if (this.scrapList.includes(this.datas[i].boardid)) this.scrapShow.push({ scrap: true });
-                                        else this.scrapShow.push({ scrap: false });
-                                    }
-                                })
-                                .catch(res => {
-                                    console.log('전체 게시글 조회 실패');
-                                });
-                        })
-                        .catch(res => {
-                            console.log('스크랩 게시글 조회 실패');
-                        });
-                })
-                .catch(res => {
-                    console.log('좋아요 게시글 조회 실패');
-                });
-        },
-        getAlldata() {
-            Axios.get(`${URI}/page/boardList`)
-                .then(res => {
-                    this.datas = res.data;
-                })
-                .catch(res => {
-                    // console.log(res);
-                });
-        },
-        showElseBtn(data) {
-            // console.log(data);
-            this.boardData = data;
-            this.elseModalBackground = true;
-            var uid = this.getUser.data.uid;
-            // console.log(uid);
-            Axios.post(`${URI}/account/following`, { uid: uid })
-                .then(res => {
-                    // console.log(res.data);
-                    // console.log(this.boardData);
-                    if (this.boardData.uid == uid) {
-                        //선택한 게시글이 내 게시글인경우
-                        this.myPosting = true;
-                    } else {
-                        this.followBtn = true;
-                        for (var i = 0; i < res.data.length; ++i) {
-                            if (res.data[i].uid != this.boardData.uid) continue;
-                            this.followBtn = false;
-                            this.unfollowBtn = true;
-                            break;
-                        }
-                    }
-                })
-                .catch(res => {
-                    console.log('팔로우 정보 조회 실패');
-                });
-        },
-        noShowElseBtn() {
-            this.elseModalBackground = false;
-            this.followBtn = false;
-            this.unfollowBtn = false;
-            this.myPosting = false;
-        },
-        follow() {
-            console.log(this.boardData);
-            Axios.post(`${URI}/account/follow`, { jwt: this.jwt, uid: this.boardData.uid })
-                .then(res => {
-                    if (this.followBtn) {
-                        alert('팔로우 되었습니다.');
-                    } else {
-                        alert('팔로우가 취소 되었습니다.');
-                    }
-                    this.noShowElseBtn();
-                })
-                .catch(res => {
-                    console.log('팔로우 등록 및 취소 실패');
-                });
-        },
-        addComment(info) {
-            // console.log(this.comment);
-            var commentObject = new Object();
-            commentObject.jwt = this.jwt;
-            commentObject.boardid = info.boardid;
-            commentObject.contents = this.comment;
-            commentObject.uid = info.uid;
-            if (this.comment == '') {
-                alert('댓글을 입력해주세요');
-            } else {
-                Axios.post(`${URI}/page/comment`, commentObject)
-                    .then(res => {
-                        // console.log('댓글 달기 성공');
-                        this.comment = '';
-                    })
-                    .catch(res => {
-                        console.log('댓글 달기 실패');
-                    });
-                this.getAlldata();
-            }
-        },
-        deleteComment(info) {
-            if (confirm('댓글을 삭제하시겠습니까?')) {
-                Axios.delete(`${URI}/page/comment`, {
-                    data: info.commentid,
-                })
-                    .then(res => {
-                        // console.log('댓글 삭제 성공');
-                    })
-                    .catch(res => {
-                        console.log('댓글 삭제 실패');
-                    });
-                this.getAlldata();
-            }
-        },
-        toggleLikeBtn(boardid) {
-            Axios.post(`${URI}/page/favorite`, { jwt: this.jwt, boardid: boardid })
-                .then(res => {
-                    this.showAll();
-                })
-                .catch(res => {
-                    console.log(res);
-                });
-        },
-        toggleScrapBtn(boardid) {
-            Axios.post(`${URI}/page/scrap`, { jwt: this.jwt, boardid: boardid })
-                .then(res => {
-                    this.showAll();
-                })
-                .catch(res => {
-                    console.log(res);
-                });
-        },
-        search(keyword) {
-            // console.log(keyword);
-            this.$router.push({ name: 'Search', params: { keyword: keyword } });
-        },
+        })
+        .catch(res => {
+          console.log('좋아요 게시글 조회 실패');
+        });
     },
+    getAlldata() {
+      Axios.get(`${URI}/page/boardList`)
+        .then(res => {
+          this.datas = res.data;
+        })
+        .catch(res => {
+          // console.log(res);
+        });
+    },
+    showElseBtn(data) {
+      // console.log(data);
+      this.boardData = data;
+      this.elseModalBackground = true;
+      var uid = this.getUser.data.uid;
+      // console.log(uid);
+      Axios.post(`${URI}/account/following`, { uid: uid })
+        .then(res => {
+          // console.log(res.data);
+          // console.log(this.boardData);
+          if (this.boardData.uid == uid) {
+            //선택한 게시글이 내 게시글인경우
+            this.myPosting = true;
+          } else {
+            this.followBtn = true;
+            for (var i = 0; i < res.data.length; ++i) {
+              if (res.data[i].uid != this.boardData.uid) continue;
+              this.followBtn = false;
+              this.unfollowBtn = true;
+              break;
+            }
+          }
+        })
+        .catch(res => {
+          console.log('팔로우 정보 조회 실패');
+        });
+    },
+    noShowElseBtn() {
+      this.elseModalBackground = false;
+      this.followBtn = false;
+      this.unfollowBtn = false;
+      this.myPosting = false;
+    },
+    follow() {
+      console.log(this.boardData);
+      Axios.post(`${URI}/account/follow`, { jwt: this.jwt, uid: this.boardData.uid })
+        .then(res => {
+          if (this.followBtn) {
+            alert('팔로우 되었습니다.');
+          } else {
+            alert('팔로우가 취소 되었습니다.');
+          }
+          this.noShowElseBtn();
+        })
+        .catch(res => {
+          console.log('팔로우 등록 및 취소 실패');
+        });
+    },
+    addComment(info) {
+      // console.log(this.comment);
+      var commentObject = new Object();
+      commentObject.jwt = this.jwt;
+      commentObject.boardid = info.boardid;
+      commentObject.contents = this.comment;
+      commentObject.uid = info.uid;
+      if (this.comment == '') {
+        alert('댓글을 입력해주세요');
+      } else {
+        Axios.post(`${URI}/page/comment`, commentObject)
+          .then(res => {
+            // console.log('댓글 달기 성공');
+            this.comment = '';
+          })
+          .catch(res => {
+            console.log('댓글 달기 실패');
+          });
+        this.getAlldata();
+      }
+    },
+    deleteComment(info) {
+      if (confirm('댓글을 삭제하시겠습니까?')) {
+        Axios.delete(`${URI}/page/comment`, {
+          data: info.commentid,
+        })
+          .then(res => {
+            // console.log('댓글 삭제 성공');
+          })
+          .catch(res => {
+            console.log('댓글 삭제 실패');
+          });
+        this.getAlldata();
+      }
+    },
+    toggleLikeBtn(boardid) {
+      Axios.post(`${URI}/page/favorite`, { jwt: this.jwt, boardid: boardid })
+        .then(res => {
+          this.showAll();
+        })
+        .catch(res => {
+          console.log(res);
+        });
+    },
+    toggleScrapBtn(boardid) {
+      Axios.post(`${URI}/page/scrap`, { jwt: this.jwt, boardid: boardid })
+        .then(res => {
+          this.showAll();
+        })
+        .catch(res => {
+          console.log(res);
+        });
+    },
+    search(keyword) {
+      // console.log(keyword);
+      this.$router.push({ name: 'Search', params: { keyword: keyword } });
+    },
+  },
 };
 </script>
 

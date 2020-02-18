@@ -5,8 +5,8 @@
         "node": true
     },
     "extends": [
-        "eslint:recommended",
-        "plugin:vue/essential"
+        "plugin:vue/recommended",
+        "prettier/vue"
     ],
     "globals": {
         "Atomics": "readonly",
@@ -20,6 +20,7 @@
         "vue"
     ],
     "rules": {
-        "no-unused-vars": 0
+        "no-unused-vars": 0,
+        "indent": ["error", 2]
     }
 }

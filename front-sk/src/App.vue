@@ -22,20 +22,20 @@ import { createNamespacedHelpers } from 'vuex';
 const userMapActions = createNamespacedHelpers('User').mapActions;
 
 export default {
-    components: {
-        Loading
-    },
-    name: 'app',
-    created() {
-        if (localStorage.getItem('routrip_JWT') !== null && 
+  name: 'App',
+  components: {
+    Loading
+  },
+  created() {
+    if (localStorage.getItem('routrip_JWT') !== null && 
         localStorage.getItem('routrip_JWT') !== undefined && 
         localStorage.getItem('routrip_JWT') !== ""){
-        this.reqUserInfo();
-        }
-    },
-    methods: {
-        ...userMapActions(['reqUserInfo']),
-    },
+      this.reqUserInfo();
+    }
+  },
+  methods: {
+    ...userMapActions(['reqUserInfo'])
+  },
 };
 </script>
 <style></style>

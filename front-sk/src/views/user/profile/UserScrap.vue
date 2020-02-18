@@ -33,30 +33,28 @@ import Axios from 'axios';
 
 
 export default {
-
-
-    mounted(){
-        this.reqScrap();
-    },
-    methods:{
-        reqScrap() {
-        console.log("hihi scrap")
-        const jwt = localStorage.getItem('routrip_JWT');
-        Axios.post('http://192.168.100.70:8083/page/scrapBoard/' , {jwt : jwt})
-            .then(res => {
-                console.log(res.data)
-                this.scrapList=res.data
+  mounted(){
+    this.reqScrap();
+  },
+  methods:{
+    reqScrap() { 
+      console.log("hihi scrap")
+      const jwt = localStorage.getItem('routrip_JWT');
+      Axios.post('http://192.168.100.70:8083/page/scrapBoard/' , {jwt : jwt})
+        .then(res => {
+          console.log(res.data)
+          this.scrapList=res.data
                 
-            });
-        }
-    },
-    data(){
-        return{
+        });
+    }
+  },
+  data(){
+    return{
             
-            scrapList:[]
+      scrapList:[]
 
-        };
-    },
+    };
+  },
 
 };
 </script>
