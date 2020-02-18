@@ -36,7 +36,7 @@
                                     <br />
                                     <span>{{ data.user.nickname }}</span>
                                 </div>
-                                <div class="else" @click="showElseBtn(data)">
+                                <div class="else" @click="showElseBtn(data, data.boardid)">
                                     <span>
                                         <i class="fas fa-ellipsis-h"></i>
                                     </span>
@@ -170,7 +170,11 @@
                         class="else-btn middle"
                         @click="follow"
                     >팔로우 취소</button>
-                    <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 수정</button>
+                    <button
+                        :class="{ myPosting: !myPosting }"
+                        class="else-btn middle"
+                        @click="updatePost"
+                    >내글 수정</button>
                     <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 삭제</button>
                     <button class="else-btn last" @click="noShowElseBtn">X</button>
                 </div>
@@ -228,6 +232,7 @@ export default {
             followList: [],
             elseModalBackground: false,
             boardData: '',
+            boardId: 0,
             jwt: '',
             followBtn: false,
             unfollowBtn: false,
@@ -345,8 +350,10 @@ export default {
                     // console.log(res);
                 });
         },
-        showElseBtn(data) {
+        showElseBtn(data, boardId) {
             // console.log(data);
+            this.boardId = boardId;
+            console.log(this.boardId);
             this.boardData = data;
             this.elseModalBackground = true;
             var uid = this.getUser.data.uid;
@@ -449,6 +456,9 @@ export default {
         search(keyword) {
             // console.log(keyword);
             this.$router.push({ name: 'Search', params: { keyword: keyword } });
+        },
+        updatePost() {
+            this.$router.push({ name: 'UpdatePost', params: { boardid: this.boardId } });
         },
     },
 };
