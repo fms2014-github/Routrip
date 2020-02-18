@@ -32,8 +32,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.web.curation.model.board.Board;
+import com.web.curation.model.board.Comment;
 import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
+import com.web.curation.service.BoardService;
 import com.web.curation.service.UserService;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -49,6 +52,9 @@ public class AccountController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private BoardService boardService;
 
 //	private String key = "webcuration-routrip-secretkey";
 //	byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(key);
@@ -443,6 +449,32 @@ public class AccountController {
 		if (isOkJwt(jwt)) {
 			List<Alarm> alarms = userService.getAlarm((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 			userService.updateAlarm((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+			for(Alarm a : alarms) {
+				if(a.getAlarmtype()==1) {
+					a.setText(a.getNickname()+" 님이 팔로우하셨습니다.");
+					a.setUser(userService.findUserSimple(a.getFollow()));
+				}else if(a.getAlarmtype()==2) {
+					Comment comment = boardService.findCommentByCommentid(a.getCommentid());
+					a.setText(a.getNickname()+" 님이 댓글다셨습니다.");
+					a.setDetail(comment.getContents());
+					a.setUser(userService.findUserSimple(a.getWriter()));
+				}else if(a.getAlarmtype()==3) {
+					Comment comment = boardService.findCommentByCommentid(a.getCommentid());
+					a.setText(a.getNickname()+" 님이 대댓글다셨습니다.");
+					a.setDetail(comment.getContents());
+					a.setUser(userService.findUserSimple(a.getWriter()));
+				}else if(a.getAlarmtype()==4) {
+					Board board = boardService.findBoardByBoardId(a.getBoardid());
+					a.setText(a.getNickname()+" 님이 글을 올리셨습니다.");
+					a.setDetail(board.getTitle());
+					a.setUser(userService.findUserSimple(a.getWriter()));
+				}else if(a.getAlarmtype()==5) {
+					Board board = boardService.findBoardByBoardId(a.getBoardid());
+					a.setText(a.getNickname()+" 님이 좋아요를 누르셨습니다.");
+					a.setDetail(board.getTitle());
+					a.setUser(userService.findUserSimple(a.getFollow()));
+				}
+			}
 			return new ResponseEntity<>(alarms, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);

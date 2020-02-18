@@ -9,11 +9,15 @@ public class Alarm {
 	private int boardid;
 	private int commentid;
 	private int follow;
+	private int writer;
 	private int alarmtype;
 	private String nickname;
 	private String time;
 	private String alarmtime;
 	private int isread; //1이 읽음 0은 안읽음
+	private String text;
+	private String detail;
+	private User user;
 
 	public Alarm(int alarmid, int uid, int boardid, int commentid, int follow, int alarmtype, String nickname, String time) {
 		super();
@@ -117,6 +121,31 @@ public class Alarm {
 	}
 	public void setIsread(int isread) {
 		this.isread = isread;
+	}
+	public String getText() {
+		return text;
+	}
+	public void setText(String text) {
+		this.text = text;
+	}
+	public String getDetail() {
+		return detail;
+	}
+	public void setDetail(String detail) {
+		this.detail = detail;
+	}
+	
+	public int getWriter() {
+		return writer;
+	}
+	public void setWriter(int writer) {
+		this.writer = writer;
+	}
+	public User getUser() {
+		return user;
+	}
+	public void setUser(User user) {
+		this.user = user;
 	}
 	@Override
 	public String toString() {

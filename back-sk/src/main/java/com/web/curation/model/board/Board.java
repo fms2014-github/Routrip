@@ -246,9 +246,10 @@ public class Board {
 	@Override
 	public String toString() {
 		return "Board [boardid=" + boardid + ", uid=" + uid + ", title=" + title + ", writedate=" + writedate
-				+ ", tripterm=" + tripterm + ", keyword=" + keyword + ", keywords=" + keywords + ", unveiled=" + unveiled + ", comments="
-				+ comments + ", imgs=" + imgs + ", favorite=" + favorite + ", favoriteNum=" + favoriteNum
-				+ ", commentNum=" + commentNum + ", markers=" + markers + ", user=" + user + ", writeday=" + writeday
-				+ ", content=" + content + "]";
+				+ ", tripterm=" + tripterm + ", keyword=" + keyword + ", keywords=" + keywords + ", unveiled="
+				+ unveiled + ", comments=" + comments + ", imgs=" + imgs + ", favorite=" + favorite + ", favoriteNum="
+				+ favoriteNum + ", commentNum=" + commentNum + ", markers=" + markers + ", user=" + user + ", writeday="
+				+ writeday + ", content=" + content + ", info=" + info + ", cusInfo=" + cusInfo + ", scrapdate="
+				+ scrapdate + "]";
 	}
 }
