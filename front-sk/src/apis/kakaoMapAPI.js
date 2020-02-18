@@ -1,6 +1,6 @@
 /* eslint-disable no-inner-declarations */
 /* eslint-disable no-undef */
-var map, detailMap1, manager, options, ps, placeResultsInfoWinow;
+var map, detailMap, manager, options, ps, placeResultsInfoWinow;
 var commentIndex = 0;
 var startX, startY, startOverlayPoint;
 var overlays = [];
@@ -8,6 +8,11 @@ var placeResults = [];
 var info = {},
     cusInfo = {};
 var commentCondition = 'both';
+var strokeColor = '#39f',
+    fillColor = '#cce6ff',
+    fillOpacity = 0.5,
+    hintStrokeStyle = 'dash';
+var tempOverlayPos, tempStartX, tempStartY, tempstartOverlayPoint;
 const createMap = () => {
     var mapContainer = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
     var mapOption = {
@@ -23,11 +28,6 @@ const createMap = () => {
     });
     var zoomControl = new kakao.maps.ZoomControl();
     map.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
-
-    var strokeColor = '#39f',
-        fillColor = '#cce6ff',
-        fillOpacity = 0.5,
-        hintStrokeStyle = 'dash';
 
     options = {
         // Drawing Manager를 생성할 때 사용할 옵션입니다
@@ -373,22 +373,22 @@ const reloadPlace = () => {
     }
 };
 const getTest = () => {
-    var infoData = {}
-    var cusInfoData = {}
+    let infoData = {}
+    let cusInfoData = {}
     var data = manager.getData();
     console.log('info', info);
-    for(var i in info){
+    for (var i in info) {
         infoData[i] = {
-            content: info[i].getContent().innerHTML,
+            content: info[i].getContent().outerHTML,
             lng: info[i].getPosition().getLng(),
             lat: info[i].getPosition().getLat()
         }
     }
     console.log('infoData', infoData);
     console.log('cusInfo', cusInfo);
-    for(var j in cusInfo){
+    for (var j in cusInfo) {
         cusInfoData[j] = {
-            content: cusInfo[j].getContent().innerHTML,
+            content: cusInfo[j].getContent().outerHTML,
             lng: cusInfo[j].getPosition().getLng(),
             lat: cusInfo[j].getPosition().getLat()
         }
@@ -409,17 +409,606 @@ const getTest = () => {
     }
 };
 
-const viewMap = () =>{
-    console.log('asdasd', document.getElementById('detail-map'))
-    var detailMapContainer = document.getElementById('detail-map'),
-    detailMapOption = {
-        //지도를 생성할 때 필요한 기본 옵션
-        center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
-        level: 3, //지도의 레벨(확대, 축소 정도)
-    };
-    detailMap1 = new kakao.maps.Map(detailMapContainer, detailMapOption); //지도 생성 및 객체 리턴
+const viewMap = () => {
+
+    var detailMapContainer = document.getElementById('detail-map-view'),
+        detailMapOption = {
+            //지도를 생성할 때 필요한 기본 옵션
+            center: new kakao.maps.LatLng(33.450701, 126.570667), //지도의 중심좌표.
+            level: 3, //지도의 레벨(확대, 축소 정도)
+        };
+    detailMap = new kakao.maps.Map(detailMapContainer, detailMapOption); //지도 생성 및 객체 리턴
     var zoomControl = new kakao.maps.ZoomControl();
-    detailMap1.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+    detailMap.addControl(zoomControl, kakao.maps.ControlPosition.RIGHT);
+}
+
+const getMpaData = (data, update) => {
+    console.log('data.overlayType', data.cusInfo)
+    let updateOrDetail = update ? map : detailMap
+    let bounds = new kakao.maps.LatLngBounds()
+    let infoTemps = JSON.parse(data.info)
+    let cusInfoTemps = JSON.parse(data.cusInfo)
+    let tempStartOverlayPoint = []
+    // let padding = 0
+    for (let i in data.markers) {
+        if (data.markers[i].overlaytype === 'marker') {
+            let tempMarker = new kakao.maps.Marker({
+                map: updateOrDetail,
+                zIndex: 10,
+                position: new kakao.maps.LatLng(Number(data.markers[i].latitude), Number(data.markers[i].longitude))
+            })
+
+            if (update) {
+                let button = document.createElement('button')
+                button.innerHTML = '<img src="http://i1.daumcdn.net/localimg/localimages/07/2012/attach/pc_img/ico_marker3_150318.png">'
+                tempMarker.setDraggable(true)
+                let closeButtonOverlay = new kakao.maps.CustomOverlay({
+                    map: updateOrDetail,
+                    clickable: true,
+                    content: button,
+                    position: new kakao.maps.LatLng(Number(data.markers[i].latitude), Number(data.markers[i].longitude)),
+                    xAnchor: 2,
+                    yAnchor: 2,
+                    zIndex: 3
+                });
+                kakao.maps.event.addListener(tempMarker, 'dragstart', updateDragstartEvent);
+                kakao.maps.event.addListener(tempMarker, 'dragend', updateDragendEvent);
+                closeButtonOverlay.getContent().addEventListener('mouseup', closeMarker);
+                function closeMarker(){
+                    closeButtonOverlay.setMap(null)
+                    tempMarker.setMap(null)
+                }
+                function updateDragstartEvent() {
+                    console.log(this.getPosition())
+                    closeButtonOverlay.setMap(null)
+                }
+                function updateDragendEvent() {
+                    console.log(this.getPosition())
+                    closeButtonOverlay.setPosition(this.getPosition())
+                    closeButtonOverlay.setMap(updateOrDetail)
+                }
+                
+            }
+            bounds.extend(new kakao.maps.LatLng(Number(data.markers[i].latitude), Number(data.markers[i].longitude)))
+        } else if (data.markers[i].overlaytype === 'polyline') {
+            let latArr = data.markers[i].latitude.split(' ')
+            let lngArr = data.markers[i].longitude.split(' ')
+            console.log('latArr', latArr)
+            console.log('lngArr', latArr)
+            let paths = []
+            for (let j = 0; j < latArr.length - 1; j++) {
+                paths.push(new kakao.maps.LatLng(Number(latArr[j]), Number(lngArr[j])))
+                bounds.extend(new kakao.maps.LatLng(Number(latArr[j]), Number(lngArr[j])))
+            }
+            let tempMarker = new kakao.maps.Polyline({
+                map: updateOrDetail,
+                path: paths,
+                zIndex: 10,
+                strokeColor: strokeColor,
+                hintStrokeStyle: hintStrokeStyle,
+            })
+
+            if (update) {
+                let button = document.createElement('button')
+                button.innerHTML = '<img src="http://i1.daumcdn.net/localimg/localimages/07/2012/attach/pc_img/ico_marker3_150318.png">'
+                let closeButtonOverlay = new kakao.maps.CustomOverlay({
+                    map: updateOrDetail,
+                    clickable: true,
+                    content: button,
+                    position: paths[paths.length-1],
+                    xAnchor: 1,
+                    yAnchor: 1,
+                    zIndex: 3
+                });
+                kakao.maps.event.addListener(tempMarker, 'mousedown', updateMousedownEvent);
+                kakao.maps.event.addListener(tempMarker, 'mouseup', function(){
+                    console.log('up')
+                    kakao.maps.event.removeListener(this, 'mouseout', updateMouseoutEvent)
+                });
+                closeButtonOverlay.getContent().addEventListener('mouseup', closeMarker);
+                function closeMarker(){
+                    closeButtonOverlay.setMap(null)
+                    tempMarker.setMap(null)
+                }
+                function updateMouseoutEvent() {
+                    console.log('mousemove', this)
+                    var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
+                    deltaX = startX - event.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다
+                    deltaY = startY - event.clientY,
+                    newPoint, newPos = [];
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표에 실제로 마우스가 이동된 픽셀좌표를 반영합니다
+                    for(let i in tempStartOverlayPoint){
+                        newPoint = new kakao.maps.Point(tempStartOverlayPoint[i].x - deltaX, tempStartOverlayPoint[i].y - deltaY);
+                        newPos.push(proj.coordsFromContainerPoint(newPoint))
+                    }
+                    // 계산된 픽셀 좌표를 지도 컨테이너에 해당하는 지도 좌표로 변경합니다
+                    closeButtonOverlay.setPosition(newPos[newPos.length-1])
+                    closeButtonOverlay.setMap(updateOrDetail)
+                    tempMarker.setPath(newPos)
+                    
+                }
+                function updateMousedownEvent() {
+                    tempStartOverlayPoint = [];
+                    console.log('mousedown', this)
+                    if (event.preventDefault) {
+                        event.preventDefault();
+                    } else {
+                        event.returnValue = false;
+                    }
+                    var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
+                    overlayPos = this.getPath(); // 커스텀 오버레이의 현재 위치를 가져옵니다
+    
+                // 커스텀오버레이에서 마우스 관련 이벤트가 발생해도 지도가 움직이지 않도록 합니다
+                    kakao.maps.event.preventMap();
+        
+                    // mousedown된 좌표를 설정합니다
+                    startX = event.clientX;
+                    startY = event.clientY;
+        
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표를
+                    // 지도 컨테이너내 픽셀 좌표로 변환합니다
+                    for(let i in overlayPos){
+                        tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos[i]));
+                    }
+                    
+                    console.log(tempStartOverlayPoint)
+                    kakao.maps.event.addListener(tempMarker, 'mouseout', updateMouseoutEvent);
+                }
+                
+            }
+        } else if (data.markers[i].overlaytype === 'arrow') {
+            let latArr = data.markers[i].latitude.split(' ')
+            let lngArr = data.markers[i].longitude.split(' ')
+            let paths = []
+            for (let j = 0; j < latArr.length - 1; j++) {
+                paths.push(new kakao.maps.LatLng(Number(latArr[j]), Number(lngArr[j])))
+                bounds.extend(new kakao.maps.LatLng(Number(latArr[j]), Number(lngArr[j])))
+            }
+            let tempMarker = new kakao.maps.Polyline({
+                map: updateOrDetail,
+                path: paths,
+                endArrow: true,
+                zIndex: 10,
+                strokeColor: strokeColor,
+                hintStrokeStyle: hintStrokeStyle,
+            })
+            if (update) {
+                let button = document.createElement('button')
+                button.innerHTML = '<img src="http://i1.daumcdn.net/localimg/localimages/07/2012/attach/pc_img/ico_marker3_150318.png">'
+                let closeButtonOverlay = new kakao.maps.CustomOverlay({
+                    map: updateOrDetail,
+                    clickable: true,
+                    content: button,
+                    position: paths[paths.length-1],
+                    xAnchor: 1,
+                    yAnchor: 1,
+                    zIndex: 3
+                });
+                kakao.maps.event.addListener(tempMarker, 'mousedown', updateMousedownEvent);
+                kakao.maps.event.addListener(tempMarker, 'mouseup', function(){
+                    console.log('up')
+                    kakao.maps.event.removeListener(this, 'mouseout', updateMouseoutEvent)
+                });
+                closeButtonOverlay.getContent().addEventListener('mouseup', closeMarker);
+                function closeMarker(){
+                    closeButtonOverlay.setMap(null)
+                    tempMarker.setMap(null)
+                }
+                function updateMouseoutEvent() {
+                    console.log('mousemove', this)
+                    var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
+                    deltaX = startX - event.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다
+                    deltaY = startY - event.clientY,
+                    newPoint, newPos = [];
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표에 실제로 마우스가 이동된 픽셀좌표를 반영합니다
+                    for(let i in tempStartOverlayPoint){
+                        newPoint = new kakao.maps.Point(tempStartOverlayPoint[i].x - deltaX, tempStartOverlayPoint[i].y - deltaY);
+                        newPos.push(proj.coordsFromContainerPoint(newPoint))
+                    }
+                    // 계산된 픽셀 좌표를 지도 컨테이너에 해당하는 지도 좌표로 변경합니다
+                    closeButtonOverlay.setPosition(newPos[newPos.length-1])
+                    closeButtonOverlay.setMap(updateOrDetail)
+                    tempMarker.setPath(newPos)
+                    
+                }
+                function updateMousedownEvent() {
+                    tempStartOverlayPoint = [];
+                    console.log('mousedown', this)
+                    if (event.preventDefault) {
+                        event.preventDefault();
+                    } else {
+                        event.returnValue = false;
+                    }
+                    var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
+                    overlayPos = this.getPath(); // 커스텀 오버레이의 현재 위치를 가져옵니다
+    
+                // 커스텀오버레이에서 마우스 관련 이벤트가 발생해도 지도가 움직이지 않도록 합니다
+                    kakao.maps.event.preventMap();
+        
+                    // mousedown된 좌표를 설정합니다
+                    startX = event.clientX;
+                    startY = event.clientY;
+        
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표를
+                    // 지도 컨테이너내 픽셀 좌표로 변환합니다
+                    for(let i in overlayPos){
+                        tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos[i]));
+                    }
+                    
+                    console.log(tempStartOverlayPoint)
+                    kakao.maps.event.addListener(tempMarker, 'mouseout', updateMouseoutEvent);
+                }
+                
+            }
+        } else if (data.markers[i].overlaytype === 'rectangle') {
+            let latArr = data.markers[i].latitude.split(' ')
+            let lngArr = data.markers[i].longitude.split(' ')
+            let center = new kakao.maps.LatLngBounds(
+                new kakao.maps.LatLng(Number(latArr[0]), Number(lngArr[0])),
+                new kakao.maps.LatLng(Number(latArr[1]), Number(lngArr[1]))
+            )
+            bounds.extend(new kakao.maps.LatLng(Number(latArr[0]), Number(lngArr[0])))
+            bounds.extend(new kakao.maps.LatLng(Number(latArr[1]), Number(lngArr[1])))
+            let tempMarker = new kakao.maps.Rectangle({
+                map: updateOrDetail,
+                zIndex: 8,
+                bounds: center,
+                strokeColor: strokeColor,
+                fillColor: fillColor,
+                fillOpacity: fillOpacity,
+            })
+            if (update) {
+                let button = document.createElement('button')
+                button.innerHTML = '<img src="http://i1.daumcdn.net/localimg/localimages/07/2012/attach/pc_img/ico_marker3_150318.png">'
+                let closeButtonOverlay = new kakao.maps.CustomOverlay({
+                    map: updateOrDetail,
+                    clickable: true,
+                    content: button,
+                    position: new kakao.maps.LatLng(Number(latArr[1]), Number(lngArr[1])),
+                    xAnchor: 1,
+                    yAnchor: 1,
+                    zIndex: 3
+                });
+                kakao.maps.event.addListener(tempMarker, 'mousedown', updateMousedownEvent);
+                kakao.maps.event.addListener(tempMarker, 'mouseup', function(){
+                    console.log('up')
+                    kakao.maps.event.removeListener(this, 'mousemove', updateMousemoveEvent)
+                });
+                closeButtonOverlay.getContent().addEventListener('mouseup', closeMarker);
+                function closeMarker(){
+                    closeButtonOverlay.setMap(null)
+                    tempMarker.setMap(null)
+                }
+                function updateMousemoveEvent() {
+                    console.log('mousemove', this)
+                    var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
+                    deltaX = startX - event.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다
+                    deltaY = startY - event.clientY,
+                    newPoint, newPos;
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표에 실제로 마우스가 이동된 픽셀좌표를 반영합니다
+                    for(let i in tempStartOverlayPoint){
+                        newPoint = new kakao.maps.Point(tempStartOverlayPoint[i].x - deltaX, tempStartOverlayPoint[i].y - deltaY);
+                        newPos.push(proj.coordsFromContainerPoint(newPoint))
+                    }
+                    newPos = new kakao.maps.LatLngBounds(newPos[0], newPos[1])
+                    // 계산된 픽셀 좌표를 지도 컨테이너에 해당하는 지도 좌표로 변경합니다
+                    closeButtonOverlay.setPosition(newPos[newPos.length-1])
+                    closeButtonOverlay.setMap(updateOrDetail)
+                    tempMarker.setBounds(newPos)
+                    
+                }
+                function updateMousedownEvent() {
+                    tempStartOverlayPoint = [];
+                    console.log('mousedown', this)
+                    if (event.preventDefault) {
+                        event.preventDefault();
+                    } else {
+                        event.returnValue = false;
+                    }
+                    var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
+                    overlayPos1 = this.getBounds().getSouthWest(); // 커스텀 오버레이의 현재 위치를 가져옵니다
+                    overlayPos2 = this.getBounds().getNorthEast();
+
+                // 커스텀오버레이에서 마우스 관련 이벤트가 발생해도 지도가 움직이지 않도록 합니다
+                    kakao.maps.event.preventMap();
+        
+                    // mousedown된 좌표를 설정합니다
+                    startX = event.clientX;
+                    startY = event.clientY;
+        
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표를
+                    // 지도 컨테이너내 픽셀 좌표로 변환합니다
+                    
+                    tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos1));
+                    tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos2));
+                    
+                    console.log(tempStartOverlayPoint)
+                    kakao.maps.event.addListener(tempMarker, 'mousemove', updateMousemoveEvent);
+                }
+                
+            }
+        } else if (data.markers[i].overlaytype === 'circle') {
+            bounds.extend(new kakao.maps.LatLng(Number(data.markers[i].latitude), Number(data.markers[i].longitude)))
+            // padding = padding < data.markers[i].radius ? data.markers[i].radius : padding
+            let tempMarker = new kakao.maps.Circle({
+                map: updateOrDetail,
+                zIndex: 8,
+                center: new kakao.maps.LatLng(Number(data.markers[i].latitude), Number(data.markers[i].longitude)),
+                radius: data.markers[i].radius,
+                strokeColor: strokeColor,
+                fillColor: fillColor,
+                fillOpacity: fillOpacity,
+            })
+            if (update) {
+                let button = document.createElement('button')
+                button.innerHTML = '<img src="http://i1.daumcdn.net/localimg/localimages/07/2012/attach/pc_img/ico_marker3_150318.png">'
+                let closeButtonOverlay = new kakao.maps.CustomOverlay({
+                    map: updateOrDetail,
+                    clickable: true,
+                    content: button,
+                    position: new kakao.maps.LatLng(Number(data.markers[i].latitude), Number(data.markers[i].longitude)),
+                    xAnchor: 4,
+                    yAnchor: 4,
+                    zIndex: 3
+                });
+                kakao.maps.event.addListener(tempMarker, 'mousedown', updateMousedownEvent);
+                kakao.maps.event.addListener(tempMarker, 'mouseup', function(){
+                    console.log('up')
+                    kakao.maps.event.removeListener(this, 'mousemove', updateMouseoutEvent)
+                });
+                closeButtonOverlay.getContent().addEventListener('mouseup', closeMarker);
+                function closeMarker(){
+                    closeButtonOverlay.setMap(null)
+                    tempMarker.setMap(null)
+                }
+                function updateMousemoveEvent() {
+                    console.log('mousemove', this)
+                    var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
+                    deltaX = startX - event.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다
+                    deltaY = startY - event.clientY,
+                    newPoint, newPos;
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표에 실제로 마우스가 이동된 픽셀좌표를 반영합니다
+                    for(let i in tempStartOverlayPoint){
+                        newPoint = new kakao.maps.Point(tempStartOverlayPoint[i].x - deltaX, tempStartOverlayPoint[i].y - deltaY);
+                    }
+                    newPos = proj.coordsFromContainerPoint(newPoint)
+                    // 계산된 픽셀 좌표를 지도 컨테이너에 해당하는 지도 좌표로 변경합니다
+                    closeButtonOverlay.setPosition(newPos)
+                    closeButtonOverlay.setMap(updateOrDetail)
+                    tempMarker.setPosition(newPos)
+                    
+                }
+                function updateMousedownEvent() {
+                    tempStartOverlayPoint = [];
+                    console.log('mousedown', this)
+                    if (event.preventDefault) {
+                        event.preventDefault();
+                    } else {
+                        event.returnValue = false;
+                    }
+                    var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
+                    overlayPos = this.getPosition(); // 커스텀 오버레이의 현재 위치를 가져옵니다
+
+                // 커스텀오버레이에서 마우스 관련 이벤트가 발생해도 지도가 움직이지 않도록 합니다
+                    kakao.maps.event.preventMap();
+        
+                    // mousedown된 좌표를 설정합니다
+                    startX = event.clientX;
+                    startY = event.clientY;
+        
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표를
+                    // 지도 컨테이너내 픽셀 좌표로 변환합니다
+                    
+                    tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos));
+                    
+                    console.log(tempStartOverlayPoint)
+                    kakao.maps.event.addListener(tempMarker, 'mousemove', updateMousemoveEvent);
+                }
+                
+            }
+        } else if (data.markers[i].overlaytype === 'polygon') {
+            let latArr = data.markers[i].latitude.split(' ')
+            let lngArr = data.markers[i].longitude.split(' ')
+            console.log('polygon.latArr', latArr)
+            console.log('polygon.lngArr', lngArr)
+            let paths = []
+            for (let j = 0; j < latArr.length - 1; j++) {
+                paths.push(new kakao.maps.LatLng(Number(latArr[j]), Number(lngArr[j])))
+                bounds.extend(new kakao.maps.LatLng(Number(latArr[j]), Number(lngArr[j])))
+            }
+            let tempMarker = new kakao.maps.Polygon({
+                map: updateOrDetail,
+                path: paths,
+                zIndex: 8,
+                strokeColor: strokeColor,
+                fillColor: fillColor,
+                fillOpacity: fillOpacity,
+            })
+            if (update) {
+                let button = document.createElement('button')
+                button.innerHTML = '<img src="http://i1.daumcdn.net/localimg/localimages/07/2012/attach/pc_img/ico_marker3_150318.png">'
+                let closeButtonOverlay = new kakao.maps.CustomOverlay({
+                    map: updateOrDetail,
+                    clickable: true,
+                    content: button,
+                    position: paths[0],
+                    xAnchor: 0.8,
+                    yAnchor: 0.8,
+                    zIndex: 3
+                });
+                kakao.maps.event.addListener(tempMarker, 'mousedown', updateMousedownEvent);
+                kakao.maps.event.addListener(tempMarker, 'mouseup', function(){
+                    console.log('up')
+                    kakao.maps.event.removeListener(this, 'mouseout', updateMouseoutEvent)
+                });
+                closeButtonOverlay.getContent().addEventListener('mouseup', closeMarker);
+                function closeMarker(){
+                    closeButtonOverlay.setMap(null)
+                    tempMarker.setMap(null)
+                }
+                function updateMouseoutEvent() {
+                    console.log('mousemove', this)
+                    var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
+                    deltaX = startX - event.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다
+                    deltaY = startY - event.clientY,
+                    newPoint, newPos = [];
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표에 실제로 마우스가 이동된 픽셀좌표를 반영합니다
+                    for(let i in tempStartOverlayPoint){
+                        newPoint = new kakao.maps.Point(tempStartOverlayPoint[i].x - deltaX, tempStartOverlayPoint[i].y - deltaY);
+                        newPos.push(proj.coordsFromContainerPoint(newPoint))
+                    }
+                    // 계산된 픽셀 좌표를 지도 컨테이너에 해당하는 지도 좌표로 변경합니다
+                    closeButtonOverlay.setPosition(newPos[newPos.length-1])
+                    closeButtonOverlay.setMap(updateOrDetail)
+                    tempMarker.setPath(newPos)
+                    
+                }
+                function updateMousedownEvent() {
+                    tempStartOverlayPoint = [];
+                    console.log('mousedown', this)
+                    if (event.preventDefault) {
+                        event.preventDefault();
+                    } else {
+                        event.returnValue = false;
+                    }
+                    var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
+                    overlayPos = this.getPath(); // 커스텀 오버레이의 현재 위치를 가져옵니다
+    
+                // 커스텀오버레이에서 마우스 관련 이벤트가 발생해도 지도가 움직이지 않도록 합니다
+                    kakao.maps.event.preventMap();
+        
+                    // mousedown된 좌표를 설정합니다
+                    startX = event.clientX;
+                    startY = event.clientY;
+        
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표를
+                    // 지도 컨테이너내 픽셀 좌표로 변환합니다
+                    for(let i in overlayPos){
+                        tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos[i]));
+                    }
+                    
+                    console.log(tempStartOverlayPoint)
+                    kakao.maps.event.addListener(tempMarker, 'mouseout', updateMouseoutEvent);
+                }
+                
+            }
+        } else if (data.markers[i].overlaytype === 'ellipse') {
+            bounds.extend(new kakao.maps.LatLng(Number(data.markers[i].latitude), Number(data.markers[i].longitude)))
+            let tempMarker = new kakao.maps.Ellipse({
+                map: updateOrDetail,
+                zIndex: 8,
+                center: new kakao.maps.LatLng(Number(data.markers[i].latitude), Number(data.markers[i].longitude)),
+                rx: data.markers[i].rx,
+                ry: data.markers[i].ry,
+                strokeColor: strokeColor,
+                fillColor: fillColor,
+                fillOpacity: fillOpacity,
+            })
+            if (update) {
+                let button = document.createElement('button')
+                button.innerHTML = '<img src="http://i1.daumcdn.net/localimg/localimages/07/2012/attach/pc_img/ico_marker3_150318.png">'
+                let closeButtonOverlay = new kakao.maps.CustomOverlay({
+                    map: updateOrDetail,
+                    clickable: true,
+                    content: button,
+                    position: new kakao.maps.LatLng(Number(data.markers[i].latitude), Number(data.markers[i].longitude)),
+                    xAnchor: data.markers[i].rx/41,
+                    yAnchor: data.markers[i].ry/41,
+                    zIndex: 3
+                });
+                kakao.maps.event.addListener(tempMarker, 'mousedown', updateMousedownEvent);
+                kakao.maps.event.addListener(tempMarker, 'mouseup', function(){
+                    console.log('up')
+                    kakao.maps.event.removeListener(this, 'mousemove', updateMousemoveEvent)
+                });
+                closeButtonOverlay.getContent().addEventListener('mouseup', closeMarker);
+                function closeMarker(){
+                    closeButtonOverlay.setMap(null)
+                    tempMarker.setMap(null)
+                }
+                function updateMousemoveEvent() {
+                    console.log('mousemove', this)
+                    var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
+                    deltaX = startX - event.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다
+                    deltaY = startY - event.clientY,
+                    newPoint, newPos;
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표에 실제로 마우스가 이동된 픽셀좌표를 반영합니다
+                    for(let i in tempStartOverlayPoint){
+                        newPoint = new kakao.maps.Point(tempStartOverlayPoint[i].x - deltaX, tempStartOverlayPoint[i].y - deltaY);
+                    }
+                    newPos = proj.coordsFromContainerPoint(newPoint)
+                    // 계산된 픽셀 좌표를 지도 컨테이너에 해당하는 지도 좌표로 변경합니다
+                    closeButtonOverlay.setPosition(newPos)
+                    closeButtonOverlay.setMap(updateOrDetail)
+                    tempMarker.setPosition(newPos)
+                    
+                }
+                function updateMousedownEvent() {
+                    tempStartOverlayPoint = [];
+                    console.log('mousedown', this)
+                    if (event.preventDefault) {
+                        event.preventDefault();
+                    } else {
+                        event.returnValue = false;
+                    }
+                    var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
+                    overlayPos = this.getPosition(); // 커스텀 오버레이의 현재 위치를 가져옵니다
+
+                // 커스텀오버레이에서 마우스 관련 이벤트가 발생해도 지도가 움직이지 않도록 합니다
+                    kakao.maps.event.preventMap();
+        
+                    // mousedown된 좌표를 설정합니다
+                    startX = event.clientX;
+                    startY = event.clientY;
+        
+                    // mousedown됐을 때의 커스텀 오버레이의 좌표를
+                    // 지도 컨테이너내 픽셀 좌표로 변환합니다
+                    
+                    tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos));
+                    
+                    console.log(tempStartOverlayPoint)
+                    kakao.maps.event.addListener(tempMarker, 'mousemove', updateMousemoveEvent);
+                }
+                
+            }
+        }
+    }
+    for (let i in infoTemps) {
+        let contentTemp = document.createElement('div')
+        contentTemp.innerHTML = infoTemps[i].content;
+        let infoTemp = new kakao.maps.InfoWindow({
+            position: new kakao.maps.LatLng(Number(infoTemps[i].lat), Number(infoTemps[i].lng)),
+            content: contentTemp.firstChild,
+        })
+        infoTemp.getContent().querySelector('.close').onclick = function closeOverlay() {
+            delete info[infoTemp.getContent().id];
+            infoTemp.setMap(null);
+        };
+        console.log()
+        info[i] = infoTemp
+        infoTemp.open(updateOrDetail, new kakao.maps.Marker({
+            position: new kakao.maps.LatLng(Number(infoTemps[i].lat), Number(infoTemps[i].lng))
+        }));
+    }
+    for (let i in cusInfoTemps) {
+        let contentTemp = document.createElement('div')
+        contentTemp.innerHTML = cusInfoTemps[i].content;
+        let cusInfoTemp = new kakao.maps.CustomOverlay({
+            position: new kakao.maps.LatLng(Number(cusInfoTemps[i].lat), Number(cusInfoTemps[i].lng)),
+            content: contentTemp.firstChild,
+            yAnchor: 1.3,
+        })
+        cusInfoTemp.getContent().querySelector('.close').onclick = function closeOverlay() {
+            delete cusInfo[cusInfoTemp.getContent().id];
+            cusInfoTemp.setMap(null);
+        };
+        cusInfo[i] = cusInfoTemp
+        cusInfoTemp.setMap(updateOrDetail);
+        bounds.extend(new kakao.maps.LatLng(Number(cusInfoTemps[i].lat), Number(cusInfoTemps[i].lng)))
+    }
+    if (data.markers.length !== 0) {
+        updateOrDetail.setBounds(bounds)
+    }
 }
 
 const KakaoMap = {
@@ -431,6 +1020,7 @@ const KakaoMap = {
     searchPlace: place => searchPlace(place),
     reloadPlace: () => reloadPlace(),
     viewMap: () => viewMap(),
+    getMpaData: (data, update) => getMpaData(data, update),
 };
 export default KakaoMap;
 
@@ -539,9 +1129,9 @@ function insertComment(type, title, content) {
                 target.removeEventListener(type, callback);
             } else {
                 target.detachEvent('on' + type, callback);
-            }
+            }c
         }
-    } else {
+    } else if (commentCondition !== 'drawtool') {
         var customOverlay = new kakao.maps.CustomOverlay({
             position: map.getCenter(),
             content: commentWrap,
@@ -661,12 +1251,12 @@ function drawPolyline(lines) {
     for (; i < len; i++) {
         var path = pointsToPath(lines[i].points);
         var polylinepath = []
-        for(var j in path){
+        for (var j in path) {
             polylinepath.push({
                 lng: path[j].getLng(),
                 lat: path[j].getLat(),
             })
-            
+
         }
         sendData.push(polylinepath);
     }
@@ -678,18 +1268,18 @@ function drawArrow(arrows) {
     var len = arrows.length,
         i = 0;
 
-        for (; i < len; i++) {
-            var path = pointsToPath(arrows[i].points);
-            var arrowpath = []
-            for(var j in path){
-                arrowpath.push({
-                    lng: path[j].getLng(),
-                    lat: path[j].getLat(),
-                })
-                
-            }
-            sendData.push(arrowpath);
+    for (; i < len; i++) {
+        var path = pointsToPath(arrows[i].points);
+        var arrowpath = []
+        for (var j in path) {
+            arrowpath.push({
+                lng: path[j].getLng(),
+                lat: path[j].getLat(),
+            })
+
         }
+        sendData.push(arrowpath);
+    }
     return sendData;
 }
 // Drawing Manager에서 가져온 데이터 중 사각형을 아래 지도에 표시하는 함수입니다
@@ -706,8 +1296,9 @@ function drawRectangle(rects) {
             },
             ePoint: {
                 lng: rects[i].ePoint.x,
-                lat:rects[i].ePoint.y,
-            }});
+                lat: rects[i].ePoint.y,
+            }
+        });
     }
     return sendData;
 }
@@ -753,12 +1344,12 @@ function drawPolygon(polygons) {
     for (; i < len; i++) {
         var path = pointsToPath(polygons[i].points);
         var polygonpath = []
-        for(var j in path){
+        for (var j in path) {
             polygonpath.push({
                 lng: path[j].getLng(),
                 lat: path[j].getLat(),
             })
-            
+
         }
         sendData.push(polygonpath);
     }
@@ -779,3 +1370,4 @@ function pointsToPath(points) {
 
     return path;
 }
+
