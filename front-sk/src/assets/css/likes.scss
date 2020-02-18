@@ -1,0 +1,42 @@
+@charset "utf-8";
+
+
+
+table {
+    font-size:1.4vw; 
+    width: 100%;
+    border-top: 1px solid  rgba($color: #d6d6d6, $alpha: 1.0);
+    border-collapse: collapse;
+  }
+
+  th{
+    vertical-align: middle;
+    background-color: beige;
+    border-bottom: 1px solid rgba($color: #d6d6d6, $alpha: 1.0);
+  }
+
+  td {
+    vertical-align: middle;
+    height: 60px;
+    padding-left: 20px;
+    text-align: center;
+  }
+
+  tbody{
+    border-bottom: 2px solid rgba($color: #d6d6d6, $alpha: 1.0);
+  }
+
+a:hover,
+a:active { text-decoration: none; color: rgb(255, 255, 255);}
+
+tbody:hover{
+    transition: 0.3s;
+    background-color: rgb(65, 171, 172);
+}
+
+// .route{
+//     a:hover{
+//         transition: 0.3s;
+//         background-color: rgb(65, 171, 172);
+//     }
+// }

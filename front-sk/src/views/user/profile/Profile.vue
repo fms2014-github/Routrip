@@ -15,7 +15,7 @@
             </div>
             
             <div class="wrap">
-                <router-link v-bind:to="{ name: 'UserPost' }"><TabComponent tabTitle="글" :isActive="true"/></router-link>
+                <router-link v-bind:to="{ name: 'UserPost' }"><TabComponent tabTitle="내 글" :isActive="true"/></router-link>
                 <router-link v-bind:to="{ name: 'UserComment' }"><TabComponent tabTitle="댓글" :isActive="true"/></router-link>
                 <router-link v-bind:to="{ name: 'UserLike' }"><TabComponent tabTitle="좋아요" :isActive="true"/></router-link>
                 <router-link v-bind:to="{ name: 'UserPeople' }"><TabComponent tabTitle="사람들" :isActive="true"/></router-link>

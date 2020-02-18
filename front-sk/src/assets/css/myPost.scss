@@ -5,11 +5,12 @@
 a:visited { text-decoration: none; color:black; }
 // a:hover { text-decoration: none; }
 // a:focus { text-decoration: none; }
-a:hover, a:active { text-decoration: none; color: dodgerblue;}
+
 
 
 
 .gallery {
+	
 	display: flex;
     flex-wrap: wrap;
     margin: -1rem -1rem;
@@ -17,10 +18,19 @@ a:hover, a:active { text-decoration: none; color: dodgerblue;}
 	padding: 2.7rem;
 }
 
+.one{
+	
+	background:beige;
+	border-style: outset;
+	margin: -10px -10px -20px -20px;
+}
+
 
 .card{
-	width: 352px;
-	height: 234px;
+	// width: 352px;
+	// height: 234px;
+	width: auto;
+	height: auto;
 	position: relative;
     flex: 1 0 22rem;
     margin: 2rem;
@@ -28,28 +38,29 @@ a:hover, a:active { text-decoration: none; color: dodgerblue;}
 }
 	
 
-.card-header{
-	display:flex;
-	width:100%;
-	height:20px;
-	max-height:30px;
-	align-items:center;
-	justify-content:space-between;
-	flex: 1 0 auto;
+// .card-header{
+// 	display:flex;
+// 	width:100%;
+// 	height:20px;
+// 	max-height:30px;
+// 	align-items:center;
+// 	justify-content:space-between;
+// 	flex: 1 0 auto;
 	
-	i{
-		color:black;
-		padding-right:25px;
-	}
+// 	i{
+// 		color:black;
+// 		padding-right:25px;
+// 	}
 	
 	h1.card-header-title{
+		
 		padding-left:25px;
 		margin:0;
 		color:black;
 		line-height:45px;
 		font-weight:400;
 	}
-}
+ 
 
 .card-image{
 	display: block;
@@ -154,4 +165,201 @@ div.row{
         width: auto;
         margin: 0;
 	}
+}
+
+
+
+@import url(https://fonts.googleapis.com/css?family=Six+Caps);
+
+html * {
+  box-sizing: border-box;
+}
+
+// body {
+//   font-size: 16px;
+//   padding: 10px;
+//   background: #333333;
+//   color: #ffffff;
+//   text-align: center;
+//   height: 100vh;
+//   margin: 0;
+//   display: flex;
+//   align-items: center;
+//   height: 100vh;
+// }
+
+
+.border-animation {
+  --border-width: 0.1em;
+  --animation-speed: 0.5s;
+  --color: #ffffff;
+  color: var(--color);
+  position: relative;
+  display: inline-block;
+  font-size: 4em;
+  line-height: 1em;
+  transform: scale(1, 0.8);
+  border: var(--border-width) solid transparent;
+  
+  .border-animation__inner {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    font-family: 'Six Caps', sans-serif;
+    font-weight: 300;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    cursor: pointer;
+    padding: 0.2em;
+    // background: rgba(50, 50, 50, 0.5);
+    background: #333;
+    z-index: 1;
+    border: solid var(--border-width) transparent;
+  }
+  
+  &:before,
+  &:after {
+    content: '';
+    position: absolute;
+    background: var(--color);
+  }
+  
+  &:focus:before,
+  &:hover:before {
+    animation: beforeBorders var(--animation-speed) forwards ease-in-out;
+  }
+
+  &:focus:after,
+  &:hover:after {
+    animation: afterBorders var(--animation-speed) forwards ease-in-out;
+  }
+  
+  &:focus,
+  &:hover {
+    animation: borderColors var(--animation-speed) steps(1) forwards;
+    outline: none;
+
+    .border-animation__inner {
+      animation: background calc(var(--animation-speed) / 5 * 3) forwards ease-in-out;
+      animation-delay: calc(var(--animation-speed) / 5 * 2);
+    }
+  }
+}
+
+@keyframes beforeBorders {
+  0% {
+    top: calc(var(--border-width) * -1);
+    left: 50%;
+    bottom: auto;
+    right: auto;
+    width: 0;
+    height: var(--border-width);
+  }
+  33% {    
+    top: calc(var(--border-width) * -1);
+    left: calc(var(--border-width) * -1);
+    bottom: auto;
+    right: auto;
+    width: calc(var(--border-width) + 50%);
+    height: var(--border-width);
+  }
+  66% {
+    top: calc(var(--border-width) * -1);
+    left: calc(var(--border-width) * -1);
+    bottom: auto;
+    right: auto;
+    width: var(--border-width);
+    height: calc((var(--border-width) * 2) + 100%);
+  }
+  100% {
+    top: auto;
+    left: calc(var(--border-width) * -1);
+    bottom: calc(var(--border-width) * -1);
+    right: auto;
+    width: calc(var(--border-width) + 50%);
+    height: calc((var(--border-width) * 2) + 100%);
+  }
+}
+
+@keyframes afterBorders {
+  0% {
+    top: calc(var(--border-width) * -1);
+    left: auto;
+    bottom: auto;
+    right: 50%;
+    width: 0;
+    height: var(--border-width);
+  }
+  33% {    
+    top: calc(var(--border-width) * -1);
+    left: auto;
+    bottom: auto;
+    right: calc(var(--border-width) * -1);
+    width: calc(var(--border-width) + 50%);
+    height: var(--border-width);
+  }
+  66% {
+    top: calc(var(--border-width) * -1);
+    left: auto;
+    bottom: auto;
+    right: calc(var(--border-width) * -1);
+    width: var(--border-width);
+    height: calc((var(--border-width) * 2) + 100%);
+  }
+  100% {
+    top: auto;
+    left: auto;
+    bottom: calc(var(--border-width) * -1);
+    right: calc(var(--border-width) * -1);
+    width: calc(var(--border-width) + 50%);
+    height: calc((var(--border-width) * 2) + 100%);
+  }
+}
+
+@keyframes borderColors {
+  0% {
+    border-top-color: transparent;
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+  }
+  33% {
+    border-top-color: var(--color);
+    border-right-color: transparent;
+    border-bottom-color: transparent;
+    border-left-color: transparent;
+
+  }
+  66% {
+    border-top-color: var(--color);
+    border-right-color: var(--color);
+    border-bottom-color: transparent;
+    border-left-color: var(--color);
+  }
+  100% {
+    border-top-color: var(--color);
+    border-right-color: var(--color);
+    border-bottom-color: var(--color);
+    border-left-color: var(--color);
+  }
+}
+
+@keyframes background {
+  to {
+    background: #555;
+    text-shadow: 0 0.1em 0.1em #111;
+  }
+}
+
+@media (min-width: 850px) {
+  body {
+    justify-content: center;
+  }
+}
+
+@media (min-width: 1200px) {
+  .border-animation {
+    font-size: 6em;
+    line-height: 1em;    
+  }
 }

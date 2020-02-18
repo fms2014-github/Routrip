@@ -1,17 +1,29 @@
 <template>
     <div>
-        <h2 style="text-align:center; font-size:2.1vw; @include wrap; margin-bottom:7vw;">총 {{ likeList.length }}개의 글에 좋아요를 눌렀네요. </h2>
-        <li v-for="like in likeList" v-bind:key="like.boardid">
-            <h4 style="font-size:1.4vw; margin-bottom:1.4vw;">
-                <router-link :to="{ name: 'Detail', params: { boardid: like.boardid } }">
-                {{ like.title }} 글에 좋아요를 눌렀습니다. ( {{ like.writedate }} )
+        <div style="text-align:center; font-size:2.1vw; @include wrap; margin-bottom:7vw;">
+            총 {{ likeList.length }}개의 글에 좋아요를 눌렀네요. 
+        </div>
+        <table>
+            <thead>
+                <th>
+                    <td style="width:5vw;">번호</td><td style="width:72vw;">내용</td><td>날짜</td>
+                </th>
+            </thead>
+            <tbody v-for="(like,index) in likeList" v-bind:key="like.boardid">
+                <router-link :to="{ name: 'Detail', params: { boardid: like.boardid } }">        
+                    <tr>
+                        <td style="width:5vw;">{{ doMath(index) }}</td><td style="width:68vw;">{{ like.title }}</td>
+                        <td>{{ like.writedate.split(':')[0] + ":" + like.writedate.split(':')[1] }}</td>
+                    </tr>
                 </router-link>
-            </h4>
-        </li>
-    </div>  
+            </tbody>
+        </table>
+    </div>
 </template>
  
 <script>
+import likes from "../../../assets/css/likes.scss"
+
 import Axios from 'axios';
 
 
@@ -31,15 +43,25 @@ export default {
                 this.likeList=res.data
                 
             });
+        },
+        doMath(index){
+            return index+1
         }
     },
     data(){
         return{
         
-            likeList:[]
+            likeList:[
+            ]
 
         };
     },
 
 };
 </script>
+
+<style scoped>
+
+
+
+</style>

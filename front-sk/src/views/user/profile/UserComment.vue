@@ -1,19 +1,35 @@
 <template>
-    <div>
-        <h2 style="text-align:center; font-size:2.1vw; @include wrap; margin-bottom:7vw;">총 {{ commentList.length }}개의 댓글이 있습니다. </h2>
-        <li v-for="comment in commentList" v-bind:key="comment.commentid">
-            <h4 style="font-size:1.3vw; margin-bottom:1.4vw;">
-            <router-link :to="{ name: 'Detail', params: { boardid: comment.boardid } }">
-            {{ comment.contents }} {{comment.writedate}}
-            </router-link>
-            </h4>
-        </li>
-
+   <div>
+        <div style="text-align:center; font-size:2.1vw; @include wrap; margin-bottom:7vw;">
+            총 {{ commentList.length }}개의 글에 댓글을 남겼습니다. 
+        </div>
+        <table>
+            <thead>
+                <th>
+                    <td style="width:5vw;">번호</td><td style="width:72vw;">내용</td><td>날짜</td>
+                </th>
+            </thead>
+            <tbody v-for="(comment,index) in commentList" v-bind:key="comment.boardid">
+                <!-- <div class="route"> -->
+                <router-link :to="{ name: 'Detail', params: { boardid: comment.boardid } }">        
+                    <tr>
+                        <td style="width:5vw;">{{ doMath(index) }}</td><td style="width:68 vw;">{{ comment.contents }}</td>
+                        <td>{{ comment.writedate.split(':')[0] + ":" + comment.writedate.split(':')[1] }}</td>
+                    </tr>
+                </router-link>
+                <!-- <div> -->
+            </tbody>
+        </table>
     </div>
 </template>
 
 <script>
+import likes from "../../../assets/css/likes.scss"
+
 import Axios from 'axios'
+
+
+
 
 export default {
      mounted(){
@@ -28,8 +44,12 @@ export default {
                 console.log(res)
                 this.commentList=res.data
             });
+        },
+        doMath(index){
+            return index+1
         }
     },
+  
     data(){
         return{
             commentList:[]
