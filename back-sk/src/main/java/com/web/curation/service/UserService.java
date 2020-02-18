@@ -169,4 +169,14 @@ public class UserService implements IUserService{
 	public List<User> findUserByLoginApi(int loginApi) throws Exception {
 		return userDao.findUserByLoginApi(loginApi);
 	}
+
+	@Override
+	public List<Alarm> getAlarmNoRead(int uid) throws Exception {
+		return userDao.getAlarmNoRead(uid);
+	}
+
+	@Override
+	public int updateAlarmByAlarmId(int alarmid) throws Exception {
+		return userDao.updateAlarmByAlarmId(alarmid);
+	}
 }

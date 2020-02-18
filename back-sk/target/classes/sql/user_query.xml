@@ -203,11 +203,23 @@
 		set isread = 1
 		where uid = #{value} and time <![CDATA[<]]> now
 	</update>
+	
+	<update id="updateAlarmByAlarmId">
+		update alarm
+		set isread = 1
+		where alarmid = #{value}
+	</update>
 
 	<select id="getAlarm" parameterType="int" resultType="alarm">
 		select alarmid, uid, alarmtype, boardid, commentid, follow, nickname, isread
 		from alarm
 		where uid = #{value}
+	</select>
+	
+	<select id="getAlarmNoRead" parameterType="int" resultType="alarm">
+		select alarmid, uid, alarmtype, boardid, commentid, follow, nickname
+		from alarm
+		where uid = #{value} and isread = 0 order by alarmid desc
 	</select>
 
 	<delete id="deleteAlarm" parameterType="int">

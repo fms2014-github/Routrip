@@ -908,8 +908,8 @@ public class PageController {
 
 	@DeleteMapping("/board")
 	@ApiOperation(value = "게시글 삭제")
-	public Object deleteBoard(@RequestBody String boardid) throws Exception {
-		int ok = boardService.deleteBoard(Integer.parseInt(boardid));
+	public Object deleteBoard(@RequestBody Map<String, String> map) throws Exception {
+		int ok = boardService.deleteBoard(Integer.parseInt(map.get("boardid")));
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
