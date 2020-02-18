@@ -307,7 +307,6 @@ export default {
                                     this.likeShow = [];
                                     this.scrapShow = [];
                                     this.whoLiked = [];
-                                    console.log(this.datas);
 
                                     for (i = 0; i < this.datas.length; ++i) {
                                         if (this.datas[i].favoriteNum > 0) {
