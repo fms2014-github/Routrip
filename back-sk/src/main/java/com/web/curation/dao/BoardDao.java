@@ -203,4 +203,27 @@ public class BoardDao implements IBoardDao{
 	public List<Board> findBoardBest() throws Exception {
 		return sqlSession.selectList(ns+"findBoardBest");
 	}
+
+	@Override
+	public int deleteImgByBoardid(int boardid) throws Exception {
+		return sqlSession.delete(ns+"deleteImgByBoardid", boardid);
+	}
+
+	@Override
+	public int deleteMarkerByBoardid(int boardid) throws Exception {
+		return sqlSession.delete(ns+"deleteMarkerByBoardid", boardid);
+	}
+
+	@Override
+	public List<Board> getBoardListByLastWrite(String writedate) throws Exception {
+		return sqlSession.selectList(ns+"getBoardListByLastWrite", writedate);
+	}
+
+	@Override
+	public String getScrapDate(int uid, int boardid) throws Exception {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		map.put("uid", uid);
+		map.put("boardid", boardid);
+		return sqlSession.selectOne(ns+"getScrapDate", map);
+	}
 }

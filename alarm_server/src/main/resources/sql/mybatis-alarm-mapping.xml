@@ -12,6 +12,6 @@
 	<select id="getAlarm" parameterType="int" resultType="alarm">
 		select alarmid, uid, alarmtype, boardid, commentid, follow, nickname
 		from alarm
-		where uid = #{value} order by alarmid desc
+		where uid = #{value} and isread = 0 order by alarmid desc
 	</select>
 </mapper>

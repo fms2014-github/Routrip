@@ -24,6 +24,14 @@
 		order by writedate desc
 	</select>
 	
+	<select id="getBoardListByLastWrite" parameterType="string" resultType="board">
+		select boardid, uid, title, writedate, tripterm,
+		keyword, unveiled, content, info, cusInfo, favoriteNum
+		from board
+		where writedate <![CDATA[>=]]> #{value}
+		order by writedate desc
+	</select>
+	
 	<select id="getBoardList5" parameterType="string" resultType="board">
 		select boardid, uid, title, writedate, tripterm,
 		keyword, unveiled, content, info, cusInfo, favoriteNum
@@ -88,7 +96,7 @@
 		set title = #{title},
 		tripterm = #{tripterm},
 		keyword = #{keyword},
-		unveiled = #{unveiled}
+		unveiled = #{unveiled},
 		content = #{content},
 		info = #{info},
 		cusInfo = #{cusInfo}
@@ -143,6 +151,13 @@
 	order by makedate desc
 	</select>
 	
+	<select id="getScrapDate" parameterType="map" resultType="string">
+	select makedate
+	from scrap
+	where uid=#{uid} and boardid=#{boardid}
+	order by makedate desc
+	</select>
+	
 	<delete id="deleteScrap" parameterType="map">
 		delete from scrap
 		where uid=#{uid} and boardid=#{boardid}
@@ -162,6 +177,12 @@
 	<delete id="deleteImg" parameterType="int">
 		delete from img
 		where imgid = #{value}
+	</delete>
+	
+	<delete id="deleteImgByBoardid" parameterType="int">
+		delete
+		from img
+		where boardid <![CDATA[>=]]> #{value} and boardid <![CDATA[<=]]> #{value}
 	</delete>
 	
 	<insert id="addComment" parameterType="comment" useGeneratedKeys="true" keyProperty="commentid">
@@ -231,6 +252,12 @@
 		delete
 		from marker
 		where markerid=#{value}
+	</delete>
+	
+	<delete id="deleteMarkerByBoardid" parameterType="int">
+		delete
+		from marker
+		where boardid <![CDATA[>=]]> #{value} and boardid <![CDATA[<=]]> #{value}
 	</delete>
 	
 	<select id="findBoardByFollow" parameterType="int" resultType="board">

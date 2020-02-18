@@ -17,23 +17,11 @@
                 <div id="drop-down-wrap" class="drop-up">
                     <div id="insert-comment-wrap">
                         <span id="insert-comment-wrap-title">설명 넣기</span>
-                        <label for="comment-title-insert"
-                            >제목
-                            <input
-                                id="comment-title-insert"
-                                type="text"
-                                v-model="commentTitle"
-                                maxlength="24"
-                                placeholder="24자 까지 작성 가능합니다."
-                        /></label>
-                        <label for="comment-content-insert"
-                            >내용<textarea
-                                id="comment-content-insert"
-                                type="text"
-                                v-model="commentContent"
-                                maxlength="80"
-                                placeholder="70자 까지 작성 가능합니다."
-                        /></label>
+                        <label for="comment-title-insert">제목
+                            <input id="comment-title-insert" type="text" v-model="commentTitle" maxlength="24"
+                                placeholder="24자 까지 작성 가능합니다." /></label>
+                        <label for="comment-content-insert">내용<textarea id="comment-content-insert" type="text"
+                                v-model="commentContent" maxlength="80" placeholder="70자 까지 작성 가능합니다." /></label>
                         <button id="comment-submit" @click="createDraw">생성</button>
                     </div>
                     <div id="create-condition">
@@ -66,7 +54,10 @@
             </div>
         </div>
         <div id="content-wrapper">
-            <InputForm id="content-title" :enterInput="titleInput" :errorText="''" placeholder="제목을 입력해 주세요." label="제목" />
+            <div class="input-with-label">
+                <input v-model="title" placeholder="제목을 입력하세요" type="text" />
+                <label for="inputValue">제목</label>
+            </div>
             <div class="select-form">
                 <span class="select-form-title">키워드</span>
                 <div class="select-tag">
@@ -82,7 +73,7 @@
                 <div id="summernote"></div>
             </div>
             <div id="inserted-image-list">
-                <span>삽입한 이미지</span>
+                <span>삽입한 이미지<span v-if="updataPost">(대표 이미지만 수정 가능 합니다.)</span></span>
                 <hr>
                 <div class="image-list-wrap" v-for="(image, index) in imageArr" :key="index.id">
                     <img class="inserted-image" @click="setRepresentative(image)" :src="image" :class="{representative: getRepresentative(image)}">
@@ -106,10 +97,34 @@
 import '../../assets/css/WriteForm.scss';
 import ImageUpload from '../../apis/ImgurAPI.js';
 import kakaoMap from '../../apis/kakaoMapAPI.js';
-import InputForm from '../../components/common/Input';
 import Axios from 'axios';
-
+const URI = 'http://192.168.100.70:8083/';
+var asdf
 export default {
+    created(){
+        this.jwt = localStorage.getItem('routrip_JWT')
+        if(this.$route.params.boardid !== undefined){
+            this.boardid = this.$route.params.boardid;
+            this.updataPost = true;
+            Axios.post(`${URI}/page/boardDetail`, {
+                    jwt: this.jwt,
+                    boardid: this.boardid,
+            }).then(res => {
+                this.title = res.data.title
+                this.keywords = res.data.keywords
+                this.content = res.data.content
+                this.night = res.data.tripterm.split(' ')[0]
+                this.day = res.data.tripterm.split(' ')[1]
+                for(let i in res.data.imgs){
+                    this.imageArr.push(res.data.imgs[i].src)
+                    this.representativeImage.push(res.data.imgs[i].src)
+                }
+                console.log('update', res.data)
+                kakaoMap.getMpaData(res.data, this.updataPost)
+            })
+        }
+        console.log(this.boardid)
+    },
     mounted() {
         //CKEditor.createCKEditor();
         kakaoMap.createMap();
@@ -146,25 +161,31 @@ export default {
                             }
                         }
                     },
-                },
+                }
             });
+            setTimeout(() => {
+                // eslint-disable-next-line no-undef
+                $('#summernote').summernote('pasteHTML',this.content)
+            }, 1000);
         });
-    },
-    components: {
-        InputForm,
+            
     },
     data() {
         return {
+            updataPost: false,
+            boardid: 0,
+            jwt: '',
             title: '',
             keywordTag: '',
             selectDraw: '',
             imageArr: [],
             representativeImage: [],
             placeSearch: '이태원 맛집',
-            keywords: ['키워드 #1', '키워드 #2', '키워드 #3', '키워드 #4', '키워드 #5'],
+            keywords: [],
             resultAreas: [],
             commentTitle: '',
             commentContent: '',
+            content: '',
             error: {
                 title: '',
             },
@@ -229,17 +250,17 @@ export default {
             this.keywords.splice(a, 1);
         },
         createHash() {
-            if (this.keywordTag !== '') {
-                if (this.keywords.length === 10) {
-                    alert('태그는 20개 이상 생성할 수 없습니다.');
-                    return;
-                }
-                this.keywords.push(this.keywordTag);
+            // eslint-disable-next-line no-useless-escape
+            let regExp = /[\{\}\[\]\/?.,;:|\)*~`!^\-_+<>@\#$%&\\\=\(\'\"\s]/gi
+            // eslint-disable-next-line no-useless-escape
+            if (this.keywordTag.replace(regExp, '') !== '') {
+                // eslint-disable-next-line no-useless-escape
+                this.keywords.push(this.keywordTag.replace(regExp, '').trim());
+                this.keywordTag = '';
+            }else{
+                alert('태그에 공백을 포함한 특수문자는 들어갈 수 없습니다.')
                 this.keywordTag = '';
             }
-        },
-        titleInput(v) {
-            this.title = v;
         },
         undo() {
             kakaoMap.undo();
@@ -274,13 +295,14 @@ export default {
             for(var i in this.keywords){
                 tempKeyword += this.keywords[i] + ' ';
             }
-            var jwt = {
-            'jwt': 'eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzdWIiOiIxNDciLCJ1aWQiOjE0NywiZW1haWwiOiJmbXMyMDE0QG5hdmVyLmNvbSIsIm5pY2tuYW1lIjoi6rmA7ISd7JqpIiwicHJvZmlsZUltZyI6Imh0dHBzOi8vaS5pbWd1ci5jb20vQ1J1aWVvdy5wbmciLCJsb2dpbkFwaSI6MCwiZXhwIjoxNTgxNjk0OTQzfQ.',
+            var sendData = {
+            'boardid': this.boardid,
+            'jwt': this.jwt.trim(),
             'title': this.title,
             'keywords': tempKeyword,
             'content': markupStr,
             'info': mapData.infoData,
-            'cusInfo': mapData.infoData,
+            'cusInfo': mapData.cusInfoData,
             'marker': mapData.marker,
             'polyline': mapData.polyline,
             'rectangle': mapData.rectangle,
@@ -292,12 +314,22 @@ export default {
             'day': this.day,
             'image': this.representativeImage
             }
-            console.log('jwt', jwt)
-            Axios.post('http://192.168.100.70:8083/page/board/', jwt).then(res =>{
-                console.log(res)
-            }).catch(error=>{
-                console.log(error)
-            })
+            console.log('jwt', sendData)
+            if(!this.updataPost){
+                Axios.post(`${URI}/page/board/`, sendData).then(res =>{
+                    console.log(res)
+                    this.$router.push('/main')
+                }).catch(error=>{
+                    console.log(error)
+                })
+            }else{
+                Axios.put(`${URI}/page/board/`, sendData).then(res =>{
+                    console.log('put', res)
+                    this.$router.push('/main')
+                }).catch(error=>{
+                    console.log('put', error)
+                })
+            }
         },
     },
 };
