@@ -83,7 +83,15 @@ public class AccountController {
 	@PostMapping("/snslogin")
 	@ApiOperation(value = "sns로그인")
 	public Object snslogin(@RequestBody User user) throws Exception {
-		User loginUser = userService.findUserByUserId(user.getUserid(), user.getLoginApi());
+		//User loginUser = userService.findUserByUserId(user.getUserid(), user.getLoginApi());
+		User loginUser = null;
+		List<User> temp = userService.findUserByLoginApi(user.getLoginApi());
+		for(User u:temp) {
+			if(BCrypt.checkpw(user.getUserid(), u.getUserid())) {
+				loginUser = u;
+				break;
+			}
+		}
 		if (loginUser == null)
 			return new ResponseEntity<>(HttpStatus.OK);
 		String refresh = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
@@ -306,6 +314,7 @@ public class AccountController {
 	public Object snsSignup(@Valid @RequestBody User user) throws Exception {
 		int ok = 0;
 		user.setUserkey("Y");
+		user.setUserid(BCrypt.hashpw(user.getUserid(), BCrypt.gensalt()));
 		ok = userService.addUser(user);
 		if (ok > 0) {
 			System.out.println(user.getNickname() + " 님 가입완료 됐습니다.");

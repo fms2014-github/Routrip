@@ -473,7 +473,7 @@ public class PageController {
 		board.setInfo(JSONStringer.valueToString(map.get("info")));
 		board.setCusInfo((String) map.get(JSONStringer.valueToString(map.get("cusInfo"))));
 		board.setUnveiled(1);
-		int ok = boardService.updateBoard(new Board());
+		int ok = boardService.updateBoard(board);
 		boardService.deleteImgByBoardid(board.getBoardid());// 싹 다 날리고 새로 추가한다
 		boardService.deleteMarkerByBoardid(board.getBoardid());
 		for (String key : map.keySet()) {

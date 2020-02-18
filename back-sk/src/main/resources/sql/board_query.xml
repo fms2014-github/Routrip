@@ -96,7 +96,7 @@
 		set title = #{title},
 		tripterm = #{tripterm},
 		keyword = #{keyword},
-		unveiled = #{unveiled}
+		unveiled = #{unveiled},
 		content = #{content},
 		info = #{info},
 		cusInfo = #{cusInfo}

@@ -164,4 +164,9 @@ public class UserService implements IUserService{
 	public int updateAlarm(int uid) throws Exception {
 		return userDao.updateAlarm(uid);
 	}
+
+	@Override
+	public List<User> findUserByLoginApi(int loginApi) throws Exception {
+		return userDao.findUserByLoginApi(loginApi);
+	}
 }

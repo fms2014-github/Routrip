@@ -21,6 +21,7 @@ public interface IUserService {
     User findUserByUserId(String userid, int loginApi) throws Exception;
     User findUserSimple(int uid) throws Exception;
     int deleteUserNoJoin(int uid) throws Exception;
+    List<User> findUserByLoginApi(int loginApi) throws Exception;
     
     int addFollow(int following, int follower) throws Exception;
     int deleteFollow(int following, int follower) throws Exception;

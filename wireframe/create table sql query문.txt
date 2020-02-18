@@ -9,8 +9,7 @@ birth date,
 profileImg varchar(500) default 'https://i.imgur.com/CRuieow.png',
 loginApi int not null default 0,
 userkey varchar(10) not null,
-userid varchar(20),
-salt varchar(200)
+userid varchar(500)
 );
 
 create table follow(
