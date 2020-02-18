@@ -2,7 +2,6 @@ package com.web.curation.controller.page;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.web.curation.model.BasicResponse;
 import com.web.curation.model.board.Board;
 import com.web.curation.model.board.Comment;
 import com.web.curation.model.board.Img;
@@ -35,15 +33,11 @@ import com.web.curation.model.user.User;
 import com.web.curation.service.BoardService;
 import com.web.curation.service.UserService;
 
+import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.MalformedJwtException;
+import io.jsonwebtoken.UnsupportedJwtException;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-
-@ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
-		@ApiResponse(code = 403, message = "Forbidden", response = BasicResponse.class),
-		@ApiResponse(code = 404, message = "Not Found", response = BasicResponse.class),
-		@ApiResponse(code = 500, message = "Failure", response = BasicResponse.class) })
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
 @RequestMapping("/page")
@@ -82,6 +76,8 @@ public class PageController {
 				ok = boardService.addFavorite(uid, boardid);
 			if (ok > 0)
 				return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -122,7 +118,7 @@ public class PageController {
 			}
 			return new ResponseEntity<>(boards, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 	public Object deleteFavorite(Map<String, String> map) throws Exception {
@@ -134,6 +130,8 @@ public class PageController {
 			int ok = boardService.deleteFavorite((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), boardid);
 			if (ok > 0)
 				return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -164,6 +162,8 @@ public class PageController {
 				ok = boardService.addScrap(uid, boardid);
 			if (ok > 0)
 				return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -200,12 +200,13 @@ public class PageController {
 				b.setFavorite(users);
 				if (b.getKeyword() != null)
 					b.setKeywords(b.getKeyword());
-				b.setScrapdate(boardService.getScrapDate((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), b.getBoardid()));
+				b.setScrapdate(boardService.getScrapDate((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"),
+						b.getBoardid()));
 				boards.add(b);
 			}
 			return new ResponseEntity<>(boards, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 	public Object deleteScrap(Map<String, String> map) throws Exception {
@@ -217,6 +218,8 @@ public class PageController {
 			int ok = boardService.deleteScrap((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), boardid);
 			if (ok > 0)
 				return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -252,7 +255,7 @@ public class PageController {
 			}
 			return new ResponseEntity<>(boards, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 	@PostMapping("/boardDetail")
@@ -289,8 +292,7 @@ public class PageController {
 				board.setKeywords(board.getKeyword());
 			return new ResponseEntity<>(board, HttpStatus.OK);
 		}
-		System.out.println("jwt가 만료되면 여기까지 올까?");
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 	@PostMapping("/board")
@@ -298,12 +300,8 @@ public class PageController {
 	public Object addBoard2(@RequestBody Map<String, Object> map) throws Exception {
 		System.out.println("게시글 작성 시작");
 		String jwt = (String) map.get("jwt");
-		if (jwt == null)
+		if (jwt == null || !isOkJwt(jwt))
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-		if (!isOkJwt(jwt)) {
-			System.out.println("jwt가 만료되면 여기까지 올까?");
-			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		}
 
 		Board board = new Board();
 		board.setUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
@@ -446,7 +444,8 @@ public class PageController {
 				alarm.setUid(i);
 				alarm.setBoardid(board.getBoardid());
 				alarm.setAlarmtype(4);
-				alarm.setNickname(userService.findUserByUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid")).getNickname());
+				alarm.setNickname(userService
+						.findUserByUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid")).getNickname());
 				userService.addAlarm(alarm);
 			}
 			System.out.println("게시글 작성 완료");
@@ -460,11 +459,11 @@ public class PageController {
 	public Object updateBoard(@RequestBody Map<String, Object> map) throws Exception {
 		System.out.println("게시글 수정 시작");
 		String jwt = (String) map.get("jwt");
-		if (jwt == null)
+		if (jwt == null || !isOkJwt(jwt))
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		Board board = boardService.findBoardByBoardId((int) map.get("boardid"));
 		int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
-		if (!isOkJwt(jwt) || uid != board.getUid())
+		if (uid != board.getUid())
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 
 		board.setTitle((String) map.get("title"));
@@ -667,7 +666,7 @@ public class PageController {
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
-	
+
 	@PostMapping("/boardList")
 	@ApiOperation(value = "게시글 전체보기(날짜구분)")
 	public Object BoardList(@RequestBody Map<String, String> map) throws Exception {
@@ -706,7 +705,7 @@ public class PageController {
 	@ApiOperation(value = "베스트 게시글")
 	public Object bestBoard() throws Exception {
 		List<Board> tempboards = boardService.getBoardList();
-		for(Board b : tempboards) {
+		for (Board b : tempboards) {
 			boardService.updateFavoriteNum(b.getBoardid(), boardService.getFavoriteNum(b.getBoardid()));
 		}
 		List<Board> boards = boardService.findBoardBest();
@@ -743,8 +742,8 @@ public class PageController {
 		for (Board b : boards) {
 			String title = b.getTitle().toLowerCase();
 			String strlow = str.toLowerCase();
-			String[] keywords = {"                 "};
-			if(b.getKeyword()!=null)
+			String[] keywords = { "                 " };
+			if (b.getKeyword() != null)
 				keywords = b.getKeyword().toLowerCase().split(" ");
 			boolean flag = false;
 			if (strlow.contains(title) || title.contains(strlow)) {// 제목과 검색어 어느쪽이 완전히 포함할 경우
@@ -759,7 +758,7 @@ public class PageController {
 				if (!flag) {
 					String[] titles = title.split(" ");// 검색어가 제목의 일부를 포함할 경우
 					for (String t : titles) {
-						if(t.length()==0)
+						if (t.length() == 0)
 							continue;
 						if (strlow.contains(t)) {
 							flag = true;
@@ -770,7 +769,7 @@ public class PageController {
 				if (!flag) {
 					String[] strs = strlow.split(" ");// 제목이 검색어의 일부를 포함할 경우
 					for (String s : strs) {
-						if(s.length()==0)
+						if (s.length() == 0)
 							continue;
 						if (title.contains(s)) {
 							flag = true;
@@ -811,31 +810,34 @@ public class PageController {
 	public Object writedBoard(@RequestBody Map<String, String> map) throws Exception {
 		if (map.get("jwt") == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-		int uid = (int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid");
-		List<Board> boards = boardService.findBoardListByUid(uid);
-		for (Board b : boards) {
-			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-			b.setImgs(imgs);
-			List<Comment> comments = boardService.findComment(b.getBoardid());
-			for (Comment c : comments) {
-				c.setUser(userService.findUserSimple(c.getUid()));
+		if (isOkJwt(map.get("jwt"))) {
+			int uid = (int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid");
+			List<Board> boards = boardService.findBoardListByUid(uid);
+			for (Board b : boards) {
+				List<Img> imgs = boardService.findBoardImg(b.getBoardid());
+				b.setImgs(imgs);
+				List<Comment> comments = boardService.findComment(b.getBoardid());
+				for (Comment c : comments) {
+					c.setUser(userService.findUserSimple(c.getUid()));
+				}
+				b.setCommentNum(comments.size());
+				int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
+				boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
+				b.setFavoriteNum(favoriteNum);
+				b.setMarkers(boardService.findMarker(b.getBoardid()));
+				b.setComments(comments);
+				List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
+				List<User> users = new ArrayList<User>();
+				for (int ui : usersid)
+					users.add(userService.findUserSimple(ui));
+				b.setFavorite(users);
+				b.setUser(userService.findUserSimple(b.getUid()));
+				if (b.getKeyword() != null)
+					b.setKeywords(b.getKeyword());
 			}
-			b.setCommentNum(comments.size());
-			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
-			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
-			b.setFavoriteNum(favoriteNum);
-			b.setMarkers(boardService.findMarker(b.getBoardid()));
-			b.setComments(comments);
-			List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
-			List<User> users = new ArrayList<User>();
-			for (int ui : usersid)
-				users.add(userService.findUserSimple(ui));
-			b.setFavorite(users);
-			b.setUser(userService.findUserSimple(b.getUid()));
-			if (b.getKeyword() != null)
-				b.setKeywords(b.getKeyword());
+			return new ResponseEntity<>(boards, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(boards, HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 	@PostMapping("/searchComment")
@@ -869,24 +871,28 @@ public class PageController {
 	public Object addComment(@RequestBody Map<String, String> map) throws Exception {
 		if (map.get("jwt") == null)
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-		Comment comment = new Comment();
-		comment.setUid((int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid"));
-		comment.setBoardid(Integer.parseInt(map.get("boardid")));
-		comment.setContents(map.get("contents"));
-		if (map.get("listener") != null)
-			comment.setListener(Integer.parseInt(map.get("listenter")));
-		int ok = boardService.addComment(comment);
-		if (ok > 0) {
-			Alarm alarm = new Alarm();
-			alarm.setUid(comment.getListener() == 0 ? boardService.findBoardByBoardId(comment.getBoardid()).getUid()
-					: boardService.findCommentByCommentid(comment.getListener()).getUid());
-			if (comment.getListener() > 0)
-				comment.getCommentid();
-			alarm.setBoardid(comment.getBoardid());
-			alarm.setAlarmtype(comment.getListener() == 0 ? 2 : 3);
-			alarm.setNickname(userService.findUserByUid(comment.getUid()).getNickname());
-			userService.addAlarm(alarm);
-			return new ResponseEntity<>(HttpStatus.OK);
+		if (isOkJwt(map.get("jwt"))) {
+			Comment comment = new Comment();
+			comment.setUid((int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid"));
+			comment.setBoardid(Integer.parseInt(map.get("boardid")));
+			comment.setContents(map.get("contents"));
+			if (map.get("listener") != null)
+				comment.setListener(Integer.parseInt(map.get("listenter")));
+			int ok = boardService.addComment(comment);
+			if (ok > 0) {
+				Alarm alarm = new Alarm();
+				alarm.setUid(comment.getListener() == 0 ? boardService.findBoardByBoardId(comment.getBoardid()).getUid()
+						: boardService.findCommentByCommentid(comment.getListener()).getUid());
+				if (comment.getListener() > 0)
+					comment.getCommentid();
+				alarm.setBoardid(comment.getBoardid());
+				alarm.setAlarmtype(comment.getListener() == 0 ? 2 : 3);
+				alarm.setNickname(userService.findUserByUid(comment.getUid()).getNickname());
+				userService.addAlarm(alarm);
+				return new ResponseEntity<>(HttpStatus.OK);
+			}
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -938,25 +944,40 @@ public class PageController {
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
 
-	public boolean isOkJwt(String jwt) throws Exception {
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		Date exp = format.parse(format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration()));
-		Date now = format.parse(format.format(new Date()));
-		if (exp.getTime() < now.getTime())// 만료기간 지났으면 인증실패
-			return false;
-		List<String> exps = userService
-				.findBlackListByUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));// 최신 로그인 이전 시점 로그인
-																									// 인증실패
-		if (exps != null) {
-			for (String e : exps) {
-				if (exp.getTime() < format.parse(e).getTime()) {
-					return false;
+	public boolean isOkJwt(String jwt) {
+		try {
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			Date exp;
+			exp = format.parse(format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration()));
+			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
+
+			List<String> exps = userService.findBlackListByUid(uid);
+			// 최신 로그인 이전 시점 인증 실패
+			if (exps != null) {
+				for (String e : exps) {
+					if (exp.getTime() < format.parse(e).getTime()) {
+						System.out.println("이미 로그아웃한 아이디입니다. : 현재 시점에 이 jwt보다 최근 아이디가 로그아웃되어있습니다.");
+						return false;
+					}
 				}
 			}
-		}
-		if (userService.findBlackList((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"),
-				format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration())) > 0)
+			if (userService.findBlackList(uid,
+					format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration())) > 0)
+				// 블랙 리스트에 있으면 인증 실패
+				return false;
+		} catch (ExpiredJwtException e1) {
+			System.out.println("토큰 기간 만료");
 			return false;
+		} catch (UnsupportedJwtException e) {
+			System.out.println("UnsupportedJwtException 발생");
+			return false;
+		} catch (MalformedJwtException e) {
+			System.out.println("MalformedJwtException 발생");
+			return false;
+		} catch (Exception e) {
+			System.out.println("오류가 발생했습니다.");
+			return false;
+		}
 		return true;
 	}
 }
