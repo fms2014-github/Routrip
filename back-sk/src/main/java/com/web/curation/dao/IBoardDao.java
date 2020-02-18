@@ -10,9 +10,11 @@ import com.web.curation.model.board.Marker;
 public interface IBoardDao {
 	int addBoard(Board board) throws Exception;
 	List<Board> getBoardList() throws Exception;
+	List<Board> getBoardList5(String writedate) throws Exception;
 	List<Board> findBoardListByUid(int uid) throws Exception;
-	List<Board> findBoardListByTitle(String title) throws Exception;
+	List<Board> findBoardListByKeyword(String keyword) throws Exception;
 	List<Board> findBoardListByWriteDate(String startdate, String enddate) throws Exception;
+	List<Board> findBoardBest() throws Exception;
 	Board findBoardByBoardId(int boardid) throws Exception;
 	int deleteBoard(int boardid) throws Exception;
 	int updateBoard(Board board) throws Exception;
@@ -30,11 +32,12 @@ public interface IBoardDao {
     
     int addImg(Img img) throws Exception;
     List<Img> findBoardImg(int boardid) throws Exception;
-    List<Img> findRepImg(int boardid) throws Exception;
     int deleteImg(int imgid) throws Exception;
     
     int addComment(Comment comment) throws Exception;
     List<Comment> findComment(int boardid) throws Exception;
+    List<Comment> findCommentByUid(int uid) throws Exception;
+    List<Comment> findCommentByListener(int listener) throws Exception;
     Comment findCommentByCommentid(int commentid) throws Exception;
     int deleteComment(int commentid) throws Exception;
     

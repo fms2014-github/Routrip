@@ -45,8 +45,7 @@
                                 </button>
                             </div>
                             <div class="state" v-if="data.favoriteNum == 1">
-                                <strong>{{ whoLiked }}</strong
-                                >님이 게시글을 좋아합니다.
+                                <strong>{{ whoLiked }}</strong>님이 게시글을 좋아합니다.
                             </div>
                             <div class="state" v-if="data.favoriteNum > 1">
                                 <strong>{{ whoLiked }}</strong>
@@ -54,7 +53,12 @@
                             </div>
                         </div>
                         <div class="keywords">
-                            <div class="keyword" v-for="(keyword, keywordIdx) in data.keywords" :key="keywordIdx">
+                            <div
+                                @click="search(keyword)"
+                                class="keyword"
+                                v-for="(keyword, keywordIdx) in data.keywords"
+                                :key="keywordIdx"
+                            >
                                 <span>#{{ keyword }}</span>
                             </div>
                         </div>
@@ -62,21 +66,33 @@
 
                     <div class="comments">
                         <div class="show-comment">
-                            <div class="comment" v-for="(comment, commentIdx) in data.comments" :key="commentIdx">
+                            <div
+                                class="comment"
+                                v-for="(comment, commentIdx) in data.comments"
+                                :key="commentIdx"
+                            >
                                 <div class="writer-img">
                                     <img :src="comment.user.profileImg" alt />
                                 </div>
                                 <div class="comment-info">
                                     <div class="comment-info-box">
                                         <div class="writer">
-                                            <strong>{{ comment.user.nickname }}</strong>
-                                            <span>{{ comment.writeday }}</span>
+                                            <div class="writer-info">
+                                                <strong>{{ comment.user.nickname }}</strong>
+                                                <span>{{ comment.writeday }}</span>
+                                            </div>
+                                            <div class="writer-reply">
+                                                <span>댓글달기</span>
+                                            </div>
                                         </div>
                                         <div class="writer-text">
                                             <span>{{ comment.contents }}</span>
                                         </div>
                                     </div>
-                                    <div class="comment-delete" v-if="comment.uid == getUser.data.uid">
+                                    <div
+                                        class="comment-delete"
+                                        v-if="comment.uid == getUser.data.uid"
+                                    >
                                         <button @click="deleteComment(comment)">삭제</button>
                                     </div>
                                 </div>
@@ -84,7 +100,13 @@
                         </div>
                         <div class="write-comment">
                             <form action class="comment-form">
-                                <textarea class="comment" placeholder="댓글 달기..." autocomplete="off" wrap="soft" v-model="comment"></textarea>
+                                <textarea
+                                    class="comment"
+                                    placeholder="댓글 달기..."
+                                    autocomplete="off"
+                                    wrap="soft"
+                                    v-model="comment"
+                                ></textarea>
                             </form>
                             <div class="comment-btn">
                                 <button @click="addComment">
@@ -295,6 +317,10 @@ export default {
                     });
                 this.getAlldata();
             }
+        },
+        search(keyword) {
+            // console.log(keyword);
+            this.$router.push({ name: 'Search', params: { keyword: keyword } });
         },
     },
 };

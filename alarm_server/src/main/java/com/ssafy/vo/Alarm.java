@@ -86,12 +86,12 @@ public class Alarm {
 			Date wd1 = format1.parse(format1.format(format3.parse(this.time)));
 			Date wd2 = format2.parse(format2.format(format3.parse(this.time)));
 			if ((now1.getTime() - wd1.getTime()) / (1000 * 60 * 60) < 24) {
-				if ((now2.getTime() - wd2.getTime()) / 1000 < 60) {
+				if ((now2.getTime() - wd2.getTime()) / 1000 >= 0 && (now2.getTime() - wd2.getTime()) / 1000 < 60) {
 					alarmtime = ((now2.getTime() - wd2.getTime()) / 1000) + "초 전";
-				} else if ((now2.getTime() - wd2.getTime()) / (1000 * 60) < 60) {
+				} else if ((now2.getTime() - wd2.getTime()) / (1000 * 60) > 0 && (now2.getTime() - wd2.getTime()) / (1000 * 60) < 60) {
 					alarmtime = ((now2.getTime() - wd2.getTime()) / (1000 * 60)) + "분 전";
-				} else if ((now2.getTime() - wd2.getTime()) / (1000 * 60 * 60) < 24) {
-					alarmtime = ((now2.getTime() - wd2.getTime()) / (1000 * 60 * 60)) + "시간 전";
+				} else {
+					alarmtime = ((now1.getTime() - wd1.getTime()) / (1000 * 60 * 60)) + "시간 전";
 				}
 			} else if ((now1.getTime() - wd1.getTime()) / (1000 * 60 * 60 * 24) < 31) {
 				alarmtime = ((now1.getTime() - wd1.getTime()) / (1000 * 60 * 60 * 24)) + "일 전";
@@ -110,5 +110,12 @@ public class Alarm {
 	}
 	public void setAlarmtime(String alarmtime) {
 		this.alarmtime = alarmtime;
+	}
+	
+	@Override
+	public String toString() {
+		return "Alarm [alarmid=" + alarmid + ", uid=" + uid + ", boardid=" + boardid + ", commentid=" + commentid
+				+ ", follow=" + follow + ", alarmtype=" + alarmtype + ", nickname=" + nickname + ", time=" + time
+				+ ", alarmtime=" + alarmtime + "]";
 	}
 }

@@ -1,12 +1,12 @@
 create table user(
 uid int primary key auto_increment,
 nickname varchar(20) not null,
-name varchar(20) not null,
+name varchar(20),
 email varchar(50),
 password varchar(50),
-phone varchar(20) not null,
-birth date not null,
-profileImg varchar(500) default 'profile_default.jpg',
+phone varchar(20),
+birth date,
+profileImg varchar(500) default 'https://i.imgur.com/CRuieow.png',
 loginApi int not null default 0,
 userkey varchar(10) not null,
 userid varchar(20)
@@ -24,15 +24,15 @@ references user(uid) on update cascade on delete cascade
 create table board(
 boardid int primary key auto_increment,
 uid int not null,
-title varchar(50) not null,
-writedate date not null,
+title varchar(100) not null,
+writedate datetime not null,
 tripterm varchar(10) not null,
-keyword varchar(200),
-latitude double not null,
-longitude double not null,
-level int not null,
+keyword varchar(500),
 favoriteNum int not null default 0,
 unveiled boolean not null default true,
+content text(4000000000),
+info text(4000000000),
+cusinfo text(4000000000),
 foreign key(uid)
 references user(uid) on update cascade on delete cascade
 );
@@ -61,7 +61,7 @@ create table comment(
 commentid int primary key auto_increment,
 uid int not null,
 boardid int not null,
-contents varchar(100) not null,
+contents varchar(1000) not null,
 writedate datetime not null,
 listener int not null default 0,
 foreign key(uid)
@@ -74,7 +74,6 @@ create table img(
 imgid int  primary key auto_increment,
 boardid int not null,
 src varchar(500) not null,
-rep boolean default false,
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade
 );
@@ -82,11 +81,10 @@ references board(boardid) on update cascade on delete cascade
 create table marker(
 markerid int primary key auto_increment,
 boardid int not null,
-latitude varchar(500) not null,
-longitude varchar(500) not null,
-remark varchar(500),
+latitude varchar(1000) not null,
+longitude varchar(1000) not null,
 overlaytype varchar(100) not null,
-radius int,
+radius double,
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade
 );

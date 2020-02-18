@@ -8,6 +8,7 @@ var placeResults = [];
 var info = {},
     cusInfo = {};
 var commentCondition = 'both';
+var sendData = {}
 
 const createMap = () => {
     var mapContainer = document.getElementById('map'); //지도를 담을 영역의 DOM 레퍼런스
@@ -374,10 +375,40 @@ const reloadPlace = () => {
     }
 };
 const getTest = () => {
+    var infoData = {}
+    var cusInfoData = {}
+    var data = manager.getData();
     console.log('info', info);
+    for(var i in info){
+        infoData[i] = {
+            content: info[i].getContent().innerHTML,
+            lng: info[i].getPosition().getLng(),
+            lat: info[i].getPosition().getLat()
+        }
+    }
+    console.log('infoData', infoData);
     console.log('cusInfo', cusInfo);
+    for(var j in cusInfo){
+        cusInfoData[j] = {
+            content: cusInfo[j].getContent().innerHTML,
+            lng: cusInfo[j].getPosition().getLng(),
+            lat: cusInfo[j].getPosition().getLat()
+        }
+    }
+    console.log('cusInfoData', cusInfoData);
     console.log('commentIndex', commentIndex);
-    console.log(manager.getData());
+    console.log(manager.getData()[kakao.maps.drawing.OverlayType.MARKER]);
+    return {
+        infoData: infoData,
+        cusInfoData: cusInfoData,
+        marker: drawMarker(data[kakao.maps.drawing.OverlayType.MARKER]),
+        polyline: drawPolyline(data[kakao.maps.drawing.OverlayType.POLYLINE]),
+        rectangle: drawRectangle(data[kakao.maps.drawing.OverlayType.RECTANGLE]),
+        circle: drawCircle(data[kakao.maps.drawing.OverlayType.CIRCLE]),
+        polygon: drawPolygon(data[kakao.maps.drawing.OverlayType.POLYGON]),
+        arrow: drawArrow(data[kakao.maps.Drawing.OverlayType.ARROW]),
+        ellipse: drawEllipse(data[kakao.maps.Drawing.OverlayType.ELLIPSE]),
+    }
 };
 
 const KakaoMap = {
@@ -594,163 +625,132 @@ function insertComment(type, title, content) {
     }
 }
 
-function getMapDrawData() {
-    // Drawing Manager에서 그려진 데이터 정보를 가져옵니다
-    var data = manager.getData();
-
-    // 지도에 가져온 데이터로 도형들을 그립니다
-    drawMarker(data[kakao.maps.drawing.OverlayType.MARKER]);
-    drawPolyline(data[kakao.maps.drawing.OverlayType.POLYLINE]);
-    drawRectangle(data[kakao.maps.drawing.OverlayType.RECTANGLE]);
-    drawCircle(data[kakao.maps.drawing.OverlayType.CIRCLE]);
-    drawPolygon(data[kakao.maps.drawing.OverlayType.POLYGON]);
-    drawArrow(data[kakao.maps.Drawing.OverlayType.ARROW]);
-    drawEllipse(data[kakao.maps.Drawing.OverlayType.ELLIPSE]);
-}
-
 // Drawing Manager에서 가져온 데이터 중 마커를 아래 지도에 표시하는 함수입니다
 function drawMarker(markers) {
+    var sendData = []
     var len = markers.length,
         i = 0;
 
     for (; i < len; i++) {
-        var marker = new kakao.maps.Marker({
-            position: new kakao.maps.LatLng(markers[i].y, markers[i].x),
-            zIndex: markers[i].zIndex,
+        sendData.push({
+            lng: markers[i].x,
+            lat: markers[i].y,
         });
-
-        overlays.push(marker);
     }
+    return sendData
 }
 
 // Drawing Manager에서 가져온 데이터 중 선을 아래 지도에 표시하는 함수입니다
 function drawPolyline(lines) {
+    var sendData = []
     var len = lines.length,
         i = 0;
 
     for (; i < len; i++) {
         var path = pointsToPath(lines[i].points);
-        var style = lines[i].options;
-        var polyline = new kakao.maps.Polyline({
-            path: path,
-            strokeColor: style.strokeColor,
-            strokeOpacity: style.strokeOpacity,
-            strokeStyle: style.strokeStyle,
-            strokeWeight: style.strokeWeight,
-        });
-
-        overlays.push(polyline);
+        var polylinepath = []
+        for(var j in path){
+            polylinepath.push({
+                lng: path[j].getLng(),
+                lat: path[j].getLat(),
+            })
+            
+        }
+        sendData.push(polylinepath);
     }
+    return sendData;
 }
 
 function drawArrow(arrows) {
+    var sendData = []
     var len = arrows.length,
         i = 0;
 
-    for (; i < len; i++) {
-        var path = pointsToPath(arrows[i].points);
-        var style = arrows[i].options;
-        var arrow = new kakao.maps.Polyline({
-            endArrow: true,
-            path: path,
-            strokeColor: style.strokeColor,
-            strokeOpacity: style.strokeOpacity,
-            strokeStyle: style.strokeStyle,
-            strokeWeight: style.strokeWeight,
-        });
-
-        overlays.push(arrow);
-    }
+        for (; i < len; i++) {
+            var path = pointsToPath(arrows[i].points);
+            var arrowpath = []
+            for(var j in path){
+                arrowpath.push({
+                    lng: path[j].getLng(),
+                    lat: path[j].getLat(),
+                })
+                
+            }
+            sendData.push(arrowpath);
+        }
+    return sendData;
 }
 // Drawing Manager에서 가져온 데이터 중 사각형을 아래 지도에 표시하는 함수입니다
 function drawRectangle(rects) {
+    var sendData = []
     var len = rects.length,
         i = 0;
 
     for (; i < len; i++) {
-        var style = rects[i].options;
-        var rect = new kakao.maps.Rectangle({
-            bounds: new kakao.maps.LatLngBounds(
-                new kakao.maps.LatLng(rects[i].sPoint.y, rects[i].sPoint.x),
-                new kakao.maps.LatLng(rects[i].ePoint.y, rects[i].ePoint.x),
-            ),
-            strokeColor: style.strokeColor,
-            strokeOpacity: style.strokeOpacity,
-            strokeStyle: style.strokeStyle,
-            strokeWeight: style.strokeWeight,
-            fillColor: style.fillColor,
-            fillOpacity: style.fillOpacity,
-        });
-
-        overlays.push(rect);
+        sendData.push({
+            sPoint: {
+                lng: rects[i].sPoint.x,
+                lat: rects[i].sPoint.y,
+            },
+            ePoint: {
+                lng: rects[i].ePoint.x,
+                lat:rects[i].ePoint.y,
+            }});
     }
+    return sendData;
 }
 
 // Drawing Manager에서 가져온 데이터 중 원을 아래 지도에 표시하는 함수입니다
 function drawCircle(circles) {
+    var sendData = []
     var len = circles.length,
         i = 0;
 
     for (; i < len; i++) {
-        var style = circles[i].options;
-        var circle = new kakao.maps.Circle({
-            center: new kakao.maps.LatLng(circles[i].center.y, circles[i].center.x),
+        sendData.push({
+            lng: circles[i].center.x,
+            lat: circles[i].center.y,
             radius: circles[i].radius,
-            strokeColor: style.strokeColor,
-            strokeOpacity: style.strokeOpacity,
-            strokeStyle: style.strokeStyle,
-            strokeWeight: style.strokeWeight,
-            fillColor: style.fillColor,
-            fillOpacity: style.fillOpacity,
         });
-
-        overlays.push(circle);
     }
+    return sendData;
 }
 
 function drawEllipse(ellipses) {
+    var sendData = []
     var len = ellipses.length,
         i = 0;
 
     for (; i < len; i++) {
-        var style = ellipses[i].options;
-        var circle = new kakao.maps.Circle({
-            rx: ellipses[i].rx,
-            ry: ellipses[i].ry,
-            center: new kakao.maps.LatLng(ellipses[i].center.y, ellipses[i].center.x),
-            strokeColor: style.strokeColor,
-            strokeOpacity: style.strokeOpacity,
-            strokeStyle: style.strokeStyle,
-            strokeWeight: style.strokeWeight,
-            fillColor: style.fillColor,
-            fillOpacity: style.fillOpacity,
+        sendData.push({
+            rx: parseFloat(ellipses[i].rx),
+            ry: parseFloat(ellipses[i].ry),
+            lng: ellipses[i].center.x,
+            lat: ellipses[i].center.y,
         });
-
-        overlays.push(circle);
     }
+    return sendData;
 }
 
 // Drawing Manager에서 가져온 데이터 중 다각형을 아래 지도에 표시하는 함수입니다
 function drawPolygon(polygons) {
+    var sendData = []
     var len = polygons.length,
         i = 0;
 
     for (; i < len; i++) {
         var path = pointsToPath(polygons[i].points);
-        var style = polygons[i].options;
-        var polygon = new kakao.maps.Polygon({
-            map: map,
-            path: path,
-            strokeColor: style.strokeColor,
-            strokeOpacity: style.strokeOpacity,
-            strokeStyle: style.strokeStyle,
-            strokeWeight: style.strokeWeight,
-            fillColor: style.fillColor,
-            fillOpacity: style.fillOpacity,
-        });
-
-        overlays.push(polygon);
+        var polygonpath = []
+        for(var j in path){
+            polygonpath.push({
+                lng: path[j].getLng(),
+                lat: path[j].getLat(),
+            })
+            
+        }
+        sendData.push(polygonpath);
     }
+    return sendData;
 }
 
 // Drawing Manager에서 가져온 데이터 중

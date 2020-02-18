@@ -23,7 +23,6 @@ $desktop: 'screen and (min-width : 1025px)';
                     background-color: white;
                     width: 80vw;
                     height: 80vh;
-                    border: 1px solid black;
                     margin: 0;
                     padding: 20px;
                 }
@@ -32,9 +31,9 @@ $desktop: 'screen and (min-width : 1025px)';
                     background-color: white;
                     width: 80vw;
                     height: 80vh;
-                    border: 1px solid black;
                     margin: 0;
                     padding: 20px;
+                    border-top: 1px solid rgba(0, 0, 0, 0.3);
                 }
             }
 
@@ -45,7 +44,6 @@ $desktop: 'screen and (min-width : 1025px)';
                     background-color: white;
                     width: 650px;
                     height: 600px;
-                    border: 1px solid black;
                     margin: 0;
                     padding: 20px;
                 }
@@ -54,9 +52,9 @@ $desktop: 'screen and (min-width : 1025px)';
                     background-color: white;
                     width: 650px;
                     height: 650px;
-                    border: 1px solid black;
                     margin: 0;
                     padding: 20px;
+                    border-top: 1px solid rgba(0, 0, 0, 0.3);
                 }
             }
 
@@ -67,7 +65,6 @@ $desktop: 'screen and (min-width : 1025px)';
                     background-color: white;
                     width: 650px;
                     height: 700px;
-                    border: 1px solid black;
                     margin: 0;
                     padding: 20px;
                 }
@@ -76,7 +73,7 @@ $desktop: 'screen and (min-width : 1025px)';
                     background-color: white;
                     width: 350px;
                     height: 700px;
-                    border: 1px solid black;
+                    border-left: 1px solid rgba(0, 0, 0, 0.3);
                     margin: 0;
                     padding: 20px;
                 }
@@ -152,6 +149,7 @@ $desktop: 'screen and (min-width : 1025px)';
                         }
                     }
                 }
+
             }
 
             .comments {

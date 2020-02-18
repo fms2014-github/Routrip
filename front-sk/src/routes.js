@@ -5,6 +5,8 @@ import Router from 'vue-router';
 import Main from './views/jh/Main.vue';
 import Detail from './views/jh/Detail.vue';
 import Search from './views/jh/Search.vue';
+import SearchAll from './views/jh/SearchAll.vue';
+import Middleware from './views/jh/Middleware.vue';
 import Login from './views/user/Login.vue';
 import Join from './views/user/Join.vue';
 import JoinAuth from './views/user/JoinAuth.vue';
@@ -32,50 +34,22 @@ import Alarm from './views/user/Alarm.vue';
 export const router = new Router({
     mode: 'history',
     routes: [{
-            path: '/',
-            name: 'Login',
-            component: Login,
-            children: [{
-                    path: 'user/join',
-                    name: 'Join',
-                    components: {
-                        join: Join,
-                    },
+        path: '/',
+        name: 'Login',
+        component: Login,
+    },
+    {
+        path: '/profile',
+        name: 'Profile',
+        component: Profile,
+        children: [
+            {
+                path: '',
+                name: 'UserPost',
+                components: {
+                    profile: UserPost,
                 },
-                {
-                    path: 'user/joinauth',
-                    name: 'JoinAuth',
-                    components: {
-                        join: JoinAuth,
-                    },
-                },
-                {
-                    path: '/user/FindEmailAndPassword',
-                    name: 'FindEmailAndPassword',
-                    components: {
-                        find: FindEmailAndPassword,
-                    },
-                },
-            ],
-        },
-        {
-            path: '/profile',
-            name: 'Profile',
-            component: Profile,
-            children: [{
-                    path: '',
-                    name: 'UserPost',
-                    components: {
-                        profile: UserPost,
-                    },
-                },
-                {
-                    path: 'picture',
-                    name: 'PictureRegister',
-                    components: {
-                        picture_register: PictureRegister,
-                    },
-                },
+            },
                 {
                     path: 'comment',
                     name: 'UserComment',
@@ -145,6 +119,16 @@ export const router = new Router({
             path: '/search',
             name: 'Search',
             component: Search,
+        },
+        {
+            path: '/searchAll/:searchWord',
+            name: 'SearchAll',
+            component: SearchAll,
+        },
+        {
+            path: '/middleware',
+            name: 'Middleware',
+            component: Middleware,
         },
         {
             path: '/alarm',

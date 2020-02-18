@@ -360,7 +360,6 @@ export default {
                         res => {
                             this.isSubmit = true;
                             alert('가입이 완료되었습니다.');
-                            this.$router.push('/');
                         },
                         error => {
                         this.isSubmit = true;
