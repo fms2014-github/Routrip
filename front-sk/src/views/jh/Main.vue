@@ -28,7 +28,7 @@
                                     <br />
                                     <span>{{ data.user.nickname }}</span>
                                 </div>
-                                <div class="else" @click="showElseBtn(data)">
+                                <div class="else" @click="showElseBtn(data, data.boardid)">
                                     <span>
                                         <i class="fas fa-ellipsis-h"></i>
                                     </span>
@@ -135,9 +135,23 @@
             <div class="modal-box">
                 <div class="box-content">
                     <button class="else-btn first">게시물로 이동</button>
+<<<<<<< HEAD
+                    <button
+                        :class="{ followBtn: !followBtn }"
+                        class="else-btn middle"
+                        @click="follow"
+                    >팔로우</button>
+                    <button
+                        :class="{ unfollowBtn: !unfollowBtn }"
+                        class="else-btn middle"
+                        @click="follow"
+                    >팔로우 취소</button>
+                    <button :class="{ myPosting: !myPosting }" class="else-btn middle" @click="updatePost">내글 수정</button>
+=======
                     <button :class="{ followBtn: !followBtn }" class="else-btn middle" @click="follow">팔로우</button>
                     <button :class="{ unfollowBtn: !unfollowBtn }" class="else-btn middle" @click="follow">팔로우 취소</button>
                     <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 수정</button>
+>>>>>>> 2dbc131b4a9e3ff4adb206a1b80664d5fca8aa84
                     <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 삭제</button>
                     <button class="else-btn last" @click="noShowElseBtn">X</button>
                 </div>
@@ -196,6 +210,7 @@ export default {
             followList: [],
             elseModalBackground: false,
             boardData: '',
+            boardId: 0,
             jwt: '',
             followBtn: false,
             unfollowBtn: false,
@@ -312,8 +327,10 @@ export default {
                     // console.log(res);
                 });
         },
-        showElseBtn(data) {
+        showElseBtn(data, boardId) {
             // console.log(data);
+            this.boardId = boardId; 
+            console.log(this.boardId)
             this.boardData = data;
             this.elseModalBackground = true;
             var uid = this.getUser.data.uid;
@@ -417,25 +434,9 @@ export default {
             // console.log(keyword);
             this.$router.push({ name: 'Search', params: { keyword: keyword } });
         },
-        // infiniteHandler($state) {
-        //     Axios.post(`${URI}/page/boardList/${this.lastDate}`).then(({ data }) => {
-        //         if (data.length > 0) {
-        //             this.cnt++;
-        //             this.lastDate = data[data.length - 1].writedate;
-        //             this.list.push(data);
-        //             this.datas = [];
-        //             for (var i = 0; i < this.list.length; ++i) {
-        //                 for (var j = 0; j < this.list[i].length; ++j) {
-        //                     this.datas.push(this.list[i][j]);
-        //                 }
-        //             }
-        //             this.showAll();
-        //             $state.loaded();
-        //         } else {
-        //             $state.complete();
-        //         }
-        //     });
-        // },
+        updatePost(){
+            this.$router.push({name: 'UpdatePost', params: {boardid: this.boardId}})
+        }
     },
 };
 </script>

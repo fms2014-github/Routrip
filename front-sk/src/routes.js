@@ -116,6 +116,11 @@ export const router = new Router({
             component: Detail,
         },
         {
+            path: '/updatePost',
+            name: 'UpdatePost',
+            component: WriteForm,
+        },
+        {
             path: '/search',
             name: 'Search',
             component: Search,
@@ -134,6 +139,6 @@ export const router = new Router({
             path: '/alarm',
             name: 'Alarm',
             component: Alarm,
-        }
+        },
     ],
 })
