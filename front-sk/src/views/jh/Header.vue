@@ -19,12 +19,21 @@
                             <div class="profile-email">{{ user.email }}</div>
                         </div>
                     </div>
-                    <div class="hambuger-menu"><i class="far fa-bell"></i><span>알림</span></div>
                     <div class="hambuger-menu">
-                        <router-link v-bind:to="{ name: 'WriteForm' }"><i class="far fa-plus-square"></i><span>글쓰기</span></router-link>
+                        <i class="far fa-bell"></i>
+                        <span>알림</span>
                     </div>
                     <div class="hambuger-menu">
-                        <a href="/profile"><i class="far fa-user"></i><span>마이페이지</span></a>
+                        <router-link v-bind:to="{ name: 'WriteForm' }">
+                            <i class="far fa-plus-square"></i>
+                            <span>글쓰기</span>
+                        </router-link>
+                    </div>
+                    <div class="hambuger-menu">
+                        <a href="/profile">
+                            <i class="far fa-user"></i>
+                            <span>마이페이지</span>
+                        </a>
                     </div>
                 </div>
             </div>
@@ -46,13 +55,24 @@
         <div class="menu">
             <div class="menu-box">
                 <span class="menu-icon">
-                    <router-link v-bind:to="{ name: 'WriteForm' }" class="btn--text"><i class="far fa-plus-square"></i></router-link>
+                    <router-link v-bind:to="{ name: 'WriteForm' }" class="btn--text">
+                        <i class="far fa-plus-square"></i>
+                    </router-link>
                 </span>
             </div>
             <div class="menu-box">
-                <span class="menu-icon">
-                    <i class="far fa-bell"></i>
-                </span>
+                <div>
+                    <span class="menu-icon">
+                        <i class="far fa-bell"></i>
+                    </span>
+                </div>
+                <div class="wobble-hor-top">
+                    <span class="menu-icon">
+                        <i class="fas fa-bell shake-bell"></i>
+                    </span>
+                </div>
+
+                <!-- <div class="alarm"></div> -->
             </div>
             <div class="menu-box mypage" @click="toggleDropBox">
                 <span class="menu-icon">
@@ -60,13 +80,16 @@
                 </span>
                 <div class="drop-box" :class="{ dropBox: !dropBox }">
                     <!-- <div><router-link :to="{ name: 'Profile' }">마이페이지</router-link></div> -->
-                    <div><a href="/profile">마이페이지</a></div>
+                    <div>
+                        <a href="/profile">마이페이지</a>
+                    </div>
                     <div @click="logout">로그아웃</div>
                 </div>
             </div>
         </div>
     </div>
 </template>
+
 <script>
 import '../../assets/css/main/header.scss';
 import { createNamespacedHelpers } from 'vuex';
@@ -77,14 +100,14 @@ const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
 const userMapActions = createNamespacedHelpers('User').mapActions;
 const URI = 'http://192.168.100.70:8083/';
+
 export default {
     created() {
         this.jwt = localStorage.getItem('routrip_JWT');
         Axios.post(`${URI}/account/decode`, { jwt: this.jwt }).then(res => {
             this.user = res.data;
-            console.log(res.data);
+            // console.log(res.data);
         });
-        window.addEventListener('scroll', this.scrollY);
     },
     computed: {
         ...userMapState(['User']),
