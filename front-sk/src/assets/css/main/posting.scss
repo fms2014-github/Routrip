@@ -159,6 +159,7 @@ $desktop: 'screen and (min-width : 1025px)';
         padding-bottom: 10px;
         border-bottom: 1px solid rgba(00, 00, 00, 0.2);
         max-height: 80px;
+        width: 100%;
         overflow-y: scroll;
 
         .keyword {

@@ -82,7 +82,7 @@ export default {
         this.jwt = localStorage.getItem('routrip_JWT');
         Axios.post(`${URI}/account/decode`, { jwt: this.jwt }).then(res => {
             this.user = res.data;
-            console.log(res.data);
+            // console.log(res.data);
         });
         window.addEventListener('scroll', this.scrollY);
     },
