@@ -3,13 +3,13 @@ uid int primary key auto_increment, 회원 식별자
 nickname varchar(20) not null, 닉네임
 name varchar(20), 이름
 email varchar(50), 이메일(아이디 대용)
-password varchar(50), 비밀번호
+password varchar(500), 비밀번호
 phone varchar(20), 전화번호
 birth date, 생년월일
 profileImg varchar(500) default 'https://i.imgur.com/CRuieow.png', 프로필 사진
 loginApi int not null default 0, 로그인api 종류(카카오1, 구글2, 네이버3)
 userkey varchar(10) not null, 유저 인증여부(인증되있으면 Y 라 됨)
-userid varchar(20) sns로그인 유저 식별자
+userid varchar(500) sns로그인 유저 식별자
 );
 
 create table follow(
@@ -104,7 +104,8 @@ commentid int, 어느 코멘트인가
 follow int, 누가 날 팔로우했는가
 alarmtype int not null, 알림타입(팔로우1, 댓글2, 대댓글3, 팔로잉한글4)
 nickname varchar(20), 알림오도록 행동한 주체의 닉네임
-time datetime not null 알림 생긴 시간
+time datetime not null, 알림 생긴 시간
+isread boolean not null default fasle 알림 읽었나 여부
 );
 
 create table token(

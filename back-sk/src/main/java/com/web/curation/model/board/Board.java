@@ -27,6 +27,7 @@ public class Board {
 	private String content;
 	private String info;
 	private String cusInfo;
+	private String scrapdate;
 
 	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword,
 			List<String> keywords, int unveiled, List<Comment> comments,
@@ -232,6 +233,14 @@ public class Board {
 
 	public void setKeywords(List<String> keywords) {
 		this.keywords = keywords;
+	}
+
+	public String getScrapdate() {
+		return scrapdate;
+	}
+
+	public void setScrapdate(String scrapdate) {
+		this.scrapdate = scrapdate;
 	}
 
 	@Override

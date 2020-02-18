@@ -22,6 +22,7 @@ public interface IUserDao {
      User findUserByUserId(String userid, int loginApi) throws Exception;
      User findUserSimple(int uid) throws Exception;
      int deleteUserNoJoin(int uid) throws Exception;
+     List<User> findUserByLoginApi(int loginApi) throws Exception;
      
      int addFollow(int following, int follower) throws Exception;
      int deleteFollow(int following, int follower) throws Exception;
@@ -37,4 +38,5 @@ public interface IUserDao {
      List<Alarm> getAlarm(int uid) throws Exception;
      int deleteAlarm(int alarmid) throws Exception;
      int deleteAlarmAll(int uid) throws Exception;
+     int updateAlarm(int uid) throws Exception;
  }
