@@ -86,6 +86,8 @@ latitude varchar(1000) not null, 마커 위도
 longitude varchar(1000) not null, 마커 경도
 overlaytype varchar(100) not null, 마커모양
 radius double, 원일 경우 반지름
+rx double, 사각형일 경우 x
+ry double, 사각형일 경우 y
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade
 );
