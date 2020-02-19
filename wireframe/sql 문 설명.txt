@@ -101,11 +101,18 @@ alarmid int primary key auto_increment, 알림 식별자
 uid int not null, 알림 받을 uid
 boardid int, 어느 글 관련인가
 commentid int, 어느 코멘트인가
-follow int, 누가 날 팔로우했는가
-alarmtype int not null, 알림타입(팔로우1, 댓글2, 대댓글3, 팔로잉한글4)
-nickname varchar(20), 알림오도록 행동한 주체의 닉네임
+alarmtype int not null, 알림타입(팔로우1, 댓글2, 대댓글3, 팔로잉한글4, 좋아요5)
+actionid int, 알림오도록 행동한 주체의 uid
 time datetime not null, 알림 생긴 시간
-isread boolean not null default fasle 알림 읽었나 여부
+isread boolean not null default fasle, 알림 읽었나 여부
+foreign key(uid)
+references user(uid) on update cascade on delete cascade,
+foreign key(actionid)
+references user(uid) on update cascade on delete cascade,
+foreign key(boardid)
+references board(boardid) on update cascade on delete cascade,
+foreign key(commentid)
+references user(commentid) on update cascade on delete cascade
 );
 
 create table token(

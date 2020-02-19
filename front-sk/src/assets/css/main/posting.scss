@@ -52,30 +52,22 @@ $desktop: 'screen and (min-width : 1025px)';
 
         li {
             @media #{$iPad} {
-                width: 98vw;
-            }
-
-            @media #{$iPadPro} {
                 width: 90vw;
             }
 
-            @media #{$desktop} {
-                width: 45vw;
+            @media #{$iPadPro, $desktop} {
+                width: 550px;
             }
         }
     }
 
     .hooper-pagination {
         @media #{$iPad} {
-            width: 98vw;
-        }
-
-        @media #{$iPadPro} {
             width: 90vw;
         }
 
-        @media #{$desktop} {
-            width: 45vw;
+        @media #{$iPadPro, $desktop} {
+            width: 550px;
         }
 
         .hooper-indicators {
@@ -112,18 +104,13 @@ $desktop: 'screen and (min-width : 1025px)';
 
     img {
         @media #{$iPad} {
-            width: 98vw;
+            width: 90vw;
             height: 61vw;
         }
 
-        @media #{$iPadPro} {
-            width: 90vw;
-            height: 56vw;
-        }
-
-        @media #{$desktop} {
-            width: 45vw;
-            height: 28vw;
+        @media #{$iPadPro, $desktop} {
+            width: 550px;
+            height: 343px;
         }
     }
 }

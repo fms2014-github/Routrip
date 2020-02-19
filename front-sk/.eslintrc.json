@@ -4,10 +4,7 @@
         "es6": true,
         "node": true
     },
-    "extends": [
-        "plugin:vue/recommended",
-        "prettier/vue"
-    ],
+    "extends": ["eslint:recommended", "plugin:vue/essential"],
     "globals": {
         "Atomics": "readonly",
         "SharedArrayBuffer": "readonly"
@@ -16,11 +13,8 @@
         "ecmaVersion": 2018,
         "sourceType": "module"
     },
-    "plugins": [
-        "vue"
-    ],
+    "plugins": ["vue"],
     "rules": {
-        "no-unused-vars": 0,
-        "indent": ["error", 2]
+        "no-unused-vars": 0
     }
 }
