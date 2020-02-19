@@ -164,6 +164,8 @@ export default {
                 }
             });
             setTimeout(() => {
+                let clear = document.getElementsByClassName('note-editable')[0].querySelector('p')
+                clear.parentNode.removeChild(clear)
                 // eslint-disable-next-line no-undef
                 $('#summernote').summernote('pasteHTML',this.content)
             }, 1000);
@@ -285,9 +287,9 @@ export default {
         submit() {
             // eslint-disable-next-line no-undef
             var markupStr = $('#summernote').summernote('code');
-            var mapData = kakaoMap.getTest();
+            var mapData = kakaoMap.submitData();
             var tempKeyword = ''
-            console.log('data', kakaoMap.getTest())
+            console.log('data', kakaoMap.submitData())
             // console.log('areasTag', Object.keys(this.areas));
             // console.log('keywords', Object.keys(this.keywords));
             // console.log('title', this.title);
@@ -318,6 +320,7 @@ export default {
             if(!this.updataPost){
                 Axios.post(`${URI}/page/board/`, sendData).then(res =>{
                     console.log(res)
+                    kakaoMap.init()
                     this.$router.push('/main')
                 }).catch(error=>{
                     console.log(error)
@@ -325,6 +328,7 @@ export default {
             }else{
                 Axios.put(`${URI}/page/board/`, sendData).then(res =>{
                     console.log('put', res)
+                    kakaoMap.init()
                     this.$router.push('/main')
                 }).catch(error=>{
                     console.log('put', error)
