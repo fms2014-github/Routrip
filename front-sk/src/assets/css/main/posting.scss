@@ -220,12 +220,17 @@ $desktop: 'screen and (min-width : 1025px)';
                     width: 100%;
                 }
 
-                span {
-                    white-space: pre-line !important;
-                    overflow: hidden;
-                    text-overflow: ellipsis;
-                    white-space: nowrap;
+                .writer-text {
+                    width: 100%;
+
+                    span {
+                        white-space: pre-line !important;
+                        // overflow: scroll;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
+                    }
                 }
+
 
                 .writer {
                     margin-bottom: 5px;
