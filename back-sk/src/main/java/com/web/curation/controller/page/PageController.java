@@ -80,7 +80,7 @@ public class PageController {
 				Alarm alarm = new Alarm();
 				alarm.setUid(u.getUid());
 				alarm.setActionid(uid);
-				alarm.setBoardid(boardid);
+				alarm.setBoardid(String.valueOf(boardid));
 				alarm.setAlarmtype(5);
 				userService.addAlarm(alarm);
 				return new ResponseEntity<>(HttpStatus.OK);
@@ -233,40 +233,6 @@ public class PageController {
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
-	@PostMapping("/followBoard")
-	@ApiOperation(value = "팔로우 게시글")
-	public Object followboard(@RequestBody Map<String, String> map) throws Exception {
-		String jwt = map.get("jwt");
-		if (isOkJwt(jwt)) {
-			List<Board> boards = boardService
-					.findBoardByFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
-			for (Board b : boards) {
-				List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-				b.setImgs(imgs);
-				List<Comment> comments = boardService.findComment(b.getBoardid());
-				for (Comment c : comments) {
-					c.setUser(userService.findUserSimple(c.getUid()));
-				}
-				b.setCommentNum(comments.size());
-				int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
-				boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
-				b.setFavoriteNum(favoriteNum);
-				b.setMarkers(boardService.findMarker(b.getBoardid()));
-				b.setComments(comments);
-				List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
-				List<User> users = new ArrayList<User>();
-				for (int ui : usersid)
-					users.add(userService.findUserSimple(ui));
-				b.setFavorite(users);
-				b.setUser(userService.findUserSimple(b.getUid()));
-				if (b.getKeyword() != null)
-					b.setKeywords(b.getKeyword());
-			}
-			return new ResponseEntity<>(boards, HttpStatus.OK);
-		}
-		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-	}
-
 	@PostMapping("/boardDetail")
 	@ApiOperation(value = "게시글 상세 정보")
 	public Object getBoardDetail(@RequestBody Map<String, String> map) throws Exception {
@@ -307,7 +273,6 @@ public class PageController {
 	@PostMapping("/board")
 	@ApiOperation(value = "게시글 작성")
 	public Object addBoard2(@RequestBody Map<String, Object> map) throws Exception {
-		System.out.println("게시글 작성 시작");
 		String jwt = (String) map.get("jwt");
 		if (jwt == null || !isOkJwt(jwt))
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
@@ -452,11 +417,10 @@ public class PageController {
 				Alarm alarm = new Alarm();
 				alarm.setUid(i);
 				alarm.setActionid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
-				alarm.setBoardid(board.getBoardid());
+				alarm.setBoardid(String.valueOf(board.getBoardid()));
 				alarm.setAlarmtype(4);
 				userService.addAlarm(alarm);
 			}
-			System.out.println("게시글 작성 완료");
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -465,7 +429,6 @@ public class PageController {
 	@PutMapping("/board")
 	@ApiOperation(value = "게시글 수정")
 	public Object updateBoard(@RequestBody Map<String, Object> map) throws Exception {
-		System.out.println("게시글 수정 시작");
 		String jwt = (String) map.get("jwt");
 		if (jwt == null || !isOkJwt(jwt))
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
@@ -607,7 +570,6 @@ public class PageController {
 			}
 		}
 		if (ok > 0) {
-			System.out.println("게시글 수정 완료");
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -641,74 +603,7 @@ public class PageController {
 		}
 		return new ResponseEntity<>(boards, HttpStatus.OK);
 	}
-
-	@PostMapping("/boardList/{lastDate}")
-	@ApiOperation(value = "게시글 전체보기(날짜구분/4개씩)")
-	public Object postBoardList(@PathVariable String lastDate) throws Exception {
-		if (lastDate == null || lastDate.equals("0")) {
-			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			lastDate = format1.format(new Date());
-		}
-		List<Board> boards = boardService.getBoardList5(lastDate);
-		for (Board b : boards) {
-			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-			b.setImgs(imgs);
-			List<Comment> comments = boardService.findComment(b.getBoardid());
-			for (Comment c : comments) {
-				c.setUser(userService.findUserSimple(c.getUid()));
-			}
-			b.setCommentNum(comments.size());
-			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
-			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
-			b.setFavoriteNum(favoriteNum);
-			b.setMarkers(boardService.findMarker(b.getBoardid()));
-			b.setComments(comments);
-			List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
-			List<User> users = new ArrayList<User>();
-			for (int ui : usersid)
-				users.add(userService.findUserSimple(ui));
-			b.setFavorite(users);
-			b.setUser(userService.findUserSimple(b.getUid()));
-			if (b.getKeyword() != null)
-				b.setKeywords(b.getKeyword());
-		}
-		return new ResponseEntity<>(boards, HttpStatus.OK);
-	}
-
-	@PostMapping("/boardList")
-	@ApiOperation(value = "게시글 전체보기(날짜구분)")
-	public Object BoardList(@RequestBody Map<String, String> map) throws Exception {
-		String lastDate = map.get("lastDate");
-		if (lastDate == null || lastDate.equals("0")) {
-			SimpleDateFormat format1 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-			lastDate = format1.format(new Date());
-		}
-		List<Board> boards = boardService.getBoardListByLastWrite(lastDate);
-		for (Board b : boards) {
-			List<Img> imgs = boardService.findBoardImg(b.getBoardid());
-			b.setImgs(imgs);
-			List<Comment> comments = boardService.findComment(b.getBoardid());
-			for (Comment c : comments) {
-				c.setUser(userService.findUserSimple(c.getUid()));
-			}
-			b.setCommentNum(comments.size());
-			int favoriteNum = boardService.getFavoriteNum(b.getBoardid());
-			boardService.updateFavoriteNum(b.getBoardid(), favoriteNum);
-			b.setFavoriteNum(favoriteNum);
-			b.setMarkers(boardService.findMarker(b.getBoardid()));
-			b.setComments(comments);
-			List<Integer> usersid = boardService.getFavoriteByBoard(b.getBoardid());
-			List<User> users = new ArrayList<User>();
-			for (int ui : usersid)
-				users.add(userService.findUserSimple(ui));
-			b.setFavorite(users);
-			b.setUser(userService.findUserSimple(b.getUid()));
-			if (b.getKeyword() != null)
-				b.setKeywords(b.getKeyword());
-		}
-		return new ResponseEntity<>(boards, HttpStatus.OK);
-	}
-
+	
 	@GetMapping("/bestBoard")
 	@ApiOperation(value = "베스트 게시글")
 	public Object bestBoard() throws Exception {
@@ -786,7 +681,7 @@ public class PageController {
 					}
 				}
 			}
-			if (flag) {// 보드 정보를 다 모아서 목록에 넣는다
+			if (flag) {
 				List<Img> imgs = boardService.findBoardImg(b.getBoardid());
 				b.setImgs(imgs);
 				List<Comment> comments = boardService.findComment(b.getBoardid());
@@ -893,8 +788,8 @@ public class PageController {
 						: boardService.findCommentByCommentid(comment.getListener()).getUid());
 				if (comment.getListener() > 0)
 					comment.getCommentid();
-				alarm.setCommentid(comment.getCommentid());
-				alarm.setBoardid(comment.getBoardid());
+				alarm.setCommentid(String.valueOf(comment.getCommentid()));
+				alarm.setBoardid(String.valueOf(comment.getBoardid()));
 				alarm.setAlarmtype(comment.getListener() == 0 ? 2 : 3);
 				alarm.setActionid((int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid"));
 				userService.addAlarm(alarm);
@@ -961,7 +856,6 @@ public class PageController {
 			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
 
 			List<String> exps = userService.findBlackListByUid(uid);
-			// 최신 로그인 이전 시점 인증 실패
 			if (exps != null) {
 				for (String e : exps) {
 					if (exp.getTime() < format.parse(e).getTime()) {
@@ -971,9 +865,9 @@ public class PageController {
 				}
 			}
 			if (userService.findBlackList(uid,
-					format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration())) > 0)
-				// 블랙 리스트에 있으면 인증 실패
+					format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration())) > 0) {
 				return false;
+			}
 		} catch (ExpiredJwtException e1) {
 			System.out.println("토큰 기간 만료");
 			return false;
