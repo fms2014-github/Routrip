@@ -267,6 +267,7 @@ export default {
                             for (var i = 0; i < res.data.length; ++i) {
                                 this.scrapList.push(res.data[i].boardid);
                             }
+
                             Axios.get(`${URI}/page/boardList`)
                                 .then(res => {
                                     this.datas = res.data;

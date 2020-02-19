@@ -5,11 +5,10 @@
 a:visited { text-decoration: none; color:black; }
 // a:hover { text-decoration: none; }
 // a:focus { text-decoration: none; }
-a:hover, a:active { text-decoration: none; color: dodgerblue;}
-
 
 
 .gallery {
+	
 	display: flex;
     flex-wrap: wrap;
     margin: -1rem -1rem;
@@ -17,43 +16,63 @@ a:hover, a:active { text-decoration: none; color: dodgerblue;}
 	padding: 2.7rem;
 }
 
+.one{
+	border-style: double;
+	border-color: rgba($color: #d4d8e6, $alpha: 1.0);
+	padding: 20px 20px 20px 20px;
+}
+
+.one:hover{
+	
+	transition: 0.3s;
+	background-color: rgba($color: #7bbfc8, $alpha: 1.0);
+
+	.card-header-title {
+		text-decoration: none; color: rgba($color: #ffffff, $alpha: 1.0)
+	}
+}
+
+// .one .card-header-title:hover { text-decoration: none; color: rgb(255, 255, 255);}
+
 
 .card{
-	width: 352px;
-	height: 234px;
+	// width: 352px;
+	// height: 234px;
+	width: auto;
+	height: auto;
 	position: relative;
-    flex: 1 0 22rem;
-    margin: 2rem;
-    cursor: pointer;
+	flex: 1 0 22rem;
+	margin: 2rem;
+	cursor: pointer;
 }
 	
 
-.card-header{
-	display:flex;
-	width:100%;
-	height:20px;
-	max-height:30px;
-	align-items:center;
-	justify-content:space-between;
-	flex: 1 0 auto;
+// .card-header{
+// 	display:flex;
+// 	width:100%;
+// 	height:20px;
+// 	max-height:30px;
+// 	align-items:center;
+// 	justify-content:space-between;
+// 	flex: 1 0 auto;
 	
-	i{
-		color:black;
-		padding-right:25px;
-	}
+// 	i{
+// 		color:black;
+// 		padding-right:25px;
+// 	}
 	
 	h1.card-header-title{
 		padding-left:25px;
 		margin:0;
 		color:black;
-		line-height:45px;
+		line-height:40px;
 		font-weight:400;
 	}
-}
+ 
 
 .card-image{
 	display: block;
-	width: 352px;
+	width: 389px;
 	height: 234px;
 	margin-left: auto;
 	margin-right: auto;
@@ -108,11 +127,11 @@ div.card-footer{
 }
 
 .keywords {
-	width:350px;
-	padding-bottom: 10px;
+	width:390px;
+	padding-bottom: 0px;
 	border-bottom: 1px solid rgba(00, 00, 00, 0.2);
 	max-height: 80px;
-	overflow-y: scroll;
+	overflow-x: scroll;
 	//스크롤의 좌우 길이 조정필요.
 	
 	.keyword {
@@ -120,19 +139,21 @@ div.card-footer{
 		text-align: left;
 		font-size: 16px;
 		display: inline-block;
-		border-radius: 0 10px 10px 10px;
+		border-radius: 10px 10px 10px 10px;
 		color: black;
-		padding: 5px;
-		margin: 0 3px;
+		padding: 2px;
+		
+		margin: 0 5px;
 		cursor: pointer;
 	}
 
 	.keyword:hover {
 		color: black;
-		background-color: #ece0f8;
+		background-color: #ffffff;
 		box-shadow: 0 3px 5px 1px rgba(0, 0, 0, 0.25);
 	}
 }
+
 
  
 div.row{
@@ -142,7 +163,7 @@ div.row{
 	margin-top:100px;	
 }
 
-@supports (display: grid) {
+@supports (display: grid) { 
 	.gallery {
 		display: grid;
 		grid-template-columns: repeat(auto-fit, minmax(22rem, 1fr));
