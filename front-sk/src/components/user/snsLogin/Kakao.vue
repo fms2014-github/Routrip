@@ -29,21 +29,22 @@ import Kakao from './kakao.js';
 export default {
     data: () => {
         return {
-            init: true,
+            init: false,
             checkLogin: false,
         };
     },
     mounted() {
-        if (this.init) {
+        if (!this.init) {
             Kakao.init('cffc768e4739655aab323adbd9eb2633');
             this.init = Kakao.isInitialized();
+            console.log("KAKAO INIT? ", this.init);
         }
     },
     watch: {
         checkLogin: function() {
             if (this.checkLogin) {
-                this.checkLogin = false;
                 this.$emit('loginOrJoin', 1);
+                this.checkLogin = false;
             }
         },
     },
@@ -67,7 +68,6 @@ export default {
                     console(JSON.stringify(errObj));
                     alert('죄송합니다. 다시 로그인 요청 해주세요!');
                 },
-                
             });
         },
     },
