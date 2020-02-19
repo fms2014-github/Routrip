@@ -44,27 +44,25 @@ $desktop: 'screen and (min-width : 1025px)';
 
 //posting box
 .posting-box {
-    background-color: #f2f2f2;
+    background-color: white;
     padding: 3vh 0;
 
     .posting-component {
         margin: 70px 0;
         background-color: white;
+        border-radius: 20px;
+        box-shadow: 3px 2px 20px;
     }
 
     .postings {
         margin: auto;
 
         @media #{$iPad} {
-            width: 98vw;
-        }
-
-        @media #{$iPadPro} {
             width: 90vw;
         }
 
-        @media #{$desktop} {
-            width: 45vw;
+        @media #{$iPadPro, $desktop} {
+            width: 550px;
         }
     }
 }

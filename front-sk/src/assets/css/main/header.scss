@@ -2,6 +2,10 @@ $iPad: 'screen and (max-width : 768px)';
 $iPadPro: 'screen and (min-width : 769px) and (max-width : 1024px) ';
 $desktop: 'screen and (min-width : 1025px)';
 
+::-webkit-scrollbar {
+    width: 0px !important;
+}
+
 .headerHeight {
     height: 60px !important;
     -webkit-transition: height 0.3s ease-in-out;
@@ -19,6 +23,7 @@ $desktop: 'screen and (min-width : 1025px)';
     z-index: 100;
     -webkit-transition: height 0.3s ease-in-out;
     transition: height 0.3s ease-in-out;
+    border-bottom: 1px solid rgba(0, 0, 0, 0.2);
 
     a:visited {
         color: black;
@@ -49,7 +54,7 @@ $desktop: 'screen and (min-width : 1025px)';
             .menu-trigger,
             .menu-trigger span {
                 display: inline-block;
-                transition: all .4s;
+                transition: all 0.4s;
                 box-sizing: border-box;
             }
 
@@ -104,14 +109,20 @@ $desktop: 'screen and (min-width : 1025px)';
         .hambuger-drop {
             padding: 30px 0 0 10px;
             position: absolute;
-            background-color: #F2F2F2;
+            background-color: white;
             left: -400px;
-            transition: all .3s;
+            transition: all 0.3s;
             font-size: 15px;
             border: 1px solid;
+            border-radius: 20px;
+
+            .profile:hover {
+                cursor: pointer;
+                color: skyblue;
+            }
 
             .profile {
-                border-bottom: 1px solid;
+                border-bottom: 1px solid rgba(0, 0, 0, 0.2);
                 width: 300px;
                 height: 80px;
                 display: flex;
@@ -119,6 +130,11 @@ $desktop: 'screen and (min-width : 1025px)';
 
                 .profile-img {
                     margin-right: 15px;
+                    border: 1px solid rgba(0, 0, 0, 0.5);
+                    padding: 2px;
+                    width: 50px;
+                    height: 50px;
+                    border-radius: 30px;
 
                     img {
                         width: 50px;
@@ -132,10 +148,23 @@ $desktop: 'screen and (min-width : 1025px)';
                 }
             }
 
+            .hambuger-menu:hover {
+                cursor: pointer;
+
+                span {
+                    color: skyblue;
+                }
+            }
+
             .hambuger-menu {
                 font-size: 20px;
                 padding: 15px 0;
                 border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+
+                img {
+                    width: 28px;
+                    height: 28px;
+                }
 
                 span {
                     margin-left: 15px;
@@ -159,7 +188,6 @@ $desktop: 'screen and (min-width : 1025px)';
                 vertical-align: middle;
             }
         }
-
 
         .menu {
             display: none;
@@ -211,8 +239,17 @@ $desktop: 'screen and (min-width : 1025px)';
             .menu-box {
                 position: relative;
 
+                .isread {
+                    background-color: rgba(150, 150, 150, 0.7) !important;
+                }
+
+                img {
+                    width: 38px;
+                    height: 38px;
+                }
+
                 .shake-bell {
-                    color: #FACC2E;
+                    color: #facc2e;
                 }
 
                 .alarm {
@@ -229,47 +266,129 @@ $desktop: 'screen and (min-width : 1025px)';
                     text-align: center;
                     font-size: 0.9em;
                 }
+
+                .dtoggle2 {
+                    display: none;
+                }
+
+                .alarm-drop-box {
+                    position: absolute;
+                    width: 450px;
+                    height: 400px;
+                    overflow-y: scroll;
+                    bottom: -415px;
+                    left: -280px;
+                    border-radius: 20px;
+
+                    .alarm-box {
+                        width: 100%;
+                        height: 60px;
+                        color: white;
+                        display: flex;
+                        align-items: center;
+                        background-color: rgba(0, 0, 0, 0.8);
+
+                        .profile-img {
+                            margin: 0 20px;
+
+                            img {
+                                width: 45px;
+                                height: 45px;
+                                border-radius: 30px;
+                            }
+                        }
+
+                        .alarm-info {
+                            .text-time {
+                                width: 350px;
+                                display: flex;
+                                justify-content: space-between;
+                                margin-bottom: 5px;
+
+                                .alarm-text {
+                                    width: 73% !important;
+                                }
+
+                                .alarm-alarmtime {
+                                    // position: absolute;
+                                    right: 10px;
+                                }
+
+                                .delete-alarm {
+                                    color: #ffc0cb;
+                                    cursor: pointer;
+                                }
+                            }
+                        }
+                    }
+                }
             }
 
             .mypage {
                 position: relative;
 
-                .profile-img {
-                    vertical-align: middle;
+                .profile-img-box {
+                    border: 1px solid rgba(0, 0, 0, 0.4);
                     width: 45px;
                     height: 45px;
                     border-radius: 45px;
+                    padding: 2px;
+
+                    .profile-img {
+                        vertical-align: middle;
+                        width: 45px;
+                        height: 45px;
+                        border-radius: 45px;
+                    }
                 }
 
                 .dropBox {
-                    display: none;
+                    opacity: 0 !important;
+                    visibility: hidden;
                 }
 
                 .drop-box {
-                    z-index: 100;
+                    opacity: 1;
+                    padding-left: 20px;
+                    background-color: white;
+                    transition: all 0.3s;
+                    font-size: 15px;
                     position: absolute;
-                    left: -55px;
+                    left: -90px;
                     top: 50px;
+                    border: 1px solid;
+                    border-radius: 20px;
                     cursor: pointer;
 
-                    div {
-                        background-color: #F2F2F2;
+                    .drop-box-menu:hover {
+                        color: skyblue;
+                    }
+
+                    .drop-box-menu {
+                        padding: 10px;
                         width: 160px;
-                        height: 35px;
-                        text-align: center;
+                        height: 40px;
                         color: black;
                         padding-top: 20px;
                         font-size: 1.1em;
                         margin-bottom: 1px;
+                        border-bottom: 1px solid rgba(0, 0, 0, 0.2);
+
+                        span {
+                            margin-left: 20px;
+                        }
+
+                        img {
+                            width: 30px;
+                            height: 30px;
+                        }
                     }
 
-                    div a {
+                    .drop-box-menu a {
                         color: black;
                     }
                 }
             }
-
-
         }
     }
 
@@ -280,80 +399,77 @@ $desktop: 'screen and (min-width : 1025px)';
     }
 }
 
-
 .wobble-hor-top {
-    -webkit-animation: wobble-hor-top .8s both;
-    animation: wobble-hor-top .8s both
+    -webkit-animation: wobble-hor-top 0.2s both;
+    animation: wobble-hor-top 0.2s both;
 }
 
 @-webkit-keyframes wobble-hor-top {
-
     0%,
     100% {
         -webkit-transform: translateX(0);
         transform: translateX(0);
         -webkit-transform-origin: 50% 50%;
-        transform-origin: 50% 50%
+        transform-origin: 50% 50%;
     }
 
     15% {
         -webkit-transform: translateX(-30px) rotate(6deg);
-        transform: translateX(-30px) rotate(6deg)
+        transform: translateX(-30px) rotate(6deg);
     }
 
     30% {
         -webkit-transform: translateX(15px) rotate(-6deg);
-        transform: translateX(15px) rotate(-6deg)
+        transform: translateX(15px) rotate(-6deg);
     }
 
-    45% {
-        -webkit-transform: translateX(-15px) rotate(3.6deg);
-        transform: translateX(-15px) rotate(3.6deg)
-    }
+    // 45% {
+    //     -webkit-transform: translateX(-15px) rotate(3.6deg);
+    //     transform: translateX(-15px) rotate(3.6deg)
+    // }
 
     60% {
         -webkit-transform: translateX(9px) rotate(-2.4deg);
-        transform: translateX(9px) rotate(-2.4deg)
+        transform: translateX(9px) rotate(-2.4deg);
     }
 
     75% {
         -webkit-transform: translateX(-6px) rotate(1.2deg);
-        transform: translateX(-6px) rotate(1.2deg)
+        transform: translateX(-6px) rotate(1.2deg);
     }
 }
 
 @keyframes wobble-hor-top {
-
     0%,
     100% {
         -webkit-transform: translateX(0);
         transform: translateX(0);
         -webkit-transform-origin: 50% 50%;
-        transform-origin: 50% 50%
+        transform-origin: 50% 50%;
     }
 
     15% {
         -webkit-transform: translateX(-30px) rotate(6deg);
-        transform: translateX(-30px) rotate(6deg)
+        transform: translateX(-30px) rotate(6deg);
     }
 
     30% {
         -webkit-transform: translateX(15px) rotate(-6deg);
-        transform: translateX(15px) rotate(-6deg)
+        transform: translateX(15px) rotate(-6deg);
     }
 
-    45% {
-        -webkit-transform: translateX(-15px) rotate(3.6deg);
-        transform: translateX(-15px) rotate(3.6deg)
-    }
+    // 45% {
+    //     -webkit-transform: translateX(-15px) rotate(3.6deg);
+    //     transform: translateX(-15px) rotate(3.6deg)
+    // }
 
     60% {
         -webkit-transform: translateX(9px) rotate(-2.4deg);
-        transform: translateX(9px) rotate(-2.4deg)
+        transform: translateX(9px) rotate(-2.4deg);
     }
 
     75% {
         -webkit-transform: translateX(-6px) rotate(1.2deg);
-        transform: translateX(-6px) rotate(1.2deg)
+        transform: translateX(-6px) rotate(1.2deg);
     }
 }
