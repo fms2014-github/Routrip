@@ -262,7 +262,6 @@ public class PageController {
 			for (int ui : usersid)
 				users.add(userService.findUserSimple(ui));
 			board.setFavorite(users);
-			board.setTripterm(board.getTripterm().split(" ")[0]+"박 "+board.getTripterm().split(" ")[1]+"일");
 			board.setUser(userService.findUserSimple(board.getUid()));
 			if (board.getKeyword() != null)
 				board.setKeywords(board.getKeyword());
