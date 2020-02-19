@@ -38,4 +38,6 @@ public interface IUserService {
     int deleteAlarm(int alarmid) throws Exception;
     int deleteAlarmAll(int uid) throws Exception;
     int updateAlarm(int uid) throws Exception;
+    List<Alarm> getAlarmNoRead(int uid) throws Exception;
+    int updateAlarmByAlarmId(int alarmid) throws Exception;
 }

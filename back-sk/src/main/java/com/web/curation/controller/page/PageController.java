@@ -74,8 +74,17 @@ public class PageController {
 			}
 			if (flag)
 				ok = boardService.addFavorite(uid, boardid);
-			if (ok > 0)
+			if (ok > 0) {
+				Board b = boardService.findBoardByBoardId(boardid);
+				User u = userService.findUserSimple(b.getUid());
+				Alarm alarm = new Alarm();
+				alarm.setUid(u.getUid());
+				alarm.setActionid(uid);
+				alarm.setBoardid(boardid);
+				alarm.setAlarmtype(5);
+				userService.addAlarm(alarm);
 				return new ResponseEntity<>(HttpStatus.OK);
+			}
 		} else {
 			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
@@ -442,10 +451,9 @@ public class PageController {
 			for (int i : follower) {
 				Alarm alarm = new Alarm();
 				alarm.setUid(i);
+				alarm.setActionid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 				alarm.setBoardid(board.getBoardid());
 				alarm.setAlarmtype(4);
-				alarm.setNickname(userService
-						.findUserByUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid")).getNickname());
 				userService.addAlarm(alarm);
 			}
 			System.out.println("게시글 작성 완료");
@@ -471,10 +479,10 @@ public class PageController {
 		board.setKeyword((String) map.get("keywords"));
 		board.setContent((String) map.get("content"));
 		board.setInfo(JSONStringer.valueToString(map.get("info")));
-		board.setCusInfo((String) map.get(JSONStringer.valueToString(map.get("cusInfo"))));
+		board.setCusInfo((String) JSONStringer.valueToString(map.get("cusInfo")));
 		board.setUnveiled(1);
 		int ok = boardService.updateBoard(board);
-		boardService.deleteImgByBoardid(board.getBoardid());// 싹 다 날리고 새로 추가한다
+		boardService.deleteImgByBoardid(board.getBoardid());
 		boardService.deleteMarkerByBoardid(board.getBoardid());
 		for (String key : map.keySet()) {
 			if (key.equals("jwt") || key.equals("title") || key.equals("night") || key.equals("day")
@@ -885,9 +893,10 @@ public class PageController {
 						: boardService.findCommentByCommentid(comment.getListener()).getUid());
 				if (comment.getListener() > 0)
 					comment.getCommentid();
+				alarm.setCommentid(comment.getCommentid());
 				alarm.setBoardid(comment.getBoardid());
 				alarm.setAlarmtype(comment.getListener() == 0 ? 2 : 3);
-				alarm.setNickname(userService.findUserByUid(comment.getUid()).getNickname());
+				alarm.setActionid((int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid"));
 				userService.addAlarm(alarm);
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
@@ -908,8 +917,8 @@ public class PageController {
 
 	@DeleteMapping("/board")
 	@ApiOperation(value = "게시글 삭제")
-	public Object deleteBoard(@RequestBody String boardid) throws Exception {
-		int ok = boardService.deleteBoard(Integer.parseInt(boardid));
+	public Object deleteBoard(@RequestBody Map<String, String> map) throws Exception {
+		int ok = boardService.deleteBoard(Integer.parseInt(map.get("boardid")));
 		if (ok > 0)
 			return new ResponseEntity<>(HttpStatus.OK);
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);

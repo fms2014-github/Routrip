@@ -10,30 +10,36 @@
             </div>
             <div :class="{ dtoggle1: dtoggle1 }">
                 <div class="hambuger-drop">
-                    <div class="profile">
-                        <div class="profile-img">
-                            <img :src="user.profileImg" />
+                    <a href="/profile">
+                        <div class="profile">
+                            <div class="profile-img">
+                                <img :src="user.profileImg" />
+                            </div>
+                            <div class="profile-info">
+                                <div class="profile-nickname">{{ user.nickname }}</div>
+                                <div class="profile-email">{{ user.email }}</div>
+                            </div>
                         </div>
-                        <div class="profile-info">
-                            <div class="profile-nickname">{{ user.nickname }}</div>
-                            <div class="profile-email">{{ user.email }}</div>
-                        </div>
-                    </div>
+                    </a>
+
                     <div class="hambuger-menu">
-                        <i class="far fa-bell"></i>
+                        <!-- <i class="far fa-bell"></i> -->
+                        <img src="../../assets/images/bell.png" alt />
                         <span>알림</span>
                     </div>
                     <div class="hambuger-menu">
                         <router-link v-bind:to="{ name: 'WriteForm' }">
-                            <i class="far fa-plus-square"></i>
+                            <!-- <i class="far fa-plus-square"></i> -->
+                            <img src="../../assets/images/pencil.png" alt />
                             <span>글쓰기</span>
                         </router-link>
                     </div>
                     <div class="hambuger-menu">
-                        <a href="/profile">
-                            <i class="far fa-user"></i>
-                            <span>마이페이지</span>
-                        </a>
+                        <div @click="logout">
+                            <!-- <i class="far fa-user"></i> -->
+                            <img src="../../assets/images/exit.png" alt />
+                            <span>로그아웃</span>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -56,34 +62,57 @@
             <div class="menu-box">
                 <span class="menu-icon">
                     <router-link v-bind:to="{ name: 'WriteForm' }" class="btn--text">
-                        <i class="far fa-plus-square"></i>
+                        <!-- <i class="far fa-plus-square"></i> -->
+                        <img src="../../assets/images/pencil.png" alt />
                     </router-link>
                 </span>
             </div>
             <div class="menu-box">
-                <div>
-                    <span class="menu-icon">
-                        <i class="far fa-bell"></i>
-                    </span>
-                </div>
                 <div class="wobble-hor-top">
                     <span class="menu-icon">
-                        <i class="fas fa-bell shake-bell"></i>
+                        <img src="../../assets/images/bell.png" @click="dropAlarm" />
                     </span>
                 </div>
-
-                <!-- <div class="alarm"></div> -->
+                <div class="alarm-drop-box" :class="{dtoggle2:!dtoggle2}">
+                    <div
+                        class="alarm-box"
+                        v-for="(alarm, alarmIdx) in alarms"
+                        :key="alarmIdx"
+                        :class="{isread : alarm.isread==1}"
+                    >
+                        <div class="profile-img">
+                            <img :src="alarm.user.profileImg" alt />
+                        </div>
+                        <div class="alarm-info">
+                            <div class="text-time">
+                                <div class="alarm-text">{{alarm.text}}</div>
+                                <div class="alarm-alarmtime">{{alarm.alarmtime}}</div>
+                                <div class="delete-alarm" @click="deleteAlarm(alarm)">x</div>
+                            </div>
+                            <div
+                                v-if="alarm.alarmtype>=2 && alarm.alarmtype<=4"
+                            >" {{alarm.detail}} "</div>
+                        </div>
+                    </div>
+                </div>
             </div>
             <div class="menu-box mypage" @click="toggleDropBox">
-                <span class="menu-icon">
-                    <img class="profile-img" :src="user.profileImg" />
-                </span>
+                <div class="profile-img-box">
+                    <span class="menu-icon">
+                        <img class="profile-img" :src="user.profileImg" />
+                    </span>
+                </div>
                 <div class="drop-box" :class="{ dropBox: !dropBox }">
-                    <!-- <div><router-link :to="{ name: 'Profile' }">마이페이지</router-link></div> -->
-                    <div>
-                        <a href="/profile">마이페이지</a>
+                    <div class="drop-box-menu">
+                        <a href="/profile">
+                            <img src="../../assets/images/user2.png" alt />
+                            <span>마이페이지</span>
+                        </a>
                     </div>
-                    <div @click="logout">로그아웃</div>
+                    <div class="drop-box-menu" @click="logout">
+                        <img src="../../assets/images/exit.png" alt />
+                        <span>로그아웃</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -106,7 +135,6 @@ export default {
         this.jwt = localStorage.getItem('routrip_JWT');
         Axios.post(`${URI}/account/decode`, { jwt: this.jwt }).then(res => {
             this.user = res.data;
-            // console.log(res.data);
         });
     },
     computed: {
@@ -139,6 +167,36 @@ export default {
         toggle1() {
             this.dtoggle1 = !this.dtoggle1;
         },
+        dropAlarm() {
+            this.dtoggle2 = !this.dtoggle2;
+            if (this.dtoggle2) {
+                this.alarms = [];
+                Axios.post(`${URI}/account/alarm`, { jwt: this.jwt })
+                    .then(res => {
+                        for (var i = 0; i < res.data.length; ++i) {
+                            this.alarms.push(res.data[i]);
+                        }
+                    })
+                    .catch(res => {});
+            }
+        },
+        deleteAlarm(alarm) {
+            console.log(alarm.alarmid);
+            Axios.delete(`${URI}/account/alarm`, { data: { alarmid: alarm.alarmid } })
+                .then(res => {
+                    this.alarms = [];
+                    Axios.post(`${URI}/account/alarm`, { jwt: this.jwt })
+                        .then(res => {
+                            for (var i = 0; i < res.data.length; ++i) {
+                                this.alarms.push(res.data[i]);
+                            }
+                        })
+                        .catch(res => {});
+                })
+                .catch(res => {
+                    console.log('알람 삭제 실패');
+                });
+        },
     },
     data: () => {
         return {
@@ -149,6 +207,8 @@ export default {
             user: '',
             dropBox: false,
             dtoggle1: false,
+            dtoggle2: false,
+            alarms: [],
         };
     },
 };
