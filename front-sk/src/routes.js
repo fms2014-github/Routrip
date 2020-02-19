@@ -32,113 +32,113 @@ import Components from './views/Components.vue';
 import Alarm from './views/user/Alarm.vue';
 
 export const router = new Router({
-    mode: 'history',
-    routes: [{
-        path: '/',
-        name: 'Login',
-        component: Login,
-    },
-    {
-        path: '/profile',
-        name: 'Profile',
-        component: Profile,
-        children: [
-            {
-                path: '',
-                name: 'UserPost',
-                components: {
-                    profile: UserPost,
-                },
-            },
-                {
-                    path: 'comment',
-                    name: 'UserComment',
-                    components: {
-                        profile: UserComment,
-                    },
-                },
-                {
-                    path: 'like',
-                    name: 'UserLike',
-                    components: {
-                        profile: UserLike,
-                    },
-                },
-                {
-                    path: 'people',
-                    name: 'UserPeople',
-                    components: {
-                        profile: UserPeople,
-                    },
-                },
-                {
-                    path: 'scrap',
-                    name: 'UserScrap',
-                    components: {
-                        profile: UserScrap,
-                    },
-                },
-            ],
+  mode: 'history',
+  routes: [{
+    path: '/',
+    name: 'Login',
+    component: Login,
+  },
+  {
+    path: '/profile',
+    name: 'Profile',
+    component: Profile,
+    children: [
+      {
+        path: '',
+        name: 'UserPost',
+        components: {
+          profile: UserPost,
         },
-        {
-            path: '/user/ChangePassword',
-            name: 'ChangePassword',
-            component: ChangePassword,
+      },
+      {
+        path: 'comment',
+        name: 'UserComment',
+        components: {
+          profile: UserComment,
         },
-        {
-            path: '*',
-            name: 'PageNotFound',
-            component: PageNotFound,
+      },
+      {
+        path: 'like',
+        name: 'UserLike',
+        components: {
+          profile: UserLike,
         },
-        {
-            path: '/error',
-            name: 'ErrorPage',
-            component: ErrorPage,
+      },
+      {
+        path: 'people',
+        name: 'UserPeople',
+        components: {
+          profile: UserPeople,
         },
-        {
-            path: '/WriteForm',
-            name: 'WriteForm',
-            component: WriteForm,
+      },
+      {
+        path: 'scrap',
+        name: 'UserScrap',
+        components: {
+          profile: UserScrap,
         },
-        {
-            path: '/components',
-            name: 'Components',
-            component: Components,
-        },
-        {
-            path: '/main',
-            name: 'Main',
-            component: Main,
-        },
-        {
-            path: '/detail',
-            name: 'Detail',
-            component: Detail,
-        },
-        {
-            path: '/updatePost',
-            name: 'UpdatePost',
-            component: WriteForm,
-        },
-        {
-            path: '/search',
-            name: 'Search',
-            component: Search,
-        },
-        {
-            path: '/searchAll/:searchWord',
-            name: 'SearchAll',
-            component: SearchAll,
-        },
-        {
-            path: '/middleware',
-            name: 'Middleware',
-            component: Middleware,
-        },
-        {
-            path: '/alarm',
-            name: 'Alarm',
-            component: Alarm,
-        },
+      },
     ],
+  },
+  {
+    path: '/user/ChangePassword',
+    name: 'ChangePassword',
+    component: ChangePassword,
+  },
+  {
+    path: '*',
+    name: 'PageNotFound',
+    component: PageNotFound,
+  },
+  {
+    path: '/error',
+    name: 'ErrorPage',
+    component: ErrorPage,
+  },
+  {
+    path: '/WriteForm',
+    name: 'WriteForm',
+    component: WriteForm,
+  },
+  {
+    path: '/components',
+    name: 'Components',
+    component: Components,
+  },
+  {
+    path: '/main',
+    name: 'Main',
+    component: Main,
+  },
+  {
+    path: '/detail',
+    name: 'Detail',
+    component: Detail,
+  },
+  {
+    path: '/updatePost',
+    name: 'UpdatePost',
+    component: WriteForm,
+  },
+  {
+    path: '/search',
+    name: 'Search',
+    component: Search,
+  },
+  {
+    path: '/searchAll/:searchWord',
+    name: 'SearchAll',
+    component: SearchAll,
+  },
+  {
+    path: '/middleware',
+    name: 'Middleware',
+    component: Middleware,
+  },
+  {
+    path: '/alarm',
+    name: 'Alarm',
+    component: Alarm,
+  },
+  ],
 })

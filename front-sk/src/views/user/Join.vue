@@ -104,9 +104,9 @@
                         type="text"
                         :class="{ error: error.phone, complete: !error.phone && phone.length >= 10 }"
                         placeholder="휴대폰 번호를 입력하세요."
+                        maxlength="11"
                         @keyup.enter="submit"
                         @keyup="phone_regx"
-                        maxlength="11"
                     />
                     <label for="phone">휴대폰 번호</label>
                     <div v-if="error.phone" class="error-text">
@@ -159,240 +159,240 @@ import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
 
 export default {
-    props: {
-        snscheck: { type: Number, default: 0 },
-        snsToggle: { type: Function },
-    },
+  props: {
+    snscheck: { type: Number, default: 0 },
+    snsToggle: { type: Function },
+  },
 
-    data: () => {
-        return {
-            JoinEmail: '',
-            password: '',
-            passwordConfirm: '',
-            passwordSchema: new PV(),
-            nickname: '',
-            JoinName: '',
-            birth: '',
-            phone: '',
-            isTerm: false,
-            isLoading: false,
-            error: {
-                phone: false,
-                JoinName: false,
-                JoinEmail: false,
-                password: false,
-                nickname: false,
-                passwordConfirm: false,
-                term: false,
-            },
-            isSubmit: false,
-            passwordType: 'password',
-            passwordConfirmType: 'password',
-            termPopup: false,
+  data: () => {
+    return {
+      JoinEmail: '',
+      password: '',
+      passwordConfirm: '',
+      passwordSchema: new PV(),
+      nickname: '',
+      JoinName: '',
+      birth: '',
+      phone: '',
+      isTerm: false,
+      isLoading: false,
+      error: {
+        phone: false,
+        JoinName: false,
+        JoinEmail: false,
+        password: false,
+        nickname: false,
+        passwordConfirm: false,
+        term: false,
+      },
+      isSubmit: false,
+      passwordType: 'password',
+      passwordConfirmType: 'password',
+      termPopup: false,
+    };
+  },
+  watch: {
+    JoinName: function(v) {
+      this.checkForm();
+    },
+    nickname: function(v) {
+      this.checkForm();
+    },
+    JoinEmail: function(v) {
+      this.checkForm();
+    },
+    password: function(v) {
+      this.checkForm();
+    },
+    passwordConfirm: function(v) {
+      this.checkForm();
+    },
+    phone: function(v) {
+      this.checkForm();
+    },
+    birth: function(v) {
+      this.checkForm();
+    },
+    isTerm: function(v) {
+      this.checkForm();
+    },
+  },
+  created() {
+    this.component = this;
+
+    this.passwordSchema
+      .is()
+      .min(8)
+      .is()
+      .max(100)
+      .has()
+      .digits()
+      .has()
+      .letters()
+      .not()
+      .symbols();
+  },
+  mounted() {
+    // console.log('SNSCHECK: ', this.snscheck);
+
+    if (localStorage.getItem('nickname') !== null) {
+      this.nickname = localStorage.getItem('nickname');
+      localStorage.removeItem('nickname');
+    }
+    if (localStorage.getItem('JoinEmail') !== null) {
+      this.JoinEmail = localStorage.getItem('JoinEmail');
+      localStorage.removeItem('JoinEmail');
+    }
+  },
+  destroyed() {
+    // console.log('디스트로이');
+  },
+  methods: {
+    phone_regx() {
+      if (this.phone != this.phone.replace(/\D/gi, '')) {
+        this.phone = this.phone.replace(/\D/gi, '');
+        alert('숫자만 입력해 주세요.');
+      }
+    },
+    checkForm() {
+      if (this.snscheck === 0) {
+        if (this.JoinEmail.length >= 0 && !EmailValidator.validate(this.JoinEmail)) {
+          this.error.JoinEmail = '이메일 형식이 아닙니다.';
+        } else {
+          this.error.JoinEmail = false;
+        }
+
+        if (this.password.length >= 0 && !this.passwordSchema.validate(this.password)) {
+          this.error.password = '영문,숫자 포함 8 자리이상이어야 합니다.';
+        } else {
+          this.error.password = false;
+        }
+
+        if (this.password != this.passwordConfirm) this.error.passwordConfirm = '비밀번호가 일치하지 않습니다.';
+        else {
+          this.error.passwordConfirm = false;
+        }
+      }
+      if (this.JoinName.length < 2) this.error.JoinName = '2자 이상 입력해 주세요.';
+      else {
+        this.error.JoinName = false;
+      }
+
+      if (this.nickname.length < 2 || this.nickname.length > 10) this.error.nickname = '2자 이상 10자 이하로 입력해주세요.';
+      else {
+        this.error.nickname = false;
+      }
+
+      if (this.phone.length < 11) this.error.phone = '휴대폰 번호를 입력해 주세요.';
+      else {
+        this.error.phone = false;
+      }
+
+      if (this.birth === '') this.error.birth = '생년월일을 입력해 주세요.';
+      else {
+        this.error.birth = false;
+      }
+
+      if (!this.isTerm) this.error.term = '약관 동의에 체크해주세요';
+      else {
+        this.error.term = false;
+      }
+      let isSubmit = true;
+
+      Object.values(this.error).map((v, i) => {
+        if (v) {
+          isSubmit = false;
+        }
+      });
+      this.isSubmit = isSubmit;
+    },
+    submit() {
+      if (this.isSubmit) {
+        let { JoinEmail, password, nickname, birth, phone } = this;
+        let data = {
+          nickname,
+          name: this.JoinName,
+          birth,
+          phone,
         };
-    },
-    watch: {
-        JoinName: function(v) {
-            this.checkForm();
-        },
-        nickname: function(v) {
-            this.checkForm();
-        },
-        JoinEmail: function(v) {
-            this.checkForm();
-        },
-        password: function(v) {
-            this.checkForm();
-        },
-        passwordConfirm: function(v) {
-            this.checkForm();
-        },
-        phone: function(v) {
-            this.checkForm();
-        },
-        birth: function(v) {
-            this.checkForm();
-        },
-        isTerm: function(v) {
-            this.checkForm();
-        },
-    },
-    created() {
-        this.component = this;
+        // 받법 1
+        // data.haha = this.snscheck;
+        // 방법 2
+        // data['haha'] = this.snsCheck;
 
-        this.passwordSchema
-            .is()
-            .min(8)
-            .is()
-            .max(100)
-            .has()
-            .digits()
-            .has()
-            .letters()
-            .not()
-            .symbols();
-    },
-    mounted() {
-        // console.log('SNSCHECK: ', this.snscheck);
-
-        if (localStorage.getItem('nickname') !== null) {
-            this.nickname = localStorage.getItem('nickname');
-            localStorage.removeItem('nickname');
-        }
-        if (localStorage.getItem('JoinEmail') !== null) {
-            this.JoinEmail = localStorage.getItem('JoinEmail');
-            localStorage.removeItem('JoinEmail');
-        }
-    },
-    destroyed() {
-        // console.log('디스트로이');
-    },
-    methods: {
-        phone_regx() {
-            if (this.phone != this.phone.replace(/\D/gi, '')) {
-                this.phone = this.phone.replace(/\D/gi, '');
-                alert('숫자만 입력해 주세요.');
-            }
-        },
-        checkForm() {
-            if (this.snscheck === 0) {
-                if (this.JoinEmail.length >= 0 && !EmailValidator.validate(this.JoinEmail)) {
-                    this.error.JoinEmail = '이메일 형식이 아닙니다.';
-                } else {
-                    this.error.JoinEmail = false;
-                }
-
-                if (this.password.length >= 0 && !this.passwordSchema.validate(this.password)) {
-                    this.error.password = '영문,숫자 포함 8 자리이상이어야 합니다.';
-                } else {
-                    this.error.password = false;
-                }
-
-                if (this.password != this.passwordConfirm) this.error.passwordConfirm = '비밀번호가 일치하지 않습니다.';
-                else {
-                    this.error.passwordConfirm = false;
-                }
-            }
-            if (this.JoinName.length < 2) this.error.JoinName = '2자 이상 입력해 주세요.';
-            else {
-                this.error.JoinName = false;
-            }
-
-            if (this.nickname.length < 2 || this.nickname.length > 10) this.error.nickname = '2자 이상 10자 이하로 입력해주세요.';
-            else {
-                this.error.nickname = false;
-            }
-
-            if (this.phone.length < 11) this.error.phone = '휴대폰 번호를 입력해 주세요.';
-            else {
-                this.error.phone = false;
-            }
-
-            if (this.birth === '') this.error.birth = '생년월일을 입력해 주세요.';
-            else {
-                this.error.birth = false;
-            }
-
-            if (!this.isTerm) this.error.term = '약관 동의에 체크해주세요';
-            else {
-                this.error.term = false;
-            }
-            let isSubmit = true;
-
-            Object.values(this.error).map((v, i) => {
-                if (v) {
-                    isSubmit = false;
-                }
-            });
-            this.isSubmit = isSubmit;
-        },
-        submit() {
-            if (this.isSubmit) {
-                let { JoinEmail, password, nickname, birth, phone } = this;
-                let data = {
-                    nickname,
-                    name: this.JoinName,
-                    birth,
-                    phone,
-                };
-                // 받법 1
-                // data.haha = this.snscheck;
-                // 방법 2
-                // data['haha'] = this.snsCheck;
-
-                //요청 후에는 버튼 비활성화
-                this.isSubmit = false;
-                // 일반회원가입
-                if (this.snscheck === 0) {
-                    data.email = JoinEmail
-                    data.password = password
+        //요청 후에는 버튼 비활성화
+        this.isSubmit = false;
+        // 일반회원가입
+        if (this.snscheck === 0) {
+          data.email = JoinEmail
+          data.password = password
                     
 
-                    sessionStorage.setItem('tempEmail', JoinEmail)
-                    UserApi.requestSignUp(
-                    data,
-                    res => {
-                        //통신을 통해 전달받은 값 콘솔에 출력
-                        // console.log(res);
-                        //요청이 끝나면 버튼 활성화
-                        this.isSubmit = true;
-                        if (this.snscheck === 0) {
-                            this.$emit('nextStep');
-                        }
-                    },
-                    error => {
-                        //요청이 끝나면 버튼 활성화
-                        this.isSubmit = true;
-                        localStorage.setItem('popup', 'false');
-                        localStorage.setItem('nickname', this.nickname);
-                        localStorage.setItem('JoinEmail', this.JoinEmail);
-                        this.$router.push({ name: 'ErrorPage' });
-                    });
-                }
-                // sns 회원가입
-                else {
-                    data.loginApi = this.snscheck
-                    data.userid = sessionStorage.getItem('snsId')
+          sessionStorage.setItem('tempEmail', JoinEmail)
+          UserApi.requestSignUp(
+            data,
+            res => {
+              //통신을 통해 전달받은 값 콘솔에 출력
+              // console.log(res);
+              //요청이 끝나면 버튼 활성화
+              this.isSubmit = true;
+              if (this.snscheck === 0) {
+                this.$emit('nextStep');
+              }
+            },
+            error => {
+              //요청이 끝나면 버튼 활성화
+              this.isSubmit = true;
+              localStorage.setItem('popup', 'false');
+              localStorage.setItem('nickname', this.nickname);
+              localStorage.setItem('JoinEmail', this.JoinEmail);
+              this.$router.push({ name: 'ErrorPage' });
+            });
+        }
+        // sns 회원가입
+        else {
+          data.loginApi = this.snscheck
+          data.userid = sessionStorage.getItem('snsId')
 
-                    UserApi.requestSnsSignUp(
-                        data,
-                        res => {
-                            this.isSubmit = true;
-                            alert('가입이 완료되었습니다.');
-                        },
-                        error => {
-                        this.isSubmit = true;
-                        localStorage.setItem('popup', 'false');
-                        localStorage.setItem('nickname', this.nickname);
-                        this.$router.push({ name: 'ErrorPage' });
-                    });
-                }
-            }
-        },
-        close() {
-            this.JoinEmail = '';
-            this.password = '';
-            this.passwordConfirm = '';
-            this.passwordSchema = new PV();
-            this.nickname = '';
-            this.JoinName = '';
-            this.birth = '';
-            this.phone = '';
-            this.isTerm = false;
-
-            this.error.phone = false;
-            this.error.JoinName = false;
-            this.error.JoinEmail = false;
-            this.error.password = false;
-            this.error.nickname = false;
-            this.error.passwordConfirm = false;
-            this.error.term = false;
-            console.log(this.snscheck);
-            if (this.snscheck == 0) this.$emit('popupToggle');
-            else {
-                this.$emit('snsToggle');
-            }
-        },
+          UserApi.requestSnsSignUp(
+            data,
+            res => {
+              this.isSubmit = true;
+              alert('가입이 완료되었습니다.');
+            },
+            error => {
+              this.isSubmit = true;
+              localStorage.setItem('popup', 'false');
+              localStorage.setItem('nickname', this.nickname);
+              this.$router.push({ name: 'ErrorPage' });
+            });
+        }
+      }
     },
+    close() {
+      this.JoinEmail = '';
+      this.password = '';
+      this.passwordConfirm = '';
+      this.passwordSchema = new PV();
+      this.nickname = '';
+      this.JoinName = '';
+      this.birth = '';
+      this.phone = '';
+      this.isTerm = false;
+
+      this.error.phone = false;
+      this.error.JoinName = false;
+      this.error.JoinEmail = false;
+      this.error.password = false;
+      this.error.nickname = false;
+      this.error.passwordConfirm = false;
+      this.error.term = false;
+      console.log(this.snscheck);
+      if (this.snscheck == 0) this.$emit('popupToggle');
+      else {
+        this.$emit('snsToggle');
+      }
+    },
+  },
 };
 </script>

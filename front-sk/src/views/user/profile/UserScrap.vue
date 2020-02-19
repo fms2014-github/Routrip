@@ -2,7 +2,7 @@
     <div>
         <div class="row">
             <h2 style="text-align:center; font-size:2.1vw; @include wrap;">총 {{scrapList.length}} 개의 스크랩</h2>
-            <div v-for="scrap in scrapList" v-bind:key="scrap.boardid">
+            <div v-for="scrap in scrapList" :key="scrap.boardid">
                 <div class="gallery">
                     <h1 class = 'card-header-title'>
                         <router-link :to="{ name: 'Detail', params: { boardid: scrap.boardid } }">
@@ -24,7 +24,7 @@
                        
                     <div class="keywords">
                          <div class = 'card-footer' >
-                            <div class="keyword" v-for="keyword in scrap.keywords" v-bind:key="keyword">
+                            <div v-for="keyword in scrap.keywords" :key="keyword" class="keyword">
                                 <span>#{{keyword}}</span>
                             </div>
                         </div>
@@ -42,28 +42,26 @@ import Axios from 'axios';
 
 
 export default {
-
-
-    mounted(){
-        this.reqScrap();
-    },
-    methods:{
-        reqScrap() {
-        console.log("hihi scrap")
-        const jwt = localStorage.getItem('routrip_JWT');
-        Axios.post('http://192.168.100.70:8083/page/scrapBoard/' , {jwt : jwt})
-            .then(res => {
-                console.log(res.data)
-                this.scrapList=res.data
+  data(){
+    return{
+      scrapList:[]
+    };
+  },
+  mounted(){
+    this.reqScrap();
+  },
+  methods:{
+    reqScrap() { 
+      console.log("hihi scrap")
+      const jwt = localStorage.getItem('routrip_JWT');
+      Axios.post('http://192.168.100.70:8083/page/scrapBoard/' , {jwt : jwt})
+        .then(res => {
+          console.log(res.data)
+          this.scrapList=res.data
                 
-            });
-        }
-    },
-    data(){
-        return{
-            scrapList:[]
-        };
-    },
+        });
+    }
+  },
 
 };
 </script>

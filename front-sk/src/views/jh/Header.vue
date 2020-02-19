@@ -28,26 +28,18 @@
                             <img src="../../assets/images/bell.png" alt />
                             <span>알림</span>
                         </div>
-                        <div class="small-alarm" :class="{dtoggle3:!dtoggle3}">
-                            <div
-                                class="alarm-box"
-                                v-for="(alarm, alarmIdx) in alarms"
-                                :key="alarmIdx"
-                                :class="{isread : alarm.isread==1}"
-                            >
+                        <div class="small-alarm" :class="{ dtoggle3: !dtoggle3 }">
+                            <div class="alarm-box" v-for="(alarm, alarmIdx) in alarms" :key="alarmIdx" :class="{ isread: alarm.isread == 1 }">
                                 <div class="profile-img">
                                     <img :src="alarm.user.profileImg" alt />
                                 </div>
                                 <div class="alarm-info">
                                     <div class="text-time">
-                                        <div class="alarm-text">{{alarm.text}}</div>
-                                        <div class="alarm-alarmtime">{{alarm.alarmtime}}</div>
+                                        <div class="alarm-text">{{ alarm.text }}</div>
+                                        <div class="alarm-alarmtime">{{ alarm.alarmtime }}</div>
                                         <div class="delete-alarm" @click="deleteAlarm(alarm)">x</div>
                                     </div>
-                                    <div
-                                        class="alarm-detail"
-                                        v-if="alarm.alarmtype>=2 && alarm.alarmtype<=4"
-                                    >" {{alarm.detail}} "</div>
+                                    <div class="alarm-detail" v-if="alarm.alarmtype >= 2 && alarm.alarmtype <= 4">" {{ alarm.detail }} "</div>
                                 </div>
                             </div>
                         </div>
@@ -98,26 +90,22 @@
                         <img src="../../assets/images/bell.png" @click="dropAlarm" />
                     </span>
                 </div>
-                <div class="alarm-drop-box" :class="{dtoggle2:!dtoggle2}">
-                    <div
-                        class="alarm-box"
-                        v-for="(alarm, alarmIdx) in alarms"
-                        :key="alarmIdx"
-                        :class="{isread : alarm.isread==1}"
-                    >
+                <div class="alarm-drop-box" :class="{ dtoggle2: !dtoggle2 }">
+                    <div class="alarm-box" v-for="(alarm, alarmIdx) in alarms" :key="alarmIdx" :class="{ isread: alarm.isread == 1 }">
                         <div class="profile-img">
                             <img :src="alarm.user.profileImg" alt />
                         </div>
                         <div class="alarm-info">
                             <div class="text-time">
-                                <div class="alarm-text">{{alarm.text}}</div>
-                                <div class="alarm-alarmtime">{{alarm.alarmtime}}</div>
+                                <div class="alarm-text">{{ alarm.text }}</div>
+                                <div class="alarm-alarmtime">{{ alarm.alarmtime }}</div>
                                 <div class="delete-alarm" @click="deleteAlarm(alarm)">x</div>
                             </div>
-                            <div
-                                class="alarm-detail"
-                                v-if="alarm.alarmtype>=2 && alarm.alarmtype<=4"
-                            >" {{alarm.detail}} "</div>
+                            <<<<<<< HEAD
+                            <div class="alarm-detail" v-if="alarm.alarmtype >= 2 && alarm.alarmtype <= 4">" {{ alarm.detail }} "</div>
+                            =======
+                            <div class="alarm-detail" v-if="alarm.alarmtype >= 2 && alarm.alarmtype <= 4">" {{ alarm.detail }} "</div>
+                            >>>>>>> 4eaf0076b0e66c0dfa9c98a46e3cf7ae34bfa88f
                         </div>
                     </div>
                 </div>
