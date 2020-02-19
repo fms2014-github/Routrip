@@ -1,104 +1,101 @@
 <template>
     <div id="login" class="user">
-        <div class="login-wrap">
-            <div class="wrapC left-view">
-                <Routrip></Routrip>
+        <div class="wrapC left-view">
+            <Routrip></Routrip>
+        </div>
+
+        <div class="wrapC right-view">
+            <div class="input-with-label">
+                <input
+                    id="LoginEmail"
+                    v-model="LoginEmail"
+                    :class="{
+                        error: error.LoginEmail,
+                        complete: !error.LoginEmail && LoginEmail.length !== 0,
+                    }"
+                    placeholder="이메일을 입력하세요."
+                    type="text"
+                    @keyup.enter="login"
+                />
+                <label for="LoginEmail">이메일</label>
+                <div v-if="error.LoginEmail" class="error-text">
+                    {{ error.LoginEmail }}
+                </div>
             </div>
-            <div class="wrapC right-view">
-                <div class="input-with-label">
-                    <input
-                        id="LoginEmail"
-                        v-model="LoginEmail"
-                        :class="{
-                            error: error.LoginEmail,
-                            complete: !error.LoginEmail && LoginEmail.length !== 0,
-                        }"
-                        placeholder="이메일을 입력하세요."
-                        type="text"
-                        @keyup.enter="login"
-                    />
-                    <label for="LoginEmail">이메일</label>
-                    <div v-if="error.LoginEmail" class="error-text">
-                        {{ error.LoginEmail }}
-                    </div>
-                </div>
 
-                <div class="input-with-label">
-                    <input
-                        id="password"
-                        v-model="password"
-                        type="password"
-                        :class="{
-                            error: error.password,
-                            complete: !error.password && password.length !== 0,
-                        }"
-                        placeholder="비밀번호를 입력하세요."
-                        @keyup.enter="login"
-                    />
-                    <label for="password">비밀번호</label>
-                    <div v-if="error.password" class="error-text">
-                        {{ error.password }}
-                    </div>
+            <div class="input-with-label">
+                <input
+                    id="password"
+                    v-model="password"
+                    type="password"
+                    :class="{
+                        error: error.password,
+                        complete: !error.password && password.length !== 0,
+                    }"
+                    placeholder="비밀번호를 입력하세요."
+                    @keyup.enter="login"
+                />
+                <label for="password">비밀번호</label>
+                <div v-if="error.password" class="error-text">
+                    {{ error.password }}
                 </div>
+            </div>
 
-                <div class="checkOption">
-                    <div class="emailSaveCheck">
-                        <input id="emailSaveCheck" v-model="emailSaveCheck" name="emailSaveCheck" type="checkbox" />
-                        <label for="emailSaveCheck">이메일 저장</label>
-                    </div>
-                    <div class="autoLogin">
-                        <input id="autoLogin" v-model="autoLogin" name="autoLogin" type="checkbox" />
-                        <label for="autoLogin">자동 로그인</label>
-                    </div>
+            <div class="checkOption">
+                <div class="emailSaveCheck">
+                    <input id="emailSaveCheck" v-model="emailSaveCheck" name="emailSaveCheck" type="checkbox" />
+                    <label for="emailSaveCheck">이메일 저장</label>
                 </div>
-                <button class="btn btn--back btn--login" :disabled="!isSubmit" :class="{ disabled: !isSubmit }" @click="login">
-                    로그인
-                </button>
-                <div v-if="error.loginFail" class="error-text red">
-                    {{ error.loginFail }}
+                <div class="autoLogin">
+                    <input id="autoLogin" v-model="autoLogin" name="autoLogin" type="checkbox" />
+                    <label for="autoLogin">자동 로그인</label>
                 </div>
+            </div>
+            <button class="btn btn--back btn--login" :disabled="!isSubmit" :class="{ disabled: !isSubmit }" @click="login">
+                로그인
+            </button>
+            <div v-if="error.loginFail" class="error-text red">
+                {{ error.loginFail }}
+            </div>
 
-                <div class="sns-login">
-                    <div class="text">
-                        <p>SNS 간편 로그인</p>
-                        <div class="bar"></div>
-                    </div>
-                    <div class="logos">
-                        <kakaoLogin :component="component" @loginOrJoin="loginOrJoin" @checkLogin="loginOrJoin" />
-                        <GoogleLogin :component="component" />
-                        <NaverLogin :component="component" />
-                    </div>
+            <div class="sns-login">
+                <div class="text">
+                    <p>SNS 간편 로그인</p>
+                    <div class="bar"></div>
                 </div>
-                <div class="add-option">
-                    <div class="text">
-                        <div class="bar"></div>
-                    </div>
-                    <div class="wrap btn--text" @click="popupFindToggle">
-                        이메일/비밀번호 찾기
-                    </div>
-                    <div class="wrap btn--text" @click="popupJoinToggle">
-                        가입하기
-                    </div>
+                <div class="logos">
+                    <kakaoLogin :component="component" @loginOrJoin="loginOrJoin" @checkLogin="loginOrJoin" />
+                    <GoogleLogin :component="component" />
+                    <NaverLogin :component="component" />
                 </div>
-                <div id="popup-join" :class="{ hideJoin: !popupJoin }">
-                    <join
-                        v-if="!this.joinNextStep"
-                        :snscheck="loginApi"
-                        @nextStep="joinNextStepToggle"
-                        @popupToggle="popupJoinToggle"
-                        @snsToggle="snsToggle"
-                    />
-                    <joinAuth v-if="this.joinNextStep" @successAuth="popupJoinToggle" />
+            </div>
+            <div class="add-option">
+                <div class="text">
+                    <div class="bar"></div>
                 </div>
-                <div id="popup-find" :class="{ hideJoin: !popupFind }">
-                    <FindEmailAndPassword
-                        v-if="!this.findNextStep"
-                        @nextStep="findNextStepToggle"
-                        @popupToggle="popupFindToggle"
-                        @routeJoinPage="routeJoinPage"
-                    />
-                    <ChangePassword v-if="this.findNextStep" @resetPassword="popupFindToggle" />
+                <div class="wrap btn--text" @click="popupFindToggle">이메일/비밀번호 찾기</div>
+                <div class="wrap btn--text" @click="popupToggle">
+                    가입하기
                 </div>
+            </div>
+            <!-- <div id="popup-join" :class="{ hideJoin: !popupJoin }">
+                <join v-if="!this.joinNextStep" :snscheck="loginApi" @nextStep="joinNextStepToggle"
+                    @popupToggle="popupJoinToggle" @snsToggle="snsToggle" />
+                <joinAuth v-if="this.joinNextStep" @successAuth="popupJoinToggle" />
+            </div> -->
+            <div id="popup-join" :class="{ hideJoin: !popup }">
+                <Join v-if="popup" :snscheck="loginApi" @popupToggle="popupToggle" @nextStep="nextStepToggle" />
+                <!-- <JoinAuth v-if="!popup && nextStep" @nextStep="nextStepToggle" /> -->
+            </div>
+
+            <div id="popup-find" :class="{ hideJoin: !popupFind }">
+                <FindEmailAndPassword
+                    v-if="!this.findNextStep"
+                    @nextStep="findNextStepToggle"
+                    @popupToggle="popupFindToggle"
+                    @routeJoinPage="routeJoinPage"
+                />
+                <ChangePassword v-if="this.findNextStep" @resetPassword="popupFindToggle" />
             </div>
         </div>
     </div>
@@ -115,7 +112,7 @@ import KakaoLogin from '../../components/user/snsLogin/Kakao.vue';
 import GoogleLogin from '../../components/user/snsLogin/Google.vue';
 import UserApi from '../../apis/UserApi';
 import NaverLogin from '../../components/user/snsLogin/Naver.vue';
-import join from './Join';
+import Join from './Join';
 import joinAuth from './JoinAuth';
 import FindEmailAndPassword from './FindEmailAndPassword';
 import ChangePassword from './ChangePassword';
@@ -138,8 +135,8 @@ export default {
         KakaoLogin,
         GoogleLogin,
         NaverLogin,
-        join,
-        joinAuth,
+        Join,
+        // joinAuth,
         FindEmailAndPassword,
         ChangePassword,
         Routrip,
@@ -183,9 +180,16 @@ export default {
             this.popupJoinToggle();
             this.popupFindToggle();
         },
-        gogo() {
-            this.$router.push('/alarm');
+        popupToggle() {
+            this.loginApi = 0;
+            this.popup = !this.popup;
+            console.log('POPUP: ', this.popup);
         },
+        nextStepToggle() {
+            this.popup = false;
+            this.nextStep = !this.nextStep;
+        },
+
         joinNextStepToggle() {
             this.joinNextStep = !this.joinNextStep;
         },
@@ -194,9 +198,7 @@ export default {
         },
         ...userHelper.mapActions(['reqUserInfo']),
         ...userHelper.mapMutations(['setUser']),
-        getImageUrl() {
-            return require('../../assets/images/routrip_logo.png');
-        },
+
         checkForm() {
             if (this.LoginEmail.length >= 0 && !EmailValidator.validate(this.LoginEmail)) this.error.LoginEmail = '이메일 형식이 아닙니다.';
             else {
@@ -284,39 +286,37 @@ export default {
         },
         loginOrJoin(loginApi) {
             this.loginApi = loginApi;
-            console.log('loginOrJoin(loginApi)');
+
+            console.log('???', this.popup);
+
             Kakao.API.request({
-                url: '/v1/user/me',
+                url: '/v2/user/me',
                 success: res => {
                     this.setUser(res);
-                    console.log('this.setUser(res)', res);
                     this.userSnsId = res.id;
-                    console.log('this.userSnsId = res.id', res.id);
                     sessionStorage.setItem('snsId', res.id);
+                    console.log(res);
                     Axios.post('http://192.168.100.70:8083/account/snslogin', {
                         loginApi: loginApi,
                         userid: res.id,
                     })
                         .then(res2 => {
-                            console.log('login');
                             localStorage.setItem('routrip_JWT', res2.data);
                             if (res2.data !== '') {
-                                console.log('login');
                                 this.reqUserInfo();
                                 this.$router.push('/main');
-                                // console.log(this.getUser);
                             }
                         })
                         .then(() => {
-                            console.log('Join');
-                            this.popupJoinToggle();
+                            this.popup = !this.popup;
                         });
                 },
                 fail: error => {
-                    console.log('error', error);
+                    console.log(error);
                 },
             });
         },
+
         init() {
             this.joinNextStep = false;
             this.findNextStep = false;
@@ -324,7 +324,7 @@ export default {
     },
     data: () => {
         return {
-            joinNextStep: false,
+            nextStep: false,
             findNextStep: false,
             LoginEmail: '',
             password: '',
@@ -338,7 +338,7 @@ export default {
             isSubmit: false,
             component: this,
             autoLogin: false,
-            popupJoin: false,
+            popup: false,
             popupFind: false,
             userSnsId: '',
             loginApi: 0,
