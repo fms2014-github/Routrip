@@ -449,8 +449,12 @@ $desktop: 'screen and (min-width : 1025px)';
                     cursor: pointer;
 
                     .drop-box-menu:hover {
-                        color: skyblue;
+                        span {
+                            color: skyblue;
+
+                        }
                     }
+
 
                     .drop-box-menu {
                         padding: 10px;
