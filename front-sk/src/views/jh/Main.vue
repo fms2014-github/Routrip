@@ -132,7 +132,9 @@
         <div class="else-modal" :class="{ elseModalBackground: !elseModalBackground }">
             <div class="modal-box">
                 <div class="box-content">
-                    <button class="else-btn first">게시물로 이동</button>
+                    <router-link :to="{ name: 'Detail', params: { boardid: boardId } }">
+                        <button class="else-btn first">게시물로 이동</button>
+                    </router-link>
                     <button :class="{ followBtn: !followBtn }" class="else-btn middle" @click="follow">팔로우</button>
                     <button :class="{ unfollowBtn: !unfollowBtn }" class="else-btn middle" @click="follow">팔로우 취소</button>
                     <button :class="{ myPosting: !myPosting }" class="else-btn middle" @click="updatePost">내글 수정</button>
