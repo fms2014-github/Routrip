@@ -175,7 +175,7 @@
                         class="else-btn middle"
                         @click="updatePost"
                     >내글 수정</button>
-                    <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 삭제</button>
+                    <button :class="{ myPosting: !myPosting }" class="else-btn middle" @click="deletePost">내글 삭제</button>
                     <button class="else-btn last" @click="noShowElseBtn">X</button>
                 </div>
             </div>
@@ -459,6 +459,25 @@ export default {
         },
         updatePost() {
             this.$router.push({ name: 'UpdatePost', params: { boardid: this.boardId } });
+        },
+        deletePost(){
+            let check = confirm('삭제 하시겠습니까?')
+            let bid = String(this.boardId)
+            console.log('aaa', bid)
+            if(check){
+            Axios.delete(`${URI}/page/board`, {data: {'boardid': bid} }, )
+                .then(res => {
+                    console.log(res)
+                    this.showAll();
+                    this.elseModalBackground = !this.elseModalBackground;
+                })
+                .catch(res => {
+                    console.log(res);
+                });
+            
+            }else {
+                alert('취소 되었습니다.')
+            }
         },
     },
 };
