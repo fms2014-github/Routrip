@@ -85,6 +85,8 @@ latitude varchar(1000) not null,
 longitude varchar(1000) not null,
 overlaytype varchar(100) not null,
 radius double,
+rx double,
+ry double,
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade
 );
