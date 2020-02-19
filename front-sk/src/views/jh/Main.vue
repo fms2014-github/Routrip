@@ -7,7 +7,18 @@
                     <hooper :infiniteScroll="true" :itemsToShow="3" :progress="true" :autoPlay="true" :playSpeed="2000">
                         <slide v-for="(data, dataIdx) in bestDatas" :key="dataIdx">
                             <router-link :to="{ name: 'Detail', params: { boardid: data.boardid } }">
-                                <img :src="data.imgs[0].src" alt />
+                                <div class="best-img">
+                                    <img :src="data.imgs[0].src" alt />
+                                    <div class="best-img-info">
+                                        <div class="info-box">
+                                            <div class="best-img-title">{{ data.title }}</div>
+                                            <div class="term-like">
+                                                <div class="best-img-term">{{ data.tripterm }}</div>
+                                                <div class="best-img-like"><i class="fas fa-heart"></i> {{ data.favoriteNum }}</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
                             </router-link>
                         </slide>
                         <hooper-navigation slot="hooper-addons"></hooper-navigation>
@@ -249,6 +260,7 @@ export default {
             Axios.get(`${URI}/page/bestBoard`)
                 .then(res => {
                     this.bestDatas = res.data;
+                    console.log(this.bestDatas);
                 })
                 .catch(res => {
                     console.log('인기게시글 조회 실패');
