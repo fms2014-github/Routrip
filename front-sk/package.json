@@ -27,11 +27,7 @@
     "sweetalert": "^2.1.2",
     "sweetalert2": "^9.7.2",
     "vue": "^2.6.10",
-<<<<<<< HEAD
     "vue-loading-overlay": "^3.2.0",
-=======
-    "vue-infinite-loading": "^2.4.4",
->>>>>>> bbd49dfcff0fcfd68f8ab711bc068c80cfa9005e
     "vue-notification": "^1.3.20",
     "vue-router": "^3.1.3",
     "vuelidate": "^0.7.4",

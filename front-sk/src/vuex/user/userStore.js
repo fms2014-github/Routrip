@@ -29,14 +29,15 @@ const actions = {
     }).then(() => {
       router.push('/');
     }).catch(error => {
-
       console.log(error.response.status);
       if(error.response.status === 406) {
         Swal.fire({
           icon: 'error',
-          title: 'Oops...',
-          text: 'Something went wrong!',
+          title: '세션 만료',
+          text: '로그인을 다시 해주세요!',
           confirmButtonText: 'Login',
+        }).then(() => {
+          router.push("/");
         })
         console.log("logout 406 ERROR");
       }
@@ -50,15 +51,8 @@ const actions = {
       jwt: jwt
     }).then(res => {
       commit('setUser', res);
-      // console.log(res.data)
-      // console.log(res)
-      // console.log(res.data.nickname);
-      // console.log(res.data.profileImg);
-      // console.log(profile)
     }).catch(error => {
-
       if(error.response.status === 406) {
-
         console.log("reqUserInfo 406 ERROR");
       }
     });
@@ -86,10 +80,5 @@ export default {
   state,
   actions,
   getters,
-  mutations,
-  // data: () => {
-  //     return {
-  //         jwt,
-  //     };
-  // },
+  mutations
 };

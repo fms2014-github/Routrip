@@ -1,186 +1,161 @@
 <template>
-    <div id="main">
-        <Header></Header>
-        <div class="body">
-            <div class="best-posting">
-                <div class="postings-posting">
-                    <hooper
-                        :infinite-scroll="true"
-                        :items-to-show="3"
-                        :progress="true"
-                        :auto-play="true"
-                        :play-speed="2000"
-                    >
-                        <slide v-for="(data, dataIdx) in bestDatas" :key="dataIdx">
-                            <router-link
-                                :to="{ name: 'Detail', params: { boardid: data.boardid } }"
-                            >
-                                <img :src="data.imgs[0].src" alt />
-                            </router-link>
-                        </slide>
-                        <hooper-navigation slot="hooper-addons"></hooper-navigation>
-                    </hooper>
+  <div id="main">
+    <Header />
+    <div class="body">
+      <div class="best-posting">
+        <div class="postings-posting">
+          <hooper :infinite-scroll="true" :items-to-show="3" :progress="true" :auto-play="true" :play-speed="2000">
+            <slide v-for="(data, dataIdx) in bestDatas" :key="dataIdx">
+              <router-link :to="{ name: 'Detail', params: { boardid: data.boardid } }">
+                <img :src="data.imgs[0].src" alt />
+              </router-link>
+            </slide>
+            <hooper-navigation slot="hooper-addons" />
+          </hooper>
+        </div>
+      </div>
+      <div class="posting-box">
+        <div class="postings">
+          <div v-for="(data, dataIdx) in datas" :key="dataIdx" class="posting-component">
+            <div class="postings-posting">
+              <div class="post-info">
+                <div class="profile-img">
+                  <img :src="data.user.profileImg" />
                 </div>
+                <div class="name-time">
+                  <strong>{{ data.title }}</strong>
+                  <span>{{ data.writeday }}</span>
+                  <br />
+                  <span>{{ data.user.nickname }}</span>
+                </div>
+                <div class="else" @click="showElseBtn(data, data.boardid)">
+                  <span>
+                    <i class="fas fa-ellipsis-h" />
+                  </span>
+                </div>
+              </div>
             </div>
-            <div class="posting-box">
-                <div class="postings">
-                    <div v-for="(data, dataIdx) in datas" :key="dataIdx" class="posting-component">
-                        <div class="postings-posting">
-                            <div class="post-info">
-                                <div class="profile-img">
-                                    <img :src="data.user.profileImg" />
-                                </div>
-                                <div class="name-time">
-                                    <strong>{{ data.title }}</strong>
-                                    <span>{{ data.writeday }}</span>
-                                    <br />
-                                    <span>{{ data.user.nickname }}</span>
-                                </div>
-                                <div class="else" @click="showElseBtn(data, data.boardid)">
-                                    <span>
-                                        <i class="fas fa-ellipsis-h"></i>
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
 
-                        <div class="post-imgs-box">
-                            <hooper class="post-img-box">
-                                <slide v-for="(img, imgIdx) in data.imgs" :key="imgIdx">
-                                    <router-link
-                                        :to="{ name: 'Detail', params: { boardid: data.boardid } }"
-                                    >
-                                        <img :src="img.src" alt />
-                                    </router-link>
-                                </slide>
-                                <hooper-pagination slot="hooper-addons"></hooper-pagination>
-                            </hooper>
-                        </div>
+            <div class="post-imgs-box">
+              <hooper class="post-img-box">
+                <slide v-for="(img, imgIdx) in data.imgs" :key="imgIdx">
+                  <router-link :to="{ name: 'Detail', params: { boardid: data.boardid } }">
+                    <img :src="img.src" alt />
+                  </router-link>
+                </slide>
+                <hooper-pagination slot="hooper-addons" />
+              </hooper>
+            </div>
 
-                        <div class="sns-tag-box">
-                            <div class="sns-btn">
-                                <div class="like">
-                                    <button @click="toggleLikeBtn(data.boardid)">
-                                        <div :class="{ likeToggle: likeShow[dataIdx].like }">
-                                            <i class="far fa-heart"></i>
-                                        </div>
-                                        <div :class="{ likeToggle: !likeShow[dataIdx].like }">
-                                            <i class="fas fa-heart" style="color:red;"></i>
-                                        </div>
-                                    </button>
-                                </div>
-                                <div class="scrap">
-                                    <button @click="toggleScrapBtn(data.boardid)">
-                                        <div :class="{ scrapToggle: scrapShow[dataIdx].scrap }">
-                                            <i class="far fa-bookmark"></i>
-                                        </div>
-                                        <div :class="{ scrapToggle: !scrapShow[dataIdx].scrap }">
-                                            <i class="fas fa-bookmark" style="color:blue;"></i>
-                                        </div>
-                                    </button>
-                                </div>
-                                <div v-if="data.favoriteNum == 1" class="state">
-                                    <strong>{{ whoLiked[dataIdx] }}</strong>님이 게시글을 좋아합니다.
-                                </div>
-                                <div v-if="data.favoriteNum > 1" class="state">
-                                    <strong>{{ whoLiked[dataIdx] }}</strong>
-                                    님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
-                                </div>
-                            </div>
-
-                            <div class="keywords">
-                                <div
-                                    v-for="(keyword, keywordIdx) in data.keywords"
-                                    :key="keywordIdx"
-                                    class="keyword"
-                                    @click="search(keyword)"
-                                >
-                                    <span>#{{ keyword }}</span>
-                                </div>
-                            </div>
-                        </div>
-
-                        <div class="comment-box">
-                            <div class="comments">
-                                <div
-                                    v-for="(comment, commentIdx) in data.comments"
-                                    :key="commentIdx"
-                                    class="comment"
-                                >
-                                    <div class="writer-img">
-                                        <img :src="comment.user.profileImg" alt />
-                                    </div>
-                                    <div class="comment-info">
-                                        <div class="comment-info-box">
-                                            <div class="writer">
-                                                <div class="writer-info">
-                                                    <strong>{{ comment.user.nickname }}</strong>
-                                                    <span>{{ comment.writeday }}</span>
-                                                </div>
-                                                <div class="writer-reply">
-                                                    <span>댓글달기</span>
-                                                </div>
-                                            </div>
-                                            <div class="writer-text">
-                                                <span>{{ comment.contents }}</span>
-                                            </div>
-                                        </div>
-                                        <div
-                                            v-if="comment.uid == getUser.data.uid"
-                                            class="comment-delete"
-                                        >
-                                            <button @click="deleteComment(comment)">삭제</button>
-                                        </div>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="write-comment">
-                                <form action class="comment-form">
-                                    <textarea
-                                        v-model="comment"
-                                        class="comment"
-                                        placeholder="댓글 달기..."
-                                        autocomplete="off"
-                                        wrap="soft"
-                                    ></textarea>
-                                </form>
-                                <div class="comment-btn">
-                                    <button @click="addComment(data)">
-                                        <strong>등록</strong>
-                                    </button>
-                                </div>
-                            </div>
-                        </div>
+            <div class="sns-tag-box">
+              <div class="sns-btn">
+                <div class="like">
+                  <button @click="toggleLikeBtn(data.boardid)">
+                    <div :class="{ likeToggle: likeShow[dataIdx].like }">
+                      <i class="far fa-heart" />
                     </div>
+                    <div :class="{ likeToggle: !likeShow[dataIdx].like }">
+                      <i class="fas fa-heart" style="color:red;" />
+                    </div>
+                  </button>
                 </div>
-            </div>
-        </div>
+                <div class="scrap">
+                  <button @click="toggleScrapBtn(data.boardid)">
+                    <div :class="{ scrapToggle: scrapShow[dataIdx].scrap }">
+                      <i class="far fa-bookmark" />
+                    </div>
+                    <div :class="{ scrapToggle: !scrapShow[dataIdx].scrap }">
+                      <i class="fas fa-bookmark" style="color:blue;" />
+                    </div>
+                  </button>
+                </div>
+                <div v-if="data.favoriteNum == 1" class="state">
+                  <strong>{{ whoLiked[dataIdx] }}</strong
+                  >님이 게시글을 좋아합니다.
+                </div>
+                <div v-if="data.favoriteNum > 1" class="state">
+                  <strong>{{ whoLiked[dataIdx] }}</strong>
+                  님 외 {{ data.favoriteNum - 1 }}명이 이 게시글을 좋아합니다.
+                </div>
+              </div>
 
-        <div class="else-modal" :class="{ elseModalBackground: !elseModalBackground }">
-            <div class="modal-box">
-                <div class="box-content">
-                    <button class="else-btn first">게시물로 이동</button>
-                    <button
-                        :class="{ followBtn: !followBtn }"
-                        class="else-btn middle"
-                        @click="follow"
-                    >팔로우</button>
-                    <button
-                        :class="{ unfollowBtn: !unfollowBtn }"
-                        class="else-btn middle"
-                        @click="follow"
-                    >팔로우 취소</button>
-                    <button
-                        :class="{ myPosting: !myPosting }"
-                        class="else-btn middle"
-                        @click="updatePost"
-                    >내글 수정</button>
-                    <button :class="{ myPosting: !myPosting }" class="else-btn middle" @click="deletePost">내글 삭제</button>
-                    <button class="else-btn last" @click="noShowElseBtn">X</button>
+              <div class="keywords">
+                <div v-for="(keyword, keywordIdx) in data.keywords" :key="keywordIdx" class="keyword" @click="search(keyword)">
+                  <span>#{{ keyword }}</span>
                 </div>
+              </div>
             </div>
+
+            <div class="comment-box">
+              <div class="comments">
+                <div v-for="(comment, commentIdx) in data.comments" :key="commentIdx" class="comment">
+                  <div class="writer-img">
+                    <img :src="comment.user.profileImg" alt />
+                  </div>
+                  <div class="comment-info">
+                    <div class="comment-info-box">
+                      <div class="writer">
+                        <div class="writer-info">
+                          <strong>{{ comment.user.nickname }}</strong>
+                          <span>{{ comment.writeday }}</span>
+                        </div>
+                        <div class="writer-reply">
+                          <span>댓글달기</span>
+                        </div>
+                      </div>
+                      <div class="writer-text">
+                        <span>{{ comment.contents }}</span>
+                      </div>
+                    </div>
+                    <div v-if="comment.uid == getUser.data.uid" class="comment-delete">
+                      <button @click="deleteComment(comment)">
+                        삭제
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <div class="write-comment">
+                <form action class="comment-form">
+                  <textarea v-model="comment" class="comment" placeholder="댓글 달기..." autocomplete="off" wrap="soft" />
+                </form>
+                <div class="comment-btn">
+                  <button @click="addComment(data)">
+                    <strong>등록</strong>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
+      </div>
     </div>
+
+    <div class="else-modal" :class="{ elseModalBackground: !elseModalBackground }">
+      <div class="modal-box">
+        <div class="box-content">
+          <button class="else-btn first">
+            게시물로 이동
+          </button>
+          <button :class="{ followBtn: !followBtn }" class="else-btn middle" @click="follow">
+            팔로우
+          </button>
+          <button :class="{ unfollowBtn: !unfollowBtn }" class="else-btn middle" @click="follow">
+            팔로우 취소
+          </button>
+          <button :class="{ myPosting: !myPosting }" class="else-btn middle" @click="updatePost">
+            내글 수정
+          </button>
+          <button :class="{ myPosting: !myPosting }" class="else-btn middle" @click="deletePost">
+            내글 삭제
+          </button>
+          <button class="else-btn last" @click="noShowElseBtn">
+            X
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -200,7 +175,7 @@ import Axios from 'axios';
 
 //component
 import { Hooper, Slide, Pagination as HooperPagination, Navigation as HooperNavigation } from 'hooper';
-import InfiniteLoading from 'vue-infinite-loading';
+// import InfiniteLoading from 'vue-infinite-loading';
 // 뷰엑스를 가져옴
 import { createNamespacedHelpers } from 'vuex';
 // load user store 필요한 부분만 가져오기
@@ -460,23 +435,22 @@ export default {
     updatePost() {
       this.$router.push({ name: 'UpdatePost', params: { boardid: this.boardId } });
     },
-    deletePost(){
-      let check = confirm('삭제 하시겠습니까?')
-      let bid = String(this.boardId)
-      console.log('aaa', bid)
-      if(check){
-        Axios.delete(`${URI}/page/board`, {data: {'boardid': bid} }, )
+    deletePost() {
+      let check = confirm('삭제 하시겠습니까?');
+      let bid = String(this.boardId);
+      console.log('aaa', bid);
+      if (check) {
+        Axios.delete(`${URI}/page/board`, { data: { boardid: bid } })
           .then(res => {
-            console.log(res)
+            console.log(res);
             this.showAll();
             this.elseModalBackground = !this.elseModalBackground;
           })
           .catch(res => {
             console.log(res);
           });
-            
-      }else {
-        alert('취소 되었습니다.')
+      } else {
+        alert('취소 되었습니다.');
       }
     },
   },
