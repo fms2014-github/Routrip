@@ -2,10 +2,6 @@ $iPad: 'screen and (max-width : 768px)';
 $iPadPro: 'screen and (min-width : 769px) and (max-width : 1024px) ';
 $desktop: 'screen and (min-width : 1025px)';
 
-::-webkit-scrollbar {
-    width: 0px !important;
-}
-
 .headerHeight {
     height: 60px !important;
     -webkit-transition: height 0.3s ease-in-out;
@@ -115,6 +111,85 @@ $desktop: 'screen and (min-width : 1025px)';
             font-size: 15px;
             border: 1px solid;
             border-radius: 20px;
+
+            .alarm-box {
+                position: relative;
+
+                .dtoggle3 {
+                    opacity: 0 !important;
+                    visibility: hidden;
+                }
+
+                .small-alarm {
+                    position: absolute;
+                    top: 0;
+                    left: 220px;
+                    width: 350px;
+                    height: 400px;
+                    transition: all .5s;
+                    overflow-y: scroll;
+                    border-radius: 20px;
+
+                    .isread {
+                        background-color: rgba(150, 150, 150, 0.7) !important;
+                    }
+
+                    .alarm-box {
+                        width: 100%;
+                        height: 60px;
+                        color: white;
+                        display: flex;
+                        align-items: center;
+                        background-color: rgba(0, 0, 0, 0.8);
+
+
+
+                        .profile-img {
+                            margin: 0 20px;
+
+                            img {
+                                width: 30px;
+                                height: 30px;
+                                border-radius: 20px;
+                            }
+                        }
+
+                        .alarm-info {
+                            font-size: 0.65em;
+                            width: 100%;
+                            margin-right: 10px;
+
+                            .text-time {
+
+                                display: flex;
+                                justify-content: space-between;
+                                margin-bottom: 5px;
+
+                                .alarm-text {
+                                    width: 75% !important;
+                                }
+
+                                .alarm-alarmtime {
+                                    // position: absolute;
+                                    right: 10px;
+                                }
+
+                                .delete-alarm {
+                                    margin-left: 1px;
+                                    color: #ffc0cb;
+                                    cursor: pointer;
+                                }
+
+                                .alarm-detail {
+                                    // width: 100%;
+                                    text-overflow: ellipsis;
+                                }
+                            }
+                        }
+                    }
+
+                }
+            }
 
             .profile:hover {
                 cursor: pointer;
@@ -268,7 +343,8 @@ $desktop: 'screen and (min-width : 1025px)';
                 }
 
                 .dtoggle2 {
-                    display: none;
+                    opacity: 0 !important;
+                    visibility: hidden;
                 }
 
                 .alarm-drop-box {
@@ -279,6 +355,7 @@ $desktop: 'screen and (min-width : 1025px)';
                     bottom: -415px;
                     left: -280px;
                     border-radius: 20px;
+                    transition: all .5s;
 
                     .alarm-box {
                         width: 100%;
@@ -317,6 +394,11 @@ $desktop: 'screen and (min-width : 1025px)';
                                 .delete-alarm {
                                     color: #ffc0cb;
                                     cursor: pointer;
+                                }
+
+                                .alarm-detail {
+                                    // width: 100%;
+                                    text-overflow: ellipsis;
                                 }
                             }
                         }
@@ -405,6 +487,7 @@ $desktop: 'screen and (min-width : 1025px)';
 }
 
 @-webkit-keyframes wobble-hor-top {
+
     0%,
     100% {
         -webkit-transform: translateX(0);
@@ -440,6 +523,7 @@ $desktop: 'screen and (min-width : 1025px)';
 }
 
 @keyframes wobble-hor-top {
+
     0%,
     100% {
         -webkit-transform: translateX(0);

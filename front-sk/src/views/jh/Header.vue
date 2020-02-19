@@ -101,7 +101,11 @@
                                 <div class="alarm-alarmtime">{{ alarm.alarmtime }}</div>
                                 <div class="delete-alarm" @click="deleteAlarm(alarm)">x</div>
                             </div>
+                            <<<<<<< HEAD
                             <div class="alarm-detail" v-if="alarm.alarmtype >= 2 && alarm.alarmtype <= 4">" {{ alarm.detail }} "</div>
+                            =======
+                            <div class="alarm-detail" v-if="alarm.alarmtype >= 2 && alarm.alarmtype <= 4">" {{ alarm.detail }} "</div>
+                            >>>>>>> 4eaf0076b0e66c0dfa9c98a46e3cf7ae34bfa88f
                         </div>
                     </div>
                 </div>
