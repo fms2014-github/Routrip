@@ -6,7 +6,12 @@
 
 </template>
 
+
+
 <script>
+import profile from '../../views/user/profile/Profile.vue';
+
+
 import Swal from 'sweetalert2';
 import $ from 'jquery';
 import Axios from 'axios';

@@ -5,14 +5,16 @@
 table {
     font-size:1.4vw; 
     width: 100%;
-    border-top: 1px solid  rgba($color: #d6d6d6, $alpha: 1.0);
+    border-top: 1px solid rgba($color: #d6d6d6, $alpha: 1.0);
     border-collapse: collapse;
   }
-
+  
   th{
+
     vertical-align: middle;
     background-color: beige;
     border-bottom: 1px solid rgba($color: #d6d6d6, $alpha: 1.0);
+    
   }
 
   td {
@@ -23,7 +25,15 @@ table {
   }
 
   tbody{
+    vertical-align: middle;
     border-bottom: 2px solid rgba($color: #d6d6d6, $alpha: 1.0);
+  }
+  
+  .del{
+    padding: 15px;
+    color: white;
+    background-color: rgba($color: #ff0000, $alpha: 0.8);
+    border-radius: 8px;
   }
 
 a:hover,
@@ -31,7 +41,7 @@ a:active { text-decoration: none; color: rgb(255, 255, 255);}
 
 tbody:hover{
     transition: 0.3s;
-    background-color: rgb(65, 171, 172);
+    background-color: rgba($color: #7bbfc8, $alpha: 1.0);
 }
 
 // .route{
