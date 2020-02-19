@@ -164,9 +164,8 @@ public class AccountController {
 			if (ok > 0) {
 				Alarm alarm = new Alarm();
 				alarm.setUid(uid);
-				alarm.setFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+				alarm.setActionid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 				alarm.setAlarmtype(1);
-				alarm.setNickname((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("nickname"));
 				userService.addAlarm(alarm);
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
@@ -451,28 +450,33 @@ public class AccountController {
 			userService.updateAlarm((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 			for(Alarm a : alarms) {
 				if(a.getAlarmtype()==1) {
-					a.setText(a.getNickname()+" 님이 팔로우하셨습니다.");
-					a.setUser(userService.findUserSimple(a.getFollow()));
+					User user = userService.findUserSimple(a.getActionid());
+					a.setText(user.getNickname()+" 님이 팔로우하셨습니다.");
+					a.setUser(user);
 				}else if(a.getAlarmtype()==2) {
+					User user = userService.findUserSimple(a.getActionid());
 					Comment comment = boardService.findCommentByCommentid(a.getCommentid());
-					a.setText(a.getNickname()+" 님이 댓글다셨습니다.");
+					a.setText(user.getNickname()+" 님이 댓글다셨습니다.");
 					a.setDetail(comment.getContents());
-					a.setUser(userService.findUserSimple(a.getWriter()));
+					a.setUser(user);
 				}else if(a.getAlarmtype()==3) {
+					User user = userService.findUserSimple(a.getActionid());
 					Comment comment = boardService.findCommentByCommentid(a.getCommentid());
-					a.setText(a.getNickname()+" 님이 대댓글다셨습니다.");
+					a.setText(user.getNickname()+" 님이 대댓글다셨습니다.");
 					a.setDetail(comment.getContents());
-					a.setUser(userService.findUserSimple(a.getWriter()));
+					a.setUser(user);
 				}else if(a.getAlarmtype()==4) {
+					User user = userService.findUserSimple(a.getActionid());
 					Board board = boardService.findBoardByBoardId(a.getBoardid());
-					a.setText(a.getNickname()+" 님이 글을 올리셨습니다.");
+					a.setText(user.getNickname()+" 님이 글을 올리셨습니다.");
 					a.setDetail(board.getTitle());
-					a.setUser(userService.findUserSimple(a.getWriter()));
+					a.setUser(user);
 				}else if(a.getAlarmtype()==5) {
+					User user = userService.findUserSimple(a.getActionid());
 					Board board = boardService.findBoardByBoardId(a.getBoardid());
-					a.setText(a.getNickname()+" 님이 좋아요를 누르셨습니다.");
+					a.setText(user.getNickname()+" 님이 ["+board.getTitle()+"] 글을 좋아합니다.");
 					a.setDetail(board.getTitle());
-					a.setUser(userService.findUserSimple(a.getFollow()));
+					a.setUser(user);
 				}
 			}
 			return new ResponseEntity<>(alarms, HttpStatus.OK);

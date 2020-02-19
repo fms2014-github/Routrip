@@ -79,10 +79,9 @@ public class PageController {
 				User u = userService.findUserSimple(b.getUid());
 				Alarm alarm = new Alarm();
 				alarm.setUid(u.getUid());
-				alarm.setFollow(uid);
+				alarm.setActionid(uid);
 				alarm.setBoardid(boardid);
 				alarm.setAlarmtype(5);
-				alarm.setNickname((String)Jwts.parser().parseClaimsJwt(jwt).getBody().get("nickname"));
 				userService.addAlarm(alarm);
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
@@ -452,11 +451,9 @@ public class PageController {
 			for (int i : follower) {
 				Alarm alarm = new Alarm();
 				alarm.setUid(i);
-				alarm.setWriter((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+				alarm.setActionid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 				alarm.setBoardid(board.getBoardid());
 				alarm.setAlarmtype(4);
-				alarm.setNickname(userService
-						.findUserByUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid")).getNickname());
 				userService.addAlarm(alarm);
 			}
 			System.out.println("게시글 작성 완료");
@@ -899,8 +896,7 @@ public class PageController {
 				alarm.setCommentid(comment.getCommentid());
 				alarm.setBoardid(comment.getBoardid());
 				alarm.setAlarmtype(comment.getListener() == 0 ? 2 : 3);
-				alarm.setNickname(userService.findUserByUid(comment.getUid()).getNickname());
-				alarm.setWriter((int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid"));
+				alarm.setActionid((int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid"));
 				userService.addAlarm(alarm);
 				return new ResponseEntity<>(HttpStatus.OK);
 			}

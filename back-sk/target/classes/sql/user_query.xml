@@ -192,10 +192,8 @@
 
 	<insert id="addAlarm" parameterType="alarm"
 		useGeneratedKeys="true" keyProperty="alarmid">
-		insert into alarm(uid, alarmtype, boardid, commentid, follow, writer, nickname,
-		time)
-		values(#{uid}, #{alarmtype}, #{boardid}, #{commentid}, #{follow}, #{writer}, #{nickname},
-		now())
+		insert into alarm(uid, alarmtype, boardid, commentid, actionid, time)
+		values(#{uid}, #{alarmtype}, #{boardid}, #{commentid}, #{actionid}, now())
 	</insert>
 	
 	<update id="updateAlarm">
@@ -211,14 +209,14 @@
 	</update>
 
 	<select id="getAlarm" parameterType="int" resultType="alarm">
-		select alarmid, uid, alarmtype, boardid, commentid, follow, nickname, time, writer, isread
+		select alarmid, uid, alarmtype, boardid, commentid, actionid, time, isread
 		from alarm
 		where uid = #{value}
 		order by time desc
 	</select>
 	
 	<select id="getAlarmNoRead" parameterType="int" resultType="alarm">
-		select alarmid, uid, alarmtype, boardid, commentid, follow, time, nickname, writer
+		select alarmid, uid, alarmtype, boardid, commentid, actionid, time, isread
 		from alarm
 		where uid = #{value} and isread = 0 order by time desc
 	</select>
