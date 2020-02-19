@@ -6,8 +6,8 @@ import java.util.Date;
 public class Alarm {
 	private int alarmid;
 	private int uid;
-	private int boardid;
-	private int commentid;
+	private String boardid;
+	private String commentid;
 	private int actionid;
 	private int alarmtype;
 	private String time;
@@ -17,7 +17,7 @@ public class Alarm {
 	private String detail;
 	private User user;
 
-	public Alarm(int alarmid, int uid, int boardid, int commentid, int actionid, int alarmtype,
+	public Alarm(int alarmid, int uid, String boardid, String commentid, int actionid, int alarmtype,
 			String time, String alarmtime, int isread, String text, String detail, User user) {
 		super();
 		this.alarmid = alarmid;
@@ -54,19 +54,19 @@ public class Alarm {
 		this.uid = uid;
 	}
 
-	public int getBoardid() {
+	public String getBoardid() {
 		return boardid;
 	}
 
-	public void setBoardid(int boardid) {
+	public void setBoardid(String boardid) {
 		this.boardid = boardid;
 	}
 
-	public int getCommentid() {
+	public String getCommentid() {
 		return commentid;
 	}
 
-	public void setCommentid(int commentid) {
+	public void setCommentid(String commentid) {
 		this.commentid = commentid;
 	}
 
