@@ -113,9 +113,3 @@ references board(boardid) on update cascade on delete cascade,
 foreign key(commentid)
 references user(commentid) on update cascade on delete cascade
 );
-
-create table token(
-uid int not null,
-jwt varchar(500),
-exp datetime not null
-);

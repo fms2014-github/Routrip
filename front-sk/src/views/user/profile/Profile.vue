@@ -13,7 +13,6 @@
                 </div>
                 </div>
             </div>
-            
             <div class="wrap">
                 <router-link v-bind:to="{ name: 'UserPost' }"><TabComponent tabTitle="내 글" :isActive="true"/></router-link>
                 <router-link v-bind:to="{ name: 'UserComment' }"><TabComponent tabTitle="댓글" :isActive="true"/></router-link>
@@ -29,8 +28,8 @@
     </div>
 </template>
 
-<script>
 
+<script>
 import Axios from 'axios';
 import Swal from 'sweetalert2';
 import { createNamespacedHelpers } from 'vuex';
@@ -123,55 +122,50 @@ export default {
                            icon:'error'
                        })
                     });
-                    
             }}})
                         
         },
 
-        getInfo() {
-            this.userinfo.email = localStorage.getItem('loginedEmail');
-            this.userinfo.nickname = localStorage.getItem('nickName');
-        },
-        checkLogin() {
-            if (localStorage.getItem('loginedEmail') !== null) {
-                this.show = true;
-            } else {
-                this.show = false;
-            }
-        },
-
-        async changeNick() { 
-            await Swal.fire({
-            title: '바꿀 닉네임을 입력해주세요.',
-            input: 'text',
-            inputValue: this.userinfo.nickname,
-            showCancelButton: true,
-            inputValidator: (value) => {
-                if (!value) {
-                    return '뭐라도 써보세요!'
-                }
-                else{
-                    const jwt = localStorage.getItem('routrip_JWT');
-                    Axios.put('http://192.168.100.70:8083/account/user/',
-                        {
-                            nickname: value,
-                            jwt : jwt
-                        }
-                    )
-                    .then(res => {
-                        console.log(res.data);
-                        localStorage.setItem('routrip_JWT', res.data);
-                        this.reqInfo();
-                    });
-                }
-            }})},
+    getInfo() {
+      this.userinfo.email = localStorage.getItem('loginedEmail');
+      this.userinfo.nickname = localStorage.getItem('nickName');
     },
-    data() {
+    checkLogin() {
+      if (localStorage.getItem('loginedEmail') !== null) {
+        this.show = true;
+      } else {
+        this.show = false;
+      }
+    },
 
+    async changeNick() {
+      await Swal.fire({
+        title: '바꿀 닉네임을 입력해주세요.',
+        input: 'text',
+        inputValue: this.userinfo.nickname,
+        showCancelButton: true,
+        inputValidator: value => {
+          if (!value) {
+            return '뭐라도 써보세요!';
+          } else {
+            const jwt = localStorage.getItem('routrip_JWT');
+            Axios.put('http://192.168.100.70:8083/account/user/', {
+              nickname: value,
+              jwt: jwt,
+            }).then(res => {
+              console.log(res.data);
+              localStorage.setItem('routrip_JWT', res.data);
+              this.reqInfo();
+            });
+          }
+        },
+      });
+    },
+  },
+  data() {
         return {
             hi:'',
             userinfo: {
-                token: '',
                 email: '',
                 nickname: '',
                 pic:'',

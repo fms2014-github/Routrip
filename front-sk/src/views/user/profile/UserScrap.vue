@@ -1,9 +1,8 @@
 <template>
      <div>
         <div class="row">
-            <h2 style="text-align:center; font-size: 2.1vw; @include wrap;">
-                총 {{scrapList.length}} 개의 글이 있습니다.</h2>
-            <div v-for="scrap in scrapList" v-bind:key="scrap.boardid">
+            <h2 style="text-align:center; font-size:2.1vw; @include wrap;">총 {{scrapList.length}} 개의 스크랩</h2>
+            <div v-for="scrap in scrapList" :key="scrap.boardid">
                 <div class="gallery">
                     <div class="one">
                         <h1 class = 'card-header-title' style="margin-bottom:10px;" >

@@ -52,7 +52,7 @@ public class AccountController {
 
 	@Autowired
 	private UserService userService;
-	
+
 	@Autowired
 	private BoardService boardService;
 
@@ -66,48 +66,6 @@ public class AccountController {
 		User loginUser = userService.findUserByEmail(user.getEmail(), 0);
 		if (loginUser == null || !BCrypt.checkpw(user.getPassword(), loginUser.getPassword()))
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-		String refresh = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
-				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
-				.claim("nickname", loginUser.getNickname()).claim("profileImg", loginUser.getProfileImg())
-				.claim("loginApi", loginUser.getLoginApi())
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))// 하루 뒤 자동 기간 만료됨
-				// .signWith(SignatureAlgorithm.HS256, signingKey)
-				.compact();
-		// System.out.println(Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key)).parseClaimsJwt(refresh).getBody().get("email"));
-		// refresh 토큰은 DB 에 저장
-		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
-				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
-				.claim("nickname", loginUser.getNickname()).claim("profileImg", loginUser.getProfileImg())
-				.claim("loginApi", loginUser.getLoginApi())
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))// 한나절 후 자동 기간 만료됨
-				// .signWith(SignatureAlgorithm.HS256, key)
-				.compact();
-		System.out.println(loginUser.getUid() + " " + loginUser.getNickname() + " 님 로그인하셨습니다.");
-		return new ResponseEntity<>(jwt, HttpStatus.OK);
-	}
-
-	@PostMapping("/snslogin")
-	@ApiOperation(value = "sns로그인")
-	public Object snslogin(@RequestBody User user) throws Exception {
-		//User loginUser = userService.findUserByUserId(user.getUserid(), user.getLoginApi());
-		User loginUser = null;
-		List<User> temp = userService.findUserByLoginApi(user.getLoginApi());
-		for(User u:temp) {
-			if(BCrypt.checkpw(user.getUserid(), u.getUserid())) {
-				loginUser = u;
-				break;
-			}
-		}
-		if (loginUser == null)
-			return new ResponseEntity<>(HttpStatus.OK);
-		String refresh = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
-				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
-				.claim("nickname", loginUser.getNickname()).claim("profileImg", loginUser.getProfileImg())
-				.claim("loginApi", loginUser.getLoginApi())
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
-				// .signWith(SignatureAlgorithm.HS256, key)
-				.compact();
-		// refresh 토큰은 DB 에 저장
 		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
 				.claim("nickname", loginUser.getNickname()).claim("profileImg", loginUser.getProfileImg())
@@ -115,7 +73,29 @@ public class AccountController {
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
 				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
-		System.out.println(loginUser.getUid() + " " + loginUser.getNickname() + " 님 로그인하셨습니다.");
+		return new ResponseEntity<>(jwt, HttpStatus.OK);
+	}
+
+	@PostMapping("/snslogin")
+	@ApiOperation(value = "sns로그인")
+	public Object snslogin(@RequestBody User user) throws Exception {
+		User loginUser = null;
+		List<User> temp = userService.findUserByLoginApi(user.getLoginApi());
+		for (User u : temp) {
+			if (BCrypt.checkpw(user.getUserid(), u.getUserid())) {
+				loginUser = u;
+				break;
+			}
+		}
+		if (loginUser == null)
+			return new ResponseEntity<>(HttpStatus.OK);
+		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
+				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
+				.claim("nickname", loginUser.getNickname()).claim("profileImg", loginUser.getProfileImg())
+				.claim("loginApi", loginUser.getLoginApi())
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
+				// .signWith(SignatureAlgorithm.HS256, key)
+				.compact();
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
 
@@ -130,11 +110,7 @@ public class AccountController {
 			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 			String exp = format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration());
 			userService.deleteBlackList();
-			System.out.print((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
-			System.out.print(" " + Jwts.parser().parseClaimsJwt(jwt).getBody().get("nickname"));
-			System.out.println(" 님이 로그아웃하셨습니다.");
 			userService.addBlackList(uid, exp, jwt);
-			// refresh 도 DB에서 삭제
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
@@ -243,7 +219,6 @@ public class AccountController {
 			if (flag)
 				ok = userService.deleteUser(uid);
 			if (ok > 0) {
-				System.out.println(user.getNickname() + " 님 탈퇴하셨습니다.");
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 		} else {
@@ -285,20 +260,11 @@ public class AccountController {
 				ok = userService.updateProfile(user);
 			}
 			if (ok > 0) {
-				System.out.println("회원정보가 변경되었습니다.");
 				SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 				String exp = format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration());
 				userService.deleteBlackList();
 				userService.addBlackList(uid, exp, jwt);
 				user = userService.findUserByUid(uid);
-				String refresh = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(user.getUid()))
-						.claim("uid", user.getUid()).claim("email", user.getEmail())
-						.claim("nickname", user.getNickname()).claim("profileImg", user.getProfileImg())
-						.claim("loginApi", user.getLoginApi())
-						.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
-						// .signWith(SignatureAlgorithm.HS256, key)
-						.compact();
-				// refresh 토큰 DB 에서 삭제 후 저장
 				jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(user.getUid()))
 						.claim("uid", user.getUid()).claim("email", user.getEmail())
 						.claim("nickname", user.getNickname()).claim("profileImg", user.getProfileImg())
@@ -322,7 +288,6 @@ public class AccountController {
 		user.setUserid(BCrypt.hashpw(user.getUserid(), BCrypt.gensalt()));
 		ok = userService.addUser(user);
 		if (ok > 0) {
-			System.out.println(user.getNickname() + " 님 가입완료 됐습니다.");
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -334,7 +299,7 @@ public class AccountController {
 		boolean flag = true;
 		if (user.getLoginApi() == 0) {
 			List<User> userlist = userService.getUserList();
-			for (User u : userlist) {// 해당 이메일이 이미 존재하는지 확인
+			for (User u : userlist) {
 				if (u.getEmail().equalsIgnoreCase(user.getEmail())) {
 					int d = userService.deleteUserNoJoin(u.getUid());
 					if (d == 0) {
@@ -353,25 +318,11 @@ public class AccountController {
 			ok = userService.addUser(user);
 			String body = "인증번호는 [ " + authNum + " ] 입니다.";
 			sendEmail(user.getEmail(), body);
-			System.out.println("인증번호를 발송했습니다.");
 		}
 		if (ok > 0) {
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-	}
-
-	@PutMapping("/mail")
-	@ApiOperation(value = "인증번호재발송")
-	public Object sendMail(@RequestBody User user) throws Exception {
-		String authNum = RandomNum();
-		user.setUserkey(authNum);
-		userService.changeUserKey(user);
-		String emailTemp = userService.findUserByUid(user.getUid()).getEmail();
-		String body = "인증번호는 [ " + authNum + " ] 입니다.";
-		sendEmail(emailTemp, body);
-		System.out.println("인증번호가 재발송 되었습니다.");
-		return new ResponseEntity<>(HttpStatus.OK);
 	}
 
 	@PutMapping("/signup")
@@ -381,11 +332,9 @@ public class AccountController {
 		if (user.getUserkey().equals(tempuser.getUserkey())) {
 			int ok = userService.updateUserKey(user.getUid());
 			if (ok > 0) {
-				System.out.println(user.getNickname() + " 님 가입완료 됐습니다.");
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 		}
-		System.out.println("인증번호가 일치하지 않습니다.");
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
@@ -448,33 +397,33 @@ public class AccountController {
 		if (isOkJwt(jwt)) {
 			List<Alarm> alarms = userService.getAlarm((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 			userService.updateAlarm((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
-			for(Alarm a : alarms) {
-				if(a.getAlarmtype()==1) {
+			for (Alarm a : alarms) {
+				if (a.getAlarmtype() == 1) {
 					User user = userService.findUserSimple(a.getActionid());
-					a.setText(user.getNickname()+" 님이 팔로우하셨습니다.");
+					a.setText(user.getNickname() + " 님이 팔로우하셨습니다.");
 					a.setUser(user);
-				}else if(a.getAlarmtype()==2) {
+				} else if (a.getAlarmtype() == 2) {
 					User user = userService.findUserSimple(a.getActionid());
-					Comment comment = boardService.findCommentByCommentid(a.getCommentid());
-					a.setText(user.getNickname()+" 님이 댓글다셨습니다.");
+					Comment comment = boardService.findCommentByCommentid(Integer.parseInt(a.getCommentid()));
+					a.setText(user.getNickname() + " 님이 댓글다셨습니다.");
 					a.setDetail(comment.getContents());
 					a.setUser(user);
-				}else if(a.getAlarmtype()==3) {
+				} else if (a.getAlarmtype() == 3) {
 					User user = userService.findUserSimple(a.getActionid());
-					Comment comment = boardService.findCommentByCommentid(a.getCommentid());
-					a.setText(user.getNickname()+" 님이 대댓글다셨습니다.");
+					Comment comment = boardService.findCommentByCommentid(Integer.parseInt(a.getCommentid()));
+					a.setText(user.getNickname() + " 님이 대댓글다셨습니다.");
 					a.setDetail(comment.getContents());
 					a.setUser(user);
-				}else if(a.getAlarmtype()==4) {
+				} else if (a.getAlarmtype() == 4) {
 					User user = userService.findUserSimple(a.getActionid());
-					Board board = boardService.findBoardByBoardId(a.getBoardid());
-					a.setText(user.getNickname()+" 님이 글을 올리셨습니다.");
+					Board board = boardService.findBoardByBoardId(Integer.parseInt(a.getBoardid()));
+					a.setText(user.getNickname() + " 님이 글을 올리셨습니다.");
 					a.setDetail(board.getTitle());
 					a.setUser(user);
-				}else if(a.getAlarmtype()==5) {
+				} else if (a.getAlarmtype() == 5) {
 					User user = userService.findUserSimple(a.getActionid());
-					Board board = boardService.findBoardByBoardId(a.getBoardid());
-					a.setText(user.getNickname()+" 님이 ["+board.getTitle()+"] 글을 좋아합니다.");
+					Board board = boardService.findBoardByBoardId(Integer.parseInt(a.getBoardid()));
+					a.setText(user.getNickname() + " 님이 [" + board.getTitle() + "] 글을 좋아합니다.");
 					a.setDetail(board.getTitle());
 					a.setUser(user);
 				}
@@ -505,7 +454,6 @@ public class AccountController {
 	}
 
 	public void sendEmail(String usermail, String body) {
-		// 골뱅이가 여러개 있을 경우, 특문 막 들어가 있을 경우는 어떻게?? 프론트에서?
 		String result = usermail.substring(usermail.lastIndexOf("@") + 1);
 		Session s = null;
 
@@ -529,11 +477,11 @@ public class AccountController {
 			Transport.send(msg);
 
 		} catch (AddressException ae) {
-			System.out.println("AddressException : " + ae.getMessage());
+			System.out.println("AddressException");
 		} catch (MessagingException me) {
-			System.out.println("MessagingException : " + me.getMessage());
+			System.out.println("MessagingException");
 		} catch (UnsupportedEncodingException e) {
-			System.out.println("UnsupportedEncodingException : " + e.getMessage());
+			System.out.println("UnsupportedEncodingException");
 		}
 	}
 
@@ -593,7 +541,6 @@ public class AccountController {
 			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
 
 			List<String> exps = userService.findBlackListByUid(uid);
-			// 최신 로그인 이전 시점 인증 실패
 			if (exps != null) {
 				for (String e : exps) {
 					if (exp.getTime() < format.parse(e).getTime()) {
@@ -603,9 +550,9 @@ public class AccountController {
 				}
 			}
 			if (userService.findBlackList(uid,
-					format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration())) > 0)
-				// 블랙 리스트에 있으면 인증 실패
+					format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration())) > 0) {
 				return false;
+			}
 		} catch (ExpiredJwtException e1) {
 			System.out.println("토큰 기간 만료");
 			return false;

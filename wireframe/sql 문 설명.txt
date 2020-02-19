@@ -114,9 +114,3 @@ references board(boardid) on update cascade on delete cascade,
 foreign key(commentid)
 references user(commentid) on update cascade on delete cascade
 );
-
-create table token(
-uid int not null, 리프레쉬 토큰의 소지자
-jwt varchar(500), 리프레쉬 토큰 내용
-exp datetime not null 리프레쉬 토큰의 만료기간
-);
