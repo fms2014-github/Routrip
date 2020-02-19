@@ -23,10 +23,8 @@ a:visited { text-decoration: none; color:black; }
 }
 
 .one:hover{
-	
 	transition: 0.3s;
 	background-color: rgba($color: #7bbfc8, $alpha: 1.0);
-
 	.card-header-title {
 		text-decoration: none; color: rgba($color: #ffffff, $alpha: 1.0)
 	}

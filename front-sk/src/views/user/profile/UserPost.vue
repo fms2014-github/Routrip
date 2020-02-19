@@ -1,8 +1,8 @@
 <template>
     <div>
         <div class="row">
-            <h2 style="text-align:center; font-size: 2.1vw; @include wrap;">
-                총 {{postList.length}} 개의 글이 있습니다.</h2>
+            <div style="text-align:center; font-size:2.1vw; @include wrap; margin-bottom:7vw;">
+                총 {{postList.length}} 개의 글이 있습니다.</div>
             <div v-for="post in postList" v-bind:key="post.boardid">
                 <div class="gallery">
                     <router-link :to="{ name: 'Detail', params: { boardid: post.boardid } }">

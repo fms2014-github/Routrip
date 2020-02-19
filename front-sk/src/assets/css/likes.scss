@@ -25,12 +25,14 @@ table {
   }
 
   tbody{
+    
     vertical-align: middle;
     border-bottom: 2px solid rgba($color: #d6d6d6, $alpha: 1.0);
   }
   
   .del{
     padding: 15px;
+    vertical-align: middle;
     color: white;
     background-color: rgba($color: #ff0000, $alpha: 0.8);
     border-radius: 8px;

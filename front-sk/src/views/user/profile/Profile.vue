@@ -78,21 +78,16 @@ export default {
         async delUser(){
             await Swal.fire({
             title: '계정이 영구 삭제됩니다.',
-            text: "비밀번호를 입력해 주세요.",
+            text: "비밀번호를 입력해 주세요.(일반 회원만)",
             input: 'password',
             icon: 'warning',
             showCancelButton: true,
             confirmButtonColor: '#d33',
-            inputPlaceholder: 'Enter your password',
+            inputPlaceholder: 'SNS유저는 입력하지 않아도 됩니다.',
             inputValue: '',
             inputValidator:(value)=>{
             if (!value) {
-                if (!this.getUser.data.email){
-                    return 'SNS 유저는 입력하지 마세요.'
-                }
-                else{
-                    return '비밀번호를 입력해 주세요.'
-                }
+              return '비밀번호를 입력해 주세요.'
             }
             else{
                 const jwt = localStorage.getItem('routrip_JWT');
@@ -114,8 +109,7 @@ export default {
                                 this.$router.push('/');
                             }
                         }
-                    )
-                        
+                    )       
                     }).catch(error=>{
                        Swal.fire({
                            title:'비밀번호가 틀렸거나, 값이 유효하지 않습니다.',
