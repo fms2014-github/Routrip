@@ -1,7 +1,12 @@
 <template>
     <div>
+        <h2 style="text-align:center; font-size:2.1vw; @include wrap; margin-bottom:7vw;">총 {{ commentList.length }}개의 댓글이 있습니다. </h2>
         <li v-for="comment in commentList" v-bind:key="comment.commentid">
+            <h4 style="font-size:1.3vw; margin-bottom:1.4vw;">
+            <router-link :to="{ name: 'Detail', params: { boardid: comment.boardid } }">
             {{ comment.contents }} {{comment.writedate}}
+            </router-link>
+            </h4>
         </li>
 
     </div>

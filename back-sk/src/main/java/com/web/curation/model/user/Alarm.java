@@ -13,6 +13,7 @@ public class Alarm {
 	private String nickname;
 	private String time;
 	private String alarmtime;
+	private int isread; //1이 읽음 0은 안읽음
 
 	public Alarm(int alarmid, int uid, int boardid, int commentid, int follow, int alarmtype, String nickname, String time) {
 		super();
@@ -110,5 +111,17 @@ public class Alarm {
 	}
 	public void setAlarmtime(String alarmtime) {
 		this.alarmtime = alarmtime;
+	}
+	public int getIsread() {
+		return isread;
+	}
+	public void setIsread(int isread) {
+		this.isread = isread;
+	}
+	@Override
+	public String toString() {
+		return "Alarm [alarmid=" + alarmid + ", uid=" + uid + ", boardid=" + boardid + ", commentid=" + commentid
+				+ ", follow=" + follow + ", alarmtype=" + alarmtype + ", nickname=" + nickname + ", time=" + time
+				+ ", alarmtime=" + alarmtime + "]";
 	}
 }

@@ -30,7 +30,6 @@ import PictureRegister from './views/user/profile/PictureRegister.vue';
 // Import Etc Components
 import Components from './views/Components.vue';
 import Alarm from './views/user/Alarm.vue';
-import Routrip from '../src/views/main/RoutripLogo.vue';
 
 export const router = new Router({
   mode: 'history',
@@ -38,75 +37,47 @@ export const router = new Router({
     path: '/',
     name: 'Login',
     component: Login,
-    children: [{
-      path: 'user/join',
-      name: 'Join',
-      components: {
-        join: Join,
-      },
-    },
-    {
-      path: 'user/joinauth',
-      name: 'JoinAuth',
-      components: {
-        join: JoinAuth,
-      },
-    },
-    {
-      path: '/user/FindEmailAndPassword',
-      name: 'FindEmailAndPassword',
-      components: {
-        find: FindEmailAndPassword,
-      },
-    },
-    ],
   },
   {
     path: '/profile',
     name: 'Profile',
     component: Profile,
-    children: [{
-      path: '',
-      name: 'UserPost',
-      components: {
-        profile: UserPost,
+    children: [
+      {
+        path: '',
+        name: 'UserPost',
+        components: {
+          profile: UserPost,
+        },
       },
-    },
-    {
-      path: 'picture',
-      name: 'PictureRegister',
-      components: {
-        picture_register: PictureRegister,
+      {
+        path: 'comment',
+        name: 'UserComment',
+        components: {
+          profile: UserComment,
+        },
       },
-    },
-    {
-      path: 'comment',
-      name: 'UserComment',
-      components: {
-        profile: UserComment,
+      {
+        path: 'like',
+        name: 'UserLike',
+        components: {
+          profile: UserLike,
+        },
       },
-    },
-    {
-      path: 'like',
-      name: 'UserLike',
-      components: {
-        profile: UserLike,
+      {
+        path: 'people',
+        name: 'UserPeople',
+        components: {
+          profile: UserPeople,
+        },
       },
-    },
-    {
-      path: 'people',
-      name: 'UserPeople',
-      components: {
-        profile: UserPeople,
+      {
+        path: 'scrap',
+        name: 'UserScrap',
+        components: {
+          profile: UserScrap,
+        },
       },
-    },
-    {
-      path: 'scrap',
-      name: 'UserScrap',
-      components: {
-        profile: UserScrap,
-      },
-    },
     ],
   },
   {
@@ -145,6 +116,11 @@ export const router = new Router({
     component: Detail,
   },
   {
+    path: '/updatePost',
+    name: 'UpdatePost',
+    component: WriteForm,
+  },
+  {
     path: '/search',
     name: 'Search',
     component: Search,
@@ -164,10 +140,5 @@ export const router = new Router({
     name: 'Alarm',
     component: Alarm,
   },
-  {
-    path: '/routrip',
-    name: 'Routrip',
-    component: Routrip,
-  }
   ],
 })

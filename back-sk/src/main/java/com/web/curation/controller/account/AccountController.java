@@ -18,6 +18,7 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 import javax.validation.Valid;
 
+import org.mindrot.jbcrypt.BCrypt;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -31,7 +32,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.web.curation.model.BasicResponse;
 import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
 import com.web.curation.service.UserService;
@@ -41,13 +41,6 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.MalformedJwtException;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.swagger.annotations.ApiOperation;
-import io.swagger.annotations.ApiResponse;
-import io.swagger.annotations.ApiResponses;
-
-@ApiResponses(value = { @ApiResponse(code = 401, message = "Unauthorized", response = BasicResponse.class),
-		@ApiResponse(code = 403, message = "Forbidden", response = BasicResponse.class),
-		@ApiResponse(code = 404, message = "Not Found", response = BasicResponse.class),
-		@ApiResponse(code = 500, message = "Failure", response = BasicResponse.class) })
 
 @CrossOrigin(origins = { "*" }, maxAge = 6000)
 @RequestMapping("/account")
@@ -57,55 +50,54 @@ public class AccountController {
 	@Autowired
 	private UserService userService;
 
-	// private String key = "webcuration-routrip-secretkey";
+//	private String key = "webcuration-routrip-secretkey";
+//	byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(key);
+//	Key signingKey = new SecretKeySpec(apiKeySecretBytes, SignatureAlgorithm.HS256.getJcaName());
 
 	@PostMapping("/login")
 	@ApiOperation(value = "로그인")
 	public Object login(@RequestBody User user) throws Exception {
-		User loginUser = userService.findUserByEmailAndPassword(user.getEmail(), user.getPassword());
-		if (loginUser == null)
+		User loginUser = userService.findUserByEmail(user.getEmail(), 0);
+		if (loginUser == null || !BCrypt.checkpw(user.getPassword(), loginUser.getPassword()))
 			return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 		String refresh = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
-				// .claim("userid", loginUser.getUserid())
-				// .claim("password", loginUser.getPassword())
-				// .claim("name", loginUser.getName())
-				.claim("nickname", loginUser.getNickname())
-				// .claim("phone", loginUser.getPhone())
-				// .claim("birth", loginUser.getBirth())
-				.claim("profileImg", loginUser.getProfileImg()).claim("loginApi", loginUser.getLoginApi())
-				.claim("userkey", loginUser.getUserkey())
+				.claim("nickname", loginUser.getNickname()).claim("profileImg", loginUser.getProfileImg())
+				.claim("loginApi", loginUser.getLoginApi())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))// 하루 뒤 자동 기간 만료됨
-				// .signWith(SignatureAlgorithm.HS256, key)
+				// .signWith(SignatureAlgorithm.HS256, signingKey)
 				.compact();
+		// System.out.println(Jwts.parser().setSigningKey(DatatypeConverter.parseBase64Binary(key)).parseClaimsJwt(refresh).getBody().get("email"));
 		// refresh 토큰은 DB 에 저장
 		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
 				.claim("nickname", loginUser.getNickname()).claim("profileImg", loginUser.getProfileImg())
-				.claim("loginApi", loginUser.getLoginApi()).claim("userkey", loginUser.getUserkey())
-				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
+				.claim("loginApi", loginUser.getLoginApi())
+				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))// 한나절 후 자동 기간 만료됨
 				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
-		System.out.println(loginUser.getUid()+" "+loginUser.getNickname()+" 님 로그인하셨습니다.");
+		System.out.println(loginUser.getUid() + " " + loginUser.getNickname() + " 님 로그인하셨습니다.");
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
 
 	@PostMapping("/snslogin")
 	@ApiOperation(value = "sns로그인")
 	public Object snslogin(@RequestBody User user) throws Exception {
-		User loginUser = userService.findUserByUserId(user.getUserid(), user.getLoginApi());
+		//User loginUser = userService.findUserByUserId(user.getUserid(), user.getLoginApi());
+		User loginUser = null;
+		List<User> temp = userService.findUserByLoginApi(user.getLoginApi());
+		for(User u:temp) {
+			if(BCrypt.checkpw(user.getUserid(), u.getUserid())) {
+				loginUser = u;
+				break;
+			}
+		}
 		if (loginUser == null)
 			return new ResponseEntity<>(HttpStatus.OK);
 		String refresh = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
-				// .claim("userid", loginUser.getUserid())
-				// .claim("password", loginUser.getPassword())
-				// .claim("name", loginUser.getName())
-				.claim("nickname", loginUser.getNickname())
-				// .claim("phone", loginUser.getPhone())
-				// .claim("birth", loginUser.getBirth())
-				.claim("profileImg", loginUser.getProfileImg()).claim("loginApi", loginUser.getLoginApi())
-				.claim("userkey", loginUser.getUserkey())
+				.claim("nickname", loginUser.getNickname()).claim("profileImg", loginUser.getProfileImg())
+				.claim("loginApi", loginUser.getLoginApi())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
 				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
@@ -113,11 +105,11 @@ public class AccountController {
 		String jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(loginUser.getUid()))
 				.claim("uid", loginUser.getUid()).claim("email", loginUser.getEmail())
 				.claim("nickname", loginUser.getNickname()).claim("profileImg", loginUser.getProfileImg())
-				.claim("loginApi", loginUser.getLoginApi()).claim("userkey", loginUser.getUserkey())
+				.claim("loginApi", loginUser.getLoginApi())
 				.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
 				// .signWith(SignatureAlgorithm.HS256, key)
 				.compact();
-		System.out.println(loginUser.getUid()+" "+loginUser.getNickname()+" 님 로그인하셨습니다.");
+		System.out.println(loginUser.getUid() + " " + loginUser.getNickname() + " 님 로그인하셨습니다.");
 		return new ResponseEntity<>(jwt, HttpStatus.OK);
 	}
 
@@ -125,27 +117,31 @@ public class AccountController {
 	@ApiOperation(value = "로그아웃")
 	public Object logout(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
-		int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
-		SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-		String exp = format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration());
-		userService.deleteBlackList();
+		if (jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
+			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
+			SimpleDateFormat format = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+			String exp = format.format(Jwts.parser().parseClaimsJwt(jwt).getBody().getExpiration());
+			userService.deleteBlackList();
 			System.out.print((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
-			System.out.print(" "+Jwts.parser().parseClaimsJwt(jwt).getBody().get("nickname"));
+			System.out.print(" " + Jwts.parser().parseClaimsJwt(jwt).getBody().get("nickname"));
 			System.out.println(" 님이 로그아웃하셨습니다.");
 			userService.addBlackList(uid, exp, jwt);
 			// refresh 도 DB에서 삭제
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 	@PostMapping("/follow")
 	@ApiOperation(value = "팔로우 등록")
 	public Object following(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
-		int uid = Integer.parseInt(map.get("uid"));
+		if (jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
+			int uid = Integer.parseInt(map.get("uid"));
 			int ok = 0;
 			List<Integer> follower = userService
 					.getFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
@@ -168,14 +164,24 @@ public class AccountController {
 				userService.addAlarm(alarm);
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	@PostMapping("/following")
 	@ApiOperation(value = "팔로우 정보 조회")
-	public Object followList(@RequestBody Map<String, Integer> map) throws Exception {
-		List<Integer> list = userService.getFollow(map.get("uid"));
+	public Object followList(@RequestBody Map<String, String> map) throws Exception {
+		List<Integer> list = new ArrayList<Integer>();
+		if (map.get("uid") != null) {
+			list = userService.getFollow(Integer.parseInt(map.get("uid")));
+		} else if (map.get("jwt") != null) {
+			if (isOkJwt(map.get("jwt")))
+				list = userService.getFollow((int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid"));
+			else
+				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		}
 		List<User> userlist = new ArrayList<User>();
 		for (Integer i : list)
 			userlist.add(userService.findUserSimple(i));
@@ -184,23 +190,33 @@ public class AccountController {
 
 	@PostMapping("/follower")
 	@ApiOperation(value = "팔로워 정보 조회")
-	public Object followerList(@RequestBody Map<String, Integer> map) throws Exception {
-		List<Integer> list = userService.getFollower(map.get("uid"));
+	public Object followerList(@RequestBody Map<String, String> map) throws Exception {
+		List<Integer> list = new ArrayList<Integer>();
+		if (map.get("uid") != null) {
+			list = userService.getFollower(Integer.parseInt(map.get("uid")));
+		} else if (map.get("jwt") != null) {
+			if (isOkJwt(map.get("jwt")))
+				list = userService.getFollower((int) Jwts.parser().parseClaimsJwt(map.get("jwt")).getBody().get("uid"));
+			else
+				return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+		}
 		List<User> userlist = new ArrayList<User>();
 		for (Integer i : list)
 			userlist.add(userService.findUserSimple(i));
 		return new ResponseEntity<>(userlist, HttpStatus.OK);
 	}
 
-	// @DeleteMapping("/follow")
-	// @ApiOperation(value = "팔로우 해제")
 	public Object deleteFollow(Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
-		int uid = Integer.parseInt(map.get("uid"));
+		if (jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
+			int uid = Integer.parseInt(map.get("uid"));
 			int ok = userService.deleteFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"), uid);
 			if (ok > 0)
 				return new ResponseEntity<>(HttpStatus.OK);
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -209,13 +225,24 @@ public class AccountController {
 	@ApiOperation(value = "탈퇴하기")
 	public Object deleteUser(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if (jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
+			User user = userService.findUserByUid(uid);
 			int ok = 0;
-			ok = userService.deleteUser(uid);
+			boolean flag = false;
+			if ((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("loginApi") != 0
+					|| BCrypt.checkpw(map.get("password"), user.getPassword()))
+				flag = true;
+			if (flag)
+				ok = userService.deleteUser(uid);
 			if (ok > 0) {
+				System.out.println(user.getNickname() + " 님 탈퇴하셨습니다.");
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -224,7 +251,8 @@ public class AccountController {
 	@ApiOperation(value = "비밀번호 변경")
 	public Object updatePassword(@RequestBody User user) throws Exception {
 		user.setUid(userService.findUserByEmail(user.getEmail(), 0).getUid());
-		int ok = userService.updateProfile(user);// 안되면 changePW함수로 다시 변경
+		user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
+		int ok = userService.updateProfile(user);
 		if (ok > 0) {
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
@@ -235,6 +263,8 @@ public class AccountController {
 	@ApiOperation(value = "회원정보 변경") // 프로필 이미지, 닉네임 변경
 	public Object updateProfile(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if (jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			int uid = (int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid");
 			String profileImg = (String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("profileImg");
@@ -242,7 +272,6 @@ public class AccountController {
 			User user = new User();
 			int ok = 0;
 			user.setUid(uid);
-			// 동시에 변경하게 되면 if&else if || 로 묶고 하나로 합치기
 			if (map.get("profileImg") != null && !profileImg.equals(map.get("profileImg"))) {
 				user.setProfileImg(map.get("profileImg"));
 				ok = userService.updateProfile(user);
@@ -259,9 +288,8 @@ public class AccountController {
 				user = userService.findUserByUid(uid);
 				String refresh = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(user.getUid()))
 						.claim("uid", user.getUid()).claim("email", user.getEmail())
-						// .claim("userid", user.getUserid())
 						.claim("nickname", user.getNickname()).claim("profileImg", user.getProfileImg())
-						.claim("loginApi", user.getLoginApi()).claim("userkey", user.getUserkey())
+						.claim("loginApi", user.getLoginApi())
 						.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 24))
 						// .signWith(SignatureAlgorithm.HS256, key)
 						.compact();
@@ -269,12 +297,14 @@ public class AccountController {
 				jwt = Jwts.builder().setHeaderParam("typ", "JWT").setSubject(String.valueOf(user.getUid()))
 						.claim("uid", user.getUid()).claim("email", user.getEmail())
 						.claim("nickname", user.getNickname()).claim("profileImg", user.getProfileImg())
-						.claim("loginApi", user.getLoginApi()).claim("userkey", user.getUserkey())
+						.claim("loginApi", user.getLoginApi())
 						.setExpiration(new Date(System.currentTimeMillis() + 1000 * 60 * 60 * 12))
 						// .signWith(SignatureAlgorithm.HS256, key)
 						.compact();
 				return new ResponseEntity<>(jwt, HttpStatus.OK);
 			}
+		} else {
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
@@ -284,8 +314,10 @@ public class AccountController {
 	public Object snsSignup(@Valid @RequestBody User user) throws Exception {
 		int ok = 0;
 		user.setUserkey("Y");
+		user.setUserid(BCrypt.hashpw(user.getUserid(), BCrypt.gensalt()));
 		ok = userService.addUser(user);
 		if (ok > 0) {
+			System.out.println(user.getNickname() + " 님 가입완료 됐습니다.");
 			return new ResponseEntity<>(HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
@@ -312,7 +344,7 @@ public class AccountController {
 		if (flag) {
 			String authNum = RandomNum();
 			user.setUserkey(authNum);
-
+			user.setPassword(BCrypt.hashpw(user.getPassword(), BCrypt.gensalt()));
 			ok = userService.addUser(user);
 			String body = "인증번호는 [ " + authNum + " ] 입니다.";
 			sendEmail(user.getEmail(), body);
@@ -340,13 +372,11 @@ public class AccountController {
 	@PutMapping("/signup")
 	@ApiOperation(value = "가입완료")
 	public Object updateUserKey(@RequestBody User tempuser) throws Exception {
-		System.out.println(tempuser.getEmail());
-		System.out.println(tempuser.getUserkey());
 		User user = userService.findUserNoJoin(tempuser.getEmail(), 0);
 		if (user.getUserkey().equals(tempuser.getUserkey())) {
 			int ok = userService.updateUserKey(user.getUid());
 			if (ok > 0) {
-				System.out.println("가입완료 됐습니다.");
+				System.out.println(user.getNickname() + " 님 가입완료 됐습니다.");
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
 		}
@@ -390,45 +420,42 @@ public class AccountController {
 	@ApiOperation(value = "유저 토큰 해석")
 	public Object decode2(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if (jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			User user = new User();
 			user.setUid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 			user.setEmail((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("email"));
-			// user.setUserid((String)
-			// Jwts.parser().parseClaimsJwt(jwt).getBody().get("userid"));
 			user.setNickname((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("nickname"));
 			user.setProfileImg((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("profileImg"));
 			user.setLoginApi((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("loginApi"));
 			return new ResponseEntity<>(user, HttpStatus.OK);
-		} else {
-			System.out.println("유효하지 않은 jwt 입니다. " + jwt);
 		}
-		return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 	@PostMapping("/alarm")
 	@ApiOperation(value = "유저 알림")
 	public Object alarm(@RequestBody Map<String, String> map) throws Exception {
 		String jwt = map.get("jwt");
+		if (jwt == null)
+			return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 		if (isOkJwt(jwt)) {
 			List<Alarm> alarms = userService.getAlarm((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+			userService.updateAlarm((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 			return new ResponseEntity<>(alarms, HttpStatus.OK);
 		}
-		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 	}
 
 	@DeleteMapping("/alarm")
 	@ApiOperation(value = "알림 삭제")
 	public Object deleteAlarm(@RequestBody Map<String, String> map) throws Exception {
-		// 알람 유저가 직접 하나씩 삭제
 		int alarmid = Integer.parseInt(map.get("alarmid"));
-		userService.deleteAlarm(alarmid);
-		// 알람 유저가 보고 나면 한꺼번에 삭제
-//		String jwt = map.get("jwt");
-//		if (isOkJwt(jwt)) {
-//			userService.deleteAlarmAll((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
-//		}
-		return new ResponseEntity<>(HttpStatus.OK);
+		int ok = userService.deleteAlarm(alarmid);
+		if (ok > 0)
+			return new ResponseEntity<>(HttpStatus.OK);
+		return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
 	}
 
 	// 인증번호 생성기 (6글자)
@@ -441,7 +468,6 @@ public class AccountController {
 		return buffer.toString();
 	}
 
-	// 이메일 보내는 함수(gmail, naver, daum)
 	public void sendEmail(String usermail, String body) {
 		// 골뱅이가 여러개 있을 경우, 특문 막 들어가 있을 경우는 어떻게?? 프론트에서?
 		String result = usermail.substring(usermail.lastIndexOf("@") + 1);
@@ -545,16 +571,17 @@ public class AccountController {
 				// 블랙 리스트에 있으면 인증 실패
 				return false;
 		} catch (ExpiredJwtException e1) {
-			// refresh 토큰 읽어와서 존재하면 acess 토큰 발급
-			// 만약 만료되서 uid 자체를 못 가져오면...?
-			// 없으면 return false
 			System.out.println("토큰 기간 만료");
+			return false;
 		} catch (UnsupportedJwtException e) {
 			System.out.println("UnsupportedJwtException 발생");
+			return false;
 		} catch (MalformedJwtException e) {
 			System.out.println("MalformedJwtException 발생");
+			return false;
 		} catch (Exception e) {
 			System.out.println("오류가 발생했습니다.");
+			return false;
 		}
 		return true;
 	}

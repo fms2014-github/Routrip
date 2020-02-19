@@ -11,8 +11,12 @@
                         :auto-play="true"
                         :play-speed="2000"
                     >
-                        <slide v-for="(data, dataIdx) in datas" :key="dataIdx">
-                            <img :src="data.imgs[0].src" alt />
+                        <slide v-for="(data, dataIdx) in bestDatas" :key="dataIdx">
+                            <router-link
+                                :to="{ name: 'Detail', params: { boardid: data.boardid } }"
+                            >
+                                <img :src="data.imgs[0].src" alt />
+                            </router-link>
                         </slide>
                         <hooper-navigation slot="hooper-addons"></hooper-navigation>
                     </hooper>
@@ -32,7 +36,7 @@
                                     <br />
                                     <span>{{ data.user.nickname }}</span>
                                 </div>
-                                <div class="else" @click="showElseBtn(data)">
+                                <div class="else" @click="showElseBtn(data, data.boardid)">
                                     <span>
                                         <i class="fas fa-ellipsis-h"></i>
                                     </span>
@@ -109,8 +113,13 @@
                                     <div class="comment-info">
                                         <div class="comment-info-box">
                                             <div class="writer">
-                                                <strong>{{ comment.user.nickname }}</strong>
-                                                <span>{{ comment.writeday }}</span>
+                                                <div class="writer-info">
+                                                    <strong>{{ comment.user.nickname }}</strong>
+                                                    <span>{{ comment.writeday }}</span>
+                                                </div>
+                                                <div class="writer-reply">
+                                                    <span>댓글달기</span>
+                                                </div>
                                             </div>
                                             <div class="writer-text">
                                                 <span>{{ comment.contents }}</span>
@@ -145,7 +154,8 @@
                     </div>
                 </div>
             </div>
-        </div>          
+        </div>
+
         <div class="else-modal" :class="{ elseModalBackground: !elseModalBackground }">
             <div class="modal-box">
                 <div class="box-content">
@@ -160,8 +170,12 @@
                         class="else-btn middle"
                         @click="follow"
                     >팔로우 취소</button>
-                    <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 수정</button>
-                    <button :class="{ myPosting: !myPosting }" class="else-btn middle">내글 삭제</button>
+                    <button
+                        :class="{ myPosting: !myPosting }"
+                        class="else-btn middle"
+                        @click="updatePost"
+                    >내글 수정</button>
+                    <button :class="{ myPosting: !myPosting }" class="else-btn middle" @click="deletePost">내글 삭제</button>
                     <button class="else-btn last" @click="noShowElseBtn">X</button>
                 </div>
             </div>
@@ -186,7 +200,7 @@ import Axios from 'axios';
 
 //component
 import { Hooper, Slide, Pagination as HooperPagination, Navigation as HooperNavigation } from 'hooper';
-
+import InfiniteLoading from 'vue-infinite-loading';
 // 뷰엑스를 가져옴
 import { createNamespacedHelpers } from 'vuex';
 // load user store 필요한 부분만 가져오기
@@ -195,7 +209,7 @@ const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
 const userMapActions = createNamespacedHelpers('User').mapActions;
 
-const URI = 'http://192.168.100.70:8083/';
+const URI = 'http://192.168.100.70:8083';
 export default {
   components: {
     Header,
@@ -207,7 +221,8 @@ export default {
   },
   data: () => {
     return {
-      datas: '',
+      bestDatas: [],
+      datas: [],
       comment: '',
       likeList: [],
       likeShow: [],
@@ -217,10 +232,14 @@ export default {
       followList: [],
       elseModalBackground: false,
       boardData: '',
+      boardId: 0,
       jwt: '',
       followBtn: false,
       unfollowBtn: false,
       myPosting: false,
+      lastDate: '0',
+      cnt: 0,
+      list: [],
     };
   },
   mounted() {
@@ -230,13 +249,10 @@ export default {
       this.getUser;
     }
   },
-  created: function() {
+  created() {
     this.jwt = localStorage.getItem('routrip_JWT');
     this.showAll();
   },
-  // updated: function() {
-  //     this.getAlldata();
-  // },
   computed: {
     ...userMapState(['User']),
     ...userMapGetters(['getUser']),
@@ -267,6 +283,14 @@ export default {
       });
     },
     showAll() {
+      Axios.get(`${URI}/page/bestBoard`)
+        .then(res => {
+          this.bestDatas = res.data;
+        })
+        .catch(res => {
+          console.log('인기게시글 조회 실패');
+        });
+      // console.log(this.jwt);
       Axios.post(`${URI}/page/favoriteBoard`, { jwt: this.jwt })
         .then(res => {
           // console.log(res.data);
@@ -282,30 +306,28 @@ export default {
               for (var i = 0; i < res.data.length; ++i) {
                 this.scrapList.push(res.data[i].boardid);
               }
-
               Axios.get(`${URI}/page/boardList`)
                 .then(res => {
+                  this.datas = res.data;
                   this.likeShow = [];
                   this.scrapShow = [];
                   this.whoLiked = [];
-                  this.datas = res.data;
-                  // console.log(this.datas);
-                  // console.log(this.getUser.data.uid);
-                  for (var i = 0; i < this.datas.length; ++i) {
-                    if (res.data[i].favoriteNum > 0) {
-                      this.whoLiked.push(res.data[i].favorite[0].nickname);
+
+                  for (i = 0; i < this.datas.length; ++i) {
+                    if (this.datas[i].favoriteNum > 0) {
+                      this.whoLiked.push(this.datas[i].favorite[0].nickname);
                     } else {
                       this.whoLiked.push('');
                     }
-
                     //좋아요
                     if (this.likeList.includes(this.datas[i].boardid)) this.likeShow.push({ like: true });
                     else this.likeShow.push({ like: false });
-                    //스크랩
 
+                    //스크랩
                     if (this.scrapList.includes(this.datas[i].boardid)) this.scrapShow.push({ scrap: true });
                     else this.scrapShow.push({ scrap: false });
                   }
+                  // console.log(this.whoLiked);
                 })
                 .catch(res => {
                   console.log('전체 게시글 조회 실패');
@@ -328,8 +350,10 @@ export default {
           // console.log(res);
         });
     },
-    showElseBtn(data) {
+    showElseBtn(data, boardId) {
       // console.log(data);
+      this.boardId = boardId;
+      console.log(this.boardId);
       this.boardData = data;
       this.elseModalBackground = true;
       var uid = this.getUser.data.uid;
@@ -403,7 +427,7 @@ export default {
           data: info.commentid,
         })
           .then(res => {
-            // console.log('댓글 삭제 성공');
+            console.log('댓글 삭제 성공');
           })
           .catch(res => {
             console.log('댓글 삭제 실패');
@@ -432,6 +456,28 @@ export default {
     search(keyword) {
       // console.log(keyword);
       this.$router.push({ name: 'Search', params: { keyword: keyword } });
+    },
+    updatePost() {
+      this.$router.push({ name: 'UpdatePost', params: { boardid: this.boardId } });
+    },
+    deletePost(){
+      let check = confirm('삭제 하시겠습니까?')
+      let bid = String(this.boardId)
+      console.log('aaa', bid)
+      if(check){
+        Axios.delete(`${URI}/page/board`, {data: {'boardid': bid} }, )
+          .then(res => {
+            console.log(res)
+            this.showAll();
+            this.elseModalBackground = !this.elseModalBackground;
+          })
+          .catch(res => {
+            console.log(res);
+          });
+            
+      }else {
+        alert('취소 되었습니다.')
+      }
     },
   },
 };

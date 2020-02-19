@@ -159,6 +159,7 @@ $desktop: 'screen and (min-width : 1025px)';
         padding-bottom: 10px;
         border-bottom: 1px solid rgba(00, 00, 00, 0.2);
         max-height: 80px;
+        width: 100%;
         overflow-y: scroll;
 
         .keyword {
@@ -202,6 +203,12 @@ $desktop: 'screen and (min-width : 1025px)';
         overflow-y: scroll;
         overflow-x: hidden;
 
+        .comment:hover {
+            .writer-reply {
+                display: block !important;
+            }
+        }
+
         .comment {
             display: flex;
             align-items: center;
@@ -236,10 +243,22 @@ $desktop: 'screen and (min-width : 1025px)';
                 .writer {
                     margin-bottom: 5px;
                     width: 300px;
+                    display: flex;
 
-                    span {
-                        margin-left: 10px;
+                    .writer-info {
+                        margin-right: 15px;
+
+                        span {
+                            margin-left: 10px;
+                            font-size: 12px;
+                        }
+                    }
+
+                    .writer-reply {
+                        color: blue;
+                        cursor: pointer;
                         font-size: 12px;
+                        display: none;
                     }
                 }
 
