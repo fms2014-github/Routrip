@@ -249,9 +249,12 @@ $desktop: 'screen and (min-width : 1025px)';
 
         .home {
             margin: auto;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             .logo {
-                width: 50px;
+                width: 80px;
                 vertical-align: middle;
                 margin-right: 15px;
                 cursor: pointer;
@@ -283,11 +286,14 @@ $desktop: 'screen and (min-width : 1025px)';
 
         .home {
             margin-left: 10vw;
+            display: flex;
+            justify-content: center;
+            align-items: center;
 
             .logo {
-                width: 45px;
+                width: 80px;
                 vertical-align: middle;
-                margin-right: 20px;
+                margin-right: 15px;
                 cursor: pointer;
             }
 
