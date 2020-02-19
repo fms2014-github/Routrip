@@ -195,4 +195,14 @@ public class UserDao implements IUserDao{
 	public List<User> findUserByLoginApi(int loginApi) throws Exception {
 		return sqlSession.selectList(ns+"findUserByLoginApi", loginApi);
 	}
+
+	@Override
+	public List<Alarm> getAlarmNoRead(int uid) throws Exception {
+		return sqlSession.selectList(ns+"getAlarmNoRead", uid);
+	}
+
+	@Override
+	public int updateAlarmByAlarmId(int alarmid) throws Exception {
+		return sqlSession.update(ns+"updateAlarmByAlarmId", alarmid);
+	}
 }

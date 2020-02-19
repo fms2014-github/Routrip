@@ -135,14 +135,13 @@
             <div class="terms">
                 <h1>개인정보 이용 동의서</h1>
                 <div class="terms-content">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam rutrum justo diam, sed tincidunt ex sodales molestie. Nulla interdum
-                    convallis odio, porttitor semper enim hendrerit sit amet. Phasellus et est et nunc varius aliquam. Fusce in urna sollicitudin,
-                    pellentesque velit sed, iaculis enim. Duis non risus vel nunc elementum faucibus ac rhoncus arcu. Interdum et malesuada fames ac
-                    ante ipsum primis in faucibus. Cras efficitur nulla lacus, non pretium mi dapibus convallis. Curabitur quis est sed justo pulvinar
-                    tincidunt. Vestibulum molestie libero vitae velit consequat suscipit. Mauris elementum facilisis felis in tincidunt. Donec
-                    vulputate tincidunt ex non elementum. Integer eget aliquet nisl. Nullam lectus turpis, dapibus a orci a, molestie accumsan nisl.
-                    Donec volutpat lacus lacus, eget sodales enim luctus a. Pellentesque tincidunt ligula ut ligula rhoncus luctus. Suspendisse in
-                    augue id velit pretium varius.
+                    이용약관<br><br>
+                    1조.<br>
+                    루:트립은 귀하의 과한 개인정보를 요구하지 않습니다. 닉네임 등에서 개개인을 특정할 수 있는 정보는 등록하지 말아주십시오.<br>
+                    2조.<br>
+                    루:트립은 저작권 확인을 하지 않습니다. 저작권에 저촉되는 게시물을 올릴 경우 모든 책임은 해당 회원에게 있음을 주의하여 주십시오.<br>
+                    3조.<br>
+                    루:트립은 사익을 목적으로 하는 사이트가 아닙니다. 루트립 내에 이뤄지는 회원들간의 모든 물질적 거래에 대한 책임은 회원에게 있음을 주의하여 주십시오.
                 </div>
                 <button @click="termPopup = false">
                     닫기

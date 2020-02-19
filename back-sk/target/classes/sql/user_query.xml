@@ -192,22 +192,33 @@
 
 	<insert id="addAlarm" parameterType="alarm"
 		useGeneratedKeys="true" keyProperty="alarmid">
-		insert into alarm(uid, alarmtype, boardid, commentid, follow, nickname,
-		time)
-		values(#{uid}, #{alarmtype}, #{boardid}, #{commentid}, #{follow}, #{nickname},
-		now())
+		insert into alarm(uid, alarmtype, boardid, commentid, actionid, time)
+		values(#{uid}, #{alarmtype}, #{boardid}, #{commentid}, #{actionid}, now())
 	</insert>
 	
 	<update id="updateAlarm">
 		update alarm
 		set isread = 1
-		where uid = #{value} and time <![CDATA[<]]> now
+		where uid = #{value} and time <![CDATA[<]]> now()
+	</update>
+	
+	<update id="updateAlarmByAlarmId">
+		update alarm
+		set isread = 1
+		where alarmid = #{value}
 	</update>
 
 	<select id="getAlarm" parameterType="int" resultType="alarm">
-		select alarmid, uid, alarmtype, boardid, commentid, follow, nickname, isread
+		select alarmid, uid, alarmtype, boardid, commentid, actionid, time, isread
 		from alarm
 		where uid = #{value}
+		order by time desc
+	</select>
+	
+	<select id="getAlarmNoRead" parameterType="int" resultType="alarm">
+		select alarmid, uid, alarmtype, boardid, commentid, actionid, time, isread
+		from alarm
+		where uid = #{value} and isread = 0 order by time desc
 	</select>
 
 	<delete id="deleteAlarm" parameterType="int">

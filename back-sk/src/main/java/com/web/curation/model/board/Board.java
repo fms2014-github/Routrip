@@ -177,7 +177,7 @@ public class Board {
 			Date wd = format1.parse(format1.format(format2.parse(this.writedate)));
 			if ((now.getTime() == wd.getTime())) {
 				writeday = "오늘";
-			} else if ((now.getTime() - wd.getTime()) / (1000 * 60 * 60 * 24) < 31) {
+			} else if ((now.getTime() - wd.getTime()) / (1000 * 60 * 60 * 24) < 31 && (now.getTime() - wd.getTime()) > 0) {
 				writeday = ((now.getTime() - wd.getTime()) / (1000 * 60 * 60 * 24)) + "일 전";
 			} else if (Integer.parseInt(format1.format(now)) / 10000
 					- Integer.parseInt(format1.format(wd)) / 10000 > 0) {
@@ -246,9 +246,10 @@ public class Board {
 	@Override
 	public String toString() {
 		return "Board [boardid=" + boardid + ", uid=" + uid + ", title=" + title + ", writedate=" + writedate
-				+ ", tripterm=" + tripterm + ", keyword=" + keyword + ", keywords=" + keywords + ", unveiled=" + unveiled + ", comments="
-				+ comments + ", imgs=" + imgs + ", favorite=" + favorite + ", favoriteNum=" + favoriteNum
-				+ ", commentNum=" + commentNum + ", markers=" + markers + ", user=" + user + ", writeday=" + writeday
-				+ ", content=" + content + "]";
+				+ ", tripterm=" + tripterm + ", keyword=" + keyword + ", keywords=" + keywords + ", unveiled="
+				+ unveiled + ", comments=" + comments + ", imgs=" + imgs + ", favorite=" + favorite + ", favoriteNum="
+				+ favoriteNum + ", commentNum=" + commentNum + ", markers=" + markers + ", user=" + user + ", writeday="
+				+ writeday + ", content=" + content + ", info=" + info + ", cusInfo=" + cusInfo + ", scrapdate="
+				+ scrapdate + "]";
 	}
 }

@@ -100,11 +100,18 @@ alarmid int primary key auto_increment,
 uid int not null,
 boardid int,
 commentid int,
-follow int,
 alarmtype int not null,
-nickname varchar(20),
+actionid int,
 time datetime not null,
-isread boolean not null default fasle
+isread boolean not null default fasle,
+foreign key(uid)
+references user(uid) on update cascade on delete cascade,
+foreign key(actionid)
+references user(uid) on update cascade on delete cascade,
+foreign key(boardid)
+references board(boardid) on update cascade on delete cascade,
+foreign key(commentid)
+references user(commentid) on update cascade on delete cascade
 );
 
 create table token(

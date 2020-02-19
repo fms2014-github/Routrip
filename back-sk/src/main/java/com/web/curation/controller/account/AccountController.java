@@ -32,8 +32,11 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.web.curation.model.board.Board;
+import com.web.curation.model.board.Comment;
 import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
+import com.web.curation.service.BoardService;
 import com.web.curation.service.UserService;
 
 import io.jsonwebtoken.ExpiredJwtException;
@@ -49,6 +52,9 @@ public class AccountController {
 
 	@Autowired
 	private UserService userService;
+	
+	@Autowired
+	private BoardService boardService;
 
 //	private String key = "webcuration-routrip-secretkey";
 //	byte[] apiKeySecretBytes = DatatypeConverter.parseBase64Binary(key);
@@ -158,9 +164,8 @@ public class AccountController {
 			if (ok > 0) {
 				Alarm alarm = new Alarm();
 				alarm.setUid(uid);
-				alarm.setFollow((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+				alarm.setActionid((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 				alarm.setAlarmtype(1);
-				alarm.setNickname((String) Jwts.parser().parseClaimsJwt(jwt).getBody().get("nickname"));
 				userService.addAlarm(alarm);
 				return new ResponseEntity<>(HttpStatus.OK);
 			}
@@ -443,6 +448,37 @@ public class AccountController {
 		if (isOkJwt(jwt)) {
 			List<Alarm> alarms = userService.getAlarm((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
 			userService.updateAlarm((int) Jwts.parser().parseClaimsJwt(jwt).getBody().get("uid"));
+			for(Alarm a : alarms) {
+				if(a.getAlarmtype()==1) {
+					User user = userService.findUserSimple(a.getActionid());
+					a.setText(user.getNickname()+" 님이 팔로우하셨습니다.");
+					a.setUser(user);
+				}else if(a.getAlarmtype()==2) {
+					User user = userService.findUserSimple(a.getActionid());
+					Comment comment = boardService.findCommentByCommentid(a.getCommentid());
+					a.setText(user.getNickname()+" 님이 댓글다셨습니다.");
+					a.setDetail(comment.getContents());
+					a.setUser(user);
+				}else if(a.getAlarmtype()==3) {
+					User user = userService.findUserSimple(a.getActionid());
+					Comment comment = boardService.findCommentByCommentid(a.getCommentid());
+					a.setText(user.getNickname()+" 님이 대댓글다셨습니다.");
+					a.setDetail(comment.getContents());
+					a.setUser(user);
+				}else if(a.getAlarmtype()==4) {
+					User user = userService.findUserSimple(a.getActionid());
+					Board board = boardService.findBoardByBoardId(a.getBoardid());
+					a.setText(user.getNickname()+" 님이 글을 올리셨습니다.");
+					a.setDetail(board.getTitle());
+					a.setUser(user);
+				}else if(a.getAlarmtype()==5) {
+					User user = userService.findUserSimple(a.getActionid());
+					Board board = boardService.findBoardByBoardId(a.getBoardid());
+					a.setText(user.getNickname()+" 님이 ["+board.getTitle()+"] 글을 좋아합니다.");
+					a.setDetail(board.getTitle());
+					a.setUser(user);
+				}
+			}
 			return new ResponseEntity<>(alarms, HttpStatus.OK);
 		}
 		return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
