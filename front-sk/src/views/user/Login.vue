@@ -296,7 +296,7 @@ export default {
                     this.userSnsId = res.id;
                     sessionStorage.setItem('snsId', res.id);
                     // console.log(res);
-                    Axios.post('http://localhost:8083/account/snslogin', {
+                    Axios.post('http://192.168.100.70:8083/account/snslogin', {
                         loginApi: loginApi,
                         userid: res.id,
                     })
