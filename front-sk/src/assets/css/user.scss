@@ -1,6 +1,10 @@
 @charset "utf-8";
 @import './common';
 
+$iPad: 'screen and (max-width : 768px)';
+$iPadPro: 'screen and (min-width : 769px) and (max-width : 1024px) ';
+$desktop: 'screen and (min-width : 1025px)';
+
 .user {
     @include wrap;
     min-height: 100%;
@@ -37,7 +41,34 @@
 
     /*로그인*/
     &#login {
-        margin-top: 50px;
+
+        @media #{$iPad, $iPadPro} {
+
+            .left-view,
+            .right-view {
+                margin: auto;
+            }
+        }
+
+        @media #{$desktop} {
+            padding: 50px 0;
+
+            .login-wrap {
+                margin: auto;
+                display: flex;
+            }
+
+            .left-view {
+                svg {
+                    height: 600px;
+                }
+            }
+
+            .right-view {
+                padding-top: 100px;
+            }
+        }
+
 
 
         .login-img {

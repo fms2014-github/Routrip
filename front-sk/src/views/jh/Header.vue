@@ -62,10 +62,15 @@
             </div>
         </div>
         <div class="home">
-            <router-link v-bind:to="{ name: 'Main' }" class="btn--text">
-                <img class="logo" src="../../assets/images/routrip_logo.png" />
-            </router-link>
-            <span class="title" :class="{ scrollDown: scrollDown }">루 : 트립</span>
+            <div class="logo">
+                <router-link v-bind:to="{ name: 'Main' }" class="btn--text">
+                    <!-- <img class="logo" src="../../assets/images/routrip_logo.png" /> -->
+                    <Routrip></Routrip>
+                </router-link>
+            </div>
+            <div>
+                <span class="title" :class="{ scrollDown: scrollDown }">루 : 트립</span>
+            </div>
         </div>
         <div class="search-box">
             <form>
@@ -130,6 +135,7 @@
 </template>
 
 <script>
+import Routrip from '../main/RoutripLogo';
 import '../../assets/css/main/header.scss';
 import { createNamespacedHelpers } from 'vuex';
 import Axios from 'axios';
@@ -141,6 +147,9 @@ const userMapActions = createNamespacedHelpers('User').mapActions;
 const URI = 'http://192.168.100.70:8083/';
 
 export default {
+    components: {
+        Routrip,
+    },
     created() {
         this.jwt = localStorage.getItem('routrip_JWT');
         Axios.post(`${URI}/account/decode`, { jwt: this.jwt }).then(res => {
