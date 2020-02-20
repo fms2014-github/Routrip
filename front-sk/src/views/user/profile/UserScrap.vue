@@ -1,17 +1,16 @@
 <template>
      <div>
         <div class="row">
-            <h5 style="text-align:center; font-size:2.1vw; @include wrap; margin-bottom:10vw;">총 {{scrapList.length}} 개의 스크랩</h5>
+            <div style="text-align:center; font-size:2.1vw; @include wrap; margin-bottom:5vw; width:100%">
+                총 {{scrapList.length}} 개의 스크랩
+            </div>
             <div v-for="scrap in scrapList" :key="scrap.boardid">
                 <div class="gallery">
                     <router-link :to="{ name: 'Detail', params: { boardid: scrap.boardid } }">
                     <div class="one">
                         <h1 class = 'card-header-title' style="margin-bottom:10px;" >
-                           
-                                {{ scrap.title }}
-                            
+                            {{ scrap.title }}
                         </h1>
-                        
                             <div class= 'card'>
                                 <img v-if="scrap.imgs[0]!== undefined" :src="scrap.imgs[0].src" class='card-image'>
                                 <img v-if="scrap.imgs[0]== undefined" src="../../../assets/images/noImage.png" class='card-image'>

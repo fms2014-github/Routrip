@@ -1,7 +1,6 @@
 @charset "utf-8";
 
 
-
 table {
     font-size:1.4vw; 
     width: 100%;
@@ -22,10 +21,10 @@ table {
     height: 60px;
     padding-left: 20px;
     text-align: center;
+    
   }
 
   tbody{
-    
     vertical-align: middle;
     border-bottom: 2px solid rgba($color: #d6d6d6, $alpha: 1.0);
   }
@@ -45,10 +44,3 @@ tbody:hover{
     transition: 0.3s;
     background-color: rgba($color: #7bbfc8, $alpha: 1.0);
 }
-
-// .route{
-//     a:hover{
-//         transition: 0.3s;
-//         background-color: rgb(65, 171, 172);
-//     }
-// }

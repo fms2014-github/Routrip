@@ -14,7 +14,6 @@
                     <tr>
                         <td style="width:5vw;">{{ doMath(index) }}</td><td style="width:58vw;">{{ comment.contents }}</td>
                         <td style="padding-right:7vw;">{{ comment.writedate.split(':')[0] + ":" + comment.writedate.split(':')[1] }}</td>
-                        
                     </tr>
                 </router-link>
                     <div style="float:right; margin:3px 2.2vw 0 0;">
