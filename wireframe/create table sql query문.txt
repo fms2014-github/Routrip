@@ -113,5 +113,5 @@ references user(uid) on update cascade on delete cascade,
 foreign key(boardid)
 references board(boardid) on update cascade on delete cascade,
 foreign key(commentid)
-references user(commentid) on update cascade on delete cascade
+references comment(commentid) on update cascade on delete cascade
 );
