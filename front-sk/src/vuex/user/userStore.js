@@ -20,17 +20,25 @@ const actions = {
   }) {
     const jwt = localStorage.getItem('routrip_JWT');
     //vuex에 user정보 비우기
-    Axios.post('http://192.168.100.70:8083/account/logout/', {
+    Axios.post('http://localhost:8083/account/logout/', {
       jwt: jwt
     }).then(() => {
       commit('setUser', null);
+      Swal.fire({
+        icon: 'warning',
+        title: '로그아웃',
+        text: '로그아웃 되었습니다!',
+      }).then(() => {
+        router.push("/");
+      })
+
       //로컬스토리지 비우기
       localStorage.clear();
     }).then(() => {
       router.push('/');
     }).catch(error => {
       console.log(error.response.status);
-      if(error.response.status === 406) {
+      if (error.response.status === 406) {
         Swal.fire({
           icon: 'error',
           title: '세션 만료',
@@ -47,12 +55,12 @@ const actions = {
     commit
   }) {
     const jwt = localStorage.getItem('routrip_JWT');
-    await Axios.post('http://192.168.100.70:8083/account/decode/', {
+    await Axios.post('http://localhost:8083/account/decode/', {
       jwt: jwt
     }).then(res => {
       commit('setUser', res);
     }).catch(error => {
-      if(error.response.status === 406) {
+      if (error.response.status === 406) {
         console.log("reqUserInfo 406 ERROR");
       }
     });

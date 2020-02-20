@@ -3,7 +3,9 @@
         <div id="JoinAuth-form">
             <div>
                 <h1>인증번호 확인</h1>
-                <button class="close" @click="close"><img class="close-img" src="../../assets/images/close.png" /></button>
+                <button class="close" @click="close">
+                    <img class="close-img" src="../../assets/images/close.png" />
+                </button>
                 <h3>{{ email }} 로 인증번호가 발송되었습니다.</h3>
             </div>
             <div class="input-with-label">
@@ -21,13 +23,16 @@
                     maxlength="6"
                 />
                 <label for="auth">인증번호</label>
-                <div class="error-text" v-if="error.auth">
-                    {{ error.auth }}
-                </div>
+                <div class="error-text" v-if="error.auth">{{ error.auth }}</div>
             </div>
         </div>
         <div>
-            <button class="btn btn--back btn--login" @click="submit" :disabled="!isSubmit" :class="{ disabled: !isSubmit }">
+            <button
+                class="btn btn--back btn--login"
+                @click="submit"
+                :disabled="!isSubmit"
+                :class="{ disabled: !isSubmit }"
+            >
                 <span>인증번호 확인</span>
             </button>
         </div>
@@ -39,6 +44,7 @@ import '../../assets/css/user.scss';
 import '../../assets/css/style.scss';
 import UserApi from '../../apis/UserApi';
 import * as EmailValidator from 'email-validator';
+import Swal from 'sweetalert2';
 import Axios from 'axios';
 
 export default {
@@ -56,12 +62,12 @@ export default {
     },
     created() {
         this.component = this;
-        this.email = sessionStorage.getItem('tempEmail')
+        this.email = sessionStorage.getItem('tempEmail');
     },
     watch: {
         auth: function(v) {
             this.checkForm();
-        }
+        },
     },
     methods: {
         checkForm() {
@@ -76,23 +82,33 @@ export default {
                 let { email, auth } = this;
                 let data = {
                     email,
-                    userkey: auth
+                    userkey: auth,
                 };
 
-                console.log(data);
+                // console.log(data);
 
-                Axios.put('http://192.168.100.70:8083/account/signup', {
+                Axios.put('http://localhost:8083/account/signup', {
                     email,
-                    userkey: auth
-                }).then((res) => {
-                    alert("FINISHED!");
-                    this.$emit("authPopUpToggle");
-                    this.$emit("registerFormClose");
-                    console.log(res)
-                }).catch((error) => {
-                    alert("ERROR");
-                    console.log(error);
-                });
+                    userkey: auth,
+                })
+                    .then(res => {
+                        Swal.fire({
+                            icon: 'success',
+                            title: '가입완료',
+                            text: '루트립에 오신것을 환영합니다!',
+                        });
+                        this.$emit('authPopUpToggle');
+                        this.$emit('registerFormClose');
+                        console.log(res);
+                    })
+                    .catch(error => {
+                        Swal.fire({
+                            icon: 'error',
+                            title: '인증번호 불일치',
+                            text: '인증번호를 확인해 주세요!',
+                        });
+                        console.log(error);
+                    });
             }
         },
         back() {

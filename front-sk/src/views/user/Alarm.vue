@@ -75,24 +75,24 @@ export default {
         },
         solosend() {
             // 보내기
-            console.log('Send message:' + this.solo_send_message);
+            // console.log('Send message:' + this.solo_send_message);
             if (this.stompClient && this.stompClient.connected) {
                 const msg = { memberId: this.solo_send_message };
-                console.log(JSON.stringify(msg));
+                // console.log(JSON.stringify(msg));
                 this.stompClient.send('/app/info', JSON.stringify(msg), {});
             }
         },
         soloconnect() {
             // 연결
-            this.socket = new SockJS('http://192.168.100.70:8081/gs-guide-websocket');
+            this.socket = new SockJS('http://localhost:8081/gs-guide-websocket');
             this.stompClient = Stomp.over(this.socket);
             this.stompClient.connect(
                 {},
                 frame => {
                     this.soloconnected = true;
-                    console.log(frame);
+                    // console.log(frame);
                     this.stompClient.subscribe('/user/queue/info', tick => {
-                        console.log(JSON.parse(tick.body).idAlarm);
+                        // console.log(JSON.parse(tick.body).idAlarm);
                         if (this.latest_alarm_id != JSON.parse(tick.body).idAlarm) {
                             if (!this.isfirst) {
                                 this.$notify({
@@ -108,7 +108,7 @@ export default {
                     });
                 },
                 error => {
-                    console.log(error);
+                    // console.log(error);
                     this.soloconnected = false;
                 },
             );
@@ -125,7 +125,7 @@ export default {
         },
     },
     mounted() {
-        // console.log('누나바보')
+        // // console.log('누나바보')
         // this.soloconnect()
         // this.solo_send_message = this.getU
         // this.alarm()

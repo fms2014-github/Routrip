@@ -8,7 +8,9 @@
                 <span v-if="snscheck !== 0">
                     <h1 id="Join-title">SNS 가입하기</h1>
                 </span>
-                <button class="close" @click="close"><img class="close-img" src="../../assets/images/close.png" /></button>
+                <button class="close" @click="close">
+                    <img class="close-img" src="../../assets/images/close.png" />
+                </button>
             </div>
             <div id="term-form">
                 <div v-if="snscheck === 0">
@@ -22,9 +24,7 @@
                             @keyup.enter="submit"
                         />
                         <label for="email">이메일</label>
-                        <div v-if="error.email" class="error-text">
-                            {{ error.email }}
-                        </div>
+                        <div v-if="error.email" class="error-text">{{ error.email }}</div>
                     </div>
                     <div class="input-with-label">
                         <input
@@ -36,9 +36,7 @@
                             @keyup.enter="submit"
                         />
                         <label for="password">비밀번호</label>
-                        <div v-if="error.password" class="error-text">
-                            {{ error.password }}
-                        </div>
+                        <div v-if="error.password" class="error-text">{{ error.password }}</div>
                     </div>
                     <div class="input-with-label">
                         <input
@@ -50,9 +48,10 @@
                             @keyup.enter="submit"
                         />
                         <label for="passwordConfirm">비밀번호 확인</label>
-                        <div v-if="error.passwordConfirm" class="error-text">
-                            {{ error.passwordConfirm }}
-                        </div>
+                        <div
+                            v-if="error.passwordConfirm"
+                            class="error-text"
+                        >{{ error.passwordConfirm }}</div>
                     </div>
                 </div>
                 <div class="input-with-label">
@@ -65,9 +64,7 @@
                         @keyup.enter="submit"
                     />
                     <label for="name">이름</label>
-                    <div v-if="error.name" class="error-text">
-                        {{ error.name }}
-                    </div>
+                    <div v-if="error.name" class="error-text">{{ error.name }}</div>
                 </div>
                 <div class="input-with-label">
                     <input
@@ -79,9 +76,7 @@
                         @keyup.enter="submit"
                     />
                     <label for="nickname">닉네임</label>
-                    <div v-if="error.nickname" class="error-text">
-                        {{ error.nickname }}
-                    </div>
+                    <div v-if="error.nickname" class="error-text">{{ error.nickname }}</div>
                 </div>
                 <div class="input-with-label">
                     <input
@@ -93,9 +88,7 @@
                         @keyup.enter="submit"
                     />
                     <label for="birth">생년월일</label>
-                    <div v-if="error.birth" class="error-text">
-                        {{ error.birth }}
-                    </div>
+                    <div v-if="error.birth" class="error-text">{{ error.birth }}</div>
                 </div>
                 <div class="input-with-label">
                     <input
@@ -109,9 +102,7 @@
                         maxlength="11"
                     />
                     <label for="phone">휴대폰 번호</label>
-                    <div v-if="error.phone" class="error-text">
-                        {{ error.phone }}
-                    </div>
+                    <div v-if="error.phone" class="error-text">{{ error.phone }}</div>
                 </div>
             </div>
             <div id="term-doc">
@@ -123,34 +114,46 @@
                 <div class="term-view">
                     <span @click="termPopup = true">약관보기</span>
                 </div>
-                <div v-if="error.term" class="error-text red">
-                    {{ error.term }}
-                </div>
+                <div v-if="error.term" class="error-text red">{{ error.term }}</div>
             </div>
-            <button class="btn btn--back btn--login" :disabled="!isSubmit" :class="{ disabled: !isSubmit }" @click="submit">
-                가입하기
-            </button>
+            <button
+                class="btn btn--back btn--login"
+                :disabled="!isSubmit"
+                :class="{ disabled: !isSubmit }"
+                @click="submit"
+            >가입하기</button>
         </div>
         <div v-if="termPopup" class="terms-doc-dialog">
             <div class="terms">
                 <h1>개인정보 이용 동의서</h1>
                 <div class="terms-content">
-                    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam rutrum justo diam, sed tincidunt ex sodales molestie. Nulla interdum
-                    convallis odio, porttitor semper enim hendrerit sit amet. Phasellus et est et nunc varius aliquam. Fusce in urna sollicitudin,
-                    pellentesque velit sed, iaculis enim. Duis non risus vel nunc elementum faucibus ac rhoncus arcu. Interdum et malesuada fames ac
-                    ante ipsum primis in faucibus. Cras efficitur nulla lacus, non pretium mi dapibus convallis. Curabitur quis est sed justo pulvinar
-                    tincidunt. Vestibulum molestie libero vitae velit consequat suscipit. Mauris elementum facilisis felis in tincidunt. Donec
-                    vulputate tincidunt ex non elementum. Integer eget aliquet nisl. Nullam lectus turpis, dapibus a orci a, molestie accumsan nisl.
-                    Donec volutpat lacus lacus, eget sodales enim luctus a. Pellentesque tincidunt ligula ut ligula rhoncus luctus. Suspendisse in
-                    augue id velit pretium varius.
+                    <div class="terms">
+                        <h1>개인정보 이용 동의서</h1>
+                        <div class="terms-content">
+                            이용약관
+                            <br />
+                            <br />1조.
+                            <br />루:트립은 귀하의 과한 개인정보를 요구하지 않습니다.
+                            닉네임 등에서 개개인을 특정할 수 있는 정보는 등록하지 말아주십시오.
+                            <br />2조.
+                            <br />루:트립은 저작권 확인을 하지 않습니다.
+                            저작권에 저촉되는 게시물을 올릴 경우 모든 책임은 해당 회원에게 있음을 주의하여 주십시오.
+                            <br />3조.
+                            <br />루:트립은 사익을 목적으로 하는 사이트가 아닙니다.
+                            루트립 내에 이뤄지는 회원들간의 모든 물질적 거래에 대한 책임은 회원에게 있음을 주의하여 주십시오.
+                        </div>
+                        <button @click="termPopup = false">닫기</button>
+                    </div>
                 </div>
-                <button @click="termPopup = false">
-                    닫기
-                </button>
+                <button @click="termPopup = false">닫기</button>
             </div>
         </div>
         <div id="popup-join" :class="{ hideJoin: !authPopUp }">
-                <JoinAuth v-if="authPopUp" @authPopUpToggle="authPopUpToggle" @registerFormClose="registerFormClose" />
+            <JoinAuth
+                v-if="authPopUp"
+                @authPopUpToggle="authPopUpToggle"
+                @registerFormClose="registerFormClose"
+            />
         </div>
     </div>
 </template>
@@ -161,6 +164,7 @@ import '../../assets/css/style.scss';
 import UserApi from '../../apis/UserApi';
 import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
+import Swal from 'sweetalert2';
 
 import JoinAuth from './JoinAuth';
 
@@ -170,7 +174,7 @@ export default {
         snsToggle: { type: Function },
     },
     components: {
-        JoinAuth
+        JoinAuth,
     },
     data: () => {
         return {
@@ -242,7 +246,7 @@ export default {
             .symbols();
     },
     mounted() {
-        // console.log('SNSCHECK: ', this.snscheck);
+        // // console.log('SNSCHECK: ', this.snscheck);
 
         if (localStorage.getItem('nickname') !== null) {
             this.nickname = localStorage.getItem('nickname');
@@ -257,7 +261,11 @@ export default {
         phone_regx() {
             if (this.phone != this.phone.replace(/\D/gi, '')) {
                 this.phone = this.phone.replace(/\D/gi, '');
-                alert('숫자만 입력해 주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '입력오류',
+                    text: '숫자만 입력해 주세요!',
+                });
             }
         },
         checkForm() {
@@ -296,7 +304,7 @@ export default {
 
             if (this.birth === '') this.error.birth = '생년월일을 입력해 주세요.';
             else {
-                this.error.birth = false; 
+                this.error.birth = false;
             }
 
             if (!this.isTerm) this.error.term = '약관 동의에 체크해주세요';
@@ -330,41 +338,45 @@ export default {
                 this.isSubmit = false;
                 // 일반회원가입
                 if (this.snscheck === 0) {
-                    data.email = email
-                    data.password = password
-                    
+                    data.email = email;
+                    data.password = password;
 
-                    sessionStorage.setItem('tempEmail', email)
+                    sessionStorage.setItem('tempEmail', email);
                     UserApi.requestSignUp(
                         data,
                         res => {
-                        //통신을 통해 전달받은 값 콘솔에 출력
-                        // console.log(res);
-                        //요청이 끝나면 버튼 활성화
+                            //통신을 통해 전달받은 값 콘솔에 출력
+                            // console.log(res);
+                            //요청이 끝나면 버튼 활성화
                             this.isSubmit = true;
                             this.authPopUpToggle();
                             // this.$emit('nextStep');
                         },
                         error => {
-                        //요청이 끝나면 버튼 활성화
+                            //요청이 끝나면 버튼 활성화
                             this.isSubmit = true;
                             localStorage.setItem('popup', 'false');
                             localStorage.setItem('nickname', this.nickname);
                             localStorage.setItem('email', this.email);
                             this.$router.push({ name: 'ErrorPage' });
-                        });
+                        },
+                    );
                 }
                 // sns 회원가입
                 else {
-                    data.loginApi = this.snscheck
-                    data.userid = sessionStorage.getItem('snsId')
+                    data.loginApi = this.snscheck;
+                    data.userid = sessionStorage.getItem('snsId');
 
                     UserApi.requestSnsSignUp(
                         data,
                         res => {
                             this.isSubmit = true;
-                            alert('가입이 완료되었습니다.');
-                            this.$emit("popupToggle");
+                            Swal.fire({
+                                icon: 'success',
+                                title: '가입완료',
+                                text: '루트립에 오신것을 환영합니다!',
+                            });
+                            this.$emit('popupToggle');
                             // this.$router.push('/');
                         },
                         error => {
@@ -372,16 +384,17 @@ export default {
                             localStorage.setItem('popup', 'false');
                             localStorage.setItem('nickname', this.nickname);
                             this.$router.push({ name: 'ErrorPage' });
-                        });
+                        },
+                    );
                 }
             }
         },
         authPopUpToggle() {
-            console.log("AUTHPOPUPTOGGLE");
+            // console.log("AUTHPOPUPTOGGLE");
             this.authPopUp = !this.authPopUp;
         },
         registerFormClose() {
-            this.$emit("popupToggle");
+            this.$emit('popupToggle');
         },
         close() {
             this.email = '';
@@ -401,10 +414,9 @@ export default {
             this.error.nickname = false;
             this.error.passwordConfirm = false;
             this.error.term = false;
-            console.log(this.snscheck);
-            
+            // console.log(this.snscheck);
+
             this.$emit('popupToggle');
-            
         },
     },
 };
