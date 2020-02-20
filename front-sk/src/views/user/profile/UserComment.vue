@@ -37,12 +37,12 @@ export default {
     },
     methods: {
         reqComments() {
-        console.log("hihi comment")
+        // console.log("hihi comment")
         const jwt = localStorage.getItem('routrip_JWT');
         
-        Axios.post('http://192.168.100.70:8083/page/searchComment' , {jwt : jwt})
+        Axios.post('http://localhost:8083/page/searchComment' , {jwt : jwt})
             .then(res => {
-                console.log(res)
+                // console.log(res)
                 this.commentList=res.data
             });
         },
@@ -67,8 +67,8 @@ export default {
             cancelButtonText: '아니오',
             }).then((result) => {
             if (result.value) {
-                console.log(id)
-                Axios.delete('http://192.168.100.70:8083/page/comment', 
+                // console.log(id)
+                Axios.delete('http://localhost:8083/page/comment', 
                 { data: id })
                     .then(res=>{
                         Swal.fire({

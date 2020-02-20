@@ -157,8 +157,8 @@ export default {
         },
     },
     created() {
-        // console.log("GET LOADING: ", this.$store.getters.getLoading);
-        // console.log("STATE LOADING", this.$store.state.flag);
+        // // console.log("GET LOADING: ", this.$store.getters.getLoading);
+        // // console.log("STATE LOADING", this.$store.state.flag);
 
         this.component = this;
         this.passwordSchema
@@ -183,7 +183,7 @@ export default {
         popupToggle() {
             this.loginApi = 0;
             this.popup = !this.popup;
-            console.log('POPUP: ', this.popup);
+            // console.log('POPUP: ', this.popup);
         },
         nextStepToggle() {
             this.popup = false;
@@ -221,7 +221,7 @@ export default {
         },
         login() {
             this.$store.commit('setLoading');
-            console.log('GET LOADING: ', this.$store.getters.getLoading);
+            // console.log('GET LOADING: ', this.$store.getters.getLoading);
             if (this.isSubmit) {
                 let { password } = this;
                 let data = {
@@ -233,26 +233,26 @@ export default {
                     data,
                     res => {
                         //통신을 통해 전달받은 값 콘솔에 출력
-                        // console.log(res.data);
+                        // // console.log(res.data);
 
                         // getters로 가져오는 법
-                        // console.log(this.getUser);
+                        // // console.log(this.getUser);
 
                         // mutations 쓰는 법
                         // 전역사용
                         // 1. this.$store.commit('User/setUser', res.data);
                         // 2. helpers 이용
                         this.setUser(res.data);
-                        // console.log('뷰엑스!!!!!');
+                        // // console.log('뷰엑스!!!!!');
                         localStorage.setItem('routrip_JWT', res.data);
                         this.reqUserInfo();
-                        // console.log(this.getUser);
+                        // // console.log(this.getUser);
                         if (this.emailSaveCheck) {
                             localStorage.setItem('LoginEmail', this.LoginEmail);
                         } else {
                             localStorage.removeItem('LoginEmail');
                         }
-                        // console.log(this.getUser);
+                        // // console.log(this.getUser);
                         //요청이 끝나면 버튼 활성화
                         this.isSubmit = true;
 
@@ -269,7 +269,7 @@ export default {
                         this.error.loginFail = '이메일 주소나 비밀번호가 틀렸습니다.';
                     },
                 );
-                console.log('GET LOADING: ', this.$store.getters.getLoading);
+                // console.log('GET LOADING: ', this.$store.getters.getLoading);
             }
         },
         popupJoinToggle() {
@@ -287,7 +287,7 @@ export default {
         loginOrJoin(loginApi) {
             this.loginApi = loginApi;
 
-            console.log('???', this.popup);
+            // console.log('???', this.popup);
 
             Kakao.API.request({
                 url: '/v2/user/me',
@@ -295,8 +295,8 @@ export default {
                     this.setUser(res);
                     this.userSnsId = res.id;
                     sessionStorage.setItem('snsId', res.id);
-                    console.log(res);
-                    Axios.post('http://192.168.100.70:8083/account/snslogin', {
+                    // console.log(res);
+                    Axios.post('http://localhost:8083/account/snslogin', {
                         loginApi: loginApi,
                         userid: res.id,
                     })
@@ -312,7 +312,7 @@ export default {
                         });
                 },
                 fail: error => {
-                    console.log(error);
+                    // console.log(error);
                 },
             });
         },

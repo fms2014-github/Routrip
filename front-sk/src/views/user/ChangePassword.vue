@@ -109,7 +109,7 @@ export default {
                         this.$emit('resetPassword')
                     },
                     error => {
-                        console.log(error);
+                        // console.log(error);
                         this.$router.push('/error');
                     },
                 );

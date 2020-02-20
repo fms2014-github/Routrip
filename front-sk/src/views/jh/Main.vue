@@ -183,7 +183,7 @@ const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
 const userMapActions = createNamespacedHelpers('User').mapActions;
 
-const URI = 'http://192.168.100.70:8083';
+const URI = 'http://localhost:8083';
 export default {
     components: {
         Header,
@@ -241,18 +241,18 @@ export default {
         kakao() {
             const at = localStorage.getItem('kakao_access_token');
             const rt = localStorage.getItem('kakao_refresh_token');
-            console.log(at);
-            console.log(rt);
+            // console.log(at);
+            // console.log(rt);
             Kakao.init('cffc768e4739655aab323adbd9eb2633');
-            console.log(Kakao.isInitialized());
+            // console.log(Kakao.isInitialized());
             Kakao.API.request({
                 url: '/v1/user/me',
                 success: res => {
                     this.setUser(res);
-                    console.log(res);
-                    // console.log(res.properties.nickname);
-                    // console.log(res.properties.profile_image);
-                    console.log(this.getUser);
+                    // console.log(res);
+                    // // console.log(res.properties.nickname);
+                    // // console.log(res.properties.profile_image);
+                    // console.log(this.getUser);
                 },
             });
         },
@@ -260,15 +260,15 @@ export default {
             Axios.get(`${URI}/page/bestBoard`)
                 .then(res => {
                     this.bestDatas = res.data;
-                    console.log(this.bestDatas);
+                    // console.log(this.bestDatas);
                 })
                 .catch(res => {
-                    console.log('인기게시글 조회 실패');
+                    // console.log('인기게시글 조회 실패');
                 });
-            // console.log(this.jwt);
+            // // console.log(this.jwt);
             Axios.post(`${URI}/page/favoriteBoard`, { jwt: this.jwt })
                 .then(res => {
-                    // console.log(res.data);
+                    // // console.log(res.data);
                     this.likeList = [];
                     for (var i = 0; i < res.data.length; ++i) {
                         this.likeList.push(res.data[i].boardid);
@@ -276,7 +276,7 @@ export default {
 
                     Axios.post(`${URI}/page/scrapBoard`, { jwt: this.jwt })
                         .then(res => {
-                            // console.log(res.data);
+                            // // console.log(res.data);
                             this.scrapList = [];
                             for (var i = 0; i < res.data.length; ++i) {
                                 this.scrapList.push(res.data[i].boardid);
@@ -303,18 +303,18 @@ export default {
                                         if (this.scrapList.includes(this.datas[i].boardid)) this.scrapShow.push({ scrap: true });
                                         else this.scrapShow.push({ scrap: false });
                                     }
-                                    // console.log(this.whoLiked);
+                                    // // console.log(this.whoLiked);
                                 })
                                 .catch(res => {
-                                    console.log('전체 게시글 조회 실패');
+                                    // console.log('전체 게시글 조회 실패');
                                 });
                         })
                         .catch(res => {
-                            console.log('스크랩 게시글 조회 실패');
+                            // console.log('스크랩 게시글 조회 실패');
                         });
                 })
                 .catch(res => {
-                    console.log('좋아요 게시글 조회 실패');
+                    // console.log('좋아요 게시글 조회 실패');
                 });
         },
         getAlldata() {
@@ -323,21 +323,21 @@ export default {
                     this.datas = res.data;
                 })
                 .catch(res => {
-                    // console.log(res);
+                    // // console.log(res);
                 });
         },
         showElseBtn(data, boardId) {
-            // console.log(data);
+            // // console.log(data);
             this.boardId = boardId;
-            console.log(this.boardId);
+            // console.log(this.boardId);
             this.boardData = data;
             this.elseModalBackground = true;
             var uid = this.getUser.data.uid;
-            // console.log(uid);
+            // // console.log(uid);
             Axios.post(`${URI}/account/following`, { uid: uid })
                 .then(res => {
-                    // console.log(res.data);
-                    // console.log(this.boardData);
+                    // // console.log(res.data);
+                    // // console.log(this.boardData);
                     if (this.boardData.uid == uid) {
                         //선택한 게시글이 내 게시글인경우
                         this.myPosting = true;
@@ -352,7 +352,7 @@ export default {
                     }
                 })
                 .catch(res => {
-                    console.log('팔로우 정보 조회 실패');
+                    // console.log('팔로우 정보 조회 실패');
                 });
         },
         noShowElseBtn() {
@@ -362,7 +362,7 @@ export default {
             this.myPosting = false;
         },
         follow() {
-            console.log(this.boardData);
+            // console.log(this.boardData);
             Axios.post(`${URI}/account/follow`, { jwt: this.jwt, uid: this.boardData.uid })
                 .then(res => {
                     if (this.followBtn) {
@@ -373,11 +373,11 @@ export default {
                     this.noShowElseBtn();
                 })
                 .catch(res => {
-                    console.log('팔로우 등록 및 취소 실패');
+                    // console.log('팔로우 등록 및 취소 실패');
                 });
         },
         addComment(info) {
-            // console.log(this.comment);
+            // // console.log(this.comment);
             var commentObject = new Object();
             commentObject.jwt = this.jwt;
             commentObject.boardid = info.boardid;
@@ -388,11 +388,11 @@ export default {
             } else {
                 Axios.post(`${URI}/page/comment`, commentObject)
                     .then(res => {
-                        // console.log('댓글 달기 성공');
+                        // // console.log('댓글 달기 성공');
                         this.comment = '';
                     })
                     .catch(res => {
-                        console.log('댓글 달기 실패');
+                        // console.log('댓글 달기 실패');
                     });
                 this.getAlldata();
             }
@@ -403,10 +403,10 @@ export default {
                     data: info.commentid,
                 })
                     .then(res => {
-                        console.log('댓글 삭제 성공');
+                        // console.log('댓글 삭제 성공');
                     })
                     .catch(res => {
-                        console.log('댓글 삭제 실패');
+                        // console.log('댓글 삭제 실패');
                     });
                 this.getAlldata();
             }
@@ -417,7 +417,7 @@ export default {
                     this.showAll();
                 })
                 .catch(res => {
-                    console.log(res);
+                    // console.log(res);
                 });
         },
         toggleScrapBtn(boardid) {
@@ -426,11 +426,11 @@ export default {
                     this.showAll();
                 })
                 .catch(res => {
-                    console.log(res);
+                    // console.log(res);
                 });
         },
         search(keyword) {
-            // console.log(keyword);
+            // // console.log(keyword);
             this.$router.push({ name: 'Search', params: { keyword: keyword } });
         },
         updatePost() {
@@ -439,16 +439,16 @@ export default {
         deletePost() {
             let check = confirm('삭제 하시겠습니까?');
             let bid = String(this.boardId);
-            console.log('aaa', bid);
+            // console.log('aaa', bid);
             if (check) {
                 Axios.delete(`${URI}/page/board`, { data: { boardid: bid } })
                     .then(res => {
-                        console.log(res);
+                        // console.log(res);
                         this.showAll();
                         this.elseModalBackground = !this.elseModalBackground;
                     })
                     .catch(res => {
-                        console.log(res);
+                        // console.log(res);
                     });
             } else {
                 alert('취소 되었습니다.');

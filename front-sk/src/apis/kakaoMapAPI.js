@@ -413,7 +413,7 @@ const submitData = () => {
         updateArrowSendData = drawArrow(updateArrow),
         updateEllipseSendData = drawEllipse(updateEllipse)
     var data = manager.getData();
-    console.log('??', data)
+    // // console.log('??', data)
     let tempDrawData = {
         marker: drawMarker(data[kakao.maps.drawing.OverlayType.MARKER]),
         polyline: drawPolyline(data[kakao.maps.drawing.OverlayType.POLYLINE]),
@@ -423,7 +423,7 @@ const submitData = () => {
         arrow: drawArrow(data[kakao.maps.Drawing.OverlayType.ARROW]),
         ellipse: drawEllipse(data[kakao.maps.Drawing.OverlayType.ELLIPSE])
     }
-    console.log(tempDrawData)
+    // // console.log(tempDrawData)
     for (var i in info) {
         infoData[i] = {
             content: info[i].getContent().outerHTML,
@@ -442,7 +442,7 @@ const submitData = () => {
     cusInfo = {}
 
     if (updateState) {
-        console.log('updateState', updateState)
+        // // console.log('updateState', updateState)
         tempDrawData.marker = tempDrawData.marker.concat(updateMarkerSendData)
         tempDrawData.polyline = tempDrawData.polyline.concat(updatePolylineSendData)
         tempDrawData.rectangle = tempDrawData.rectangle.concat(updateRectangleSendData)
@@ -486,16 +486,16 @@ const viewMap = () => {
 }
 
 const getMpaData = (data, update) => {
-    console.log('getMpaData::data', data)
+    // // console.log('getMpaData::data', data)
     let updateOrDetail = update ? map : detailMap
     let bounds = new kakao.maps.LatLngBounds()
     let infoTemps = JSON.parse(data.info)
-    console.log('getMpaData::infoTemps', infoTemps)
+    // // console.log('getMpaData::infoTemps', infoTemps)
     let cusInfoTemps = JSON.parse(data.cusInfo)
-    console.log('getMpaData::cusInfoTemps', cusInfoTemps)
-    console.log('infoTemps.length + cusInfoTemps.length', Object.keys(infoTemps).length + Object.keys(cusInfoTemps).length)
+    // // console.log('getMpaData::cusInfoTemps', cusInfoTemps)
+    // // console.log('infoTemps.length + cusInfoTemps.length', Object.keys(infoTemps).length + Object.keys(cusInfoTemps).length)
     commentIndex = (Object.keys(infoTemps).length + Object.keys(cusInfoTemps).length)
-    console.log('commentIndex', commentIndex)
+    // // console.log('commentIndex', commentIndex)
     let tempStartOverlayPoint = []
     let setUpdateMarker = updateMarker
     let setUpdatePolyline = updatePolyline
@@ -540,12 +540,12 @@ const getMpaData = (data, update) => {
                 }
 
                 function updateDragstartEvent() {
-                    console.log(this.getPosition())
+                    // // console.log(this.getPosition())
                     closeButtonOverlay.setMap(null)
                 }
 
                 function updateDragendEvent() {
-                    console.log(this.getPosition())
+                    // // console.log(this.getPosition())
                     closeButtonOverlay.setPosition(this.getPosition())
                     closeButtonOverlay.setMap(updateOrDetail)
                 }
@@ -583,7 +583,7 @@ const getMpaData = (data, update) => {
                 });
                 kakao.maps.event.addListener(tempMarker, 'mousedown', updateMousedownEvent);
                 kakao.maps.event.addListener(tempMarker, 'mouseup', function () {
-                    console.log('up')
+                    // console.log('up')
                     kakao.maps.event.removeListener(this, 'mouseout', updateMouseoutEvent)
                 });
                 closeButtonOverlay.getContent().addEventListener('mouseup', closeMarker);
@@ -596,7 +596,7 @@ const getMpaData = (data, update) => {
                 }
 
                 function updateMouseoutEvent() {
-                    console.log('mousemove', this)
+                    // console.log('mousemove', this)
                     var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
                         deltaX = startX - event.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다
                         deltaY = startY - event.clientY,
@@ -615,7 +615,7 @@ const getMpaData = (data, update) => {
 
                 function updateMousedownEvent() {
                     tempStartOverlayPoint = [];
-                    console.log('mousedown', this)
+                    // console.log('mousedown', this)
                     if (event.preventDefault) {
                         event.preventDefault();
                     } else {
@@ -637,7 +637,7 @@ const getMpaData = (data, update) => {
                         tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos[i]));
                     }
 
-                    console.log(tempStartOverlayPoint)
+                    // console.log(tempStartOverlayPoint)
                     kakao.maps.event.addListener(tempMarker, 'mouseout', updateMouseoutEvent);
                 }
 
@@ -674,7 +674,7 @@ const getMpaData = (data, update) => {
                 });
                 kakao.maps.event.addListener(tempMarker, 'mousedown', updateMousedownEvent);
                 kakao.maps.event.addListener(tempMarker, 'mouseup', function () {
-                    console.log('up')
+                    // console.log('up')
                     kakao.maps.event.removeListener(this, 'mouseout', updateMouseoutEvent)
                 });
                 closeButtonOverlay.getContent().addEventListener('mouseup', closeMarker);
@@ -687,7 +687,7 @@ const getMpaData = (data, update) => {
                 }
 
                 function updateMouseoutEvent() {
-                    console.log('mousemove', this)
+                    // console.log('mousemove', this)
                     var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
                         deltaX = startX - event.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다
                         deltaY = startY - event.clientY,
@@ -706,7 +706,7 @@ const getMpaData = (data, update) => {
 
                 function updateMousedownEvent() {
                     tempStartOverlayPoint = [];
-                    console.log('mousedown', this)
+                    // console.log('mousedown', this)
                     if (event.preventDefault) {
                         event.preventDefault();
                     } else {
@@ -728,7 +728,7 @@ const getMpaData = (data, update) => {
                         tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos[i]));
                     }
 
-                    console.log(tempStartOverlayPoint)
+                    // console.log(tempStartOverlayPoint)
                     kakao.maps.event.addListener(tempMarker, 'mouseout', updateMouseoutEvent);
                 }
 
@@ -765,7 +765,7 @@ const getMpaData = (data, update) => {
                 });
                 kakao.maps.event.addListener(tempMarker, 'mousedown', updateMousedownEvent);
                 kakao.maps.event.addListener(tempMarker, 'mouseup', function () {
-                    console.log('up')
+                    // console.log('up')
                     kakao.maps.event.removeListener(this, 'mousemove', updateMousemoveEvent)
                 });
                 closeButtonOverlay.getContent().addEventListener('mouseup', closeMarker);
@@ -778,7 +778,7 @@ const getMpaData = (data, update) => {
                 }
 
                 function updateMousemoveEvent() {
-                    console.log('mousemove', this)
+                    // console.log('mousemove', this)
                     var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
                         deltaX = startX - event.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다
                         deltaY = startY - event.clientY,
@@ -799,7 +799,7 @@ const getMpaData = (data, update) => {
 
                 function updateMousedownEvent() {
                     tempStartOverlayPoint = [];
-                    console.log('mousedown', this)
+                    // console.log('mousedown', this)
                     if (event.preventDefault) {
                         event.preventDefault();
                     } else {
@@ -822,7 +822,7 @@ const getMpaData = (data, update) => {
                     tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos1));
                     tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos2));
 
-                    console.log(tempStartOverlayPoint)
+                    // console.log(tempStartOverlayPoint)
                     kakao.maps.event.addListener(tempMarker, 'mousemove', updateMousemoveEvent);
                 }
 
@@ -855,7 +855,7 @@ const getMpaData = (data, update) => {
                 });
                 kakao.maps.event.addListener(tempMarker, 'mousedown', updateMousedownEvent);
                 kakao.maps.event.addListener(tempMarker, 'mouseup', function () {
-                    console.log('up')
+                    // console.log('up')
                     kakao.maps.event.removeListener(this, 'mousemove', updateMousemoveEvent)
                 });
                 closeButtonOverlay.getContent().addEventListener('mouseup', closeMarker);
@@ -868,7 +868,7 @@ const getMpaData = (data, update) => {
                 }
 
                 function updateMousemoveEvent() {
-                    console.log('mousemove', this)
+                    // console.log('mousemove', this)
                     var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
                         deltaX = startX - event.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다
                         deltaY = startY - event.clientY,
@@ -887,7 +887,7 @@ const getMpaData = (data, update) => {
 
                 function updateMousedownEvent() {
                     tempStartOverlayPoint = [];
-                    console.log('mousedown', this)
+                    // console.log('mousedown', this)
                     if (event.preventDefault) {
                         event.preventDefault();
                     } else {
@@ -908,7 +908,7 @@ const getMpaData = (data, update) => {
 
                     tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos));
 
-                    console.log(tempStartOverlayPoint)
+                    // console.log(tempStartOverlayPoint)
                     kakao.maps.event.addListener(tempMarker, 'mousemove', updateMousemoveEvent);
                 }
 
@@ -916,8 +916,8 @@ const getMpaData = (data, update) => {
         } else if (data.markers[i].overlaytype === 'polygon') {
             let latArr = data.markers[i].latitude.split(' ')
             let lngArr = data.markers[i].longitude.split(' ')
-            console.log('polygon.latArr', latArr)
-            console.log('polygon.lngArr', lngArr)
+            // console.log('polygon.latArr', latArr)
+            // console.log('polygon.lngArr', lngArr)
             let paths = []
             for (let j = 0; j < latArr.length - 1; j++) {
                 paths.push(new kakao.maps.LatLng(Number(latArr[j]), Number(lngArr[j])))
@@ -946,7 +946,7 @@ const getMpaData = (data, update) => {
                 });
                 kakao.maps.event.addListener(tempMarker, 'mousedown', updateMousedownEvent);
                 kakao.maps.event.addListener(tempMarker, 'mouseup', function () {
-                    console.log('up')
+                    // console.log('up')
                     kakao.maps.event.removeListener(this, 'mouseout', updateMouseoutEvent)
                 });
                 closeButtonOverlay.getContent().addEventListener('mouseup', closeMarker);
@@ -959,7 +959,7 @@ const getMpaData = (data, update) => {
                 }
 
                 function updateMouseoutEvent() {
-                    console.log('mousemove', this)
+                    // console.log('mousemove', this)
                     var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
                         deltaX = startX - event.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다
                         deltaY = startY - event.clientY,
@@ -978,7 +978,7 @@ const getMpaData = (data, update) => {
 
                 function updateMousedownEvent() {
                     tempStartOverlayPoint = [];
-                    console.log('mousedown', this)
+                    // console.log('mousedown', this)
                     if (event.preventDefault) {
                         event.preventDefault();
                     } else {
@@ -1000,7 +1000,7 @@ const getMpaData = (data, update) => {
                         tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos[i]));
                     }
 
-                    console.log(tempStartOverlayPoint)
+                    // console.log(tempStartOverlayPoint)
                     kakao.maps.event.addListener(tempMarker, 'mouseout', updateMouseoutEvent);
                 }
 
@@ -1032,7 +1032,7 @@ const getMpaData = (data, update) => {
                 });
                 kakao.maps.event.addListener(tempMarker, 'mousedown', updateMousedownEvent);
                 kakao.maps.event.addListener(tempMarker, 'mouseup', function () {
-                    console.log('up')
+                    // console.log('up')
                     kakao.maps.event.removeListener(this, 'mousemove', updateMousemoveEvent)
                 });
                 closeButtonOverlay.getContent().addEventListener('mouseup', closeMarker);
@@ -1045,7 +1045,7 @@ const getMpaData = (data, update) => {
                 }
 
                 function updateMousemoveEvent() {
-                    console.log('mousemove', this)
+                    // console.log('mousemove', this)
                     var proj = updateOrDetail.getProjection(), // 지도 객체로 부터 화면픽셀좌표, 지도좌표간 변환을 위한 MapProjection 객체를 얻어옵니다
                         deltaX = startX - event.clientX, // mousedown한 픽셀좌표에서 mousemove한 좌표를 빼서 실제로 마우스가 이동된 픽셀좌표를 구합니다
                         deltaY = startY - event.clientY,
@@ -1064,7 +1064,7 @@ const getMpaData = (data, update) => {
 
                 function updateMousedownEvent() {
                     tempStartOverlayPoint = [];
-                    console.log('mousedown', this)
+                    // console.log('mousedown', this)
                     if (event.preventDefault) {
                         event.preventDefault();
                     } else {
@@ -1085,7 +1085,7 @@ const getMpaData = (data, update) => {
 
                     tempStartOverlayPoint.push(proj.containerPointFromCoords(overlayPos));
 
-                    console.log(tempStartOverlayPoint)
+                    // console.log(tempStartOverlayPoint)
                     kakao.maps.event.addListener(tempMarker, 'mousemove', updateMousemoveEvent);
                 }
 
@@ -1103,7 +1103,7 @@ const getMpaData = (data, update) => {
             delete info[infoTemp.getContent().id];
             infoTemp.setMap(null);
         };
-        console.log()
+        // console.log()
         info[i] = infoTemp
         infoTemp.open(updateOrDetail, new kakao.maps.Marker({
             position: new kakao.maps.LatLng(Number(infoTemps[i].lat), Number(infoTemps[i].lng))
@@ -1251,7 +1251,7 @@ function insertComment(type, title, content) {
             }
         }
     } else if (commentCondition !== 'drawtool') {
-        console.log('!drawtool', commentCondition)
+        // console.log('!drawtool', commentCondition)
         var customOverlay = new kakao.maps.CustomOverlay({
             position: map.getCenter(),
             content: commentWrap,
@@ -1518,7 +1518,7 @@ function drawPolygon(polygons) {
         i = 0;
     let polygonpath = []
     for (; i < len; i++) {
-        console.log('polygons[i]', polygons[i])
+        // console.log('polygons[i]', polygons[i])
         if (polygons[i].points !== undefined) {
             let path = pointsToPath(polygons[i].points);
             for (let j in path) {
