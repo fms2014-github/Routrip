@@ -7,12 +7,12 @@ $desktop: 'screen and (min-width : 1025px)';
 
 .user {
     @include wrap;
-    min-height: 100%;
+    display: flex;
+    justify-content: center;
+    height: 100vh;
+    float: none;
+    vertical-align: middle;
     box-sizing: border-box;
-
-    .wrapC {
-        width: 80% !important;
-    }
 
     h1 {
         color: #000;
@@ -41,34 +41,6 @@ $desktop: 'screen and (min-width : 1025px)';
 
     /*로그인*/
     &#login {
-
-        @media #{$iPad, $iPadPro} {
-
-            .left-view,
-            .right-view {
-                margin: auto;
-            }
-        }
-
-        @media #{$desktop} {
-            padding: 50px 0;
-
-            .login-wrap {
-                margin: auto;
-                display: flex;
-            }
-
-            .left-view {
-                svg {
-                    height: 600px;
-                }
-            }
-
-            .right-view {
-                padding-top: 100px;
-            }
-        }
-
 
 
         .login-img {
@@ -188,9 +160,9 @@ $desktop: 'screen and (min-width : 1025px)';
     display: inline-flex;
     flex-direction: column;
     justify-content: space-between;
-    min-width: 510px;
+    margin: 10vh 15vw;
+    max-width: 460px;
     min-height: 440px;
-    max-width: 610px;
     padding: 20px;
     background-color: white;
     border-radius: 12px;
@@ -376,13 +348,11 @@ $desktop: 'screen and (min-width : 1025px)';
     left: 0;
     right: 0;
     bottom: 0;
-
     .input-with-label {
         height: auto;
         float: left;
     }
 }
-
 @media (max-width: 1000px) {
 
     #forget-password,
@@ -392,6 +362,9 @@ $desktop: 'screen and (min-width : 1025px)';
 
     #reset-password-form {
         width: calc(100vw - 40px);
+    }
+    .add-option {
+        height: 120px;
     }
 }
 
@@ -408,5 +381,45 @@ $desktop: 'screen and (min-width : 1025px)';
                 margin-bottom: 20px;
             }
         }
+    }
+}
+
+@media #{$iPad, $iPadPro} {
+    #login{
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+    .left-view,
+    .right-view {
+        margin: 1vh 1vw;
+    }
+    #popup-join,
+    #popup-find {
+        height: 800px;
+        position: absolute;
+        top: 20vh;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        .input-with-label {
+            height: auto;
+            float: left;
+        }
+    }
+
+}
+
+@media #{$desktop} {
+
+    .left-view {
+        vertical-align: middle;
+        svg {
+            height: 600px;
+        }
+    }
+
+    .right-view {
+        padding-top: 100px;
     }
 }

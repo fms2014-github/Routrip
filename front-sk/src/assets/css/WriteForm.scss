@@ -1,8 +1,8 @@
+@charset "utf-8";
 $iPad: 'screen and (max-width : 768px)';
 $iPadPro: 'screen and (min-width : 769px) and (max-width : 1024px) ';
 $desktop: 'screen and (min-width : 1025px)';
 
-@charset "utf-8";
 @import './common';
 $hashtag-cansle-circle: 18px;
 $area-search-bar-circle: 30px;
@@ -12,7 +12,19 @@ $border-7bbfc8: 1px solid #7bbfc8;
 $border-a6cdc6: 1px solid #a6cdc6;
 
 #content-upload-form {
-    @media #{$iPad, $iPadPro} {}
+    @media #{$iPad, $iPadPro} {
+        display: flex;
+        flex-direction: column;
+        #header{
+            display: inline-flex;
+            position: static;
+            width: 100vw;
+        }
+        #map-wrapper, #content-wrapper{
+            width: calc(100% - 4px)!important;
+            margin: 0;
+        }
+    }
 
     @media #{$desktop} {
         display: flex;
@@ -219,7 +231,7 @@ $border-a6cdc6: 1px solid #a6cdc6;
             left: 0;
             bottom: 0;
             width: 250px;
-            margin: 60px 0 30px 10px;
+            margin: 200px 0 30px 10px;
             padding: 5px;
             overflow-y: auto;
             background: rgba(255, 255, 255, 0.7);
@@ -669,6 +681,6 @@ $border-a6cdc6: 1px solid #a6cdc6;
 
     /* keyframe */
     to {
-        margin-top: 60px !important;
+        margin-top: 200px !important;
     }
 }
