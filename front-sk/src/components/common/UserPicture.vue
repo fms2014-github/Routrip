@@ -58,7 +58,7 @@ export default {
                 $.ajax(settings).done(response => {
                     this.pic = JSON.parse(response).data.link
                     const jwt = localStorage.getItem('routrip_JWT');
-                    Axios.put('http://192.168.100.70:8083/account/user/',
+                    Axios.put('http://52.78.8.59:8083/account/user/',
                         {
                             profileImg : JSON.parse(response).data.link,
                             jwt : jwt
@@ -82,7 +82,7 @@ export default {
                         imageAlt: 'The uploaded picture'
                     }).then( (dismiss)=>{
                             if (dismiss){
-                                location.reload(true);
+                                this.$router.push('/profile');
                             }
                         }
                     )

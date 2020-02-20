@@ -40,7 +40,7 @@ export default {
         // console.log("hihi comment")
         const jwt = localStorage.getItem('routrip_JWT');
         
-        Axios.post('http://192.168.100.70:8083/page/searchComment' , {jwt : jwt})
+        Axios.post('http://52.78.8.59:8083/page/searchComment' , {jwt : jwt})
             .then(res => {
                 // console.log(res)
                 this.commentList=res.data
@@ -68,7 +68,7 @@ export default {
             }).then((result) => {
             if (result.value) {
                 // console.log(id)
-                Axios.delete('http://192.168.100.70:8083/page/comment', 
+                Axios.delete('http://52.78.8.59:8083/page/comment', 
                 { data: id })
                     .then(res=>{
                         Swal.fire({

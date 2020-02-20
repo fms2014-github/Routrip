@@ -171,7 +171,7 @@ import '../../assets/css/WriteForm.scss';
 import ImageUpload from '../../apis/ImgurAPI.js';
 import kakaoMap from '../../apis/kakaoMapAPI.js';
 import Axios from 'axios';
-const URI = 'http://192.168.100.70:8083/';
+const URI = 'http://52.78.8.59:8083/';
 var asdf;
 export default {
     components: {

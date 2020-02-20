@@ -84,7 +84,7 @@ export default {
         },
         soloconnect() {
             // 연결
-            this.socket = new SockJS('http://192.168.100.70:8081/gs-guide-websocket');
+            this.socket = new SockJS('http://52.78.8.59:8081/gs-guide-websocket');
             this.stompClient = Stomp.over(this.socket);
             this.stompClient.connect(
                 {},

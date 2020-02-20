@@ -91,7 +91,7 @@ export default {
             }
             else{
                 const jwt = localStorage.getItem('routrip_JWT');
-                Axios.delete('http://192.168.100.70:8083/account/user/',
+                Axios.delete('http://52.78.8.59:8083/account/user/',
                         {   data:{
                             jwt: jwt,
                             password: value}
@@ -143,7 +143,7 @@ export default {
             return '뭐라도 써보세요!';
           } else {
             const jwt = localStorage.getItem('routrip_JWT');
-            Axios.put('http://192.168.100.70:8083/account/user/', {
+            Axios.put('http://52.78.8.59:8083/account/user/', {
               nickname: value,
               jwt: jwt,
             }).then(res => {

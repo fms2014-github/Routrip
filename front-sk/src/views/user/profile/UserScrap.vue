@@ -52,7 +52,7 @@ export default {
         async reqScrap() {
         // console.log("hihi scrap")
         const jwt = localStorage.getItem('routrip_JWT');
-        await Axios.post('http://192.168.100.70:8083/page/scrapBoard/' , {jwt : jwt})
+        await Axios.post('http://52.78.8.59:8083/page/scrapBoard/' , {jwt : jwt})
             .then(res => {
                 // console.log("???", res.data)
                 this.scrapList=res.data

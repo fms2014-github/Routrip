@@ -87,7 +87,7 @@ export default {
 
                 // console.log(data);
 
-                Axios.put('http://192.168.100.70:8083/account/signup', {
+                Axios.put('http://52.78.8.59:8083/account/signup', {
                     email,
                     userkey: auth,
                 })
