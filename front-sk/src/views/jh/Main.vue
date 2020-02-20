@@ -2,6 +2,7 @@
     <div id="main">
         <Header></Header>
         <div class="body">
+            <h1 style="margin: 8px;">베스트 게시글</h1>
             <div class="best-posting">
                 <div class="postings-posting">
                     <hooper
@@ -36,8 +37,12 @@
                     </hooper>
                 </div>
             </div>
+            <hr style="margin: 32px 4px 16px 4px; border: 2px solid #AAA; box-shadow: 1px 1px 12px 1px #565656">
             <div class="posting-box">
                 <div class="postings">
+                    <div v-if="(datas == '')" style="text-align: center;">
+                        <h1>검색 결과가 없습니다.</h1>
+                    </div>
                     <div class="posting-component" v-for="(data, dataIdx) in datas" :key="dataIdx">
                         <div class="postings-posting">
                             <div class="post-info">
@@ -130,9 +135,6 @@
                                                 <div class="writer-info">
                                                     <strong>{{ comment.user.nickname }}</strong>
                                                     <span>{{ comment.writeday }}</span>
-                                                </div>
-                                                <div class="writer-reply">
-                                                    <span>댓글달기</span>
                                                 </div>
                                             </div>
                                             <div class="writer-text">
