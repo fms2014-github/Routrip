@@ -30,7 +30,7 @@
 
     .user-picture {
         float: left;
-        width:calc(33.333%% - 15vw);
+        width:15vw;
         height: 15vw;
         border-radius: 50%;
         margin: 10px;
@@ -40,7 +40,6 @@
             display: flex;
             float:left;
             width: 15vw;
-            // width:calc(33.333%% - 15vw);
             height: 15vw;
         }
     }
