@@ -6,18 +6,19 @@
         <table style="width:100%;">
             <thead>
                 <th>
-                    <td style="width:5vw;">번호</td><td style="width:58vw;">내용</td><td style="width:10vw; text-align:center; padding-right:10vw;">날짜</td>
+                    <td style="width:5vw;">번호</td><td style="width:58vw;">내용</td><td style="width:10vw; text-align:center; padding-right:10vw;">날짜</td><td></td>
                 </th>
             </thead>
             <tbody v-for="(comment,index) in commentList" v-bind:key="comment.boardid">
                 <router-link :to="{ name: 'Detail', params: { boardid: comment.boardid } }">        
                     <tr>
                         <td style="width:5vw;">{{ doMath(index) }}</td><td style="width:58vw;">{{ comment.contents }}</td>
-                        <td>{{ comment.writedate.split(':')[0] + ":" + comment.writedate.split(':')[1] }}</td>
-                        <td style="padding-left:8vw;"><button class="del" @click="delComment(id=comment.commentid,index)">댓글 삭제</button></td>
+                        <td style="padding-right:7vw;">{{ comment.writedate.split(':')[0] + ":" + comment.writedate.split(':')[1] }}</td>
                     </tr>
                 </router-link>
-               
+                    <div style="float:right; margin:3px 2.2vw 0 0;">
+                        <button class="del" @click="delComment(id=comment.commentid,index)">댓글 삭제</button>
+                    </div>
             </tbody>
         </table>
     </div>
@@ -38,6 +39,7 @@ export default {
         reqComments() {
         console.log("hihi comment")
         const jwt = localStorage.getItem('routrip_JWT');
+        
         Axios.post('http://192.168.100.70:8083/page/searchComment' , {jwt : jwt})
             .then(res => {
                 console.log(res)

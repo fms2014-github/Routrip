@@ -1,16 +1,16 @@
 <template>
      <div>
         <div class="row">
-            <h2 style="text-align:center; font-size:2.1vw; @include wrap;">총 {{scrapList.length}} 개의 스크랩</h2>
+            <div style="text-align:center; font-size:2.1vw; @include wrap; margin-bottom:5vw; width:100%">
+                총 {{scrapList.length}} 개의 스크랩
+            </div>
             <div v-for="scrap in scrapList" :key="scrap.boardid">
                 <div class="gallery">
+                    <router-link :to="{ name: 'Detail', params: { boardid: scrap.boardid } }">
                     <div class="one">
                         <h1 class = 'card-header-title' style="margin-bottom:10px;" >
-                            <router-link :to="{ name: 'Detail', params: { boardid: scrap.boardid } }">
-                                {{ scrap.title }}
-                            </router-link>
+                            {{ scrap.title }}
                         </h1>
-                        <router-link :to="{ name: 'Detail', params: { boardid: scrap.boardid } }">
                             <div class= 'card'>
                                 <img v-if="scrap.imgs[0]!== undefined" :src="scrap.imgs[0].src" class='card-image'>
                                 <img v-if="scrap.imgs[0]== undefined" src="../../../assets/images/noImage.png" class='card-image'>
@@ -21,7 +21,6 @@
                                     </ul>
                                 </div> 	
                             </div>
-                        </router-link>
                         <div class="keywords">
                             <div class = 'card-footer' >
                                 <div class="keyword" v-for="keyword in scrap.keywords" v-bind:key="keyword">
@@ -30,6 +29,7 @@
                             </div>
                         </div>
                     </div>
+                    </router-link>
                 </div>
             </div>
         </div>
