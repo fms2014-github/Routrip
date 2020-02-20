@@ -61,6 +61,10 @@ maria DB 사용
 
 ## Common
 
+http://52.78.8.59:8083/ 로 접속
+
+## Developer
+
 git 프로젝트를 다운로드 한다.
 
 - git을 이용한 방법
@@ -102,3 +106,12 @@ git 프로젝트를 다운로드 한다.
 5. 다운받은 프로젝트의 front_sk폴더안에 있는 파일들을 전부 새로 생성한 프로젝트에 이동한다.
 6. 다시 vue ui를 실행해서 켜진 창으로 이동하여 플러그인과 의존성 탭을 클릭해서 다운로드 버튼을 클릭하여 필요한 라이브러리를 다운받으면 되고  중복되는 내용은 휴지통 아이콘을 클릭하여 삭제를 하면된다.
 7. 이후 작업목록에서 serve를 클릭한 후 실행을 누르거나 vue 프로젝트가 포커스 되어 있는 cmd창에서 npm serve run 또는 yarn serve를 입력하여 서버를 실행하면 웹페이지 사용이 가능하다.
+
+## - Back Project
+
+1. 위 설명을 참고해 STS 설치와 DB 구축을 한다.
+2. wireframe 폴더 안의 'pom.xml 내용물.txt' 안의 내용을 복사하여 pom.xml 파일을 만들어 그 안에 넣는다.
+3. 만들어진 pom.xml 파일을 back-sk 폴더 안에 넣는다.
+4. STS 를 실행하여 File-Import-Maven-Existing Maven Projects 를 선택하여 Root Directory 에서 back-sk 폴더를 선택한 후 Finish 를 누른다.
+5. STS 에서 가져온 프로젝트에서 WebCurationApplication.java 를 찾아 오른쪽 버튼을 클릭
+6. Run As-Spring Boot App 을 클릭하면 서버가 실행된다.
