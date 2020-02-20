@@ -119,10 +119,10 @@
                 </div>
                 <div class="drop-box" :class="{ dropBox: !dropBox }">
                     <div class="drop-box-menu">
-                        <a href="/profile">
+                        <router-link v-bind:to="{name: 'Profile'}">
                             <img src="../../assets/images/user2.png" alt />
                             <span>마이페이지</span>
-                        </a>
+                        </router-link>
                     </div>
                     <div class="drop-box-menu" @click="logout">
                         <img src="../../assets/images/exit.png" alt />
