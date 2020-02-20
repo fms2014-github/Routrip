@@ -4,9 +4,17 @@
         <div class="body">
             <div class="best-posting">
                 <div class="postings-posting">
-                    <hooper :infiniteScroll="true" :itemsToShow="3" :progress="true" :autoPlay="true" :playSpeed="2000">
+                    <hooper
+                        :infiniteScroll="true"
+                        :itemsToShow="3"
+                        :progress="true"
+                        :autoPlay="true"
+                        :playSpeed="2000"
+                    >
                         <slide v-for="(data, dataIdx) in bestDatas" :key="dataIdx">
-                            <router-link :to="{ name: 'Detail', params: { boardid: data.boardid } }">
+                            <router-link
+                                :to="{ name: 'Detail', params: { boardid: data.boardid } }"
+                            >
                                 <div class="best-img">
                                     <img :src="data.imgs[0].src" alt />
                                     <div class="best-img-info">
@@ -14,7 +22,10 @@
                                             <div class="best-img-title">{{ data.title }}</div>
                                             <div class="term-like">
                                                 <div class="best-img-term">{{ data.tripterm }}</div>
-                                                <div class="best-img-like"><i class="fas fa-heart"></i> {{ data.favoriteNum }}</div>
+                                                <div class="best-img-like">
+                                                    <i class="fas fa-heart"></i>
+                                                    {{ data.favoriteNum }}
+                                                </div>
                                             </div>
                                         </div>
                                     </div>
@@ -50,7 +61,9 @@
                         <div class="post-imgs-box">
                             <hooper class="post-img-box">
                                 <slide v-for="(img, imgIdx) in data.imgs" :key="imgIdx">
-                                    <router-link :to="{ name: 'Detail', params: { boardid: data.boardid } }">
+                                    <router-link
+                                        :to="{ name: 'Detail', params: { boardid: data.boardid } }"
+                                    >
                                         <img :src="img.src" alt />
                                     </router-link>
                                 </slide>
@@ -81,8 +94,7 @@
                                     </button>
                                 </div>
                                 <div class="state" v-if="data.favoriteNum == 1">
-                                    <strong>{{ whoLiked[dataIdx] }}</strong
-                                    >님이 게시글을 좋아합니다.
+                                    <strong>{{ whoLiked[dataIdx] }}</strong>님이 게시글을 좋아합니다.
                                 </div>
                                 <div class="state" v-if="data.favoriteNum > 1">
                                     <strong>{{ whoLiked[dataIdx] }}</strong>
@@ -91,7 +103,12 @@
                             </div>
 
                             <div class="keywords">
-                                <div @click="search(keyword)" class="keyword" v-for="(keyword, keywordIdx) in data.keywords" :key="keywordIdx">
+                                <div
+                                    @click="search(keyword)"
+                                    class="keyword"
+                                    v-for="(keyword, keywordIdx) in data.keywords"
+                                    :key="keywordIdx"
+                                >
                                     <span>#{{ keyword }}</span>
                                 </div>
                             </div>
@@ -99,7 +116,11 @@
 
                         <div class="comment-box">
                             <div class="comments">
-                                <div class="comment" v-for="(comment, commentIdx) in data.comments" :key="commentIdx">
+                                <div
+                                    class="comment"
+                                    v-for="(comment, commentIdx) in data.comments"
+                                    :key="commentIdx"
+                                >
                                     <div class="writer-img">
                                         <img :src="comment.user.profileImg" alt />
                                     </div>
@@ -118,7 +139,10 @@
                                                 <span>{{ comment.contents }}</span>
                                             </div>
                                         </div>
-                                        <div class="comment-delete" v-if="comment.uid == getUser.data.uid">
+                                        <div
+                                            class="comment-delete"
+                                            v-if="comment.uid == getUser.data.uid"
+                                        >
                                             <button @click="deleteComment(comment)">삭제</button>
                                         </div>
                                     </div>
@@ -126,7 +150,13 @@
                             </div>
                             <div class="write-comment">
                                 <form action class="comment-form">
-                                    <textarea class="comment" placeholder="댓글 달기..." autocomplete="off" wrap="soft" v-model="comment"></textarea>
+                                    <textarea
+                                        class="comment"
+                                        placeholder="댓글 달기..."
+                                        autocomplete="off"
+                                        wrap="soft"
+                                        v-model="comment"
+                                    ></textarea>
                                 </form>
                                 <div class="comment-btn">
                                     <button @click="addComment(data)">
@@ -146,10 +176,26 @@
                     <router-link :to="{ name: 'Detail', params: { boardid: boardId } }">
                         <button class="else-btn first">게시물로 이동</button>
                     </router-link>
-                    <button :class="{ followBtn: !followBtn }" class="else-btn middle" @click="follow">팔로우</button>
-                    <button :class="{ unfollowBtn: !unfollowBtn }" class="else-btn middle" @click="follow">팔로우 취소</button>
-                    <button :class="{ myPosting: !myPosting }" class="else-btn middle" @click="updatePost">내글 수정</button>
-                    <button :class="{ myPosting: !myPosting }" class="else-btn middle" @click="deletePost">내글 삭제</button>
+                    <button
+                        :class="{ followBtn: !followBtn }"
+                        class="else-btn middle"
+                        @click="follow"
+                    >팔로우</button>
+                    <button
+                        :class="{ unfollowBtn: !unfollowBtn }"
+                        class="else-btn middle"
+                        @click="follow"
+                    >팔로우 취소</button>
+                    <button
+                        :class="{ myPosting: !myPosting }"
+                        class="else-btn middle"
+                        @click="updatePost"
+                    >내글 수정</button>
+                    <button
+                        :class="{ myPosting: !myPosting }"
+                        class="else-btn middle"
+                        @click="deletePost"
+                    >내글 삭제</button>
                     <button class="else-btn last" @click="noShowElseBtn">X</button>
                 </div>
             </div>
@@ -160,7 +206,7 @@
 <script>
 //vue
 import Header from './Header.vue';
-
+import Swal from 'sweetalert2';
 //js
 import Kakao from '../../components/user/snsLogin/kakao';
 
@@ -366,9 +412,15 @@ export default {
             Axios.post(`${URI}/account/follow`, { jwt: this.jwt, uid: this.boardData.uid })
                 .then(res => {
                     if (this.followBtn) {
-                        alert('팔로우 되었습니다.');
+                        Swal.fire({
+                            icon: 'success',
+                            title: '"' + this.boardData.user.nickname + '" 님을 팔로우 했습니다.',
+                        });
                     } else {
-                        alert('팔로우가 취소 되었습니다.');
+                        Swal.fire({
+                            icon: 'warning',
+                            title: '"' + this.boardData.user.nickname + '" 님의 팔로우를 취소했습니다.',
+                        });
                     }
                     this.noShowElseBtn();
                 })
@@ -384,7 +436,11 @@ export default {
             commentObject.contents = this.comment;
             commentObject.uid = info.uid;
             if (this.comment == '') {
-                alert('댓글을 입력해주세요');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '댓글 오류',
+                    text: '댓글을 입력해 주세요!',
+                });
             } else {
                 Axios.post(`${URI}/page/comment`, commentObject)
                     .then(res => {
@@ -451,7 +507,10 @@ export default {
                         console.log(res);
                     });
             } else {
-                alert('취소 되었습니다.');
+                Swal.fire({
+                    icon: 'error',
+                    title: '취소되었습니다.',
+                });
             }
         },
     },

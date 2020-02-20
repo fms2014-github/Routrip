@@ -3,7 +3,9 @@
         <div id="sign-up">
             <div>
                 <h1 id="Join-title">사진등록</h1>
-                <button class="close" @click="close"><img class="close-img" src="../../../assets/images/close.png" /></button>
+                <button class="close" @click="close">
+                    <img class="close-img" src="../../../assets/images/close.png" />
+                </button>
             </div>
             <div id="term-form">
                 <div class="input-with-label">
@@ -16,9 +18,7 @@
                         @keyup.enter="submit"
                     />
                     <label for="email">이메일</label>
-                    <div v-if="error.email" class="error-text">
-                        {{ error.email }}
-                    </div>
+                    <div v-if="error.email" class="error-text">{{ error.email }}</div>
                 </div>
                 <div class="input-with-label">
                     <input
@@ -30,9 +30,7 @@
                         @keyup.enter="submit"
                     />
                     <label for="password">비밀번호</label>
-                    <div v-if="error.password" class="error-text">
-                        {{ error.password }}
-                    </div>
+                    <div v-if="error.password" class="error-text">{{ error.password }}</div>
                 </div>
                 <div class="input-with-label">
                     <input
@@ -44,9 +42,7 @@
                         @keyup.enter="submit"
                     />
                     <label for="passwordConfirm">비밀번호 확인</label>
-                    <div v-if="error.passwordConfirm" class="error-text">
-                        {{ error.passwordConfirm }}
-                    </div>
+                    <div v-if="error.passwordConfirm" class="error-text">{{ error.passwordConfirm }}</div>
                 </div>
                 <div class="input-with-label">
                     <input
@@ -58,9 +54,7 @@
                         @keyup.enter="submit"
                     />
                     <label for="name">이름</label>
-                    <div v-if="error.name" class="error-text">
-                        {{ error.name }}
-                    </div>
+                    <div v-if="error.name" class="error-text">{{ error.name }}</div>
                 </div>
                 <div class="input-with-label">
                     <input
@@ -72,9 +66,7 @@
                         @keyup.enter="submit"
                     />
                     <label for="nickName">닉네임</label>
-                    <div v-if="error.nickName" class="error-text">
-                        {{ error.nickName }}
-                    </div>
+                    <div v-if="error.nickName" class="error-text">{{ error.nickName }}</div>
                 </div>
                 <div class="input-with-label">
                     <input
@@ -86,9 +78,7 @@
                         @keyup.enter="submit"
                     />
                     <label for="birthday">생년월일</label>
-                    <div v-if="error.birthday" class="error-text">
-                        {{ error.birthday }}
-                    </div>
+                    <div v-if="error.birthday" class="error-text">{{ error.birthday }}</div>
                 </div>
                 <div class="input-with-label">
                     <input
@@ -102,9 +92,7 @@
                         maxlength="11"
                     />
                     <label for="phone_number">휴대폰 번호</label>
-                    <div v-if="error.phone_number" class="error-text">
-                        {{ error.phone_number }}
-                    </div>
+                    <div v-if="error.phone_number" class="error-text">{{ error.phone_number }}</div>
                 </div>
             </div>
             <div id="term-doc">
@@ -116,13 +104,14 @@
                 <div class="term-view">
                     <span @click="termPopup = true">약관보기</span>
                 </div>
-                <div v-if="error.term" class="error-text red">
-                    {{ error.term }}
-                </div>
+                <div v-if="error.term" class="error-text red">{{ error.term }}</div>
             </div>
-            <button class="btn btn--back btn--login" :disabled="!isSubmit" :class="{ disabled: !isSubmit }" @click="submit">
-                가입하기
-            </button>
+            <button
+                class="btn btn--back btn--login"
+                :disabled="!isSubmit"
+                :class="{ disabled: !isSubmit }"
+                @click="submit"
+            >가입하기</button>
         </div>
         <div v-if="termPopup" class="terms-doc-dialog">
             <div class="terms">
@@ -137,9 +126,7 @@
                     Donec volutpat lacus lacus, eget sodales enim luctus a. Pellentesque tincidunt ligula ut ligula rhoncus luctus. Suspendisse in
                     augue id velit pretium varius.
                 </div>
-                <button @click="termPopup = false">
-                    닫기
-                </button>
+                <button @click="termPopup = false">닫기</button>
             </div>
         </div>
     </div>
@@ -153,6 +140,7 @@ import PV from 'password-validator';
 import * as EmailValidator from 'email-validator';
 import '../../../assets/css/profile.scss';
 import '../../../assets/css/user.scss';
+import Swal from 'sweetalert2';
 
 export default {
     data: () => {
@@ -237,7 +225,11 @@ export default {
         phone_regx() {
             if (this.phone_number != this.phone_number.replace(/\D/gi, '')) {
                 this.phone_number = this.phone_number.replace(/\D/gi, '');
-                alert('숫자만 입력해 주세요.');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '입력오류',
+                    text: '숫자만 입력해 주세요.',
+                });
             }
         },
         checkForm() {

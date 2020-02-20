@@ -36,7 +36,6 @@ $desktop: 'screen and (min-width : 1025px)';
                         border-radius: 20px;
                         color: white;
 
-
                         .info-box {
                             .best-img-title {
                                 margin: auto;
@@ -60,14 +59,12 @@ $desktop: 'screen and (min-width : 1025px)';
                                     }
                                 }
                             }
-
-
                         }
                     }
                 }
 
                 .best-img-info {
-                    transition: all .2s;
+                    transition: all 0.2s;
                     display: none;
                 }
 
@@ -76,11 +73,7 @@ $desktop: 'screen and (min-width : 1025px)';
                     height: 100%;
                     border-radius: 20px;
                 }
-
-
-
             }
-
         }
     }
 
@@ -88,15 +81,15 @@ $desktop: 'screen and (min-width : 1025px)';
         .hooper-prev {
             -webkit-transform: translate(10px, -50%);
             transform: translate(10px, -50%) !important;
-            -webkit-transition: transform .5s;
-            transition: transform .5s;
+            -webkit-transition: transform 0.5s;
+            transition: transform 0.5s;
         }
 
         .hooper-next {
             -webkit-transform: translate(-30px, -50%);
             transform: translate(-30px, -50%) !important;
-            -webkit-transition: transform .5s;
-            transition: transform .5s;
+            -webkit-transition: transform 0.5s;
+            transition: transform 0.5s;
         }
     }
 
@@ -119,7 +112,7 @@ $desktop: 'screen and (min-width : 1025px)';
             opacity: 0.8;
             border: 0;
             border-radius: 30px;
-            padding: .5em;
+            padding: 0.5em;
             position: absolute;
             top: 50%;
             display: flex;
@@ -141,7 +134,6 @@ $desktop: 'screen and (min-width : 1025px)';
         }
     }
 
-
     .hooper-sr-only {
         position: absolute;
         width: 1px;
@@ -152,5 +144,4 @@ $desktop: 'screen and (min-width : 1025px)';
         clip: rect(0, 0, 0, 0);
         border: 0;
     }
-
 }

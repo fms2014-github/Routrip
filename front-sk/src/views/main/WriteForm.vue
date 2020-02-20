@@ -165,6 +165,7 @@
 </template>
 
 <script>
+import Swal from 'sweetalert2';
 import Header from '../jh/Header.vue';
 import '../../assets/css/WriteForm.scss';
 import ImageUpload from '../../apis/ImgurAPI.js';
@@ -333,7 +334,11 @@ export default {
                 this.keywords.push(this.keywordTag.replace(regExp, '').trim());
                 this.keywordTag = '';
             } else {
-                alert('태그에 공백을 포함한 특수문자는 들어갈 수 없습니다.');
+                Swal.fire({
+                    icon: '',
+                    title: '입력오류!',
+                    text: '태그에 공백을 포함한 특수문자는 들어갈 수 없습니다.',
+                });
                 this.keywordTag = '';
             }
         },

@@ -24,13 +24,21 @@ const actions = {
       jwt: jwt
     }).then(() => {
       commit('setUser', null);
+      Swal.fire({
+        icon: 'warning',
+        title: '로그아웃',
+        text: '로그아웃 되었습니다!',
+      }).then(() => {
+        router.push("/");
+      })
+
       //로컬스토리지 비우기
       localStorage.clear();
     }).then(() => {
       router.push('/');
     }).catch(error => {
       console.log(error.response.status);
-      if(error.response.status === 406) {
+      if (error.response.status === 406) {
         Swal.fire({
           icon: 'error',
           title: '세션 만료',
@@ -52,7 +60,7 @@ const actions = {
     }).then(res => {
       commit('setUser', res);
     }).catch(error => {
-      if(error.response.status === 406) {
+      if (error.response.status === 406) {
         console.log("reqUserInfo 406 ERROR");
       }
     });

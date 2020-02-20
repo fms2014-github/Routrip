@@ -19,9 +19,7 @@
                     type="password"
                 />
                 <label for="password1">비밀번호</label>
-                <div class="error-text" v-if="error.password">
-                    {{ error.password }}
-                </div>
+                <div class="error-text" v-if="error.password">{{ error.password }}</div>
             </div>
             <div class="input-with-label">
                 <input
@@ -33,18 +31,19 @@
                     type="password"
                 />
                 <label for="password2">비밀번호 확인</label>
-                <div class="error-text" v-if="error.password2">
-                    {{ error.password2 }}
-                </div>
+                <div class="error-text" v-if="error.password2">{{ error.password2 }}</div>
             </div>
             <div class="password-error-msg" :class="{ samePassword: !samePassword }">
                 <span style="color:red;">비밀번호가 동일하지 않습니다.</span>
             </div>
         </div>
 
-        <button @click="register" class="btn btn--back" :disabled="!registerBtn" :class="{ disabled: !registerBtn }">
-            비밀번호변경
-        </button>
+        <button
+            @click="register"
+            class="btn btn--back"
+            :disabled="!registerBtn"
+            :class="{ disabled: !registerBtn }"
+        >비밀번호변경</button>
         <div class="back" @click="toLogin">로그인하기</div>
     </div>
 </template>
@@ -54,7 +53,7 @@ import '../../assets/css/style.scss';
 import '../../assets/css/user.scss';
 import PV from 'password-validator';
 import UserApi from '../../apis/UserApi';
-
+import Swal from 'sweetalert2';
 export default {
     created() {
         this.passwordSchema
@@ -105,8 +104,12 @@ export default {
                 UserApi.passwordReset(
                     data,
                     res => {
-                        alert('비밀번호가 번경되었습니다.');
-                        this.$emit('resetPassword')
+                        Swal.fire({
+                            icon: 'success',
+                            title: '비밀번호 변경 성공',
+                            text: '비밀번호가 번경되었습니다.',
+                        });
+                        this.$emit('resetPassword');
                     },
                     error => {
                         console.log(error);

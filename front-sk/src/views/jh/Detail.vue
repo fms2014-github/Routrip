@@ -50,8 +50,7 @@
                                 </button>
                             </div>
                             <div class="state" v-if="this.data.favoriteNum == 1">
-                                <strong>{{ whoLiked }}</strong
-                                >님이 게시글을 좋아합니다.
+                                <strong>{{ whoLiked }}</strong>님이 게시글을 좋아합니다.
                             </div>
                             <div class="state" v-if="this.data.favoriteNum > 1">
                                 <strong>{{ whoLiked }}</strong>
@@ -59,7 +58,12 @@
                             </div>
                         </div>
                         <div class="keywords">
-                            <div @click="search(keyword)" class="keyword" v-for="(keyword, keywordIdx) in data.keywords" :key="keywordIdx">
+                            <div
+                                @click="search(keyword)"
+                                class="keyword"
+                                v-for="(keyword, keywordIdx) in data.keywords"
+                                :key="keywordIdx"
+                            >
                                 <span>#{{ keyword }}</span>
                             </div>
                         </div>
@@ -67,7 +71,11 @@
 
                     <div class="comments">
                         <div class="show-comment">
-                            <div class="comment" v-for="(comment, commentIdx) in data.comments" :key="commentIdx">
+                            <div
+                                class="comment"
+                                v-for="(comment, commentIdx) in data.comments"
+                                :key="commentIdx"
+                            >
                                 <div class="writer-img">
                                     <img :src="comment.user.profileImg" alt />
                                 </div>
@@ -86,7 +94,10 @@
                                             <span>{{ comment.contents }}</span>
                                         </div>
                                     </div>
-                                    <div class="comment-delete" v-if="comment.uid == getUser.data.uid">
+                                    <div
+                                        class="comment-delete"
+                                        v-if="comment.uid == getUser.data.uid"
+                                    >
                                         <button @click="deleteComment(comment)">삭제</button>
                                     </div>
                                 </div>
@@ -94,7 +105,13 @@
                         </div>
                         <div class="write-comment">
                             <form action class="comment-form">
-                                <textarea class="comment" placeholder="댓글 달기..." autocomplete="off" wrap="soft" v-model="comment"></textarea>
+                                <textarea
+                                    class="comment"
+                                    placeholder="댓글 달기..."
+                                    autocomplete="off"
+                                    wrap="soft"
+                                    v-model="comment"
+                                ></textarea>
                             </form>
                             <div class="comment-btn">
                                 <button @click="addComment">
@@ -111,7 +128,7 @@
 
 <script>
 import '../../assets/css/main/detail.scss';
-
+import Swal from 'sweetalert2';
 import Header from './Header.vue';
 //axios
 import Axios from 'axios';
@@ -303,9 +320,15 @@ export default {
             })
                 .then(res => {
                     if (this.follow) {
-                        alert('팔로우 되었습니다.');
+                        Swal.fire({
+                            icon: 'success',
+                            title: '"' + this.data.user.nickname + '" 님을 팔로우 했습니다.',
+                        });
                     } else {
-                        alert('팔로우가 취소 되었습니다.');
+                        Swal.fire({
+                            icon: 'warning',
+                            title: '"' + this.data.user.nickname + '" 님의 팔로우를 취소했습니다.',
+                        });
                     }
                     this.showAll();
                 })
@@ -321,7 +344,11 @@ export default {
             commentObject.contents = this.comment;
             commentObject.uid = this.data.uid;
             if (this.comment == '') {
-                alert('댓글을 입력해주세요');
+                Swal.fire({
+                    icon: 'warning',
+                    title: '댓글 오류',
+                    text: '댓글을 입력해 주세요!',
+                });
             } else {
                 Axios.post(`${URI}/page/comment`, commentObject)
                     .then(res => {
