@@ -127,10 +127,7 @@
             <div class="terms">
                 <h1>개인정보 이용 동의서</h1>
                 <div class="terms-content">
-                    <div class="terms">
-                        <h1>개인정보 이용 동의서</h1>
-                        <div class="terms-content">
-                            이용약관
+                    이용약관
                             <br />
                             <br />1조.
                             <br />루:트립은 귀하의 과한 개인정보를 요구하지 않습니다.
@@ -141,9 +138,6 @@
                             <br />3조.
                             <br />루:트립은 사익을 목적으로 하는 사이트가 아닙니다.
                             루트립 내에 이뤄지는 회원들간의 모든 물질적 거래에 대한 책임은 회원에게 있음을 주의하여 주십시오.
-                        </div>
-                        <button @click="termPopup = false">닫기</button>
-                    </div>
                 </div>
                 <button @click="termPopup = false">닫기</button>
             </div>
