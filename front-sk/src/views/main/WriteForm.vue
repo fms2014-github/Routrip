@@ -171,7 +171,7 @@ import '../../assets/css/WriteForm.scss';
 import ImageUpload from '../../apis/ImgurAPI.js';
 import kakaoMap from '../../apis/kakaoMapAPI.js';
 import Axios from 'axios';
-const URI = 'http://192.168.100.70:8083/';
+const URI = 'http://localhost:8083/';
 var asdf;
 export default {
     components: {
@@ -195,11 +195,11 @@ export default {
                     this.imageArr.push(res.data.imgs[i].src);
                     this.representativeImage.push(res.data.imgs[i].src);
                 }
-                console.log('update', res.data);
+                // console.log('update', res.data);
                 kakaoMap.getMpaData(res.data, this.updataPost);
             });
         }
-        console.log(this.boardid);
+        // console.log(this.boardid);
     },
     mounted() {
         //CKEditor.createCKEditor();
@@ -214,13 +214,13 @@ export default {
                 callbacks: {
                     onImageUpload: function(files) {
                         // upload image to server and create imgNode...
-                        console.log('file :', files);
+                        // console.log('file :', files);
                         for (var i = 0; i < files.length; i++) {
                             if (files) {
                                 ImageUpload.uploadImage(
                                     files[i],
                                     res => {
-                                        console.log(res.data.data.link);
+                                        // console.log(res.data.data.link);
                                         imageArr.push(res.data.data.link);
                                         representativeImage.push(res.data.data.link);
                                         if (representativeImage.length > 10) {
@@ -231,7 +231,7 @@ export default {
                                         $('#summernote').summernote('insertImage', res.data.data.link, res.data.data.id);
                                     },
                                     error => {
-                                        console.log(error);
+                                        // console.log(error);
                                     },
                                 );
                             }
@@ -367,11 +367,11 @@ export default {
             var markupStr = $('#summernote').summernote('code');
             var mapData = kakaoMap.submitData();
             var tempKeyword = '';
-            console.log('data', kakaoMap.submitData());
-            // console.log('areasTag', Object.keys(this.areas));
-            // console.log('keywords', Object.keys(this.keywords));
-            // console.log('title', this.title);
-            // console.log('content', markupStr);
+            // console.log('data', kakaoMap.submitData());
+            // // console.log('areasTag', Object.keys(this.areas));
+            // // console.log('keywords', Object.keys(this.keywords));
+            // // console.log('title', this.title);
+            // // console.log('content', markupStr);
             for (var i in this.keywords) {
                 tempKeyword += this.keywords[i] + ' ';
             }
@@ -394,26 +394,26 @@ export default {
                 day: this.day,
                 image: this.representativeImage,
             };
-            console.log('jwt', sendData);
+            // console.log('jwt', sendData);
             if (!this.updataPost) {
                 Axios.post(`${URI}/page/board/`, sendData)
                     .then(res => {
-                        console.log(res);
+                        // console.log(res);
                         kakaoMap.init();
                         this.$router.push('/main');
                     })
                     .catch(error => {
-                        console.log(error);
+                        // console.log(error);
                     });
             } else {
                 Axios.put(`${URI}/page/board/`, sendData)
                     .then(res => {
-                        console.log('put', res);
+                        // console.log('put', res);
                         kakaoMap.init();
                         this.$router.push('/main');
                     })
                     .catch(error => {
-                        console.log('put', error);
+                        // console.log('put', error);
                     });
             }
         },

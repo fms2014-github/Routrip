@@ -246,7 +246,7 @@ export default {
             .symbols();
     },
     mounted() {
-        // console.log('SNSCHECK: ', this.snscheck);
+        // // console.log('SNSCHECK: ', this.snscheck);
 
         if (localStorage.getItem('nickname') !== null) {
             this.nickname = localStorage.getItem('nickname');
@@ -390,7 +390,7 @@ export default {
             }
         },
         authPopUpToggle() {
-            console.log('AUTHPOPUPTOGGLE');
+            // console.log("AUTHPOPUPTOGGLE");
             this.authPopUp = !this.authPopUp;
         },
         registerFormClose() {
@@ -414,7 +414,7 @@ export default {
             this.error.nickname = false;
             this.error.passwordConfirm = false;
             this.error.term = false;
-            console.log(this.snscheck);
+            // console.log(this.snscheck);
 
             this.$emit('popupToggle');
         },

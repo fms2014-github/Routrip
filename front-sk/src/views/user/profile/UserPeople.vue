@@ -41,17 +41,17 @@ export default {
         
         reqfollow() {
             const jwt = localStorage.getItem('routrip_JWT');
-            Axios.post('http://192.168.100.70:8083/account/follower' , {jwt : jwt})
+            Axios.post('http://localhost:8083/account/follower' , {jwt : jwt})
                 .then(res => { 
-                    console.log("follower")
-                    console.log(res)
+                    // console.log("follower")
+                    // console.log(res)
                     this.followerList=res.data
                 });
-            console.log("hihi following")                
-            Axios.post('http://192.168.100.70:8083/account/following' , {jwt : jwt})
+            // console.log("hihi following")                
+            Axios.post('http://localhost:8083/account/following' , {jwt : jwt})
                 .then(res => {
-                    console.log("following")
-                    console.log(res)
+                    // console.log("following")
+                    // console.log(res)
                     this.followingList=res.data
                 });
         }

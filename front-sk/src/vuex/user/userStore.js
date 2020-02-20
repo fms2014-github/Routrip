@@ -20,7 +20,7 @@ const actions = {
   }) {
     const jwt = localStorage.getItem('routrip_JWT');
     //vuex에 user정보 비우기
-    Axios.post('http://192.168.100.70:8083/account/logout/', {
+    Axios.post('http://localhost:8083/account/logout/', {
       jwt: jwt
     }).then(() => {
       commit('setUser', null);
@@ -55,7 +55,7 @@ const actions = {
     commit
   }) {
     const jwt = localStorage.getItem('routrip_JWT');
-    await Axios.post('http://192.168.100.70:8083/account/decode/', {
+    await Axios.post('http://localhost:8083/account/decode/', {
       jwt: jwt
     }).then(res => {
       commit('setUser', res);

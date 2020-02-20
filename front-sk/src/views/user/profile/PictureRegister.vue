@@ -233,7 +233,7 @@ export default {
             }
         },
         checkForm() {
-            console.log('birthday : ' + this.birthday);
+            // console.log('birthday : ' + this.birthday);
             if (this.name.length < 2) this.error.name = '2자 이상 입력해 주세요.';
             else {
                 this.error.name = false;
@@ -299,7 +299,7 @@ export default {
                     data,
                     res => {
                         //통신을 통해 전달받은 값 콘솔에 출력
-                        console.log(res);
+                        // console.log(res);
 
                         //요청이 끝나면 버튼 활성화
                         this.isSubmit = true;

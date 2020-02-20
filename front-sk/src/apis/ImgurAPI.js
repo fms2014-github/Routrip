@@ -13,11 +13,11 @@ const uploadImage = (data1, callback, errorCallback) => {
             },
         })
         .then(res => {
-            console.log(res);
+            // console.log(res);
             callback(res);
         })
         .catch(error => {
-            console.log(error);
+            // console.log(error);
             errorCallback(false);
         });
 };

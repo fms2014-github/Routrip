@@ -1,8 +1,9 @@
 <template>
     <div>
         <div class="row">
-            <h2 style="text-align:center; font-size: 2.1vw; @include wrap;">
-                총 {{postList.length}} 개의 글이 있습니다.</h2>
+            <div style="text-align:center; font-size:2.1vw; @include wrap; margin-bottom:5vw; width:100%">
+                총 {{postList.length}} 개의 글이 있습니다.
+            </div>
             <div v-for="post in postList" v-bind:key="post.boardid">
                 <div class="gallery">
                     <router-link :to="{ name: 'Detail', params: { boardid: post.boardid } }">
@@ -57,14 +58,14 @@ export default {
         //     return "#"+keyword
         // },
         reqPosts() {
-        console.log("hihi Post")
+        // console.log("hihi Post")
         const jwt = localStorage.getItem('routrip_JWT');
-        Axios.post('http://192.168.100.70:8083/page/searchBoard/' , {jwt : jwt})
+        Axios.post('http://localhost:8083/page/searchBoard/' , {jwt : jwt})
             .then(res => {
-                console.log(res.data[0].imgs[0].src)
-                console.log(res.data)
+                // console.log(res.data[0].imgs[0].src)
+                // console.log(res.data)
                 this.postList=res.data
-                console.log(this.postList)
+                // console.log(this.postList)
             });
         }
     },
