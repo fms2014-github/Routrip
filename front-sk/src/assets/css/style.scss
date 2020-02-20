@@ -1396,7 +1396,6 @@ p {
 @media (min-width: 1100px) {
     .user{
         display: flex;
-        height: calc(100vh - 50px);
         justify-content: space-between;
         align-items: center;
         h1{

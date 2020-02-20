@@ -4,6 +4,9 @@
         <div class="body">
             <div class="posting-box">
                 <div class="postings">
+                    <div v-if="(datas == '')" style="text-align: center;">
+                        <h1>검색 결과가 없습니다.</h1>
+                    </div>
                     <div class="posting-component" v-for="(data, dataIdx) in datas" :key="dataIdx">
                         <div class="postings-posting">
                             <div class="post-info">
