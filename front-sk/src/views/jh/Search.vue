@@ -184,7 +184,7 @@ const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
 const userMapActions = createNamespacedHelpers('User').mapActions;
 
-const URI = 'http://localhost:8083/';
+const URI = 'http://192.168.100.70:8083/';
 export default {
     components: {
         Header,
