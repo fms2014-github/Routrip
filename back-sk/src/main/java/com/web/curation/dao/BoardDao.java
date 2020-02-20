@@ -36,8 +36,8 @@ public class BoardDao implements IBoardDao{
 	}
 
 	@Override
-	public List<Board> findBoardListByTitle(String title) throws Exception {
-		return sqlSession.selectList(ns+"findBoardListByTitle", title);
+	public List<Board> findBoardListByKeyword(String keyword) throws Exception {
+		return sqlSession.selectList(ns+"findBoardListByKeyword", keyword);
 	}
 
 	@Override
@@ -106,11 +106,6 @@ public class BoardDao implements IBoardDao{
 	}
 
 	@Override
-	public List<Img> findRepImg(int boardid) throws Exception {
-		return sqlSession.selectList(ns+"findRepImg", boardid);
-	}
-
-	@Override
 	public int deleteImg(int imgid) throws Exception {
 		return sqlSession.delete(ns+"deleteImg", imgid);
 	}
@@ -156,5 +151,79 @@ public class BoardDao implements IBoardDao{
 	@Override
 	public int deleteMarker(int markerid) throws Exception {
 		return sqlSession.delete(ns+"deleteMarker", markerid);
+	}
+
+	@Override
+	public Comment findCommentByCommentid(int commentid) throws Exception {
+		return sqlSession.selectOne(ns+"findCommentByCommentid", commentid);
+	}
+
+	@Override
+	public List<Board> findBoardByFollow(int following) throws Exception {
+		return sqlSession.selectList(ns+"findBoardByFollow", following);
+	}
+
+	@Override
+	public int addScrap(int uid, int boardid) throws Exception {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		map.put("uid", uid);
+		map.put("boardid", boardid);
+		return sqlSession.insert(ns+"addScrap", map);
+	}
+
+	@Override
+	public List<Integer> getScrap(int uid) throws Exception {
+		return sqlSession.selectList(ns+"getScrap", uid);
+	}
+
+	@Override
+	public int deleteScrap(int uid, int boardid) throws Exception {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		map.put("uid", uid);
+		map.put("boardid", boardid);
+		return sqlSession.delete(ns+"deleteScrap", map);
+	}
+
+	@Override
+	public List<Comment> findCommentByUid(int uid) throws Exception {
+		return sqlSession.selectList(ns+"findCommentByUid", uid);
+	}
+
+	@Override
+	public List<Comment> findCommentByListener(int listener) throws Exception {
+		return sqlSession.selectList(ns+"findCommentByListener", listener);
+	}
+
+	@Override
+	public List<Board> getBoardList5(String writedate) throws Exception {
+		return sqlSession.selectList(ns+"getBoardList5", writedate);
+	}
+
+	@Override
+	public List<Board> findBoardBest() throws Exception {
+		return sqlSession.selectList(ns+"findBoardBest");
+	}
+
+	@Override
+	public int deleteImgByBoardid(int boardid) throws Exception {
+		return sqlSession.delete(ns+"deleteImgByBoardid", boardid);
+	}
+
+	@Override
+	public int deleteMarkerByBoardid(int boardid) throws Exception {
+		return sqlSession.delete(ns+"deleteMarkerByBoardid", boardid);
+	}
+
+	@Override
+	public List<Board> getBoardListByLastWrite(String writedate) throws Exception {
+		return sqlSession.selectList(ns+"getBoardListByLastWrite", writedate);
+	}
+
+	@Override
+	public String getScrapDate(int uid, int boardid) throws Exception {
+		Map<String, Integer> map = new HashMap<String, Integer>();
+		map.put("uid", uid);
+		map.put("boardid", boardid);
+		return sqlSession.selectOne(ns+"getScrapDate", map);
 	}
 }

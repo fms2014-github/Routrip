@@ -14,21 +14,25 @@ public class Board {
 	private String writedate;
 	private String tripterm;
 	private String keyword;
-	private double latitude;
-	private double longitude;
-	private int level;
+	private List<String> keywords = new ArrayList<>();
 	private int unveiled = 1; // true = 1, false = 0
 	private List<Comment> comments = new ArrayList<>();
 	private List<Img> imgs = new ArrayList<>();
+	private List<User> favorite = new ArrayList<>();
 	private int favoriteNum = 0;
 	private int commentNum = 0;
 	private List<Marker> markers = new ArrayList<>();
 	private User user;
 	private String writeday;// ~전
+	private String content;
+	private String info;
+	private String cusInfo;
+	private String scrapdate;
 
-	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs, int favoriteNum,
-			int commentNum, List<Marker> markers, String writeday) {
+	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword,
+			List<String> keywords, int unveiled, List<Comment> comments,
+			List<Img> imgs, List<User> favorite, int favoriteNum, int commentNum, List<Marker> markers, User user,
+			String writeday, String content) {
 		super();
 		this.boardid = boardid;
 		this.uid = uid;
@@ -36,79 +40,21 @@ public class Board {
 		this.writedate = writedate;
 		this.tripterm = tripterm;
 		this.keyword = keyword;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
+		this.keywords = keywords;
 		this.unveiled = unveiled;
 		this.comments = comments;
 		this.imgs = imgs;
+		this.favorite = favorite;
 		this.favoriteNum = favoriteNum;
 		this.commentNum = commentNum;
 		this.markers = markers;
+		this.user = user;
 		this.writeday = writeday;
-	}
-
-	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled, List<Comment> comments, List<Img> imgs) {
-		super();
-		this.boardid = boardid;
-		this.uid = uid;
-		this.title = title;
-		this.writedate = writedate;
-		this.tripterm = tripterm;
-		this.keyword = keyword;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
-		this.unveiled = unveiled;
-		this.comments = comments;
-		this.imgs = imgs;
-	}
-
-	public Board(int boardid, int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled) {
-		super();
-		this.boardid = boardid;
-		this.uid = uid;
-		this.title = title;
-		this.writedate = writedate;
-		this.tripterm = tripterm;
-		this.keyword = keyword;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
-		this.unveiled = unveiled;
+		this.content = content;
 	}
 
 	public Board() {
 		super();
-	}
-
-	public Board(int uid, String title, String writedate, String tripterm, String keyword, double latitude,
-			double longitude, int level, int unveiled) {
-		super();
-		this.uid = uid;
-		this.title = title;
-		this.writedate = writedate;
-		this.tripterm = tripterm;
-		this.keyword = keyword;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
-		this.unveiled = unveiled;
-	}
-
-	public Board(int uid, String titile, String writedate, String tripterm, double latitude, double longitude,
-			int level, int unveiled) {
-		super();
-		this.uid = uid;
-		this.title = titile;
-		this.writedate = writedate;
-		this.tripterm = tripterm;
-		this.latitude = latitude;
-		this.longitude = longitude;
-		this.level = level;
-		this.unveiled = unveiled;
 	}
 
 	public int getBoardid() {
@@ -159,30 +105,6 @@ public class Board {
 		this.keyword = keyword;
 	}
 
-	public double getLatitude() {
-		return latitude;
-	}
-
-	public void setLatitude(double latitude) {
-		this.latitude = latitude;
-	}
-
-	public double getLongitude() {
-		return longitude;
-	}
-
-	public void setLongitude(double longitude) {
-		this.longitude = longitude;
-	}
-
-	public int getLevel() {
-		return level;
-	}
-
-	public void setLevel(int level) {
-		this.level = level;
-	}
-
 	public int getUnveiled() {
 		return unveiled;
 	}
@@ -223,6 +145,14 @@ public class Board {
 		this.commentNum = commentNum;
 	}
 
+	public List<User> getFavorite() {
+		return favorite;
+	}
+
+	public void setFavorite(List<User> favorite) {
+		this.favorite = favorite;
+	}
+
 	public List<Marker> getMarkers() {
 		return markers;
 	}
@@ -247,16 +177,15 @@ public class Board {
 			Date wd = format1.parse(format1.format(format2.parse(this.writedate)));
 			if ((now.getTime() == wd.getTime())) {
 				writeday = "오늘";
-			} else if ((now.getTime() - wd.getTime()) / (1000 * 60 * 60 * 24) < 31) {
+			} else if ((now.getTime() - wd.getTime()) / (1000 * 60 * 60 * 24) < 31 && (now.getTime() - wd.getTime()) > 0) {
 				writeday = ((now.getTime() - wd.getTime()) / (1000 * 60 * 60 * 24)) + "일 전";
 			} else if (Integer.parseInt(format1.format(now)) / 10000
 					- Integer.parseInt(format1.format(wd)) / 10000 > 0) {
 				writeday = (Integer.parseInt(format1.format(now)) / 10000
 						- Integer.parseInt(format1.format(wd)) / 10000) + "년 전";
-			} else if (Integer.parseInt(format1.format(now)) / 100
-					- Integer.parseInt(format1.format(wd)) / 100 > 0) {
-				writeday = (Integer.parseInt(format1.format(now)) / 100
-						- Integer.parseInt(format1.format(wd)) / 100) + "달 전";
+			} else if (Integer.parseInt(format1.format(now)) / 100 - Integer.parseInt(format1.format(wd)) / 100 > 0) {
+				writeday = (Integer.parseInt(format1.format(now)) / 100 - Integer.parseInt(format1.format(wd)) / 100)
+						+ "달 전";
 			}
 		} catch (Exception e) {
 			System.out.println("writeday 가져오는 동안 오류 발생");
@@ -266,5 +195,61 @@ public class Board {
 
 	public void setWriteday(String writeday) {
 		this.writeday = writeday;
+	}
+
+	public List<String> getKeywords() {
+		return keywords;
+	}
+
+	public void setKeywords(String keyword) {
+		String[] keywordArray = keyword.split(" ");
+		for(String s : keywordArray)
+			keywords.add(s);
+	}
+
+	public String getContent() {
+		return content;
+	}
+
+	public void setContent(String content) {
+		this.content = content;
+	}
+
+	public String getInfo() {
+		return info;
+	}
+
+	public void setInfo(String info) {
+		this.info = info;
+	}
+
+	public String getCusInfo() {
+		return cusInfo;
+	}
+
+	public void setCusInfo(String cusInfo) {
+		this.cusInfo = cusInfo;
+	}
+
+	public void setKeywords(List<String> keywords) {
+		this.keywords = keywords;
+	}
+
+	public String getScrapdate() {
+		return scrapdate;
+	}
+
+	public void setScrapdate(String scrapdate) {
+		this.scrapdate = scrapdate;
+	}
+
+	@Override
+	public String toString() {
+		return "Board [boardid=" + boardid + ", uid=" + uid + ", title=" + title + ", writedate=" + writedate
+				+ ", tripterm=" + tripterm + ", keyword=" + keyword + ", keywords=" + keywords + ", unveiled="
+				+ unveiled + ", comments=" + comments + ", imgs=" + imgs + ", favorite=" + favorite + ", favoriteNum="
+				+ favoriteNum + ", commentNum=" + commentNum + ", markers=" + markers + ", user=" + user + ", writeday="
+				+ writeday + ", content=" + content + ", info=" + info + ", cusInfo=" + cusInfo + ", scrapdate="
+				+ scrapdate + "]";
 	}
 }

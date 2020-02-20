@@ -33,8 +33,8 @@ public class BoardService implements IBoardService{
 	}
 
 	@Override
-	public List<Board> findBoardListByTitle(String title) throws Exception {
-		return boardDao.findBoardListByTitle(title);
+	public List<Board> findBoardListByKeyword(String keyword) throws Exception {
+		return boardDao.findBoardListByKeyword(keyword);
 	}
 
 	@Override
@@ -93,11 +93,6 @@ public class BoardService implements IBoardService{
 	}
 
 	@Override
-	public List<Img> findRepImg(int boardid) throws Exception {
-		return boardDao.findRepImg(boardid);
-	}
-
-	@Override
 	public int deleteImg(int imgid) throws Exception {
 		return boardDao.deleteImg(imgid);
 	}
@@ -140,5 +135,70 @@ public class BoardService implements IBoardService{
 	@Override
 	public int deleteMarker(int markerid) throws Exception {
 		return boardDao.deleteMarker(markerid);
+	}
+
+	@Override
+	public Comment findCommentByCommentid(int commentid) throws Exception {
+		return boardDao.findCommentByCommentid(commentid);
+	}
+
+	@Override
+	public List<Board> findBoardByFollow(int following) throws Exception {
+		return boardDao.findBoardByFollow(following);
+	}
+
+	@Override
+	public int addScrap(int uid, int boardid) throws Exception {
+		return boardDao.addScrap(uid, boardid);
+	}
+
+	@Override
+	public List<Integer> getScrap(int uid) throws Exception {
+		return boardDao.getScrap(uid);
+	}
+
+	@Override
+	public int deleteScrap(int uid, int boardid) throws Exception {
+		return boardDao.deleteScrap(uid, boardid);
+	}
+
+	@Override
+	public List<Comment> findCommentByUid(int uid) throws Exception {
+		return boardDao.findCommentByUid(uid);
+	}
+
+	@Override
+	public List<Comment> findCommentByListener(int listener) throws Exception {
+		return boardDao.findCommentByListener(listener);
+	}
+
+	@Override
+	public List<Board> getBoardList5(String writedate) throws Exception {
+		return boardDao.getBoardList5(writedate);
+	}
+
+	@Override
+	public List<Board> findBoardBest() throws Exception {
+		return boardDao.findBoardBest();
+	}
+
+	@Override
+	public int deleteImgByBoardid(int boardid) throws Exception {
+		return boardDao.deleteImgByBoardid(boardid);
+	}
+
+	@Override
+	public int deleteMarkerByBoardid(int boardid) throws Exception {
+		return boardDao.deleteMarkerByBoardid(boardid);
+	}
+
+	@Override
+	public List<Board> getBoardListByLastWrite(String writedate) throws Exception {
+		return boardDao.getBoardListByLastWrite(writedate);
+	}
+
+	@Override
+	public String getScrapDate(int uid, int boardid) throws Exception {
+		return boardDao.getScrapDate(uid, boardid);
 	}
 }

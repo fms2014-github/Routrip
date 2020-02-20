@@ -8,9 +8,10 @@ import org.apache.ibatis.session.SqlSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
+import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
 
-@Repository//("userDaoImpl")
+@Repository
 public class UserDao implements IUserDao{
     @Autowired
     private SqlSession sqlSession;
@@ -22,6 +23,14 @@ public class UserDao implements IUserDao{
     	map.put("email", email);
     	map.put("loginApi", String.valueOf(loginApi));
 		return sqlSession.selectOne(ns+"findUserByEmail", map);
+	}
+    
+    @Override
+	public User findUserNoJoin(String email, int loginApi) throws Exception {
+    	Map<String, String> map = new HashMap<String, String>();
+    	map.put("email", email);
+    	map.put("loginApi", String.valueOf(loginApi));
+		return sqlSession.selectOne(ns+"findUserNoJoin", map);
 	}
 
     @Override
@@ -150,5 +159,50 @@ public class UserDao implements IUserDao{
 	@Override
 	public User findUserSimple(int uid) throws Exception {
 		return sqlSession.selectOne(ns+"findUserSimple", uid);
+	}
+
+	@Override
+	public int addAlarm(Alarm alarm) throws Exception {
+		return sqlSession.insert(ns+"addAlarm", alarm);
+	}
+
+	@Override
+	public List<Alarm> getAlarm(int uid) throws Exception {
+		return sqlSession.selectList(ns+"getAlarm", uid);
+	}
+
+	@Override
+	public int deleteAlarm(int alarmid) throws Exception {
+		return sqlSession.delete(ns+"deleteAlarm", alarmid);
+	}
+
+	@Override
+	public int deleteAlarmAll(int uid) throws Exception {
+		return sqlSession.delete(ns+"deleteAlarmAll", uid);
+	}
+
+	@Override
+	public int deleteUserNoJoin(int uid) throws Exception {
+		return sqlSession.delete(ns+"deleteUserNoJoin", uid);
+	}
+
+	@Override
+	public int updateAlarm(int uid) throws Exception {
+		return sqlSession.update(ns+"updateAlarm", uid);
+	}
+
+	@Override
+	public List<User> findUserByLoginApi(int loginApi) throws Exception {
+		return sqlSession.selectList(ns+"findUserByLoginApi", loginApi);
+	}
+
+	@Override
+	public List<Alarm> getAlarmNoRead(int uid) throws Exception {
+		return sqlSession.selectList(ns+"getAlarmNoRead", uid);
+	}
+
+	@Override
+	public int updateAlarmByAlarmId(int alarmid) throws Exception {
+		return sqlSession.update(ns+"updateAlarmByAlarmId", alarmid);
 	}
 }

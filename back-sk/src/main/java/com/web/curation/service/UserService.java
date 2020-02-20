@@ -6,9 +6,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.web.curation.dao.UserDao;
+import com.web.curation.model.user.Alarm;
 import com.web.curation.model.user.User;
 
-@Service//("userService")
+@Service
 public class UserService implements IUserService{
 
 	@Autowired
@@ -127,5 +128,55 @@ public class UserService implements IUserService{
 	@Override
 	public User findUserSimple(int uid) throws Exception {
 		return userDao.findUserSimple(uid);
+	}
+
+	@Override
+	public int addAlarm(Alarm alarm) throws Exception {
+		return userDao.addAlarm(alarm);
+	}
+
+	@Override
+	public List<Alarm> getAlarm(int uid) throws Exception {
+		return userDao.getAlarm(uid);
+	}
+
+	@Override
+	public int deleteAlarm(int alarmid) throws Exception {
+		return userDao.deleteAlarm(alarmid);
+	}
+
+	@Override
+	public int deleteAlarmAll(int uid) throws Exception {
+		return userDao.deleteAlarmAll(uid);
+	}
+
+	@Override
+	public int deleteUserNoJoin(int uid) throws Exception {
+		return userDao.deleteUserNoJoin(uid);
+	}
+
+	@Override
+	public User findUserNoJoin(String email, int loginApi) throws Exception {
+		return userDao.findUserNoJoin(email, loginApi);
+	}
+
+	@Override
+	public int updateAlarm(int uid) throws Exception {
+		return userDao.updateAlarm(uid);
+	}
+
+	@Override
+	public List<User> findUserByLoginApi(int loginApi) throws Exception {
+		return userDao.findUserByLoginApi(loginApi);
+	}
+
+	@Override
+	public List<Alarm> getAlarmNoRead(int uid) throws Exception {
+		return userDao.getAlarmNoRead(uid);
+	}
+
+	@Override
+	public int updateAlarmByAlarmId(int alarmid) throws Exception {
+		return userDao.updateAlarmByAlarmId(alarmid);
 	}
 }

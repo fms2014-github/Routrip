@@ -11,11 +11,13 @@ $desktop: 'screen and (min-width : 1025px)';
 
     .profile-img {
         margin-right: 2vw;
-    }
 
-    .profile-img img {
-        vertical-align: middle;
-        width: 33px;
+        img {
+            vertical-align: middle;
+            width: 40px;
+            height: 40px;
+            border-radius: 20px;
+        }
     }
 
     .name-time {
@@ -28,6 +30,7 @@ $desktop: 'screen and (min-width : 1025px)';
     .else {
         position: absolute;
         right: 20px;
+        cursor: pointer;
 
         span {
             font-size: 1.2em;
@@ -38,6 +41,7 @@ $desktop: 'screen and (min-width : 1025px)';
 .post-imgs-box {
     display: flex;
     overflow: hidden;
+    cursor: pointer;
 
     .hooper {
         height: unset;
@@ -48,30 +52,22 @@ $desktop: 'screen and (min-width : 1025px)';
 
         li {
             @media #{$iPad} {
-                width: 98vw;
-            }
-
-            @media #{$iPadPro} {
                 width: 90vw;
             }
 
-            @media #{$desktop} {
-                width: 45vw;
+            @media #{$iPadPro, $desktop} {
+                width: 550px;
             }
         }
     }
 
     .hooper-pagination {
         @media #{$iPad} {
-            width: 98vw;
-        }
-
-        @media #{$iPadPro} {
             width: 90vw;
         }
 
-        @media #{$desktop} {
-            width: 45vw;
+        @media #{$iPadPro, $desktop} {
+            width: 550px;
         }
 
         .hooper-indicators {
@@ -108,50 +104,103 @@ $desktop: 'screen and (min-width : 1025px)';
 
     img {
         @media #{$iPad} {
-            width: 98vw;
+            width: 90vw;
             height: 61vw;
         }
 
-        @media #{$iPadPro} {
-            width: 90vw;
-            height: 56vw;
-        }
-
-        @media #{$desktop} {
-            width: 45vw;
-            height: 28vw;
+        @media #{$iPadPro, $desktop} {
+            width: 550px;
+            height: 343px;
         }
     }
 }
 
-.sns-btn {
-    display: flex;
-    align-items: center;
-    padding: 0 20px 5px 20px;
+.sns-tag-box {
+    padding: 20px 20px 0 20px;
 
-    .like {
-        font-size: 1.5em;
-        margin-right: 10px;
+    .sns-btn {
+        display: flex;
+        align-items: center;
+        margin-bottom: 10px;
+
+        .like {
+            font-size: 1.5em;
+            margin-right: 10px;
+
+            .likeToggle {
+                display: none;
+            }
+        }
+
+        .scrap {
+            font-size: 1.5em;
+            margin-right: 10px;
+
+            .scrapToggle {
+                display: none;
+            }
+        }
     }
 
-    .follow {
-        font-size: 1.5em;
-        margin-right: 10px;
-    }
-}
+    .keywords {
+        padding-bottom: 10px;
+        border-bottom: 1px solid rgba(00, 00, 00, 0.2);
+        max-height: 80px;
+        width: 100%;
+        overflow-y: scroll;
 
-.text {
-    padding: 10px 20px;
+        .keyword {
+            // background-color: rgba(0, 0, 0, 0.1);
+            display: inline-block;
+            border-radius: 0 10px 10px 10px;
+            color: black;
+            padding: 5px;
+            margin: 0 3px;
+            cursor: pointer;
+        }
+
+        .keyword:hover {
+            color: black;
+            background-color: #ece0f8;
+            box-shadow: 0 3px 5px 1px rgba(0, 0, 0, 0.25);
+            // font-size: 1.1em;
+        }
+    }
 }
 
 .comment-box {
     padding: 20px;
 
+    ::-webkit-scrollbar {
+        width: 3px;
+    }
+
+    /* Track */
+    ::-webkit-scrollbar-track {
+        background: white;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 10px;
+    }
+
     .comments {
+        max-height: 270px;
+        overflow-y: scroll;
+        overflow-x: hidden;
+
+        .comment:hover {
+            .writer-reply {
+                display: block !important;
+            }
+        }
+
         .comment {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
+            width: 100%;
 
             .writer-img img {
                 width: 30px;
@@ -160,18 +209,53 @@ $desktop: 'screen and (min-width : 1025px)';
             }
 
             .comment-info {
-                margin-left: 20px;
                 width: 100%;
+                margin-left: 20px;
+
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                .writer {
-                    margin-bottom: 5px;
+
+                .comment-info-box {
+                    width: 100%;
+                }
+
+                .writer-text {
+                    width: 100%;
 
                     span {
-                        margin-left: 10px;
-                        font-size: 12px;
+                        white-space: pre-line !important;
+                        // overflow: scroll;
+                        text-overflow: ellipsis;
+                        white-space: nowrap;
                     }
+                }
+
+
+                .writer {
+                    margin-bottom: 5px;
+                    width: 300px;
+                    display: flex;
+
+                    .writer-info {
+                        margin-right: 15px;
+
+                        span {
+                            margin-left: 10px;
+                            font-size: 12px;
+                        }
+                    }
+
+                    .writer-reply {
+                        color: blue;
+                        cursor: pointer;
+                        font-size: 12px;
+                        display: none;
+                    }
+                }
+
+                .comment-delete {
+                    margin: 0 10px;
                 }
             }
         }
@@ -182,13 +266,15 @@ $desktop: 'screen and (min-width : 1025px)';
         justify-content: space-between;
         align-items: center;
         margin-top: 20px;
+        padding: 15px 10px 0 10px;
+        border-top: 1px solid rgba(00, 00, 00, 0.2);
     }
 
     .comment-form {
         width: 95%;
 
         textarea {
-            height: 18px;
+            height: 54px;
             border: 0;
             outline: 0;
             line-height: 18px;
@@ -202,5 +288,71 @@ $desktop: 'screen and (min-width : 1025px)';
 
     .comment-btn button {
         color: slateblue;
+    }
+}
+
+.elseModalBackground,
+.followBtn,
+.myPosting,
+.unfollowBtn {
+    display: none !important;
+}
+
+.else-modal {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    background-color: rgba(0, 0, 0, 0.65);
+    -webkit-tap-highlight-color: transparent;
+    -webkit-box-align: center;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    position: fixed;
+    z-index: 1;
+
+    .modal-box {
+        @media #{$iPad, $iPadPro} {
+            width: 260px;
+        }
+
+        @media #{$desktop} {
+            width: 400px;
+        }
+
+        .box-content {
+            .first {
+                border-top: none;
+                border-top-left-radius: 12px;
+                border-top-right-radius: 12px;
+            }
+
+            .middle {
+                background-color: transparent;
+                border-bottom: 0;
+                border-left: 0;
+                border-right: 0;
+            }
+
+            .last {
+                border-bottom-left-radius: 12px;
+                border-bottom-right-radius: 12px;
+                color: red;
+            }
+
+            .else-btn {
+                font-weight: 500;
+                background-color: #ffffff;
+                width: 100%;
+                display: block;
+                text-align: center;
+                padding: 4px 8px;
+                cursor: pointer;
+                font-size: 16px;
+                height: 48px;
+                border-top: 1px solid rgba(var(--b6a, 219, 219, 219), 1);
+            }
+        }
     }
 }

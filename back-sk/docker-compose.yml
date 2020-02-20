@@ -1,0 +1,19 @@
+﻿version: "3"
+services:
+    test_database:
+        # 컨테이너 이름을 주고 싶다면 작성한다
+        container_name: test_database
+        image: mariadb:10.4
+        environment:
+          MYSQL_DATABASE: test_dbd
+          MYSQL_ROOT_PASSWORD: root
+          MYSQL_ROOT_HOST: '%'
+        ports:
+          - 3306:3306        
+
+    test_application:
+        build: .
+        ports:
+          - 8083:8083
+        depends_on:
+          - test_database

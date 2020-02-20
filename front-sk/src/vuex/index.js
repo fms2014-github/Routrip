@@ -7,9 +7,15 @@ import UserStore from './user/userStore';
 Vue.use(Vuex);
 
 export default new Vuex.Store({
-    state: {},
-    getters: {},
-    mutations: {},
+    state: {
+        flag: false,
+    },
+    getters: {
+        getLoading: state => state.flag,
+    },
+    mutations: {
+        setLoading: (state) => (state.flag = !state.flag),
+    },
     actions: {},
     // 2. modules에 추가한다.
     modules: {

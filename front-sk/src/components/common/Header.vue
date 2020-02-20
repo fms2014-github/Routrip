@@ -1,20 +1,17 @@
 <template>
     <div class="header-default">
-        <button class="menu" v-if="!isBack"></button>
+        <button class="menu" v-if="isBack"></button>
 
         <button class="menu" v-if="profileIcon"></button>
 
         <button class="mail" v-if="mailIcon"></button>
 
-        <button v-if="isBack" class="back">
-            <i class="fas fa-chevron-left"></i>
-        </button>
 
         <h4 class="title">
             {{ headerTitle }}
         </h4>
 
-        <button v-if="rightText" class="right-text" :class="{ disabled: isDisabled }" :disabled="isDisabled" @click="changeNick">
+        <button v-if="rightText" class="right-text" :class="{ disabled: isDisabled }" :disabled="isDisabled" @click="test">
             {{ rightText }}
         </button>
 
@@ -32,7 +29,10 @@ export default {
         console.log(this.headerTitle);
     },
     methods: {
-       
+       test() {
+           
+           this.$emit('changeNick');
+       }
     }
 };
 </script>

@@ -1,15 +1,25 @@
 @charset "utf-8";
 @import './common';
 
+$iPad: 'screen and (max-width : 768px)';
+$iPadPro: 'screen and (min-width : 769px) and (max-width : 1024px) ';
+$desktop: 'screen and (min-width : 1025px)';
+
 .user {
     @include wrap;
     min-height: 100%;
     box-sizing: border-box;
+
+    .wrapC {
+        width: 80% !important;
+    }
+
     h1 {
-        color:#000;
+        color: #000;
         font-weight: $f600;
         margin-bottom: 30px;
     }
+
     .mention {
         margin: 10px;
         color: #a6cdc6;
@@ -18,44 +28,84 @@
         text-align: center;
         display: inline-block;
     }
+
     .checkOption {
         text-align: center;
-        padding-top: 130px;
+        padding-top: 30px;
         margin-bottom: 20px;
+    }
+
+    .input-with-label {
+        float: none;
     }
 
     /*로그인*/
     &#login {
-        margin-top:50px;
-        .login-img{
+
+        @media #{$iPad, $iPadPro} {
+
+            .left-view,
+            .right-view {
+                margin: auto;
+            }
+        }
+
+        @media #{$desktop} {
+            padding: 50px 0;
+
+            .login-wrap {
+                margin: auto;
+                display: flex;
+            }
+
+            .left-view {
+                svg {
+                    height: 600px;
+                }
+            }
+
+            .right-view {
+                padding-top: 100px;
+            }
+        }
+
+
+
+        .login-img {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
             justify-content: center;
             margin: 10px;
+
             h1 {
                 display: inline-block;
                 color: #41abac;
                 font-size: 7vw;
                 margin: 20px;
             }
+
             .main-logo {
                 display: inline-block;
                 height: 15vw;
                 margin: 20px;
             }
         }
+
         .btn--login {
             margin-top: 5px;
         }
+
         .text {
             @include wrap;
+
             p {
                 color: #787878;
                 float: left;
                 font-size: $font-size__5;
                 margin-right: 10px;
             }
+
             .bar {
                 height: 1px;
                 background-color: $grey;
@@ -64,9 +114,14 @@
                 margin-bottom: 20px;
             }
         }
-        .emailSaveCheck{
-            input{
-                &[type=checkbox]{
+
+        .emailSaveCheck,
+        .autoLogin {
+            display: inline-block;
+            margin: 0 8px;
+
+            input {
+                &[type=checkbox] {
                     -webkit-appearance: checkbox;
                     position: static;
                     left: 0px;
@@ -75,38 +130,49 @@
                 }
             }
         }
+
         .sns-login {
             margin: 20px 0;
             text-align: right;
+
             .bar {
                 width: calc(100% - 100px);
             }
-            #kakao-login, #naver-login, .google-login {
+
+            #kakao-login,
+            #naver-login,
+            .google-login {
                 display: inline-block;
                 margin: 10px;
             }
+
             #kakao-login {
                 margin: 0 10px;
             }
+
             .logos {
                 text-align: center;
             }
         }
+
         .add-option {
             .bar {
                 width: calc(100%);
             }
+
             .wrap {
                 text-align: right;
                 cursor: pointer;
                 margin-bottom: 10px;
             }
+
             p {
                 float: left;
             }
+
             a {
                 float: right;
-                color:#000;
+                color: #000;
                 font-weight: $f600;
             }
         }
@@ -115,7 +181,10 @@
 
 }
 
-#sign-up,#JoinAuth,#change-password,#find-email-password{
+#sign-up,
+#JoinAuth,
+#change-password,
+#find-email-password {
     display: inline-flex;
     flex-direction: column;
     justify-content: space-between;
@@ -125,92 +194,125 @@
     padding: 20px;
     background-color: white;
     border-radius: 12px;
-    box-shadow: 0px 0px 5px 5px rgba(50,50,50,.3), 0px 0px 18px 18px rgba(0,0,0,.15);
-    #input-with-label{
+    box-shadow: 0px 0px 5px 5px rgba(50, 50, 50, .3), 0px 0px 18px 18px rgba(0, 0, 0, .15);
+
+    #input-with-label {
         width: 500px;
     }
-    #button-wrap{
+
+    #button-wrap {
         div {
             margin: 0 5%;
             width: calc(40% - 4px);
             text-align: center;
             padding: 8px 0;
+
             border: {
                 style: solid;
                 width: 1px;
                 color: #ccc;
             }
+
             display: inline-block;
         }
     }
-    #Join-title{
+
+    #Join-title {
         font-size: 2.5rem;
         display: inline-block;
         margin-right: calc(100% - 180px)
     }
-    #JoinAuth-title{
+
+    #JoinAuth-title {
         font-size: 2rem;
         display: inline-block;
         margin-right: calc(100% - 216px)
     }
-    #find-title{
+
+    #find-title {
         font-size: 1.6rem;
         display: inline-block;
         margin-right: calc(100% - 280px)
     }
-    #find-email-tab, #find-password-tab{
+
+    #find-email-result {
+        text-align: center;
+
+        h1,
+        h3 {
+            margin: 0 0 16px 0;
+        }
+    }
+
+    #find-email-tab,
+    #find-password-tab {
         margin: 0;
         padding: 4px;
         display: inline-block;
         width: calc(50% - 16px);
         text-align: center;
+
         border: {
             style: solid;
             width: 1px;
             color: #ccc;
         }
+
         font: {
             size: 2rem;
         }
     }
-    .close{
+
+    .close {
         display: inline;
         background-color: white;
-        .close-img{
+        opacity: 1;
+
+        .close-img {
             width: 32px;
         }
-        
+
     }
-    .JoinAuth-subtitle{
+
+    .JoinAuth-subtitle {
         margin-bottom: 10px;
     }
+
     input {
         background-color: whitesmoke;
     }
-    #term-doc{
-        .term-view{
+
+    #term-doc {
+        .term-view {
             text-align: right;
             display: inline-block;
             width: calc(100% - 150px);
-            span{cursor: pointer;}
+
+            span {
+                cursor: pointer;
+            }
         }
     }
-    button{
+
+    button {
         background-color: rgba($color: #31a8ac, $alpha: 1.0);
     }
-    .disabled{
+
+    .disabled {
         background-color: rgba($color: #d4d8e6, $alpha: 1.0);
     }
-    .back{
+
+    .back {
         margin: 7px 0;
         text-align: center;
         text-decoration: underline;
         color: rgb(0, 119, 255);
         cursor: pointer;
     }
-    
+
 }
-.terms-doc-dialog{
+
+.terms-doc-dialog {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -220,7 +322,8 @@
     left: 5%;
     right: 5%;
     bottom: 5%;
-    .terms{
+
+    .terms {
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -230,13 +333,15 @@
         margin: 10px;
         max-width: 400px;
         border-radius: 20px;
-        box-shadow: 0px 0px 5px 5px rgba(50,50,50,.3), 0px 0px 18px 18px rgba(0,0,0,.15);
-        h1{
+        box-shadow: 0px 0px 5px 5px rgba(50, 50, 50, .3), 0px 0px 18px 18px rgba(0, 0, 0, .15);
+
+        h1 {
             font-size: 1.65rem !important;
             text-align: center;
             margin: 0 !important;
         }
-        .terms-content{
+
+        .terms-content {
             background-color: rgba(200, 200, 200, 1);
             padding: 15px;
             margin: 10px;
@@ -244,7 +349,8 @@
             height: 260px;
             overflow: auto;
         }
-        button{
+
+        button {
             display: inline-block;
             width: 80px;
             height: 30px;
@@ -256,10 +362,12 @@
     }
 }
 
-.hideJoin{
+.hideJoin {
     visibility: hidden !important;
 }
-#popup-join, #popup-find{
+
+#popup-join,
+#popup-find {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -268,26 +376,36 @@
     left: 0;
     right: 0;
     bottom: 0;
-    .input-with-label{
+
+    .input-with-label {
         height: auto;
+        float: left;
     }
 }
 
-@media (max-width: 1000px){
-    #forget-password, #sign-up{
+@media (max-width: 1000px) {
+
+    #forget-password,
+    #sign-up {
         padding: 20px 20px;
     }
-    #JoinAuth-form, #reset-password-form{
+
+    #reset-password-form {
         width: calc(100vw - 40px);
     }
 }
+
 // 하단 버튼 absolute 해제
 @media (max-height: 650px) {
     .user {
+
         //회원가입
         &.join {
             .btn-bottom {
-                position: inherit; @include wrap; margin-top: 60px; margin-bottom: 20px;
+                position: inherit;
+                @include wrap;
+                margin-top: 60px;
+                margin-bottom: 20px;
             }
         }
     }
