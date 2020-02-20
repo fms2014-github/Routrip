@@ -1,17 +1,21 @@
-<<<<<<< HEAD
-com\web\curation\model\user\AuthenticationRequest$AuthenticationRequestBuilder.class
-=======
-com\web\curation\dao\user\UserDaoImpl.class
-com\web\curation\model\BasicResponse.class
+com\web\curation\controller\account\AccountController$2.class
 com\web\curation\WebCurationApplication.class
-com\web\curation\controller\account\AccountController$User.class
-com\web\curation\model\user\AuthenticationRequest$AuthenticationRequestBuilder.class
+com\web\curation\model\board\Marker.class
+com\web\curation\model\board\Board.class
+com\web\curation\controller\page\PageController.class
+com\web\curation\service\BoardService.class
+com\web\curation\service\IUserService.class
+com\web\curation\dao\IUserDao.class
+com\web\curation\service\IBoardService.class
+com\web\curation\model\user\Alarm.class
+com\web\curation\dao\UserDao.class
+com\web\curation\model\board\Img.class
+com\web\curation\controller\account\AccountController$1.class
+com\web\curation\dao\BoardDao.class
+com\web\curation\dao\IBoardDao.class
+com\web\curation\controller\account\AccountController$3.class
 com\web\curation\config\SwaggerConfig.class
-com\web\curation\service\UserServiceImpl.class
-com\web\curation\model\user\AuthenticationRequest.class
-com\web\curation\dao\user\UserDao.class
 com\web\curation\model\user\User.class
 com\web\curation\controller\account\AccountController.class
 com\web\curation\service\UserService.class
-com\web\curation\model\user\SignupRequest.class
->>>>>>> beb3c8c49971f5ef68cb571f91b7bb0ab5195984
+com\web\curation\model\board\Comment.class

@@ -129,7 +129,7 @@ const userMapMutations = createNamespacedHelpers('User').mapMutations;
 const userMapGetters = createNamespacedHelpers('User').mapGetters;
 const userMapActions = createNamespacedHelpers('User').mapActions;
 
-const URI = 'http://192.168.100.70:8083/';
+const URI = 'http://localhost:8083/';
 export default {
     components: {
         Header,
@@ -201,14 +201,14 @@ export default {
                 boardid: this.boardid,
             })
                 .then(res => {
-                    console.log('res.data', res.data);
+                    // console.log('res.data', res.data);
                     kakaoMap.getMpaData(res.data);
                     this.data = res.data;
                     Axios.post(`${URI}/page/scrapBoard`, {
                         jwt: this.jwt,
                     })
                         .then(res => {
-                            // console.log(res.data);
+                            // // console.log(res.data);
                             this.scrapit = false;
                             for (var i = 0; i < res.data.length; ++i) {
                                 if (res.data[i].boardid == this.data.boardid) {
@@ -220,7 +220,7 @@ export default {
                                 jwt: this.jwt,
                             })
                                 .then(res => {
-                                    // console.log(res.data);
+                                    // // console.log(res.data);
                                     this.likeit = false;
                                     for (var i = 0; i < res.data.length; ++i) {
                                         if (res.data[i].boardid == this.data.boardid) {
@@ -230,13 +230,13 @@ export default {
                                     }
 
                                     var uid = this.getUser.data.uid;
-                                    // console.log('uid : ' + uid);
+                                    // // console.log('uid : ' + uid);
                                     Axios.post(`${URI}/account/following`, {
                                         uid: uid,
                                     })
                                         .then(res => {
-                                            // console.log(res.data);
-                                            // console.log(this.boardData);
+                                            // // console.log(res.data);
+                                            // // console.log(this.boardData);
                                             this.follow = false;
                                             this.unfollow = false;
                                             if (this.data.uid != uid) {
@@ -251,23 +251,23 @@ export default {
                                             }
                                         })
                                         .catch(res => {
-                                            console.log('팔로우 정보 조회 실패');
+                                            // console.log('팔로우 정보 조회 실패');
                                         });
                                     if (this.data.favoriteNum > 0) {
                                         this.whoLiked = this.data.favorite[0].nickname;
-                                        // console.log(this.whoLiked);
+                                        // // console.log(this.whoLiked);
                                     }
                                 })
                                 .catch(res => {
-                                    console.log('좋아요 게시글 조회 실패');
+                                    // console.log('좋아요 게시글 조회 실패');
                                 });
                         })
                         .catch(res => {
-                            console.log('스크랩 게시글 조회 실패');
+                            // console.log('스크랩 게시글 조회 실패');
                         });
                 })
                 .catch(res => {
-                    console.log('상세 게시물 조회 실패', res);
+                    // console.log('상세 게시물 조회 실패', res);
                 });
         },
         toggleLikeBtn() {
@@ -280,7 +280,7 @@ export default {
                     this.showAll();
                 })
                 .catch(res => {
-                    console.log('좋아요 버튼 에러');
+                    // console.log('좋아요 버튼 에러');
                 });
         },
         toggleScrapBtn() {
@@ -293,7 +293,7 @@ export default {
                     this.showAll();
                 })
                 .catch(res => {
-                    console.log('스크랩 버튼 에러');
+                    // console.log('스크랩 버튼 에러');
                 });
         },
         toggleFollow() {
@@ -310,11 +310,11 @@ export default {
                     this.showAll();
                 })
                 .catch(res => {
-                    console.log('팔로우 등록 및 취소 실패');
+                    // console.log('팔로우 등록 및 취소 실패');
                 });
         },
         addComment() {
-            // console.log(this.comment);
+            // // console.log(this.comment);
             var commentObject = new Object();
             commentObject.jwt = this.jwt;
             commentObject.boardid = this.data.boardid;
@@ -325,12 +325,12 @@ export default {
             } else {
                 Axios.post(`${URI}/page/comment`, commentObject)
                     .then(res => {
-                        // console.log('댓글 달기 성공');
+                        // // console.log('댓글 달기 성공');
                         this.comment = '';
                         this.showAll();
                     })
                     .catch(res => {
-                        console.log('댓글 달기 실패');
+                        // console.log('댓글 달기 실패');
                     });
                 this.getAlldata();
             }
@@ -341,17 +341,17 @@ export default {
                     data: comment.commentid,
                 })
                     .then(res => {
-                        // console.log('댓글 삭제 성공');
+                        // // console.log('댓글 삭제 성공');
                         this.showAll();
                     })
                     .catch(res => {
-                        console.log('댓글 삭제 실패');
+                        // console.log('댓글 삭제 실패');
                     });
                 this.getAlldata();
             }
         },
         search(keyword) {
-            // console.log(keyword);
+            // // console.log(keyword);
             this.$router.push({
                 name: 'Search',
                 params: {

@@ -37,11 +37,11 @@ export default {
     },
     methods:{
         reqlikes() {
-            console.log("hihi")
+            // console.log("hihi")
             const jwt = localStorage.getItem('routrip_JWT');
-            Axios.post('http://192.168.100.70:8083/page/favoriteBoard/' , {jwt : jwt})
+            Axios.post('http://localhost:8083/page/favoriteBoard/' , {jwt : jwt})
                 .then(res => {
-                console.log(res.data)
+                // console.log(res.data)
                 this.likeList=res.data
             });
         },

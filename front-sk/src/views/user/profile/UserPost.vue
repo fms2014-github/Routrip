@@ -58,14 +58,14 @@ export default {
         //     return "#"+keyword
         // },
         reqPosts() {
-        console.log("hihi Post")
+        // console.log("hihi Post")
         const jwt = localStorage.getItem('routrip_JWT');
-        Axios.post('http://192.168.100.70:8083/page/searchBoard/' , {jwt : jwt})
+        Axios.post('http://localhost:8083/page/searchBoard/' , {jwt : jwt})
             .then(res => {
-                console.log(res.data[0].imgs[0].src)
-                console.log(res.data)
+                // console.log(res.data[0].imgs[0].src)
+                // console.log(res.data)
                 this.postList=res.data
-                console.log(this.postList)
+                // console.log(this.postList)
             });
         }
     },

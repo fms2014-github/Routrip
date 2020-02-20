@@ -91,15 +91,15 @@ export default {
             }
             else{
                 const jwt = localStorage.getItem('routrip_JWT');
-                Axios.delete('http://192.168.100.70:8083/account/user/',
+                Axios.delete('http://localhost:8083/account/user/',
                         {   data:{
                             jwt: jwt,
                             password: value}
                         }
                     ).then(res => {
-                        console.log(res.headers);
-                        console.log(jwt)
-                        console.log('탈퇴',res)
+                        // console.log(res.headers);
+                        // console.log(jwt)
+                        // console.log('탈퇴',res)
                             Swal.fire({
                             icon:"success",
                             title:'모든 정보가 삭제되었습니다. \n 다음에 다시 만나요!'
@@ -143,11 +143,11 @@ export default {
             return '뭐라도 써보세요!';
           } else {
             const jwt = localStorage.getItem('routrip_JWT');
-            Axios.put('http://192.168.100.70:8083/account/user/', {
+            Axios.put('http://localhost:8083/account/user/', {
               nickname: value,
               jwt: jwt,
             }).then(res => {
-              console.log(res.data);
+              // console.log(res.data);
               localStorage.setItem('routrip_JWT', res.data);
               this.reqInfo();
             });

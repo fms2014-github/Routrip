@@ -242,7 +242,7 @@ export default {
             .symbols();
     },
     mounted() {
-        // console.log('SNSCHECK: ', this.snscheck);
+        // // console.log('SNSCHECK: ', this.snscheck);
 
         if (localStorage.getItem('nickname') !== null) {
             this.nickname = localStorage.getItem('nickname');
@@ -339,7 +339,7 @@ export default {
                         data,
                         res => {
                         //통신을 통해 전달받은 값 콘솔에 출력
-                        // console.log(res);
+                        // // console.log(res);
                         //요청이 끝나면 버튼 활성화
                             this.isSubmit = true;
                             this.authPopUpToggle();
@@ -377,7 +377,7 @@ export default {
             }
         },
         authPopUpToggle() {
-            console.log("AUTHPOPUPTOGGLE");
+            // console.log("AUTHPOPUPTOGGLE");
             this.authPopUp = !this.authPopUp;
         },
         registerFormClose() {
@@ -401,7 +401,7 @@ export default {
             this.error.nickname = false;
             this.error.passwordConfirm = false;
             this.error.term = false;
-            console.log(this.snscheck);
+            // console.log(this.snscheck);
             
             this.$emit('popupToggle');
             

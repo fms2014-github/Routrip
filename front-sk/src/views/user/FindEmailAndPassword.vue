@@ -184,11 +184,11 @@
                         res => {
                             alert('위 이메일로 인증번호를 보냈습니다.');
                             localStorage.setItem('authEmail', this.FindEmail);
-                            console.log(res.data);
+                            // console.log(res.data);
                             this.authCode = res.data;
                         },
                         error => {
-                            console.log(error);
+                            // console.log(error);
                         },
                     );
                 }
@@ -197,8 +197,8 @@
                 this.checkCertNumBtn = true;
             },
             compareCertNum() {
-                console.log('this.certNum', this.certNum);
-                console.log('this.authCode', this.authCode);
+                // console.log('this.certNum', this.certNum);
+                // console.log('this.authCode', this.authCode);
                 if (this.certNum === String(this.authCode)) {
                     alert('인증되었습니다.');
                     this.$emit('nextStep')
@@ -220,12 +220,12 @@
                     UserApi.findEmail(
                         data,
                         res => {
-                            console.log(res.data);
+                            // console.log(res.data);
                             this.resultEmail = res.data
                             this.findSuccess = true
                         },
                         error => {
-                            console.log(error);
+                            // console.log(error);
                             alert('가입하신 메일 주소가 없습니다.')
                         },
                     );
