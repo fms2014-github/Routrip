@@ -1,5 +1,3 @@
-# README
-
 # 저장소 설명
 
 ## back-sk : 백엔드 서버
@@ -24,8 +22,26 @@
     - password-validator
 - CSS-Preprocessor(node-sass)
     - scss
-- JavaScript
+- JavaScript(jQuery)
 
+## 프로젝트 개요
+
+자기가 여행을 갔던 경로를 카카오 지도를 통해 보여주고 여행을 다니면서 찍었던 사진을 업로드 할 수 있는 SNS 프로젝트 입니다.
+
+### 구현 내용
+- 소셜 로그인 구현
+- 회원가입 페이지
+- jQuery WYSIWYG인 Summernote 적용
+  - 업로드한 이미지 삽입 기능 추가
+  - 대표 이미지 설정 기능 추가
+- 카카오 지도 API를 이용해 본인이 여행을 갔던 곳을 표시하는 기능 개발
+
+### 프로젝트 구현 이미지
+![readmeImg/1.png](readmeImg/1.png)
+![readmeImg/2.png](readmeImg/2.png)
+![readmeImg/3.png](readmeImg/3.png)
+![readmeImg/4.png](readmeImg/4.png)
+![readmeImg/7.png](readmeImg/7.png)
 ---
 
 # 프론트/백엔드 프로젝트 사용방법(Based by Windows 10)
